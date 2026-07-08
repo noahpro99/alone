@@ -1,0 +1,407 @@
+package dev.alone.core;
+
+import com.mojang.serialization.Codec;
+import dev.alone.core.net.SurvivalSyncPayload;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+
+/**
+ * Survival meters (proposal §1) — the daily-loop drivers every other system reads and feeds.
+ * <b>Stamina</b> (§1.4), <b>thirst</b> (§1.2), and ambient <b>temperature</b> (§1.3), plus a
+ * realism tweak: shorter arm reach than vanilla. Server-authoritative via persistent attachments,
+ * synced to the HUD each half-second. This is the framework the condition panel and later meters
+ * hang off.
+ */
+public final class SurvivalMeters {
+    private SurvivalMeters() {
+    }
+
+    public static final float MAX_STAMINA = 100f;
+    // MC sprint ≈ 5.6 m/s — a hard run, not an all-out dash. An average fit adult holds that pace a
+    // few minutes; we compress to ~40s to empty (~225 m) so it's costly but not a 10-second gasp.
+    private static final float SPRINT_DRAIN = 0.125f;
+    private static final float SWING_DRAIN = 0.1f;  // mining / chopping / attacking is exertion
+    private static final float REST_REGEN = 0.2f;   // ~25s rest to full
+    private static final float STAMINA_LOW = 20f;
+    private static final float FATIGUE_GAIN = 0.04f;         // exertion builds medium-term fatigue…
+    private static final float FATIGUE_RECOVER = 0.015f;     // …which sheds slowly with rest…
+    private static final float FATIGUE_SLEEP_RECOVER = 1.5f; // …and fast while sleeping (clears a night).
+    private static final float SLEEP_REGEN = 4.0f;           // stamina refilled per tick while asleep
+    private static final float FATIGUE_MAX_PENALTY = 0.25f;  // sore → up to 25% lower stamina ceiling
+
+    public static final float MAX_THIRST = 100f;
+    private static final float THIRST_DRAIN = 0.01f;        // base, ~8 min at rest
+    private static final float THIRST_DRAIN_SPRINT = 0.02f; // exertion
+    private static final float THIRST_DRAIN_HEAT = 0.02f;   // hot biomes
+    private static final float THIRST_LOW = 15f;
+
+    private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
+    private static final float SWIM_FREE_WEIGHT = 8f;   // load past this makes staying afloat real work
+    private static final float SWIM_WEIGHT_DRAIN = 0.012f; // extra stamina/tick per kg over, while in water
+
+    /** Realistic block reach — shorter than vanilla's 4.5 (also used for the drink raycast). */
+    public static final double BLOCK_REACH = 2.75;
+    private static final double ENTITY_REACH = 2.5; // shorter reach is realism; combat worked once Weakness was fixed
+
+    public static final AttachmentType<Float> STAMINA =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "stamina"), Codec.FLOAT);
+    /** Medium-term soreness (0..100): the higher it is, the lower your usable stamina ceiling (§1.4). */
+    public static final AttachmentType<Float> FATIGUE =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "fatigue"), Codec.FLOAT);
+    public static final AttachmentType<Float> THIRST =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "thirst"), Codec.FLOAT);
+
+    // Body temperature (§1.3): -100 (freezing) .. 0 (comfortable) .. +100 (overheating).
+    private static final float NEUTRAL_AMBIENT = 0.8f; // biome temp that feels comfortable
+    private static final float TEMP_SCALE = 100f;
+    private static final float WET_COLD_SHIFT = 35f;   // wetness chills you / blunts heat
+    private static final float WATER_TARGET = -30f;    // being IN water pulls you to at least "slightly cold"
+    private static final float CAVE_TEMPERATURE = 0.7f; // underground: a stable, mild refuge (biome scale)
+    private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
+    private static final float EXPOSURE_RATE = 0.03f;  // drift toward a harsher environment (slow)
+    private static final float RECOVERY_RATE = 0.05f;  // drift back toward a milder one
+    private static final float HEAT_RATE = 0.08f;      // radiant heat warms gradually, not instantly
+    private static final float HYPOTHERMIA = -50f;
+    private static final float SEVERE_COLD = -85f;
+    private static final float HEATSTROKE = 50f;
+    private static final float SEVERE_HOT = 85f;
+
+    public static final AttachmentType<Float> BODY_TEMP =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "body_temp"), Codec.FLOAT);
+    /** How wet you are, in ticks — soaked by water/rain, drying over time (§1.3). */
+    public static final AttachmentType<Integer> WETNESS =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "wetness"), Codec.INT);
+    private static final int MAX_WETNESS = 600;   // ~30s to dry naturally
+    private static final int DRY_NATURAL = 1;
+    private static final int DRY_BY_FIRE = 5;     // a fire dries you ~5x faster
+
+    public static void init() {
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                tick(player);
+                Nutrition.tick(player);
+            }
+        });
+
+        // A completed night's sleep fully restores you (§1.4). The bed-sleep window is too short for
+        // per-tick regen alone, so we top up on waking — clear fatigue, refill stamina.
+        EntitySleepEvents.STOP_SLEEPING.register((entity, sleepingPos) -> {
+            if (entity instanceof ServerPlayer player) {
+                rest(player, 100f, MAX_STAMINA);
+            }
+        });
+    }
+
+    public static float getStamina(Player player) {
+        return player.getAttachedOrElse(STAMINA, MAX_STAMINA);
+    }
+
+    public static float getFatigue(Player player) {
+        return player.getAttachedOrElse(FATIGUE, 0f);
+    }
+
+    public static float getThirst(Player player) {
+        return player.getAttachedOrElse(THIRST, MAX_THIRST);
+    }
+
+    public static float getBodyTemp(Player player) {
+        return player.getAttachedOrElse(BODY_TEMP, 0f);
+    }
+
+    /** Restore thirst (drinking). */
+    public static void drink(Player player, float amount) {
+        player.setAttached(THIRST, Math.min(MAX_THIRST, getThirst(player) + amount));
+    }
+
+    /** Spend stamina on effort (mining, chopping, …). */
+    public static void exert(Player player, float amount) {
+        if (amount > 0f) {
+            player.setAttached(STAMINA, Math.max(0f, getStamina(player) - amount));
+        }
+    }
+
+    /** Recover from resting/sleeping — sheds medium-term fatigue and restores stamina. */
+    public static void rest(Player player, float fatigueShed, float staminaRestore) {
+        player.setAttached(FATIGUE, Math.max(0f, getFatigue(player) - fatigueShed));
+        player.setAttached(STAMINA, Math.min(MAX_STAMINA, getStamina(player) + staminaRestore));
+    }
+
+    /**
+     * Ambient temperature around the player (§1.3): biome baseline, cooled by weather.
+     * Season will feed in here once §10 (Alone: World) exists — see the TODO.
+     */
+    public static float ambientTemperature(Player player) {
+        Level level = player.level();
+        BlockPos pos = player.blockPosition();
+        // Underground (below sea level with a roof overhead): caves are a stable, mild refuge —
+        // insulated from sun, weather, and season. A welcome escape from winter and summer alike.
+        if (pos.getY() < level.getSeaLevel() && !level.canSeeSky(pos)) {
+            return CAVE_TEMPERATURE;
+        }
+        float temp = level.getBiome(pos).value().getBaseTemperature(); // biome
+        if (level.isRainingAt(pos)) {
+            temp -= level.isThundering() ? 0.35f : 0.2f; // rain/snow/storm chills the air
+        }
+        long timeOfDay = level.getOverworldClockTime() % 24000L;
+        if (timeOfDay >= 13000L && timeOfDay < 23000L) {
+            temp -= NIGHT_CHILL; // it's colder at night
+        }
+        temp += Seasons.temperatureOffset(level); // §10 — winter cold, summer hot
+        return temp;
+    }
+
+    private static void tick(ServerPlayer player) {
+        // Realistic reach, shorter than vanilla 4.5. Creative keeps vanilla values for building.
+        setBaseValue(player, Attributes.BLOCK_INTERACTION_RANGE, player.isCreative() ? 4.5 : BLOCK_REACH);
+        setBaseValue(player, Attributes.ENTITY_INTERACTION_RANGE, player.isCreative() ? 3.0 : ENTITY_REACH);
+
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
+        float temperature = ambientTemperature(player);
+
+        // Stamina (short-term) + fatigue (medium-term soreness) — §1.4.
+        float fatigue = getFatigue(player);
+        float effectiveMax = MAX_STAMINA * (1f - fatigue / 100f * FATIGUE_MAX_PENALTY);
+        float stamina = getStamina(player);
+        boolean exerting = player.isSprinting() || player.swinging || player.isSwimming(); // sprint, swim, mine, fight
+        // Keeping a heavy load afloat is exhausting on its own — the more you haul, the faster you tire.
+        float swimLoadDrain = 0f;
+        if (player.isInWater()) {
+            swimLoadDrain = Math.max(0f, Carry.totalWeight(player) - SWIM_FREE_WEIGHT) * SWIM_WEIGHT_DRAIN;
+        }
+        if (exerting || swimLoadDrain > 0f) {
+            float drain = (player.isSprinting() ? SPRINT_DRAIN : (exerting ? SWING_DRAIN : 0f)) + swimLoadDrain;
+            stamina -= drain;
+            fatigue = Math.min(100f, fatigue + drain * FATIGUE_GAIN);
+        } else {
+            float regen = player.isShiftKeyDown() ? REST_REGEN * 2f : REST_REGEN; // sit still to recover faster
+            if (player.isSleeping()) {
+                regen = SLEEP_REGEN; // a night's sleep refills stamina fast (§1.4)
+            }
+            if (player.getFoodData().getFoodLevel() < 6) {
+                regen *= 0.3f; // hungry → poor recovery (§1.4: stamina restores from food)
+            }
+            stamina += regen;
+            fatigue = Math.max(0f, fatigue - (player.isSleeping() ? FATIGUE_SLEEP_RECOVER : FATIGUE_RECOVER));
+        }
+        stamina = Math.max(0f, Math.min(effectiveMax, stamina)); // soreness caps how far it refills
+        applyStaminaPenalties(player, stamina);
+        player.setAttached(STAMINA, stamina);
+        player.setAttached(FATIGUE, fatigue);
+
+        // Thirst — only drains; drink to restore. Faster when exerting or hot (§1.2).
+        float thirst = getThirst(player);
+        float drain = THIRST_DRAIN
+            + (player.isSprinting() ? THIRST_DRAIN_SPRINT : 0f)
+            + (temperature > 1.0f ? THIRST_DRAIN_HEAT : 0f);
+        thirst = clamp(thirst - drain, MAX_THIRST);
+        applyThirstPenalties(player, thirst);
+        player.setAttached(THIRST, thirst);
+
+        // Body temperature (§1.3), two influences:
+        float bodyTemp = getBodyTemp(player);
+        float heat = nearbyHeat(player); // reused below for both warming and drying
+
+        // Wetness — soaked by water/rain, dries over time (faster by a fire); you stay cold while wet.
+        int wetness = player.getAttachedOrElse(WETNESS, 0);
+        if (player.isInWaterOrRain()) {
+            wetness = MAX_WETNESS;
+        } else if (wetness > 0) {
+            wetness = Math.max(0, wetness - (heat > 5f ? DRY_BY_FIRE : DRY_NATURAL));
+        }
+        player.setAttached(WETNESS, wetness);
+        boolean wet = wetness > 0;
+
+        //  1) Environmental drift — biome + weather + wetness. Slow (minutes) unless you're wet.
+        boolean submerged = player.isInWater();
+        float envTarget = (temperature - NEUTRAL_AMBIENT) * TEMP_SCALE;
+        if (wet) {
+            envTarget -= WET_COLD_SHIFT;
+        }
+        if (submerged) {
+            // water always pulls you down to at least "slightly cold", fast; a cold biome/winter
+            // still drives it lower (icy water stays deadly).
+            envTarget = Math.min(envTarget, WATER_TARGET);
+        }
+        envTarget = clampTemp(envTarget);
+        float envRate = Math.abs(envTarget) > Math.abs(bodyTemp) ? EXPOSURE_RATE : RECOVERY_RATE;
+        if (wet && envTarget < bodyTemp) {
+            envRate *= 3f; // wet = rapid heat loss — you chill fast (§1.3)
+        }
+        if (submerged && envTarget < bodyTemp) {
+            envRate *= 4f; // submerged = you chill all the way to cold quickly
+        }
+        bodyTemp = approach(bodyTemp, envTarget, envRate);
+
+        //  2) Radiant heat — nearby fire/lava warms you FAST (seconds) and never cools you.
+        if (heat > bodyTemp) {
+            bodyTemp = approach(bodyTemp, clampTemp(heat), HEAT_RATE);
+        }
+
+        applyTemperatureEffects(player, bodyTemp);
+        player.setAttached(BODY_TEMP, bodyTemp);
+
+        // Carried weight → movement penalty (§5.1): heavier load, slower you move.
+        Carry.applyWeightMovement(player);
+
+        // Swimming with a heavy load — too heavy and you can't stay afloat; you sink and can't rise (§5.1).
+        if (player.isInWater() && Carry.totalWeight(player) > SINK_WEIGHT) {
+            Vec3 motion = player.getDeltaMovement();
+            float over = Carry.totalWeight(player) - SINK_WEIGHT;
+            double sinkRate = -0.045 - Math.min(0.06, over * 0.004); // a slow, unstoppable sink — not a plummet
+            if (motion.y > sinkRate) {
+                player.setDeltaMovement(motion.x, sinkRate, motion.z);
+                player.hurtMarked = true; // force the client to apply the downward pull — no swimming up
+            }
+        }
+
+        // Push state to the client HUD a few times a second (temperature field carries body temp).
+        if (player.tickCount % 10 == 0) {
+            ServerPlayNetworking.send(player,
+                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player)));
+        }
+    }
+
+    private static void applyStaminaPenalties(ServerPlayer player, float stamina) {
+        if (stamina <= 0f) {
+            player.setSprinting(false); // you can't push past empty
+            effect(player, MobEffects.SLOWNESS, 1);
+            effect(player, MobEffects.MINING_FATIGUE, 1);
+            effect(player, MobEffects.WEAKNESS, 0);
+        } else if (stamina < STAMINA_LOW) {
+            effect(player, MobEffects.SLOWNESS, 0);
+            effect(player, MobEffects.MINING_FATIGUE, 0);
+        }
+    }
+
+    private static void applyThirstPenalties(ServerPlayer player, float thirst) {
+        if (thirst <= 0f) {
+            effect(player, MobEffects.WEAKNESS, 0);
+            effect(player, MobEffects.SLOWNESS, 0);
+            effect(player, MobEffects.MINING_FATIGUE, 0);
+        } else if (thirst < THIRST_LOW) {
+            effect(player, MobEffects.SLOWNESS, 0); // thirsty = sluggish, but you can still fight
+        }
+    }
+
+    private static void applyTemperatureEffects(ServerPlayer player, float bodyTemp) {
+        ServerLevel level = (ServerLevel) player.level();
+        if (bodyTemp <= HYPOTHERMIA) {
+            int severe = bodyTemp <= SEVERE_COLD ? 1 : 0;
+            effect(player, MobEffects.SLOWNESS, severe);
+            effect(player, MobEffects.MINING_FATIGUE, severe);
+            effect(player, MobEffects.WEAKNESS, 0);
+            if (bodyTemp <= SEVERE_COLD && player.tickCount % 40 == 0) {
+                player.hurtServer(level, level.damageSources().freeze(), 1.0f);
+            }
+        } else if (bodyTemp >= HEATSTROKE) {
+            int severe = bodyTemp >= SEVERE_HOT ? 1 : 0;
+            effect(player, MobEffects.SLOWNESS, severe);
+            effect(player, MobEffects.WEAKNESS, severe);
+            if (bodyTemp >= SEVERE_HOT && player.tickCount % 40 == 0) {
+                player.hurtServer(level, level.damageSources().onFire(), 1.0f);
+            }
+        }
+    }
+
+    private static void effect(ServerPlayer player, Holder<MobEffect> which, int amplifier) {
+        player.addEffect(new MobEffectInstance(which, 40, amplifier, false, false, true));
+    }
+
+    private static final int HEAT_RADIUS = 3;
+
+    /** Warmth from nearby fire/lava (§1.3) — the strongest close source wins, with distance falloff. */
+    private static float nearbyHeat(Player player) {
+        Level level = player.level();
+        BlockPos center = player.blockPosition();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        float best = 0f;
+        for (int dx = -HEAT_RADIUS; dx <= HEAT_RADIUS; dx++) {
+            for (int dy = -HEAT_RADIUS; dy <= HEAT_RADIUS; dy++) {
+                for (int dz = -HEAT_RADIUS; dz <= HEAT_RADIUS; dz++) {
+                    cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
+                    float heat = heatValue(level, cursor, level.getBlockState(cursor));
+                    if (heat <= 0f) {
+                        continue;
+                    }
+                    double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    float falloff = (float) Math.max(0.0, 1.0 - dist / (HEAT_RADIUS + 1));
+                    best = Math.max(best, heat * falloff);
+                }
+            }
+        }
+        return best;
+    }
+
+    // Heat sources warm you toward a target body temperature. Only lava (or standing in fire) is hot
+    // enough to overheat you; a campfire/fire just keeps the chill off — cozy, never heatstroke (§1.3).
+    private static float heatValue(Level level, BlockPos pos, BlockState state) {
+        var fluid = state.getFluidState().getType();
+        if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA) {
+            return 90f; // dangerously hot
+        }
+        if (state.is(Blocks.FIRE) || state.is(Blocks.SOUL_FIRE)) {
+            return 22f;
+        }
+        if (state.is(Blocks.MAGMA_BLOCK)) {
+            return 8f;
+        }
+        if (state.is(Blocks.TORCH) || state.is(Blocks.WALL_TORCH)
+            || state.is(Blocks.SOUL_TORCH) || state.is(Blocks.SOUL_WALL_TORCH)
+            || state.is(Blocks.LANTERN) || state.is(Blocks.SOUL_LANTERN)) {
+            return 3f;
+        }
+        if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT)) {
+            if (state.is(Blocks.CAMPFIRE) || state.is(Blocks.SOUL_CAMPFIRE)) {
+                BlockEntity be = level.getBlockEntity(pos);
+                float fraction = be != null
+                    ? Math.min(1f, Campfires.getFuel(be) / (float) Campfires.INITIAL_FUEL) : 1f;
+                return 16f * Math.max(0.4f, fraction); // cozy, dwindling as it burns down; never overheats
+            }
+            return 6f; // lit furnace / smoker / blast furnace
+        }
+        return 0f;
+    }
+
+    private static float approach(float current, float target, float step) {
+        return current < target ? Math.min(target, current + step) : Math.max(target, current - step);
+    }
+
+    private static float clampTemp(float value) {
+        return Math.max(-100f, Math.min(100f, value));
+    }
+
+    private static float clamp(float value, float max) {
+        return Math.max(0f, Math.min(max, value));
+    }
+
+    private static void setBaseValue(ServerPlayer player, Holder<Attribute> attribute, double value) {
+        AttributeInstance instance = player.getAttribute(attribute);
+        if (instance != null && instance.getBaseValue() != value) {
+            instance.setBaseValue(value);
+        }
+    }
+}

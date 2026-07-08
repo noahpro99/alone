@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "alone-core",
+  "version": "${version}",
+  "name": "Alone: Core",
+  "description": "Foundation of the Alone survival-realism overhaul: shared systems and the first grounding rules.",
+  "authors": ["noahpro"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.alone.core.AloneCore"],
+    "client": ["dev.alone.core.client.AloneCoreClient"]
+  },
+  "mixins": [
+    "alone-core.mixins.json",
+    {
+      "config": "alone-core.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

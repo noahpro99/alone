@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "dev.alone.core.client.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["MinecraftUseItemMixin", "MultiPlayerGameModeMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

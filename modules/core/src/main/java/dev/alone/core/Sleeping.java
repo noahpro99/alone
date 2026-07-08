@@ -1,0 +1,88 @@
+package dev.alone.core;
+
+import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+
+/**
+ * The bottom rung of the shelter ladder (proposal §1.4/§5.2): right-click bare ground with an empty
+ * hand to catch a quick, fitful rest — the <b>worst</b> sleep, only <b>at night</b> with <b>no rain on
+ * you</b>. It sheds some fatigue and restores some stamina on a cooldown, but does <b>not</b> lay you
+ * down or skip time. The bedroll (a real bed block) and a bed do that far better.
+ */
+public final class Sleeping {
+    private Sleeping() {
+    }
+
+    private static final long COOLDOWN = 1200L; // ~60s between ground-rests
+    private static final float FATIGUE_SHED = 40f;
+    private static final float STAMINA_RESTORE = 50f;
+
+    /** Game time of the player's last ground-rest, for the cooldown. */
+    public static final AttachmentType<Long> LAST_REST =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "last_rest"), Codec.LONG);
+
+    public static void init() {
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            // Bare-handed right-click on the top of bare ground (grass/dirt/sand). No sneak needed —
+            // but we only react when the hand is empty and you're aiming at the top face, so normal
+            // play doesn't trip it. grass_block is in BlockTags.DIRT, so grass counts.
+            if (hand != InteractionHand.MAIN_HAND
+                || !player.getMainHandItem().isEmpty()
+                || hit.getDirection() != Direction.UP) {
+                return InteractionResult.PASS;
+            }
+            var ground = level.getBlockState(hit.getBlockPos());
+            if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND)) {
+                return InteractionResult.PASS;
+            }
+            return tryRest(player, level, FATIGUE_SHED, STAMINA_RESTORE, "You rest fitfully on the cold ground.")
+                ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        });
+    }
+
+    /**
+     * Rest, if it's night and no rain is on you (shared by ground-sleep and the bedroll). Tells you
+     * <em>why</em> it won't work so it isn't a silent no-op; a cooldown gates the actual recovery.
+     */
+    public static boolean tryRest(Player player, Level level, float fatigueShed, float staminaRestore, String message) {
+        long timeOfDay = level.getOverworldClockTime() % 24000L;
+        boolean night = timeOfDay >= 13000L && timeOfDay < 23000L;
+        if (!night) {
+            say(player, level, "It's not dark enough to bed down — wait for night.");
+            return true; // consume the click; we explained why
+        }
+        if (player.isInWaterOrRain()) {
+            say(player, level, "You're too exposed to the rain to rest — find cover.");
+            return true;
+        }
+        if (!level.isClientSide()) {
+            long now = level.getGameTime();
+            long since = now - player.getAttachedOrElse(LAST_REST, -COOLDOWN);
+            if (since >= COOLDOWN) {
+                player.setAttached(LAST_REST, now);
+                SurvivalMeters.rest(player, fatigueShed, staminaRestore);
+                player.sendSystemMessage(Component.literal(message));
+            } else {
+                player.sendSystemMessage(Component.literal(
+                    "You've only just rested — give it " + ((COOLDOWN - since) / 20L) + "s."));
+            }
+        }
+        return true;
+    }
+
+    private static void say(Player player, Level level, String text) {
+        if (!level.isClientSide()) {
+            player.sendSystemMessage(Component.literal(text));
+        }
+    }
+}

@@ -1,0 +1,51 @@
+// Shared build logic applied to every Alone: X module.
+// Loom is declared here (apply false) and applied per-subproject below.
+
+plugins {
+    // 26.1+ is unobfuscated: use the new NON-remapping Loom plugin. The old
+    // `fabric-loom` id is the remapping variant for obfuscated (<=1.21.11) Minecraft.
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT' apply false
+}
+
+subprojects {
+    apply plugin: 'net.fabricmc.fabric-loom'
+
+    version = project.mod_version
+    group = project.maven_group
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        // No `mappings` line: 26.1+ ships unobfuscated with parameter names, so there is
+        // nothing to remap. The non-remapping Loom plugin means plain `implementation`
+        // (not `modImplementation`) — deps land on the classpath and Loader discovers them.
+        implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 25
+    }
+
+    // Expand ${version} in fabric.mod.json from gradle.properties.
+    tasks.named('processResources') {
+        inputs.property 'version', project.version
+        filesMatching('fabric.mod.json') {
+            expand version: project.version
+        }
+    }
+}

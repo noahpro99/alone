@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["FF", "FS", " S"],
+  "key": {"F": "minecraft:flint", "S": "minecraft:stick"},
+  "result": {"id": "alone:flint_hatchet", "count": 1}
+}

@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:white_wool", "minecraft:white_wool", "minecraft:leather"],
+  "result": {"id": "alone:bedroll", "count": 1}
+}

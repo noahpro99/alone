@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "dev.alone.core.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": ["PlayerDestroySpeedMixin", "InventoryVolumeMixin", "SlotVolumeMixin", "CampfireCookTickMixin", "LivingEntityJumpMixin", "ItemStackDrinkMixin", "ServerPlayerGameModeMixin", "ResultSlotMixin", "ItemEntityDespawnMixin", "CropGrowthMixin", "LivingEntityDropMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

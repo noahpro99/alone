@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["F", "S"],
+  "key": {"F": "minecraft:flint", "S": "minecraft:stick"},
+  "result": {"id": "alone:flint_knife", "count": 1}
+}

@@ -1,0 +1,6 @@
+// Alone: Core — the foundation module.
+// All Loom/Fabric/Java config is inherited from the root build.gradle.
+
+base {
+    archivesName = 'alone-core'
+}

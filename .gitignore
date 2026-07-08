@@ -1,0 +1,30 @@
+# Gradle / Loom
+.gradle/
+build/
+run/
+
+# Build distributables — the mrpack + zips are attached to GitHub Releases, not committed
+dist/
+
+# Third-party mods: the mrpack references these by URL/hash; we never redistribute the jars
+mods/
+
+# Nix
+result
+result-*
+
+# Editors / IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / crash reports
+*.log
+crash-reports/

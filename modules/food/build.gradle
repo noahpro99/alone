@@ -1,0 +1,12 @@
+// Alone: Table — food: nutrition, spoilage, preservation, scent.
+// First feature: raw-food sickness risk (proposal §4.2).
+// All Loom/Fabric/Java config is inherited from the root build.gradle.
+
+base {
+    archivesName = 'alone-food'
+}
+
+dependencies {
+    // Alone: Table builds on Core's condition framework (foodborne illness → sickness).
+    implementation project(':core')
+}

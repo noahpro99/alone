@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'alone'
+
+// Each Alone: X mod is its own Gradle subproject that compiles to its own jar.
+// We include the leaf directly (no empty `:modules` parent for Loom to choke on)
+// and point it at its folder under modules/.
+include 'core'
+project(':core').projectDir = file('modules/core')
+
+include 'food'
+project(':food').projectDir = file('modules/food')
+
+// Not a shipped mod — aggregates every module so one run loads the whole pack.
+include 'dev'
+project(':dev').projectDir = file('modules/dev')
+
+// Future modules — uncomment as each phase lands:
+// include 'body'
+// project(':body').projectDir = file('modules/body')

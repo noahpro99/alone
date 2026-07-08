@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["C", "S"],
+  "key": {"C": "#minecraft:coals", "S": "minecraft:stick"},
+  "result": {"id": "alone:torch", "count": 1}
+}

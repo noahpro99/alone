@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        { "condition": "minecraft:survives_explosion" }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "alone:bedroll",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "alone:bedroll",
+              "properties": { "part": "head" }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "alone:blocks/bedroll"
+}

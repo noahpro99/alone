@@ -1,0 +1,7 @@
+// Alone: Dev — NOT a shipped mod. This project ships no code of its own; it exists only so
+// that a single `runClient` / `runServer` loads every Alone module at once for playtesting
+// the whole pack. Add each new module here as it lands.
+dependencies {
+    localRuntime project(':core')
+    localRuntime project(':food')
+}
