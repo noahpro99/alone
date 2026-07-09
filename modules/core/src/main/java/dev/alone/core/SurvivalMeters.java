@@ -132,7 +132,8 @@ public final class SurvivalMeters {
 
     /** Restore thirst (drinking). */
     public static void drink(Player player, float amount) {
-        player.setAttached(THIRST, Math.min(MAX_THIRST, getThirst(player) + amount));
+        // clamps both ends so a negative amount (salt water dehydrating you, §1.2) is safe too
+        player.setAttached(THIRST, Math.max(0f, Math.min(MAX_THIRST, getThirst(player) + amount)));
     }
 
     /** Spend stamina on effort (mining, chopping, …). */

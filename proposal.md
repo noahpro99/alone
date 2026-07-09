@@ -30,7 +30,7 @@ Four survival meters — hunger, thirst, temperature, stamina — plus sleep and
 
 ### 1.2 Thirst
 - Drains faster than hunger; faster still in heat or exertion. Water weighs 1 kg/liter, so carried water is a real logistics cost (§4.1).
-- Source quality: rain catch/springs (clean) → flowing rivers (usually fine, small illness chance) → still ponds/swamps (dangerous raw) → ocean (never; drinking it worsens thirst). **Boiling purifies anything.**
+- Source quality: rain catch/springs (clean) → flowing rivers (usually fine, small illness chance) → still ponds/swamps (dangerous raw) → **ocean = salt water** — drinking it (bare-handed *or* from a vessel) **dehydrates** you rather than quenching. **Boiling purifies fresh water and desalinates seawater** — it's the one fix for anything, so the sea is only water *after* you've boiled it.
 - See §2 for containers — v1.1 removes the abstract "water bottle" and replaces it with a real vessel technology ladder.
 
 ### 1.3 Temperature
@@ -327,5 +327,6 @@ Wake at dawn — snug shelter, full recovery, no soreness because yesterday was 
 
 - **Added** §1.6 Digestion and waste: a hygiene/disease system (no explicit visuals) where relieving yourself contaminates ground and water — foul your well/food/camp and you sicken yourself and scent for predators. **Diarrhea/dysentery** drains hydration fast, making dehydration an acute cause of death; prevention (boil water, clean vessels, wash hands, cook food, site a latrine downhill/downwind) is the whole point. Ties together §1.2, §1.5, §2, §4.2, §4.3, §5.6.
 - **Added** §9.1 Livestock is bartered wealth: domesticated animals can't be spawned/found wild/bred from nothing — they're **bartered** (villagers §7.4, ruins §12) at **historical grain prices** (a cow ≈ ~150 measures of wheat, i.e. ~2–3 stacks; ratios scale chicken → ox). Grain becomes currency; a herd is earned wealth. Config-sliderable.
+- **Clarified** §1.2 salt water: the **ocean is salt water** — drinking it (bare-handed or from a vessel) dehydrates rather than quenches; **boiling both purifies fresh water and desalinates seawater**. (Rivers/lakes stay fresh.) Now implemented.
 
 *End of proposal v1.2.*

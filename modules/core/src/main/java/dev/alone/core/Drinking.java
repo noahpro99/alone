@@ -3,7 +3,9 @@ package dev.alone.core;
 import dev.alone.core.net.DrinkRequestPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -29,6 +31,12 @@ public final class Drinking {
 
     private static final float DRINK_AMOUNT = 25f;
     private static final float SICKNESS_CHANCE = 0.15f;
+    private static final float SALT_DEHYDRATE = 15f; // seawater pulls water OUT of you (§1.2)
+
+    /** Ocean water is salt water — drinking it dehydrates unless boiled first. Rivers/lakes are fresh. */
+    public static boolean isSaltWater(Level level, BlockPos pos) {
+        return level.getBiome(pos).is(BiomeTags.IS_OCEAN);
+    }
 
     public static void init() {
         // Fabric invokes play payload receivers on the server thread, so we can apply directly.
@@ -52,10 +60,16 @@ public final class Drinking {
     }
 
     private static void handleDrink(ServerPlayer player) {
-        if (!player.getMainHandItem().isEmpty() || findWaterSource(player, player.level()) == null) {
+        BlockPos water = findWaterSource(player, player.level());
+        if (!player.getMainHandItem().isEmpty() || water == null) {
             return;
         }
         Hygiene.wash(player); // cupping water also rinses your hands (§5.6)
+        if (isSaltWater(player.level(), water)) {
+            SurvivalMeters.drink(player, -SALT_DEHYDRATE); // seawater only makes you thirstier (§1.2)
+            player.sendSystemMessage(Component.literal("The seawater is salty — it only makes you thirstier. Boil it first."));
+            return;
+        }
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
             SurvivalMeters.drink(player, DRINK_AMOUNT);
             if (player.getRandom().nextFloat() < SICKNESS_CHANCE) {
