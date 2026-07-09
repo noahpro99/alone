@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shaped", "pattern": ["XXX","X X"], "key": { "X": "alone:steel_ingot" }, "result": { "id": "alone:steel_helmet", "count": 1 } }
