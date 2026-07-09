@@ -64,6 +64,10 @@ public final class AloneItems {
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** Rope coil (§5.7) — throw it down a cliff face to hang a free, safe climb line. */
+    public static final Item ROPE = register("rope",
+        key -> new RopeItem(new Item.Properties().stacksTo(64).setId(key)));
+
     /** Splint (§1.5 medicine) — sticks bound with cord; sneak + right-click to treat a sprain. */
     public static final Item SPLINT = register("splint",
         key -> new Item(new Item.Properties().setId(key)));

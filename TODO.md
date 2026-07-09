@@ -104,6 +104,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Forge & temper — timed metal crafting (§8.2)** — metal gear is no longer finished in the grid. A grid-crafted iron/steel tool or armour piece comes out an **unforged blank** (brittle, ~20 durability) until you work it hot: **hold it by a lit forge** (blast furnace/furnace/smoker/campfire/lava) to **heat** it, then **right-click an anvil** (with a craftable `alone:smithing_hammer` in your pack) to **hammer** — a piece takes many blows across several heats (12 for tools, up to 20 for a chestplate). On completion it gets a **random quality** (crude→masterwork) that sets its durability (0.6×–1.5×). **Re-temper**: reheat + rehammer a finished piece to **reroll quality**, but each rework lowers the ceiling (×0.85) — and repairs it. Live durability via `ItemStackForgeDurabilityMixin`; forge state/grade shown in the tooltip; heat/blows on the action bar. (`Forging`, `forgeable` tag.)
 
+- [x] **Rope (§5.7)** — a craftable coil (`alone:rope`, 3 string → 3) you **throw down a cliff face**: aim at a block face near the top and use it, and the rope **unrolls straight down** the open air (one length per block, up to 32) as climbable `alone:rope` blocks. Rope is in `minecraft:climbable` with **no collision**, so vanilla treats it exactly like a ladder — **free, full-speed, safe up/down climbing**, the civilized counterpoint to brutal free-climbing. Break it to recover the coil. (`RopeItem`, `AloneBlocks.ROPE`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

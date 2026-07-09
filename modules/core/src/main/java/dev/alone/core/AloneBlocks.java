@@ -33,6 +33,22 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /**
+     * Rope (proposal §5.7) — a hanging climb line. No collision (you move through it) and it's in the
+     * {@code minecraft:climbable} tag, so vanilla treats it exactly like a ladder: full-speed, no-cost,
+     * safe up-and-down climbing — the civilized alternative to brutal free-climbing. Deployed as a run
+     * down a cliff face by {@link RopeItem}.
+     */
+    public static final Block ROPE = register("rope",
+        key -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOL)
+            .strength(0.4F)
+            .noCollision()
+            .noOcclusion()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
     }

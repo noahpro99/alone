@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:string", "minecraft:string", "minecraft:string"],
+  "result": { "id": "alone:rope", "count": 3 }
+}
