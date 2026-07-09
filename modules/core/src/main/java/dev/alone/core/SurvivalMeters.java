@@ -5,6 +5,7 @@ import dev.alone.core.net.SurvivalSyncPayload;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -111,6 +112,22 @@ public final class SurvivalMeters {
                 tick(player);
                 Nutrition.tick(player);
             }
+        });
+
+        // Death is a setback, not a reset (§11): you're "carried home" and wake days later — battered,
+        // hungry, thirsty, and weak, with a lingering injury. Recovery is the real death penalty.
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, returnFromEnd) -> {
+            if (returnFromEnd) {
+                return; // only after an actual death, not returning from the End
+            }
+            newPlayer.setHealth(newPlayer.getMaxHealth() * 0.4f);
+            newPlayer.getFoodData().setFoodLevel(6);
+            newPlayer.setAttached(THIRST, 25f);
+            newPlayer.setAttached(STAMINA, 20f);
+            newPlayer.setAttached(FATIGUE, 80f);
+            Conditions.addSprain(newPlayer, 600); // you didn't walk home unscathed
+            newPlayer.sendSystemMessage(Component.literal(
+                "You wake at your homestead, days later — battered, hungry, and weak."));
         });
 
         // A night's sleep restores you (§1.4) — but only as well as you were comfortable (§5.5). Warm
