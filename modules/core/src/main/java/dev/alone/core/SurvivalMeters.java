@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -112,11 +113,17 @@ public final class SurvivalMeters {
             }
         });
 
-        // A completed night's sleep fully restores you (§1.4). The bed-sleep window is too short for
-        // per-tick regen alone, so we top up on waking — clear fatigue, refill stamina.
+        // A night's sleep restores you (§1.4) — but only as well as you were comfortable (§5.5). Warm
+        // and sheltered = a full night; cold or roasting = a poor one. Applied on waking.
         EntitySleepEvents.STOP_SLEEPING.register((entity, sleepingPos) -> {
             if (entity instanceof ServerPlayer player) {
-                rest(player, 100f, MAX_STAMINA);
+                float quality = restQuality(player);
+                rest(player, 100f * quality, MAX_STAMINA * quality);
+                if (quality < 1.0f) {
+                    player.sendSystemMessage(Component.literal(getBodyTemp(player) < 0f
+                        ? "You slept poorly — too cold to rest well."
+                        : "You slept poorly — too hot to rest well."));
+                }
             }
         });
     }
@@ -141,6 +148,21 @@ public final class SurvivalMeters {
     public static void drink(Player player, float amount) {
         // clamps both ends so a negative amount (salt water dehydrating you, §1.2) is safe too
         player.setAttached(THIRST, Math.max(0f, Math.min(MAX_THIRST, getThirst(player) + amount)));
+    }
+
+    /**
+     * How restful sleep is, by how comfortable your body is (§1.4/§5.5): a warm, sheltered night
+     * restores you fully; shivering or roasting, you barely rest. 1.0 comfortable → 0.3 extreme.
+     */
+    public static float restQuality(Player player) {
+        float t = Math.abs(getBodyTemp(player));
+        if (t >= 50f) {
+            return 0.3f; // freezing or roasting — fitful, almost no recovery
+        }
+        if (t >= 20f) {
+            return 0.6f; // cold/hot — a poor night
+        }
+        return 1.0f;     // comfortable — a full night's rest
     }
 
     /** A hot meal warms you (§1.3) — raises body temperature toward comfort, never into heatstroke. */
