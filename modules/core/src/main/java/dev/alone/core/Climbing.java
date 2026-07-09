@@ -132,10 +132,14 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // Free-climbing a wall: only while pressed into it, and not while a jump's upward momentum is
-        // still live (the latch) — so a jump near a wall keeps its FULL height before the climb (which
-        // clamps you to a slow pace) takes over at the apex. No height limit; climb as far as stamina lasts.
-        return player.horizontalCollision && !jumpLatched(player) && facingFlatWall(player);
+        // Free-climbing a wall: only while pressed into it, and not while a jump is still carrying you up.
+        // Two guards together protect the FULL jump near a wall: the instantaneous check kills the fast
+        // rise (no stale state), and the latch covers the slow approach to the apex. The climb only takes
+        // over once you've peaked. No height limit; you climb as far as your stamina lasts.
+        return player.horizontalCollision
+            && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
+            && !jumpLatched(player)
+            && facingFlatWall(player);
     }
 
     /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,

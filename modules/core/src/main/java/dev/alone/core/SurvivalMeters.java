@@ -305,9 +305,12 @@ public final class SurvivalMeters {
         float effectiveMax = MAX_STAMINA * (1f - fatigue / 100f * FATIGUE_MAX_PENALTY);
         float stamina = getStamina(player);
         boolean exerting = player.isSprinting() || player.swinging || player.isSwimming(); // sprint, swim, mine, fight
+        // Only real swimming/floating is work — wading through shallow water (standing on the bottom) is
+        // like walking on land, so you recover stamina there instead of "swimming".
+        boolean afloat = player.isInWater() && !player.onGround();
         // Keeping a heavy load afloat is exhausting on its own — the more you haul, the faster you tire.
         float swimLoadDrain = 0f;
-        if (player.isInWater()) {
+        if (afloat) {
             swimLoadDrain = Math.max(0f, Carry.totalWeight(player) - SWIM_FREE_WEIGHT) * SWIM_WEIGHT_DRAIN;
         }
         if (exerting || swimLoadDrain > 0f) {
