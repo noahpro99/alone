@@ -24,7 +24,7 @@ public final class SurvivalHud {
 
     private static final Identifier HEART = Identifier.withDefaultNamespace("hud/heart/full");
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.FEATHER);
-    private static final ItemStack ICON_FATIGUE = new ItemStack(Items.PHANTOM_MEMBRANE);
+    private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
     private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);
 
@@ -51,7 +51,7 @@ public final class SurvivalHud {
         drawItemIcon(g, ICON_STAMINA, left, yStamina - 3);
         drawBar(g, barX, yStamina, ClientSurvivalState.stamina / SurvivalMeters.MAX_STAMINA, 0xFF3AA655);
 
-        drawItemIcon(g, ICON_FATIGUE, left, yFatigue - 3);
+        drawItemIcon(g, ICON_ENDURANCE, left, yFatigue - 3);
         // Endurance reserve — full when rested, drains as fatigue builds (so it reads like the rest:
         // full = good). Low reserve = you're worn down and your stamina can't refill as high.
         drawBar(g, barX, yFatigue, 1f - ClientSurvivalState.fatigue / 100f, 0xFFB5793A);
@@ -99,17 +99,19 @@ public final class SurvivalHud {
         boolean bleeding = (conditions & Conditions.FLAG_BLEEDING) != 0;
         boolean sprained = (conditions & Conditions.FLAG_SPRAINED) != 0;
         boolean dirty = (conditions & Conditions.FLAG_DIRTY_HANDS) != 0;
+        boolean infected = (conditions & Conditions.FLAG_INFECTED) != 0;
 
         int body = sick ? 0xFF7BA05B : 0xFFCBB89A; // sickly green, else skin tone
         int hands = dirty ? 0xFF6B4A2B : body;      // brown when dirty
         int torso = bleeding ? 0xFFB53030 : body;   // red when bleeding
         int legs = sprained ? 0xFFCC7A33 : body;    // orange when sprained
+        int arms = infected ? 0xFF7A4FA3 : body;    // purple when a wound's infected
 
         g.fill(x - 1, y - 1, x + 11, y + 19, 0xAA000000); // backdrop
         g.fill(x + 3, y, x + 8, y + 5, body);             // head
         g.fill(x + 3, y + 5, x + 8, y + 12, torso);       // torso
-        g.fill(x + 1, y + 5, x + 3, y + 11, body);        // left arm
-        g.fill(x + 8, y + 5, x + 10, y + 11, body);       // right arm
+        g.fill(x + 1, y + 5, x + 3, y + 11, arms);        // left arm
+        g.fill(x + 8, y + 5, x + 10, y + 11, arms);       // right arm
         g.fill(x + 1, y + 11, x + 3, y + 13, hands);      // left hand
         g.fill(x + 8, y + 11, x + 10, y + 13, hands);     // right hand
         g.fill(x + 3, y + 12, x + 5, y + 18, legs);       // left leg

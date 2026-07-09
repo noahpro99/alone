@@ -60,6 +60,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 - [x] **Torches placeable + fuel-conserving** — lit torch plants a torch/wall-torch (`TorchBlockItem`); placed torches burn down and gutter to a spent torch; mining returns the remaining fuel (no free refill). (`Torches`.)
 - [x] **Nutrition variety / food fatigue (§1.1)** — foods tagged protein/veg/grain/fruit; eating one group repeatedly raises its fatigue and shrinks usable max hunger (cap down to ~12); variety recovers it. (`Nutrition` + `nutrient_*` tags.)
 - [x] **Condition panel MVP (§1.5)** — vanilla hearts hidden (`HudElementRegistry.removeElement(HEALTH_BAR)`); HUD shows a **vitality bar** (top, blood-red → amber → alarm) + the paper-doll injury figure. xvfb-verified in-world. *Depth to add later: death only from conditions (damage → conditions draining vitality), slow multi-day vitality regen.*
+- [x] **HUD icons + endurance bar flip** — game icon per bar (heart/feather/golden-carrot/water-bucket/bundle); the old "fatigue" bar flipped to an **endurance reserve** (full = rested, drains as you tire) so it reads like the others.
+- [x] **Infection condition (§1.5)** — zombie-type bites have a ~30% chance to fester: fever (weakness + nausea), and a compounding/deep infection turns septic and drains vitality (can kill). Dress it with cloth (sneak + right-click) to stop bleeding and clean the infection back down. Paper-doll arms turn purple when infected. (`Conditions`.)
 - [x] **Swim-by-weight retune** — sink threshold 22 kg (one full block ≈ 30 kg sinks you); slow
   unstoppable sink (not a plummet); stamina drains faster the more you haul in water.
 - [x] **Being submerged chills you** — extra cold-push + faster cooling while in water.

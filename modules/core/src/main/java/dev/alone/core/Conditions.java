@@ -18,6 +18,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -47,15 +48,22 @@ public final class Conditions {
     /** Remaining sprain in ticks — a bad fall leaves you limping for a while (§1.5). */
     public static final AttachmentType<Integer> SPRAIN =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "sprain"), Codec.INT);
+    /** Remaining infection in ticks — a dirty (zombie) bite festers: fever, and if it deepens, it kills. */
+    public static final AttachmentType<Integer> INFECTION =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "infection"), Codec.INT);
 
     private static final int BLEED_TICKS = 200;   // ~10s per wound (stacks with more hits)
     private static final int SPRAIN_TICKS = 600;  // ~30s limping per bad fall
+    private static final int INFECTION_PER_BITE = 4000; // one bite ≈ a fever that clears; bites compound
+    private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
+    private static final float INFECT_CHANCE = 0.30f;   // odds a zombie-type bite gets infected
 
     // Condition flags synced to the HUD.
     public static final int FLAG_SICK = 1;
     public static final int FLAG_BLEEDING = 2;
     public static final int FLAG_SPRAINED = 4;
     public static final int FLAG_DIRTY_HANDS = 8;
+    public static final int FLAG_INFECTED = 16;
 
     public static int flags(Player player) {
         int f = 0;
@@ -71,6 +79,9 @@ public final class Conditions {
         if (Hygiene.handsDirty(player)) {
             f |= FLAG_DIRTY_HANDS;
         }
+        if (player.getAttachedOrElse(INFECTION, 0) > 0) {
+            f |= FLAG_INFECTED;
+        }
         return f;
     }
 
@@ -80,6 +91,7 @@ public final class Conditions {
                 tickSickness(player);
                 tickBleeding(player);
                 tickSprain(player);
+                tickInfection(player);
             }
         });
         // Damage lands as conditions (§1.5/§8.6): a claw/bite/arrow bleeds you; a bad fall sprains you.
@@ -93,17 +105,26 @@ public final class Conditions {
             if (damageTaken >= 4.0f && source.is(DamageTypes.FALL)) {
                 addSprain(player, SPRAIN_TICKS);
             }
+            // A zombie-type bite can fester into infection (§1.5).
+            if (source.getEntity() instanceof Zombie && player.getRandom().nextFloat() < INFECT_CHANCE) {
+                addInfection(player, INFECTION_PER_BITE);
+            }
         });
-        // Treatment (§1.5): sneak + right-click with cloth (string/wool/paper) to bind a bleeding wound.
+        // Treatment (§1.5): sneak + right-click with cloth (string/wool/paper) to dress a wound —
+        // stops bleeding and cleans an infection back down.
         UseItemCallback.EVENT.register((player, level, hand) -> {
             ItemStack stack = player.getItemInHand(hand);
-            if (player.isShiftKeyDown() && isBandage(stack) && isBleeding(player)) {
+            if (player.isShiftKeyDown() && isBandage(stack) && (isBleeding(player) || isInfected(player))) {
                 if (!level.isClientSide()) {
                     player.removeAttached(BLEEDING);
+                    int infection = player.getAttachedOrElse(INFECTION, 0);
+                    if (infection > 0) {
+                        player.setAttached(INFECTION, Math.max(0, infection - INFECTION_PER_BITE)); // dressing knocks it back
+                    }
                     if (!player.isCreative()) {
                         stack.shrink(1);
                     }
-                    player.sendSystemMessage(Component.literal("You bind the wound."));
+                    player.sendSystemMessage(Component.literal("You clean and bind the wound."));
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -150,6 +171,32 @@ public final class Conditions {
             player.hurtServer(level, level.damageSources().generic(), 1.0f);
         }
         player.setAttached(BLEEDING, remaining - 1);
+    }
+
+    public static boolean isInfected(Player player) {
+        return player.getAttachedOrElse(INFECTION, 0) > 0;
+    }
+
+    /** Contract (or worsen) an infection — a dirty wound that festers. */
+    public static void addInfection(Player player, int ticks) {
+        player.setAttached(INFECTION, Math.min(player.getAttachedOrElse(INFECTION, 0) + ticks, MAX_SICKNESS_TICKS));
+    }
+
+    private static void tickInfection(ServerPlayer player) {
+        int remaining = player.getAttachedOrElse(INFECTION, 0);
+        if (remaining <= 0) {
+            return;
+        }
+        if (remaining % 20 == 0) {
+            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30, 0, false, false, true)); // feverish, weak
+            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 40, 0, false, false, true));    // malaise
+        }
+        // A deep (compounding) infection turns septic — the fever drains vitality until you dress it.
+        if (remaining > SEVERE_INFECTION && remaining % 60 == 0) {
+            ServerLevel level = (ServerLevel) player.level();
+            player.hurtServer(level, level.damageSources().generic(), 1.0f);
+        }
+        player.setAttached(INFECTION, remaining - 1);
     }
 
     /** Contract (or worsen) sickness. */
