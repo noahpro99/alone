@@ -84,6 +84,7 @@ public final class SurvivalMeters {
     private static final float WATER_TARGET = -30f;    // being IN water pulls you to at least "slightly cold"
     private static final float CAVE_TEMPERATURE = 0.7f; // underground: a stable, mild refuge (biome scale)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
+    private static final float ROOF_INSULATION = 0.4f;  // a roof blunts ~40% of the cold/heat (§5.5)
     private static final float EXPOSURE_RATE = 0.03f;  // drift toward a harsher environment (slow)
     private static final float RECOVERY_RATE = 0.05f;  // drift back toward a milder one
     private static final float HEAT_RATE = 0.08f;      // radiant heat warms gradually, not instantly
@@ -160,20 +161,27 @@ public final class SurvivalMeters {
     public static float ambientTemperature(Player player) {
         Level level = player.level();
         BlockPos pos = player.blockPosition();
-        // Underground (below sea level with a roof overhead): caves are a stable, mild refuge —
-        // insulated from sun, weather, and season. A welcome escape from winter and summer alike.
-        if (pos.getY() < level.getSeaLevel() && !level.canSeeSky(pos)) {
+        boolean roofed = !level.canSeeSky(pos); // a block/roof/canopy overhead — you're under cover
+        // Underground (below sea level, under cover): caves are a stable, mild refuge — insulated
+        // from sun, weather, and season. A welcome escape from winter and summer alike.
+        if (roofed && pos.getY() < level.getSeaLevel()) {
             return CAVE_TEMPERATURE;
         }
         float temp = level.getBiome(pos).value().getBaseTemperature(); // biome
-        if (level.isRainingAt(pos)) {
-            temp -= level.isThundering() ? 0.35f : 0.2f; // rain/snow/storm chills the air
+        temp += Seasons.temperatureOffset(level);                      // §10 — winter cold, summer hot
+        if (roofed) {
+            // Under a roof (§5.5): shielded from rain and the cold night sky, and insulated part-way
+            // toward comfort. A shelter blunts the extremes; a fire inside (radiant heat) does the rest.
+            temp += (NEUTRAL_AMBIENT - temp) * ROOF_INSULATION;
+        } else {
+            if (level.isRainingAt(pos)) {
+                temp -= level.isThundering() ? 0.35f : 0.2f; // rain/snow/storm chills the exposed
+            }
+            long timeOfDay = level.getOverworldClockTime() % 24000L;
+            if (timeOfDay >= 13000L && timeOfDay < 23000L) {
+                temp -= NIGHT_CHILL; // clear night sky is colder
+            }
         }
-        long timeOfDay = level.getOverworldClockTime() % 24000L;
-        if (timeOfDay >= 13000L && timeOfDay < 23000L) {
-            temp -= NIGHT_CHILL; // it's colder at night
-        }
-        temp += Seasons.temperatureOffset(level); // §10 — winter cold, summer hot
         return temp;
     }
 
