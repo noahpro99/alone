@@ -20,7 +20,10 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -88,6 +91,14 @@ public final class SurvivalMeters {
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
     private static final float ROOF_INSULATION = 0.4f;  // a roof blunts ~40% of the cold/heat (§5.5)
     private static final float HOT_MEAL_CAP = 15f;       // a hot meal warms you toward comfort, not heatstroke
+    // Clothing insulation (§1.3/§5.5): leather/hide layers trap body heat — a blessing in the cold,
+    // a burden in the heat; metal plates insulate little and bake in the sun.
+    private static final float LEATHER_INSULATION = 9f;  // per hide piece — a full set (~36) beats a cold night
+    private static final float METAL_INSULATION = 2f;    // per metal plate — barely a windbreak
+    private static final float HEAT_TRAP = 0.4f;         // fraction of your insulation that turns into a burden when hot
+    private static final float METAL_SUN_HEAT = 4f;      // per metal plate baking under an open sky
+    private static final EquipmentSlot[] ARMOR_SLOTS =
+        {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     public static final float HOT_MEAL_WARMTH = 25f;     // body-temp bump from a hot meal (drifts back)
     private static final float EXPOSURE_RATE = 0.03f;  // drift toward a harsher environment (slow)
     private static final float RECOVERY_RATE = 0.05f;  // drift back toward a milder one
@@ -235,6 +246,47 @@ public final class SurvivalMeters {
         return temp;
     }
 
+    /**
+     * How your clothing bends the environment's pull on your body temperature (§1.3/§5.5). Hide/leather
+     * layers insulate — in the cold they blunt the chill (up to comfortable, never warmer than the air);
+     * in the heat they trap warmth and make it worse. Bare metal plates barely insulate and, under an
+     * open sky in the heat, bake you. Returns the adjusted environmental target.
+     */
+    private static float clothingShift(Player player, float envTarget) {
+        float insulation = 0f; // hide layers that trap body heat
+        int metal = 0;         // conducting plates
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            ItemStack worn = player.getItemBySlot(slot);
+            if (worn.isEmpty()) {
+                continue;
+            }
+            if (isLeather(worn)) {
+                insulation += LEATHER_INSULATION;
+            } else if (worn.has(net.minecraft.core.component.DataComponents.EQUIPPABLE)) {
+                metal++;
+                insulation += METAL_INSULATION;
+            }
+        }
+        if (envTarget < 0f) {
+            // Cold: clothing warms you back toward comfort, but can't push you past it.
+            return Math.min(0f, envTarget + insulation);
+        }
+        if (envTarget > 0f) {
+            // Heat: layers you can't shed trap warmth, and sun-baked metal adds to it.
+            boolean underSun = player.level().canSeeSky(player.blockPosition());
+            float sun = underSun ? metal * METAL_SUN_HEAT : 0f;
+            return envTarget + insulation * HEAT_TRAP + sun;
+        }
+        return envTarget;
+    }
+
+    /** Leather/hide armour — the insulating layers, as opposed to conducting metal plates. */
+    private static boolean isLeather(ItemStack stack) {
+        return stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_CHESTPLATE)
+            || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Items.LEATHER_BOOTS)
+            || stack.is(Items.TURTLE_HELMET);
+    }
+
     private static void tick(ServerPlayer player) {
         // Realistic reach, shorter than vanilla 4.5. Creative keeps vanilla values for building.
         setBaseValue(player, Attributes.BLOCK_INTERACTION_RANGE, player.isCreative() ? 4.5 : BLOCK_REACH);
@@ -308,6 +360,10 @@ public final class SurvivalMeters {
             // water always pulls you down to at least "slightly cold", fast; a cold biome/winter
             // still drives it lower (icy water stays deadly).
             envTarget = Math.min(envTarget, WATER_TARGET);
+        } else {
+            // What you're wearing shifts how the environment reaches you (§1.3/§5.5) — but only in air;
+            // soaked clothing insulates nothing.
+            envTarget = clothingShift(player, envTarget);
         }
         envTarget = clampTemp(envTarget);
         float envRate = Math.abs(envTarget) > Math.abs(bodyTemp) ? EXPOSURE_RATE : RECOVERY_RATE;
