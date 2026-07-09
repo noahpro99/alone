@@ -73,6 +73,7 @@ public class AloneCore implements ModInitializer {
         Nutrition.init();       // §1.1 — diet variety; a monotonous diet shrinks usable hunger
         Leaves.init();          // §5.4 — leaves: hand → twigs + litter, axe/hoe → leaf block
         Climbing.init();        // §5.4 — climb up through leaves; free-climb short flat walls (strenuous)
+        Forging.init();         // §8.2 — forge & temper: heat + hammer metal gear to quality at an anvil
 
         // Proposal §8.1 — you fell a tree with the right tool, not your fist or a chicken.
         // An axe works; a crude blade barely works (the destroy-speed mixin makes it crawl);

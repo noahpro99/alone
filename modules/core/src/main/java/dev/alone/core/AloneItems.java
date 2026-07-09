@@ -68,6 +68,11 @@ public final class AloneItems {
     public static final Item SPLINT = register("splint",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** Smithing hammer (§8.2) — the tool you forge metal with. Kept out of the forgeable tag (no
+     *  chicken-and-egg): craft it normally, then hammer everything else into shape at an anvil. */
+    public static final Item SMITHING_HAMMER = register("smithing_hammer",
+        key -> new Item(new Item.Properties().durability(512).setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick
