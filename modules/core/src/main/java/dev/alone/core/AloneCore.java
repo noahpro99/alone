@@ -71,6 +71,8 @@ public class AloneCore implements ModInitializer {
         Hygiene.init();         // §5.6 — dirty hands from butchering contaminate food
         Torches.init();         // §5.6 — lit torches burn their fuel down to a spent torch
         Nutrition.init();       // §1.1 — diet variety; a monotonous diet shrinks usable hunger
+        Leaves.init();          // §5.4 — leaves: hand → twigs + litter, axe/hoe → leaf block
+        Climbing.init();        // §5.4 — climb up through leaves; free-climb short flat walls (strenuous)
 
         // Proposal §8.1 — you fell a tree with the right tool, not your fist or a chicken.
         // An axe works; a crude blade barely works (the destroy-speed mixin makes it crawl);

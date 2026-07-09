@@ -99,6 +99,9 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 - [x] **Barely-scratched digs heal** — a dig under 10% progress no longer saves a permanent chip; it resets to a pristine block (client + server both gate on 10%). (`MultiPlayerGameModeMixin`, `ServerPlayerGameModeMixin`.)
 - [x] **Drinking takes time + a water gauge** — sipping from a waterskin/iron pot is now a ~1.6s timed drink (DRINK animation), not instant; and the vessel shows a durability-style **water bar** tinted by quality (blue clean / murky raw / sickly tainted / teal salt) so you can read how much water is left and what kind. (`WaterskinItem`.)
 
+- [x] **Leaves feel like foliage (§5.4)** — breaking leaves by **hand** yields snapped **sticks + leaf litter** (not a tidy block); an **axe or hoe** shears the whole **leaf block** free. Either way it's **slow, tugging work** (hand ~12× slower, blade ~3×). Vanilla saplings/apples still drop, so tree farming survives. (`Leaves`, `PlayerDestroySpeedMixin`.)
+- [x] **Free-climbing (§5.4)** — two new ways up: **leaves are soft** (passable + climbable — haul yourself up through a canopy, no stamina cost), and you can **scrabble up a flat full-block wall up to ~3 tall** (a wall that tops out within reach), which is **strenuous — it drains stamina and you can't climb once spent**. Taller cliffs still need a ladder. Ladder-like physics via `onClimbable`. (`Climbing`, `LivingEntityClimbMixin`, `LeavesCollisionMixin`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);
