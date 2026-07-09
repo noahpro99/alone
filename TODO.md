@@ -108,6 +108,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Plant fiber → string (§8.1)** — string no longer requires killing spiders. Tearing up **grass/ferns/vines/dead bush** drops **`alone:plant_fiber`** (bare hands ~50% for one strand; a **cutting blade** — sword/axe/hoe/flint knife — strips 1–2 clean lengths). **Twist 3 fiber → 1 string** (shapeless). Spiders still drop string; this just frees you from them and feeds the whole string→rope/bandage/bow economy. (`Fibers`.)
 
+- [x] **Friction fire needs tinder (§3.1)** — drilling with a stick only makes an ember now; it won't catch without **tinder** (a bundle of `alone:plant_fiber`, or dry `leaf_litter`), which is **consumed when the fire lights**. Without tinder you just smoke, with a throttled hint. Ties the new fiber/leaf-litter into fire-starting — you gather tinder before you can make fire. (`FireStarting`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

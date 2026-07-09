@@ -8,9 +8,12 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -25,6 +28,10 @@ import net.minecraft.world.phys.Vec3;
  * on solid, dry ground to drill: it's slow, drains stamina, and <b>fails in the rain or when
  * you're wet</b>, so keeping tinder dry matters. Each held right-click is one "stroke" (the client
  * mixin sends them); enough strokes on the same spot lights a fire on top.
+ *
+ * <p>Drilling only makes an ember — you need <b>tinder</b> (a bundle of plant fiber, or dry leaf
+ * litter) to catch it into flame, and it's consumed when the fire lights. Without tinder you just
+ * smoke and never catch. (§8.1 fiber → §3.1 fire.)
  */
 public final class FireStarting {
     private FireStarting() {
@@ -32,11 +39,13 @@ public final class FireStarting {
 
     private static final int STROKES_TO_LIGHT = 15; // ~3 seconds of drilling
     private static final float STAMINA_PER_STROKE = 1.5f;
+    private static final int WARN_INTERVAL = 40;    // don't spam the "no tinder" hint
 
     private record Drill(BlockPos pos, int strokes, int atTick) {
     }
 
     private static final Map<UUID, Drill> ACTIVE = new HashMap<>();
+    private static final Map<UUID, Integer> LAST_WARN = new HashMap<>();
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(FireDrillPayload.TYPE,
@@ -88,6 +97,20 @@ public final class FireStarting {
             return; // too spent to keep drilling
         }
 
+        // No tinder, no fire — drilling alone only makes an ember that dies without something to catch it.
+        if (findTinder(player) < 0) {
+            int now = player.tickCount;
+            if (now - LAST_WARN.getOrDefault(player.getUUID(), -WARN_INTERVAL) >= WARN_INTERVAL) {
+                player.sendSystemMessage(Component.literal(
+                    "You need dry tinder to catch the ember — a bundle of plant fiber, or leaf litter."));
+                LAST_WARN.put(player.getUUID(), now);
+            }
+            serverLevel.sendParticles(ParticleTypes.SMOKE, fire.getX() + 0.5, fire.getY() + 0.05, fire.getZ() + 0.5,
+                2, 0.08, 0.02, 0.08, 0.005);
+            ACTIVE.remove(player.getUUID());
+            return;
+        }
+
         Drill current = ACTIVE.get(player.getUUID());
         boolean continuing = current != null && current.pos.equals(base) && player.tickCount - current.atTick <= 20;
         int strokes = continuing ? current.strokes + 1 : 1;
@@ -97,7 +120,8 @@ public final class FireStarting {
             2, 0.08, 0.02, 0.08, 0.005);
 
         if (strokes >= STROKES_TO_LIGHT) {
-            // Light a campfire — the focus of the fire system (§3). It starts with a full fuel load.
+            // The ember catches the tinder — consume a bundle and light a campfire (§3), full fuel load.
+            consumeTinder(player);
             serverLevel.setBlockAndUpdate(fire,
                 Blocks.CAMPFIRE.defaultBlockState().setValue(BlockStateProperties.LIT, true));
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.1, fire.getZ() + 0.5,
@@ -105,6 +129,28 @@ public final class FireStarting {
             ACTIVE.remove(player.getUUID());
         } else {
             ACTIVE.put(player.getUUID(), new Drill(base, strokes, player.tickCount));
+        }
+    }
+
+    /** Tinder: a bundle of plant fiber, or dry leaf litter. Returns the inventory slot, or -1 if none. */
+    private static int findTinder(Player player) {
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(AloneItems.PLANT_FIBER) || stack.is(Items.LEAF_LITTER)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void consumeTinder(Player player) {
+        if (player.isCreative()) {
+            return;
+        }
+        int slot = findTinder(player);
+        if (slot >= 0) {
+            player.getInventory().getItem(slot).shrink(1);
         }
     }
 }
