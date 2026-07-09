@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "LLL"
+  ],
+  "key": {
+    "S": "minecraft:stick",
+    "L": "#minecraft:logs"
+  },
+  "result": { "id": "minecraft:campfire", "count": 1 }
+}
