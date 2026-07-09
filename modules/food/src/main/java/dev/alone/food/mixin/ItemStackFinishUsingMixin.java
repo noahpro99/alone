@@ -39,6 +39,14 @@ public class ItemStackFinishUsingMixin {
         if (self.is(AloneFood.HOT_MEALS)) {
             SurvivalMeters.warm(player, SurvivalMeters.HOT_MEAL_WARMTH);
         }
+        // Food and thirst (§1.2): salt-preserved food dehydrates most, dry food some; juicy food helps.
+        if (self.getOrDefault(dev.alone.food.Spoilage.PRESERVED, false)) {
+            SurvivalMeters.drink(player, -12f);
+        } else if (self.is(AloneFood.DRY_FOODS)) {
+            SurvivalMeters.drink(player, -6f);
+        } else if (self.is(AloneFood.JUICY_FOODS)) {
+            SurvivalMeters.drink(player, 6f);
+        }
         // Per-tier odds (§4.2): raw chicken is a real gamble, fish much safer.
         float chance = 0f;
         int illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS;

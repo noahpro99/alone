@@ -24,6 +24,8 @@ public class AloneFood implements ModInitializer {
     public static final TagKey<Item> RAW_MEDIUM_RISK = tag("raw_medium_risk"); // beef, pork, mutton, rabbit
     public static final TagKey<Item> RAW_LOW_RISK = tag("raw_low_risk");       // fresh fish
     public static final TagKey<Item> HOT_MEALS = tag("hot_meals");            // cooked food/stews that warm you (§1.3)
+    public static final TagKey<Item> DRY_FOODS = tag("dry_foods");            // bread/jerky/dried — costs thirst (§1.2)
+    public static final TagKey<Item> JUICY_FOODS = tag("juicy_foods");        // fruit/soups — gives a little water back
 
     private static TagKey<Item> tag(String path) {
         return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", path));
