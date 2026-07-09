@@ -106,6 +106,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Rope (§5.7)** — a craftable coil (`alone:rope`, 3 string → 3) you **throw down a cliff face**: aim at a block face near the top and use it, and the rope **unrolls straight down** the open air (one length per block, up to 32) as climbable `alone:rope` blocks. Rope is in `minecraft:climbable` with **no collision**, so vanilla treats it exactly like a ladder — **free, full-speed, safe up/down climbing**, the civilized counterpoint to brutal free-climbing. Break it to recover the coil. (`RopeItem`, `AloneBlocks.ROPE`.)
 
+- [x] **Plant fiber → string (§8.1)** — string no longer requires killing spiders. Tearing up **grass/ferns/vines/dead bush** drops **`alone:plant_fiber`** (bare hands ~50% for one strand; a **cutting blade** — sword/axe/hoe/flint knife — strips 1–2 clean lengths). **Twist 3 fiber → 1 string** (shapeless). Spiders still drop string; this just frees you from them and feeds the whole string→rope/bandage/bow economy. (`Fibers`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

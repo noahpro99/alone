@@ -68,6 +68,10 @@ public final class AloneItems {
     public static final Item ROPE = register("rope",
         key -> new RopeItem(new Item.Properties().stacksTo(64).setId(key)));
 
+    /** Plant fiber (§8.1) — stripped from grass/ferns/vines; twist a few into string (no spiders needed). */
+    public static final Item PLANT_FIBER = register("plant_fiber",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Splint (§1.5 medicine) — sticks bound with cord; sneak + right-click to treat a sprain. */
     public static final Item SPLINT = register("splint",
         key -> new Item(new Item.Properties().setId(key)));
