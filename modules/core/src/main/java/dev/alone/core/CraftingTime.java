@@ -37,9 +37,9 @@ public final class CraftingTime {
     // Craft durations in ticks (20/s) — compressed real-world effort. Tunable; a datapack could refine.
     private static final int SIMPLE = 40;    // ~2s: planks, sticks, a torch
     private static final int FOOD = 100;     // ~5s: prep a meal
-    private static final int STATION = 600;  // ~30s: a chest, furnace, other block-entity workstation
-    private static final int TOOL = 300;     // ~15s: shape and haft a tool or weapon
-    private static final int ARMOR = 2400;   // ~2 min: a full piece of armour is a smithing job
+    private static final int STATION = 1200; // ~60s: a chest, furnace — real joinery/masonry
+    private static final int TOOL = 300;     // ~15s: shape and haft a tool or weapon (metal ones then forge)
+    private static final int ARMOR = 2400;   // ~2 min assembling the piece — metal is then forged on top
 
     // Per player, the accumulated ticks worked on each result item (by item id) — kept so a craft you
     // stepped away from resumes. Side-separated so the integrated server and client don't collide.
