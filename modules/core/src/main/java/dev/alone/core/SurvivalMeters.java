@@ -59,8 +59,11 @@ public final class SurvivalMeters {
     public static final float MAX_THIRST = 100f;
     private static final float THIRST_DRAIN = 0.01f;        // base, ~8 min at rest
     private static final float THIRST_DRAIN_SPRINT = 0.02f; // exertion
-    private static final float THIRST_DRAIN_HEAT = 0.02f;   // hot biomes
+    private static final float THIRST_DRAIN_SWEAT = 0.04f;  // full-body-heat sweat rate (scaled by how hot you run)
     private static final float THIRST_LOW = 15f;
+    // Thermoregulation feedback (§1.3) — a hot body sweats (dehydrates), a cold body burns food and shivers.
+    private static final float COLD_SHIVER = -30f;      // below this, stiff muscles recover stamina poorly
+    private static final float COLD_EXHAUSTION = 0.03f; // extra food burned per tick keeping warm (scaled by cold)
 
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
     // Slow vitality recovery (§1.5) — heals only when fed, hydrated, and free of active wounds/illness.
@@ -319,6 +322,9 @@ public final class SurvivalMeters {
             if (player.getFoodData().getFoodLevel() < 6) {
                 regen *= 0.3f; // hungry → poor recovery (§1.4: stamina restores from food)
             }
+            if (getBodyTemp(player) <= COLD_SHIVER) {
+                regen *= 0.5f; // shivering, stiff — the cold blunts recovery (§1.3)
+            }
             stamina += regen;
             fatigue = Math.max(0f, fatigue - (player.isSleeping() ? FATIGUE_SLEEP_RECOVER : FATIGUE_RECOVER));
         }
@@ -327,11 +333,13 @@ public final class SurvivalMeters {
         player.setAttached(STAMINA, stamina);
         player.setAttached(FATIGUE, fatigue);
 
-        // Thirst — only drains; drink to restore. Faster when exerting or hot (§1.2).
+        // Thirst — only drains; drink to restore. Faster when exerting, and you sweat the hotter your
+        // *body* runs (§1.2/§1.3): the desert, a fire, heavy clothing, and hard exertion all cost water.
         float thirst = getThirst(player);
+        float bodyHeat = getBodyTemp(player); // last tick's body temp — already folds in biome/fire/clothing
         float drain = THIRST_DRAIN
             + (player.isSprinting() ? THIRST_DRAIN_SPRINT : 0f)
-            + (temperature > 1.0f ? THIRST_DRAIN_HEAT : 0f);
+            + (bodyHeat > 0f ? bodyHeat / 100f * THIRST_DRAIN_SWEAT : 0f);
         thirst = clamp(thirst - drain, MAX_THIRST);
         applyThirstPenalties(player, thirst);
         player.setAttached(THIRST, thirst);
@@ -382,6 +390,12 @@ public final class SurvivalMeters {
 
         applyTemperatureEffects(player, bodyTemp);
         player.setAttached(BODY_TEMP, bodyTemp);
+
+        // Staying warm costs calories (§1.3): a cold body shivers and burns food to hold its heat —
+        // the colder you are, the more you eat just to keep from freezing.
+        if (bodyTemp < 0f) {
+            player.causeFoodExhaustion(-bodyTemp / 100f * COLD_EXHAUSTION);
+        }
 
         // Slow vitality recovery (§1.5): your body mends over time, but only when fed, hydrated, and
         // NOT actively wounded or ill — a wound or fever has to be dealt with before you heal.
