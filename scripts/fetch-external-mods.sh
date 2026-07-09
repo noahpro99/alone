@@ -10,7 +10,7 @@ mkdir -p "$OUT"
 
 # The mods requested for the pack (Modrinth slugs).
 REQUESTED=(mouse-tweaks real-camera sodium iris sound sound-physics-remastered \
-           enhancedvisuals modmenu physicsmod ambientsounds presence-footsteps not-enough-animations jei)
+           enhancedvisuals modmenu physicsmod ambientsounds presence-footsteps not-enough-animations jei yacl)
 
 declare -A SEEN
 api() { curl -s -m 30 -H "User-Agent: $UA" "$1"; }

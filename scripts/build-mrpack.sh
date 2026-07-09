@@ -10,7 +10,7 @@ rm -rf "$WORK"; mkdir -p "$WORK/overrides/mods"
 
 # required client experience mods; physics mod is optional-only
 REQUIRED=(mouse-tweaks real-camera sodium iris sound sound-physics-remastered \
-          enhancedvisuals modmenu ambientsounds presence-footsteps not-enough-animations jei)
+          enhancedvisuals modmenu ambientsounds presence-footsteps not-enough-animations jei yacl)
 OPTIONAL=(physicsmod)
 
 api(){ curl -s -m 30 -H "User-Agent: $UA" "$1"; }
