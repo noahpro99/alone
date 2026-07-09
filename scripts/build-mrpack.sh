@@ -2,7 +2,7 @@
 # Builds Alone.mrpack: external mods referenced from Modrinth (url+hash), custom Alone mods
 # bundled under overrides/mods/. Requires: curl, jq, zip.
 set -uo pipefail
-MC="26.2"; LOADER_VER="0.19.3"; PACK_VER="0.1.0"; PACK_NAME="Alone"
+MC="26.2"; LOADER_VER="0.19.3"; PACK_VER="0.2.0"; PACK_NAME="Alone"
 UA="alone-modpack/0.1 (local)"
 ROOT="$(pwd)"
 WORK="$ROOT/dist/mrpack-work"
