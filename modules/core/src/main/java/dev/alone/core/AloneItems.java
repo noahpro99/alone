@@ -55,6 +55,10 @@ public final class AloneItems {
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** Splint (§1.5 medicine) — sticks bound with cord; sneak + right-click to treat a sprain. */
+    public static final Item SPLINT = register("splint",
+        key -> new Item(new Item.Properties().setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick

@@ -128,8 +128,23 @@ public final class Conditions {
                 }
                 return InteractionResult.SUCCESS;
             }
+            // Splint a sprain (§1.5): sneak + right-click a splint to bind the joint and speed recovery.
+            if (player.isShiftKeyDown() && stack.is(AloneItems.SPLINT) && isSprained(player)) {
+                if (!level.isClientSide()) {
+                    player.setAttached(SPRAIN, player.getAttachedOrElse(SPRAIN, 0) / 4); // bound → mends faster
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                    }
+                    player.sendSystemMessage(Component.literal("You splint the sprain."));
+                }
+                return InteractionResult.SUCCESS;
+            }
             return InteractionResult.PASS;
         });
+    }
+
+    public static boolean isSprained(Player player) {
+        return player.getAttachedOrElse(SPRAIN, 0) > 0;
     }
 
     public static boolean isBleeding(Player player) {

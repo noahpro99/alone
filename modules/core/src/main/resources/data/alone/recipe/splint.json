@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:stick", "minecraft:stick", "minecraft:string"],
+  "result": {"id": "alone:splint", "count": 1}
+}
