@@ -2,10 +2,12 @@ package dev.alone.core;
 
 import java.util.function.Function;
 import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -17,7 +19,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BedItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -135,9 +139,31 @@ public final class AloneItems {
     public static final Item STEEL_BOOTS = register("steel_boots",
         key -> new Item(new Item.Properties().humanoidArmor(STEEL_ARMOR, ArmorType.BOOTS).setId(key)));
 
-    /** Touching this class registers the items above. (Obtain them with {@code /give alone:waterskin}, etc.,
-     *  or add them to a creative tab once the item-group API / textures are in.) */
+    /** Touching this class registers the items above; {@link #init()} then adds the creative tab. */
     public static void init() {
+        registerCreativeTab();
+    }
+
+    /**
+     * A single "Alone" creative tab holding every {@code alone:} item — so they're reachable in creative
+     * and, crucially, so recipe viewers (JEI/EMI) can list them and show their recipes (those tools build
+     * their ingredient list from the creative tabs). Populated by scanning the registry for our namespace,
+     * so new items appear automatically.
+     */
+    private static void registerCreativeTab() {
+        CreativeModeTab tab = FabricCreativeModeTab.builder()
+            .icon(() -> new ItemStack(WATERSKIN))
+            .title(Component.literal("Alone"))
+            .displayItems((params, output) -> {
+                for (Item item : BuiltInRegistries.ITEM) {
+                    if (BuiltInRegistries.ITEM.getKey(item).getNamespace().equals("alone")) {
+                        output.accept(item);
+                    }
+                }
+            })
+            .build();
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
+            Identifier.fromNamespaceAndPath("alone", "items"), tab);
     }
 
     private static Item register(String path, Function<ResourceKey<Item>, Item> factory) {
