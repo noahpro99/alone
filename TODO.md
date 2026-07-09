@@ -110,6 +110,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Friction fire needs tinder (§3.1)** — drilling with a stick only makes an ember now; it won't catch without **tinder** (a bundle of `alone:plant_fiber`, or dry `leaf_litter`), which is **consumed when the fire lights**. Without tinder you just smoke, with a throttled hint. Ties the new fiber/leaf-litter into fire-starting — you gather tinder before you can make fire. (`FireStarting`.)
 
+- [x] **Timed, stationary crafting (§8.2)** — a craft is no longer instant. Once a valid recipe sits in the grid you must **work at it** before the result can be taken (gated via `mayPickup` on the result slot). Times are compressed real-world effort by category: **simple ~2s** (planks/torch), **food ~5s**, **tools/weapons ~15s**, **block-entity stations ~30s** (chest/furnace), **armor ~2 min**. A **green progress bar** fills along the bottom of the result slot (client render hook on `extractSlot`), plus an action-bar %. **Resumable**: progress is kept per result item and survives closing the screen or switching recipes and back; taking a craft resets that item's clock. Runs both sides so the take-gate stays in sync. *Known limit: shift-click bulk-craft only times the first item.* (`CraftingTime`, `SlotCraftTimeMixin`, `ScreenCraftBarMixin`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

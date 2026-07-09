@@ -2,7 +2,7 @@
   "required": true,
   "package": "dev.alone.core.client.mixin",
   "compatibilityLevel": "JAVA_25",
-  "client": ["MinecraftUseItemMixin", "MultiPlayerGameModeMixin"],
+  "client": ["MinecraftUseItemMixin", "MultiPlayerGameModeMixin", "ScreenCraftBarMixin"],
   "injectors": {
     "defaultRequire": 1
   }

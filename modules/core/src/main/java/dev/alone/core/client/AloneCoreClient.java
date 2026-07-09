@@ -1,10 +1,12 @@
 package dev.alone.core.client;
 
 import dev.alone.core.AloneCore;
+import dev.alone.core.CraftingTime;
 import dev.alone.core.Forging;
 import dev.alone.core.SurvivalMeters;
 import dev.alone.core.net.SurvivalSyncPayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -26,6 +28,14 @@ public class AloneCoreClient implements ClientModInitializer {
                     context.player().setAttached(SurvivalMeters.STAMINA, payload.stamina());
                 }
             });
+
+        // Timed crafting (§8.2): tick the same craft-timer client-side so the result slot's "can I take
+        // it yet?" gate agrees with the server (no take-then-snap-back on the crafting result).
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player != null) {
+                CraftingTime.tick(client.player);
+            }
+        });
 
         // The Condition Panel (§1.5): no hearts bar — the body is a vitality bar + the injury readout,
         // both drawn by our HUD. Hide the vanilla hearts.
