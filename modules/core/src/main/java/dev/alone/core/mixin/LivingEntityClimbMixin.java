@@ -27,14 +27,18 @@ public class LivingEntityClimbMixin {
     }
 
     /**
-     * Slow a bare-wall climb to rock-climbing pace. Vanilla clamps climb motion to ladder speed; we
-     * scale the vertical component down for our wall climbs (leaves and real ladders keep vanilla speed).
+     * Slow our free-climbs to a realistic pace. Vanilla clamps climb motion to ladder speed; we scale
+     * the vertical component down for bare-wall and tree (leaf) climbs. Real ladders/vines are left at
+     * full speed (factor 1.0).
      */
     @Inject(method = "handleOnClimbable", at = @At("RETURN"), cancellable = true)
-    private void alone$slowWallClimb(Vec3 motion, CallbackInfoReturnable<Vec3> cir) {
-        if ((Object) this instanceof Player player && Climbing.isWallClimbing(player)) {
-            Vec3 m = cir.getReturnValue();
-            cir.setReturnValue(new Vec3(m.x, m.y * Climbing.WALL_CLIMB_SPEED, m.z));
+    private void alone$slowFreeClimb(Vec3 motion, CallbackInfoReturnable<Vec3> cir) {
+        if ((Object) this instanceof Player player) {
+            double factor = Climbing.climbSpeedFactor(player);
+            if (factor < 1.0) {
+                Vec3 m = cir.getReturnValue();
+                cir.setReturnValue(new Vec3(m.x, m.y * factor, m.z));
+            }
         }
     }
 }

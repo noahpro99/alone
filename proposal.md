@@ -1,5 +1,5 @@
 # ALONE: A Survival-Realism Overhaul for Minecraft
-### Full Design Proposal — v1.2
+### Full Design Proposal — v1.3
 *(v1.1 integrates the injury system, water containers, fire & heat technology, hunting/tracking, combat redesign, navigation, masterwork crafting, horse carts, glass gating, and the full system audit.)*
 
 ---
@@ -160,6 +160,7 @@ The chain is **acquire → process → preserve → secure**, and every arrow ha
 - **Stone:** real quarrying is hours per block. In-game: **20–40 seconds of active swinging per block with a proper iron pick** plus real stamina (≈20–30x vanilla — you feel it), softer stone faster, ores slower. Planned quarrying uses work sessions (§8.3) so "a morning at the quarry" compresses without lying about the labor. **Wheelbarrow** (§6) exists precisely for the quarry-to-cart leg.
 - **Trees:** a mid-size tree is 1–3 minutes of active chopping with sharp iron, several with stone, scaling with age state, heavy stamina, session-eligible. Real felling is 10–30+ minutes with iron; the compression keeps the ratio between tools honest.
 - **Dirt:** shoveling is genuinely fast in real life — digging stays quick. The ground is the one material that cooperates.
+- **Leaves:** dense foliage is slow, tugging work to clear by hand; a blade (axe/hoe) shears through quicker. Tearing a canopy apart bare-handed leaves you with **snapped twigs and leaf litter**, not a tidy hedge cube — only a **clean cut with an axe or hoe salvages the whole leaf block**. (Saplings/apples still fall from the vanilla loot, so tree farming survives.)
 
 ### 5.5 Shelter Quality
 Enclosed spaces get an implicit rating (roof, wall tier, door, heat source, dry floor) shown as a simple icon at bedtime — *exposed / rough / snug / secure* — governing sleep recovery, temperature protection, and storage conditions.
@@ -167,6 +168,12 @@ Enclosed spaces get an implicit rating (roof, wall tier, door, heat source, dry 
 ### 5.6 Light and cleanliness
 - **Torches burn out** (~2 game days) to relightable stubs; **candles** (tallow) are cheap and short; **lanterns** (iron + oil) are permanent — a reason to want iron beyond tools. Caving becomes a light-supply problem, as it was for real miners.
 - Stations and containers carry a **clean/dirty state** (raw meat, rot, mud). Dirty stations raise contamination odds for anything made on them; wash with clean water, better with **soap** (tallow + potash — the ash economy again, §3.3).
+
+### 5.7 Climbing and rope
+Getting *up* is its own problem, not a free jump.
+- **Trees / leaves** behave like scaffolding: you can stand on a canopy, but you climb up (or crouch down) *through* the foliage. It's **slow and tiring** — hauling yourself up a ~6 m tree is real effort (drains stamina; run out and you fall out of the tree). Branches give holds, so it's a touch quicker than bare rock.
+- **Bare walls / cliffs** — you can free-climb a **flat full-block face** of any height, up or down, but it's **slow, deliberate rock-climbing** and **brutally strenuous**: clinging burns stamina every tick in either direction, and **when your stamina is gone you lose your grip and fall.** Carry too much weight (more than ~one block's mass) and you simply can't climb — you need both hands and a light load. This makes a sheer face a real barrier, not a staircase.
+- **Rope** — the civilized answer. A crafted rope (later, hemp/plant fiber; for now string/leather) you can **anchor at the top and drop down a face**, or **fix and climb** — *much* easier and cheaper on stamina than free-climbing, and it lets you descend safely. Rope turns a deadly cliff into managed infrastructure: place it once, reuse it, and it's the difference between scouting a ravine and dying in one. (Ties into transport §6 — rope + rivers + carts are how you move through vertical terrain.)
 
 ---
 
@@ -218,6 +225,12 @@ Bare hands can't break logs. The true start: gather **loose sticks and stones** 
 
 ### 8.2 Timed, stationary crafting
 Every recipe takes time — torch ~2s, stick-wall bundle ~5s, wooden tool ~15s, chest ~30s, iron armor a multi-minute smithing job — and crafting roots you: **no panic-crafting mid-fight**. Workshop time is a phase of the day, done in safety.
+
+**Forge & temper (metal gear).** Metal tools and armor aren't finished in the grid — a grid-crafted piece comes out an **unforged blank**: brittle, barely usable, until you work it hot. The loop mirrors real smithing and is deliberately *long*:
+1. **Heat** — hold the blank by a lit forge (blast furnace, furnace, smoker, campfire, or lava) and it glows hotter each tick; step away and it cools. You can only work it while it's hot.
+2. **Hammer** — right-click an anvil (with a **smithing hammer** in your pack) to land a blow. A piece takes **many blows across several heats** — a blade a dozen, a cuirass close to twenty — so forging one tool is real, tended work, not a click.
+3. **Quality** — the finished piece rolls a **random quality** (crude → rough → serviceable → fine → masterwork) that sets its durability. This is where the *skill-by-doing* and material-quality of §8.5 express themselves.
+4. **Re-temper** — not happy with the roll? Reheat and rehammer to **reroll the quality** — but every rework **tires the steel and permanently lowers its ceiling**, and a re-forge also fully repairs the piece. So reworking is a gamble: chase a better edge at the cost of a blade that won't last as long. It's the honest tension of the forge — you can always try again, but the metal remembers.
 
 ### 8.3 Work sessions — the honest speedup
 Big items are **multi-stage projects** with visible in-world states (a half-planked hull on the shore; hides tanning in a bark-liquor trough; a charcoal clamp smoking for hours; a drying clay furnace). Engaging a project enters **accelerated tick mode** — the same mechanism as sleep: game time compresses, body meters still drain per tick, weather rolls, and **events interrupt you** back to real time. You experience "I spent the afternoon on the boat" in ninety real seconds, and you're hungrier for it.
@@ -329,4 +342,12 @@ Wake at dawn — snug shelter, full recovery, no soreness because yesterday was 
 - **Added** §9.1 Livestock is bartered wealth: domesticated animals can't be spawned/found wild/bred from nothing — they're **bartered** (villagers §7.4, ruins §12) at **historical grain prices** (a cow ≈ ~150 measures of wheat, i.e. ~2–3 stacks; ratios scale chicken → ox). Grain becomes currency; a herd is earned wealth. Config-sliderable.
 - **Clarified** §1.2 salt water: the **ocean is salt water** — drinking it (bare-handed or from a vessel) dehydrates rather than quenches; **boiling both purifies fresh water and desalinates seawater**. (Rivers/lakes stay fresh.) Now implemented.
 
-*End of proposal v1.2.*
+## Appendix D: Changelog v1.2 → v1.3 (live build additions)
+
+- **Added** §5.7 Climbing and rope: **leaves work like scaffolding** (stand on top, climb up / crouch down through) — slow and stamina-draining, like climbing a real ~6 m tree, and you fall out if you're spent. **Bare walls/cliffs** can be free-climbed up or down at slow rock-climbing pace, brutally strenuous (stamina every tick, fall when empty), impossible if overloaded (>~one block's mass). **Rope** (planned) anchors at the top to drop/climb a face far more cheaply — vertical terrain as managed infrastructure. Climbing implemented; rope pending.
+- **Expanded** §8.2 with **Forge & temper**: metal gear is a grid-crafted **unforged blank** (brittle) until you **heat** it at a forge and **hammer** it on an anvil (many blows across several heats) into a piece with a **random quality** (crude→masterwork) that sets durability. **Re-tempering** rerolls the quality but tires the steel (lower ceiling) and repairs the piece. Requires a craftable **smithing hammer**. Now implemented (iron + steel gear).
+- **Expanded** §5.4 leaves as real foliage: **slow, tugging** to clear; **bare hand → sticks + leaf litter**, **axe/hoe → the leaf block** (vanilla saplings/apples still drop). Now implemented.
+- **Added** clothing insulation + thermoregulation feedback (§1.3): worn hide/leather **insulates** (warm in cold, a burden in heat), metal plates bake in the sun; body heat now **drives thirst (sweat) and hunger (shivering burns food; cold slows stamina recovery)**. Now implemented.
+- **Added** vessel water gauge + **timed drinking** (§2): waterskin/iron-pot show a quality-tinted charge bar; drinking is a ~1.6 s action, not instant. Worn armor no longer counts against carry **volume**. Realistic **campfire recipe** (sticks over logs, no coal). **Vanilla torches abolished** (only the burn-down `alone` torch remains). Now implemented.
+
+*End of proposal v1.3 (rolling — live-build changelog; features land in code as they're built).*

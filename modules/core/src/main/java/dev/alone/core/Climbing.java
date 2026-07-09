@@ -29,16 +29,28 @@ public final class Climbing {
 
     private static final float CLIMB_MIN_STAMINA = 5f;      // too spent to hold your grip → you fall
     private static final float CLIMB_STAMINA_DRAIN = 2.0f;  // clinging to bare rock is brutal, every tick
+    private static final float LEAF_CLIMB_DRAIN = 0.6f;     // hauling up a tree is hard work too (a ~6 m tree ≈ most of your wind)
     private static final float CLIMB_MAX_WEIGHT = 25f;      // more than ~one block's mass and you can't haul up at all
-    /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate rock-climbing. */
-    public static final double WALL_CLIMB_SPEED = 0.45;
+    /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate bare-rock climbing. */
+    public static final double WALL_CLIMB_SPEED = 0.3;
+    /** Tree/canopy pace — slow, but a touch quicker than bare rock since branches give you holds. */
+    public static final double LEAF_CLIMB_SPEED = 0.4;
 
     public static void init() {
         // Stamina cost is applied server-side while clinging to a bare wall (leaves/ladders are free),
         // in either direction — hauling up or lowering yourself down both burn.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (player.onClimbable() && player.horizontalCollision && !inLeaves(player)) {
+                if (!player.onClimbable()) {
+                    continue;
+                }
+                if (inLeaves(player)) {
+                    // Hauling yourself up a tree is tiring; drifting/dropping down through it is free.
+                    if (player.getDeltaMovement().y > 0.0) {
+                        SurvivalMeters.exert(player, LEAF_CLIMB_DRAIN);
+                    }
+                } else if (player.horizontalCollision) {
+                    // Clinging to bare rock burns in either direction.
                     SurvivalMeters.exert(player, CLIMB_STAMINA_DRAIN);
                 }
             }
@@ -54,18 +66,31 @@ public final class Climbing {
         if (Carry.totalWeight(player) > CLIMB_MAX_WEIGHT) {
             return false;
         }
-        if (inLeaves(player)) {
-            return true; // soft canopy — free to climb through
-        }
-        // Free-climbing a wall: only while pressed into it, with stamina left. No height limit — you
-        // climb as far as your stamina lasts, and fall when it's gone.
-        if (!player.horizontalCollision || SurvivalMeters.getStamina(player) <= CLIMB_MIN_STAMINA) {
+        // Both a canopy and a bare wall need stamina — run out and you lose your grip and fall.
+        if (SurvivalMeters.getStamina(player) <= CLIMB_MIN_STAMINA) {
             return false;
         }
-        return facingFlatWall(player);
+        if (inLeaves(player)) {
+            return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
+        }
+        // Free-climbing a wall: only while pressed into it. No height limit — you climb as far as your
+        // stamina lasts, and fall when it's gone.
+        return player.horizontalCollision && facingFlatWall(player);
     }
 
-    /** True when the player's current climb is a bare wall (not leaves, not a real ladder) — used to slow it. */
+    /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,
+     *  full (unchanged) for a real ladder/vine. Used by {@code handleOnClimbable} to slow the climb. */
+    public static double climbSpeedFactor(Player player) {
+        if (inLeaves(player)) {
+            return LEAF_CLIMB_SPEED;
+        }
+        if (isWallClimbing(player)) {
+            return WALL_CLIMB_SPEED;
+        }
+        return 1.0; // a real ladder/vine/scaffolding keeps vanilla speed
+    }
+
+    /** True when the player's current climb is a bare wall (not leaves, not a real ladder). */
     public static boolean isWallClimbing(Player player) {
         if (inLeaves(player) || !player.horizontalCollision) {
             return false;
