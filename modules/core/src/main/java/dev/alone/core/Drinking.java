@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -33,9 +34,13 @@ public final class Drinking {
     private static final float SICKNESS_CHANCE = 0.15f;
     private static final float SALT_DEHYDRATE = 15f; // seawater pulls water OUT of you (§1.2)
 
-    /** Ocean water is salt water — drinking it dehydrates unless boiled first. Rivers/lakes are fresh. */
+    /**
+     * Coastal water is salt water — drinking it dehydrates unless boiled first. Covers oceans, beaches
+     * (water read from a beach column counts too), and rocky shores. Rivers, lakes, and swamps are fresh.
+     */
     public static boolean isSaltWater(Level level, BlockPos pos) {
-        return level.getBiome(pos).is(BiomeTags.IS_OCEAN);
+        var biome = level.getBiome(pos);
+        return biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_BEACH) || biome.is(Biomes.STONY_SHORE);
     }
 
     public static void init() {

@@ -56,6 +56,7 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
   persistent chipped-crack marker on saved blocks) + server `destroyProgressStart` offset. Root cause of
   the long failure: Mixin doesn't run `@Unique` instance-field initialisers → maps were null; lazy-init fixed it.
 - [x] **Heavy items don't throw (§5.1)** — drop velocity scales to zero horizontal by ~20 kg. (`LivingEntityDropMixin`.)
+- [x] **Can't throw block items (§5.1)** — Q-key and GUI drop-outside of any `BlockItem` are refused and handed back; you must place them or store them in a chest. Player throws only (`thrownFromHand`); death drops untouched. (`LivingEntityDropMixin`.)
 - [x] **Ghost items fixed** — never-despawn was keeping vanilla's fake `/give` pickup-animation items (setNeverPickUp + age 5999) forever; now exempts fake/never-pickup items. (`ItemEntityDespawnMixin`.)
 - [x] **Torches placeable + fuel-conserving** — lit torch plants a torch/wall-torch (`TorchBlockItem`); placed torches burn down and gutter to a spent torch; mining returns the remaining fuel (no free refill). (`Torches`.)
 - [x] **Nutrition variety / food fatigue (§1.1)** — foods tagged protein/veg/grain/fruit; eating one group repeatedly raises its fatigue and shrinks usable max hunger (cap down to ~12); variety recovers it. (`Nutrition` + `nutrient_*` tags.)
