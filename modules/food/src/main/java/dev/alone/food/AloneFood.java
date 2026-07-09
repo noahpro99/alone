@@ -23,6 +23,7 @@ public class AloneFood implements ModInitializer {
     public static final TagKey<Item> RAW_HIGH_RISK = tag("raw_high_risk");     // chicken, rotten flesh
     public static final TagKey<Item> RAW_MEDIUM_RISK = tag("raw_medium_risk"); // beef, pork, mutton, rabbit
     public static final TagKey<Item> RAW_LOW_RISK = tag("raw_low_risk");       // fresh fish
+    public static final TagKey<Item> HOT_MEALS = tag("hot_meals");            // cooked food/stews that warm you (§1.3)
 
     private static TagKey<Item> tag(String path) {
         return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", path));

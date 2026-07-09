@@ -85,6 +85,8 @@ public final class SurvivalMeters {
     private static final float CAVE_TEMPERATURE = 0.7f; // underground: a stable, mild refuge (biome scale)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
     private static final float ROOF_INSULATION = 0.4f;  // a roof blunts ~40% of the cold/heat (§5.5)
+    private static final float HOT_MEAL_CAP = 15f;       // a hot meal warms you toward comfort, not heatstroke
+    public static final float HOT_MEAL_WARMTH = 25f;     // body-temp bump from a hot meal (drifts back)
     private static final float EXPOSURE_RATE = 0.03f;  // drift toward a harsher environment (slow)
     private static final float RECOVERY_RATE = 0.05f;  // drift back toward a milder one
     private static final float HEAT_RATE = 0.08f;      // radiant heat warms gradually, not instantly
@@ -139,6 +141,15 @@ public final class SurvivalMeters {
     public static void drink(Player player, float amount) {
         // clamps both ends so a negative amount (salt water dehydrating you, §1.2) is safe too
         player.setAttached(THIRST, Math.max(0f, Math.min(MAX_THIRST, getThirst(player) + amount)));
+    }
+
+    /** A hot meal warms you (§1.3) — raises body temperature toward comfort, never into heatstroke. */
+    public static void warm(Player player, float amount) {
+        float current = getBodyTemp(player);
+        float warmed = Math.min(HOT_MEAL_CAP, current + amount);
+        if (warmed > current) {
+            player.setAttached(BODY_TEMP, warmed); // it drifts back toward the environment over time
+        }
     }
 
     /** Spend stamina on effort (mining, chopping, …). */

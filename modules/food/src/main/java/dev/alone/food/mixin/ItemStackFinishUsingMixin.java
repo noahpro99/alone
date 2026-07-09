@@ -3,6 +3,7 @@ package dev.alone.food.mixin;
 import dev.alone.core.Conditions;
 import dev.alone.core.Hygiene;
 import dev.alone.core.Nutrition;
+import dev.alone.core.SurvivalMeters;
 import dev.alone.food.AloneFood;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -34,6 +35,10 @@ public class ItemStackFinishUsingMixin {
         }
         // Diet variety (§1.1): a monotonous diet shrinks usable hunger.
         Nutrition.onEat(player, self);
+        // A hot meal warms you (§1.3).
+        if (self.is(AloneFood.HOT_MEALS)) {
+            SurvivalMeters.warm(player, SurvivalMeters.HOT_MEAL_WARMTH);
+        }
         // Per-tier odds (§4.2): raw chicken is a real gamble, fish much safer.
         float chance = 0f;
         int illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS;
