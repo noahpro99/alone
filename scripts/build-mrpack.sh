@@ -8,10 +8,10 @@ ROOT="$(pwd)"
 WORK="$ROOT/dist/mrpack-work"
 rm -rf "$WORK"; mkdir -p "$WORK/overrides/mods"
 
-# required client experience mods; physics mod is optional-only
+# required client experience mods
 REQUIRED=(mouse-tweaks real-camera sodium iris sound sound-physics-remastered \
           enhancedvisuals modmenu ambientsounds presence-footsteps not-enough-animations jei yacl)
-OPTIONAL=(physicsmod)
+OPTIONAL=()
 
 api(){ curl -s -m 30 -H "User-Agent: $UA" "$1"; }
 declare -A SEEN
@@ -50,7 +50,7 @@ resolve(){ # slug  force_env(optional|"")
 
 echo "Resolving mods…"
 for s in "${REQUIRED[@]}"; do resolve "$s" ""; done
-for s in "${OPTIONAL[@]}"; do resolve "$s" "optional"; done
+for s in "${OPTIONAL[@]+"${OPTIONAL[@]}"}"; do resolve "$s" "optional"; done
 # fabric-api explicitly (needed by the Alone mods + many others)
 resolve fabric-api ""
 
