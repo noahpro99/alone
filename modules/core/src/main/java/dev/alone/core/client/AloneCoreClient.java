@@ -34,6 +34,9 @@ public class AloneCoreClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null) {
                 CraftingTime.tick(client.player);
+                // Client movement is authoritative, so the jump-momentum latch (which protects a jump's
+                // full height near a wall) must be maintained here, where velocity is real.
+                dev.alone.core.Climbing.updateJumpLatch(client.player);
             }
         });
 

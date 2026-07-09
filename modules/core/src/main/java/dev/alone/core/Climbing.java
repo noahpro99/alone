@@ -52,14 +52,47 @@ public final class Climbing {
      *  so {@code deltaMovement}/{@code horizontalCollision}/{@code onClimbable} are unreliable server-side). */
     private static final Map<Player, Double> LAST_Y = new WeakHashMap<>();
 
+    // "Live jump momentum" latch: true from the moment you jump until the jump peaks. While latched we
+    // don't grab the wall, so a jump keeps its FULL upward momentum near a wall instead of being clamped
+    // to climb speed. Side-separated: the client (which drives movement) has the reliable velocity.
+    private static final Map<Player, Boolean> JUMP_LATCH_CLIENT = new WeakHashMap<>();
+    private static final Map<Player, Boolean> JUMP_LATCH_SERVER = new WeakHashMap<>();
+
     public static void init() {
         // Charge stamina off real vertical travel while against a climbable surface — the one signal the
         // server can trust for a client-driven player.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                updateJumpLatch(player);
                 climbDrainTick(player);
             }
         });
+    }
+
+    /**
+     * Maintain the jump-momentum latch — call once per tick per side (server loop + client tick). Latched
+     * the instant you leave the ground rising, cleared once you stop rising (apex), so the whole ascent of
+     * a jump is protected from the climb clamp.
+     */
+    public static void updateJumpLatch(Player player) {
+        Map<Player, Boolean> map = player.level().isClientSide() ? JUMP_LATCH_CLIENT : JUMP_LATCH_SERVER;
+        if (player.onGround()) {
+            map.put(player, false);
+            return;
+        }
+        double vy = player.getDeltaMovement().y;
+        boolean latched = map.getOrDefault(player, false);
+        if (vy > CLIMB_ENGAGE_VY) {
+            latched = true;  // a real upward burst — you jumped
+        } else if (vy <= 0.0) {
+            latched = false; // you've stopped rising; the jump is spent, grabbing is fair game
+        }
+        map.put(player, latched);
+    }
+
+    private static boolean jumpLatched(Player player) {
+        return (player.level().isClientSide() ? JUMP_LATCH_CLIENT : JUMP_LATCH_SERVER)
+            .getOrDefault(player, false);
     }
 
     private static void climbDrainTick(ServerPlayer player) {
@@ -99,11 +132,10 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // Free-climbing a wall: only while pressed into it, and only once a jump's upward momentum is
-        // spent — so a normal jump still carries you the first block near a wall before the climb (which
-        // clamps you to a slow pace) engages. No height limit; you climb as far as your stamina lasts.
-        return player.horizontalCollision && player.getDeltaMovement().y < CLIMB_ENGAGE_VY
-            && facingFlatWall(player);
+        // Free-climbing a wall: only while pressed into it, and not while a jump's upward momentum is
+        // still live (the latch) — so a jump near a wall keeps its FULL height before the climb (which
+        // clamps you to a slow pace) takes over at the apex. No height limit; climb as far as stamina lasts.
+        return player.horizontalCollision && !jumpLatched(player) && facingFlatWall(player);
     }
 
     /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,
