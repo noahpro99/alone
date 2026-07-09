@@ -55,7 +55,10 @@ public final class AloneItems {
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));
     public static final Item WATERSKIN = register("waterskin",
-        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key)));
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3));
+    /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */
+    public static final Item IRON_POT = register("iron_pot",
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 6));
 
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",

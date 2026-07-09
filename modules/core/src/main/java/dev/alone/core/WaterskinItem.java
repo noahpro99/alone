@@ -14,10 +14,11 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Waterskin (proposal §2) — carry water, with real quality. Right-click a water source to fill;
- * right-click elsewhere to sip (restores thirst, spends a charge). Untreated water risks sickness,
- * and sipping raw/tainted water leaves residue that <b>dirties the vessel</b> — a dirty vessel taints
- * the next fill. <b>Boil it over a campfire</b> to make the water clean and sterilise the vessel.
+ * A water vessel (proposal §2 vessel ladder) — carry water, with real quality. Right-click a water
+ * source to fill; right-click elsewhere to sip (restores thirst, spends a charge). Untreated water
+ * risks sickness, and sipping raw/tainted water leaves residue that <b>dirties the vessel</b> — a
+ * dirty vessel taints the next fill. <b>Boil it over a campfire</b> to clean the water and sterilise
+ * the vessel. Capacity varies by vessel: a waterskin holds a few sips, an iron pot far more.
  */
 public class WaterskinItem extends Item {
     public static final int RAW = 0;
@@ -25,12 +26,14 @@ public class WaterskinItem extends Item {
     public static final int TAINTED = 2;
     public static final int SALT = 3;
 
-    public static final int MAX_CHARGES = 3;
     private static final float THIRST_PER_SIP = 30f;
     private static final float SALT_DEHYDRATE_SIP = 18f; // a sip of seawater dehydrates (§1.2)
 
-    public WaterskinItem(Properties properties) {
+    private final int maxCharges;
+
+    public WaterskinItem(Properties properties, int maxCharges) {
         super(properties);
+        this.maxCharges = maxCharges;
     }
 
     /** Right-click a cauldron of (rain) water to fill clean — a fuel-free clean source (§1.2). */
@@ -42,7 +45,7 @@ public class WaterskinItem extends Item {
         if (state.is(Blocks.WATER_CAULDRON) && context.getPlayer() != null) {
             if (!level.isClientSide()) {
                 ItemStack stack = context.getItemInHand();
-                int amount = Math.min(MAX_CHARGES, state.getValue(LayeredCauldronBlock.LEVEL));
+                int amount = Math.min(this.maxCharges, state.getValue(LayeredCauldronBlock.LEVEL));
                 stack.set(AloneItems.WATER_CHARGES, amount);
                 stack.set(AloneItems.WATER_QUALITY, CLEAN);
                 stack.set(AloneItems.VESSEL_DIRTY, false); // clean rain water; sterilises the vessel
@@ -62,7 +65,7 @@ public class WaterskinItem extends Item {
         BlockPos water = Drinking.findWaterSource(player, level);
         if (water != null) {
             if (!level.isClientSide()) {
-                stack.set(AloneItems.WATER_CHARGES, MAX_CHARGES);
+                stack.set(AloneItems.WATER_CHARGES, this.maxCharges);
                 int quality = Drinking.isSaltWater(level, water) ? SALT
                     : (stack.getOrDefault(AloneItems.VESSEL_DIRTY, false) ? TAINTED : RAW);
                 stack.set(AloneItems.WATER_QUALITY, quality);
