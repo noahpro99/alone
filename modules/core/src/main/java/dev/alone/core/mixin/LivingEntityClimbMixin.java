@@ -27,18 +27,28 @@ public class LivingEntityClimbMixin {
     }
 
     /**
-     * Slow our free-climbs to a realistic pace. Vanilla clamps climb motion to ladder speed; we scale
-     * the vertical component down for bare-wall and tree (leaf) climbs. Real ladders/vines are left at
-     * full speed (factor 1.0).
+     * Shape the vertical feel of our free-climbs. Vanilla clamps climb motion to ladder speed; we:
+     * <ul>
+     *   <li>let you <b>crouch to lower yourself down through a canopy</b> at a controlled speed, like
+     *       sneaking down scaffolding;</li>
+     *   <li><b>slow the ascent</b> of bare-wall and tree climbs (hauling up is the hard part) while
+     *       leaving the <b>descent at vanilla ladder speed</b> so climbing down stays smooth.</li>
+     * </ul>
+     * Real ladders/vines are untouched.
      */
     @Inject(method = "handleOnClimbable", at = @At("RETURN"), cancellable = true)
-    private void alone$slowFreeClimb(Vec3 motion, CallbackInfoReturnable<Vec3> cir) {
-        if ((Object) this instanceof Player player) {
-            double factor = Climbing.climbSpeedFactor(player);
-            if (factor < 1.0) {
-                Vec3 m = cir.getReturnValue();
-                cir.setReturnValue(new Vec3(m.x, m.y * factor, m.z));
-            }
+    private void alone$freeClimbFeel(Vec3 motion, CallbackInfoReturnable<Vec3> cir) {
+        if (!((Object) this instanceof Player player)) {
+            return;
+        }
+        Vec3 m = cir.getReturnValue();
+        if (Climbing.isDescendingLeaves(player)) {
+            cir.setReturnValue(new Vec3(m.x, Climbing.LEAF_DESCEND_SPEED, m.z));
+            return;
+        }
+        double factor = Climbing.climbSpeedFactor(player);
+        if (factor < 1.0 && m.y > 0.0) { // slow the climb up; leave the climb down ladder-smooth
+            cir.setReturnValue(new Vec3(m.x, m.y * factor, m.z));
         }
     }
 }

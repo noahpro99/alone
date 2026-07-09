@@ -1,5 +1,7 @@
 package dev.alone.core;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,25 +38,49 @@ public final class Climbing {
     /** Tree/canopy pace — slow, but a touch quicker than bare rock since branches give you holds. */
     public static final double LEAF_CLIMB_SPEED = 0.4;
 
+    /** Per-block stamina cost of hauling up a bare wall — brutal: a full bar buys ~4 blocks. */
+    private static final float WALL_DRAIN_PER_BLOCK = 25f;
+    /** Only start clinging once your jump momentum is spent — below this upward speed. Lets a normal
+     *  jump carry you the first block near a wall before the (slower) climb takes over. */
+    private static final double CLIMB_ENGAGE_VY = 0.1;
+    /** Per-block cost of climbing a tree — hard, but a full ~6 m tree stays doable on one wind. */
+    private static final float LEAF_DRAIN_PER_BLOCK = 12f;
+    /** Above this per-tick rise it's a jump/fall, not a climb — don't charge for it. */
+    private static final double CLIMB_MOVE_CAP = 0.2;
+
+    /** Last server Y per player, to measure how far they've actually climbed (movement is client-driven,
+     *  so {@code deltaMovement}/{@code horizontalCollision}/{@code onClimbable} are unreliable server-side). */
+    private static final Map<Player, Double> LAST_Y = new WeakHashMap<>();
+
     public static void init() {
-        // Stamina cost is applied server-side while clinging to a bare wall (leaves/ladders are free),
-        // in either direction — hauling up or lowering yourself down both burn.
+        // Charge stamina off real vertical travel while against a climbable surface — the one signal the
+        // server can trust for a client-driven player.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (!player.onClimbable()) {
-                    continue;
-                }
-                if (inLeaves(player)) {
-                    // Hauling yourself up a tree is tiring; drifting/dropping down through it is free.
-                    if (player.getDeltaMovement().y > 0.0) {
-                        SurvivalMeters.exert(player, LEAF_CLIMB_DRAIN);
-                    }
-                } else if (player.horizontalCollision) {
-                    // Clinging to bare rock burns in either direction.
-                    SurvivalMeters.exert(player, CLIMB_STAMINA_DRAIN);
-                }
+                climbDrainTick(player);
             }
         });
+    }
+
+    private static void climbDrainTick(ServerPlayer player) {
+        double y = player.getY();
+        Double prev = LAST_Y.put(player, y);
+        if (prev == null || player.onGround() || player.isInWater()
+            || player.getAbilities().flying || player.isSpectator()) {
+            return;
+        }
+        double dy = y - prev;
+        double ady = Math.abs(dy);
+        if (ady < 1.0e-4 || ady > CLIMB_MOVE_CAP) {
+            return; // standing still, or a jump/fall rather than a controlled climb
+        }
+        if (inLeaves(player)) {
+            if (dy > 0) { // hauling up a tree; dropping down through it is free
+                SurvivalMeters.exert(player, (float) (dy * LEAF_DRAIN_PER_BLOCK));
+            }
+        } else if (facingFlatWall(player)) {
+            SurvivalMeters.exert(player, (float) (ady * WALL_DRAIN_PER_BLOCK)); // rock burns up or down
+        }
     }
 
     /** Can this player cling here right now? Called from the {@code onClimbable} mixin. */
@@ -73,9 +99,11 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // Free-climbing a wall: only while pressed into it. No height limit — you climb as far as your
-        // stamina lasts, and fall when it's gone.
-        return player.horizontalCollision && facingFlatWall(player);
+        // Free-climbing a wall: only while pressed into it, and only once a jump's upward momentum is
+        // spent — so a normal jump still carries you the first block near a wall before the climb (which
+        // clamps you to a slow pace) engages. No height limit; you climb as far as your stamina lasts.
+        return player.horizontalCollision && player.getDeltaMovement().y < CLIMB_ENGAGE_VY
+            && facingFlatWall(player);
     }
 
     /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,
@@ -102,8 +130,16 @@ public final class Climbing {
         return facingFlatWall(player);
     }
 
+    /** Controlled downward speed when you crouch to lower yourself through a canopy (scaffolding-like). */
+    public static final double LEAF_DESCEND_SPEED = -0.16;
+
+    /** Crouching inside a canopy to climb down through it, like sneaking down scaffolding. */
+    public static boolean isDescendingLeaves(Player player) {
+        return player.isShiftKeyDown() && inLeaves(player);
+    }
+
     /** You're inside (or your head is inside) foliage. */
-    private static boolean inLeaves(Player player) {
+    public static boolean inLeaves(Player player) {
         Level level = player.level();
         BlockPos feet = player.blockPosition();
         return level.getBlockState(feet).is(BlockTags.LEAVES)

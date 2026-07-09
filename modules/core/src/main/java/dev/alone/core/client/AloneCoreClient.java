@@ -2,6 +2,7 @@ package dev.alone.core.client;
 
 import dev.alone.core.AloneCore;
 import dev.alone.core.Forging;
+import dev.alone.core.SurvivalMeters;
 import dev.alone.core.net.SurvivalSyncPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -17,7 +18,14 @@ public class AloneCoreClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(SurvivalSyncPayload.TYPE,
-            (payload, context) -> ClientSurvivalState.update(payload));
+            (payload, context) -> {
+                ClientSurvivalState.update(payload);
+                // Mirror stamina onto the client player so Climbing's client-side gate (which drives the
+                // actual climb physics) sees the real value and drops you off the wall when you're spent.
+                if (context.player() != null) {
+                    context.player().setAttached(SurvivalMeters.STAMINA, payload.stamina());
+                }
+            });
 
         // The Condition Panel (§1.5): no hearts bar — the body is a vitality bar + the injury readout,
         // both drawn by our HUD. Hide the vanilla hearts.
