@@ -58,6 +58,10 @@ public final class SurvivalMeters {
     private static final float THIRST_LOW = 15f;
 
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
+    // Slow vitality recovery (§1.5) — heals only when fed, hydrated, and free of active wounds/illness.
+    private static final int HEAL_FOOD_MIN = 14;    // need a reasonably full stomach to mend
+    private static final float HEAL_THIRST_MIN = 30f;
+    private static final int HEAL_INTERVAL = 200;   // 1 HP / ~10s in good conditions (full heal ≈ 3–4 min)
     private static final float SWIM_FREE_WEIGHT = 8f;   // load past this makes staying afloat real work
     private static final float SWIM_WEIGHT_DRAIN = 0.012f; // extra stamina/tick per kg over, while in water
 
@@ -264,6 +268,16 @@ public final class SurvivalMeters {
 
         applyTemperatureEffects(player, bodyTemp);
         player.setAttached(BODY_TEMP, bodyTemp);
+
+        // Slow vitality recovery (§1.5): your body mends over time, but only when fed, hydrated, and
+        // NOT actively wounded or ill — a wound or fever has to be dealt with before you heal.
+        if (player.getHealth() < player.getMaxHealth()
+            && player.getFoodData().getFoodLevel() >= HEAL_FOOD_MIN
+            && getThirst(player) >= HEAL_THIRST_MIN
+            && !Conditions.isBleeding(player) && !Conditions.isInfected(player) && !Conditions.isSick(player)
+            && player.tickCount % HEAL_INTERVAL == 0) {
+            player.heal(1.0f);
+        }
 
         // Carried weight → movement penalty (§5.1): heavier load, slower you move.
         Carry.applyWeightMovement(player);
