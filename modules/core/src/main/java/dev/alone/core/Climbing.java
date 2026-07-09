@@ -151,7 +151,17 @@ public final class Climbing {
         Level level = player.level();
         Direction dir = player.getDirection();
         BlockPos feet = player.blockPosition();
-        return isFlatWall(level, feet.relative(dir)) || isFlatWall(level, feet.above().relative(dir));
+        boolean foot = isFlatWall(level, feet.relative(dir));
+        boolean head = isFlatWall(level, feet.above().relative(dir));
+        if (!foot && !head) {
+            return false;
+        }
+        // A one-block-tall step while standing on the ground (solid at foot height, open above it) is
+        // just a hop — a normal jump handles it. Don't engage the climb for single-block verticals.
+        if (player.onGround() && foot && !head) {
+            return false;
+        }
+        return true;
     }
 
     /** A full solid cube presents a flat face you can grip (stairs/fences/leaves don't). */
