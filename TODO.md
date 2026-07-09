@@ -91,6 +91,14 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
   inserted count by volume (`safeInsert` via `@ModifyVariable`). So a big stack into a near-full chest
   deposits what fits, leaves the rest. *Watch for: odd counts when dropping stacks into near-full chests.*
 
+## Playtest fixes (this continuation)
+- [x] **Sprain lasts longer** — a fall sprain was only ~30s; now ~2 min of limping (splint still cuts it to ~30s). Injuries should be a real setback. (`Conditions.SPRAIN_TICKS`.)
+- [x] **Worn armour doesn't eat your volume** — equipped armour rides on your body, so it no longer counts toward the hard volume cap (you can wear a full set *and* still pick up a block). Its weight still slows you. (`Carry.isWornArmor`.)
+- [x] **Can't throw blocks via the inventory either** — dragging a block-item out of the inventory window used to throw it (that path doesn't set `thrownFromHand`); now any *living* player's block-drop is handed back (death drops still fall). Creative exempt. (`LivingEntityDropMixin`.)
+- [x] **Torch break — single alone torch, no vanilla one** — breaking a torch is now handled end-to-end via `BEFORE` (cancel vanilla break + drop, pop one `alone:torch_lit` with its remaining fuel). Fixes the double-drop; converts any world torch to an alone torch. **Vanilla torch recipe removed** (`data/minecraft/recipe/torch.json` false-condition). (`Torches`.)
+- [x] **Barely-scratched digs heal** — a dig under 10% progress no longer saves a permanent chip; it resets to a pristine block (client + server both gate on 10%). (`MultiPlayerGameModeMixin`, `ServerPlayerGameModeMixin`.)
+- [x] **Drinking takes time + a water gauge** — sipping from a waterskin/iron pot is now a ~1.6s timed drink (DRINK animation), not instant; and the vessel shows a durability-style **water bar** tinted by quality (blue clean / murky raw / sickly tainted / teal salt) so you can read how much water is left and what kind. (`WaterskinItem`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

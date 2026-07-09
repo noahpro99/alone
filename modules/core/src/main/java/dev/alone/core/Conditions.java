@@ -53,7 +53,7 @@ public final class Conditions {
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "infection"), Codec.INT);
 
     private static final int BLEED_TICKS = 200;   // ~10s per wound (stacks with more hits)
-    private static final int SPRAIN_TICKS = 600;  // ~30s limping per bad fall
+    private static final int SPRAIN_TICKS = 2400;  // ~2 min limping per bad fall (splint it to mend in ~30s)
     private static final int INFECTION_PER_BITE = 4000; // one bite ≈ a fever that clears; bites compound
     private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
     private static final float INFECT_CHANCE = 0.30f;   // odds a zombie-type bite gets infected

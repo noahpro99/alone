@@ -24,16 +24,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(LivingEntity.class)
 public class LivingEntityDropMixin {
-    /** Refuse to throw block items out of the inventory — hand them back instead. */
+    /**
+     * Refuse to throw block items out of the inventory — hand them back instead. This covers <b>both</b>
+     * a Q-key toss and dragging a stack out of the inventory window (that path doesn't set
+     * {@code thrownFromHand}), so we key off the player being <em>alive</em>: a living player never
+     * throws blocks, while death drops (health 0 → not alive) still fall normally. Creative is exempt.
+     */
     @Inject(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
         at = @At("HEAD"), cancellable = true)
     private void alone$noThrowingBlocks(ItemStack stack, boolean randomly, boolean thrownFromHand,
                                         CallbackInfoReturnable<ItemEntity> cir) {
-        if (thrownFromHand && (Object) this instanceof Player player && stack.getItem() instanceof BlockItem) {
+        if ((Object) this instanceof Player player && player.isAlive() && !player.isCreative()
+            && stack.getItem() instanceof BlockItem) {
             player.getInventory().add(stack); // put it back; you place blocks, you don't chuck them
             if (stack.isEmpty()) {
-                cir.setReturnValue(null); // nothing dropped
+                cir.setReturnValue(null); // fully returned — nothing gets thrown
             }
+            // if the pack was full the leftover falls at your feet (better than losing it);
+            // the heavy-drop handler below still keeps it from sailing away.
         }
     }
 

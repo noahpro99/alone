@@ -4,9 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -74,31 +76,76 @@ public class WaterskinItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        // Otherwise → drink a sip if there's water in it.
-        int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
-        if (charges > 0) {
-            if (!level.isClientSide()) {
-                int quality = stack.getOrDefault(AloneItems.WATER_QUALITY, RAW);
-                if (quality == SALT) {
-                    // seawater dehydrates instead of quenching — boil it to make it drinkable (§1.2)
-                    SurvivalMeters.drink(player, -SALT_DEHYDRATE_SIP);
-                    stack.set(AloneItems.VESSEL_DIRTY, true); // salt residue
-                    player.sendSystemMessage(Component.literal("Salty — boil it first, or it just dries you out."));
-                } else {
-                    SurvivalMeters.drink(player, THIRST_PER_SIP);
-                    float sicknessChance = quality == CLEAN ? 0f : (quality == TAINTED ? 0.45f : 0.15f);
-                    if (quality != CLEAN) {
-                        stack.set(AloneItems.VESSEL_DIRTY, true); // raw/tainted water leaves residue
-                    }
-                    if (player.getRandom().nextFloat() < sicknessChance) {
-                        Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 4);
-                    }
-                }
-                stack.set(AloneItems.WATER_CHARGES, charges - 1);
-            }
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
+        // Otherwise → drink, if there's water in it. Drinking takes a moment (a real pull from the
+        // vessel), so we start a timed use and apply the sip when it finishes.
+        if (stack.getOrDefault(AloneItems.WATER_CHARGES, 0) > 0) {
+            player.startUsingItem(hand);
+            return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
+    }
+
+    /** Drinking a full draught takes ~1.6s (a bit longer than a potion) — you can't chug on the run. */
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 32;
+    }
+
+    @Override
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.DRINK;
+    }
+
+    /** The sip lands when the drinking animation completes. */
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+        if (level.isClientSide() || !(entity instanceof Player player)) {
+            return stack;
+        }
+        int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
+        if (charges <= 0) {
+            return stack;
+        }
+        int quality = stack.getOrDefault(AloneItems.WATER_QUALITY, RAW);
+        if (quality == SALT) {
+            // seawater dehydrates instead of quenching — boil it to make it drinkable (§1.2)
+            SurvivalMeters.drink(player, -SALT_DEHYDRATE_SIP);
+            stack.set(AloneItems.VESSEL_DIRTY, true); // salt residue
+            player.sendSystemMessage(Component.literal("Salty — boil it first, or it just dries you out."));
+        } else {
+            SurvivalMeters.drink(player, THIRST_PER_SIP);
+            float sicknessChance = quality == CLEAN ? 0f : (quality == TAINTED ? 0.45f : 0.15f);
+            if (quality != CLEAN) {
+                stack.set(AloneItems.VESSEL_DIRTY, true); // raw/tainted water leaves residue
+            }
+            if (player.getRandom().nextFloat() < sicknessChance) {
+                Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 4);
+            }
+        }
+        stack.set(AloneItems.WATER_CHARGES, charges - 1);
+        return stack;
+    }
+
+    // A water gauge on the vessel (§2): the durability-style bar shows how many sips are left, tinted by
+    // quality — blue clean, murky raw, sickly tainted, teal salt — so you can read your water at a glance.
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return stack.getOrDefault(AloneItems.WATER_CHARGES, 0) > 0;
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
+        return Math.round(13f * charges / this.maxCharges);
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return switch (stack.getOrDefault(AloneItems.WATER_QUALITY, RAW)) {
+            case CLEAN -> 0x3C8CFF; // clean blue
+            case TAINTED -> 0x7A8A38; // sickly green
+            case SALT -> 0x2FB6B6; // brine teal
+            default -> 0x6F88A0;   // murky raw
+        };
     }
 }

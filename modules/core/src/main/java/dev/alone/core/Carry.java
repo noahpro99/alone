@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -42,6 +43,9 @@ public final class Carry {
     private static final float MIN_SPEED_FACTOR = 0.35f;
 
     private static final Identifier CARRY_MODIFIER = Identifier.fromNamespaceAndPath("alone", "carry_weight");
+
+    private static final EquipmentSlot[] ARMOR_SLOTS =
+        {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     /** Per-item volume is deterministic per item type — compute the block shape once and cache it. */
     private static final Map<Item, Float> VOLUME_CACHE = new ConcurrentHashMap<>();
@@ -161,11 +165,27 @@ public final class Carry {
         float sum = 0f;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (!stack.isEmpty()) {
-                sum += volume ? itemVolume(stack) : itemWeight(stack);
+            if (stack.isEmpty()) {
+                continue;
             }
+            // Worn armour rides on your body, not in your pack — it doesn't eat your volume budget
+            // (its weight still slows you). So a full set of gear never blocks picking a block up.
+            if (volume && isWornArmor(player, stack)) {
+                continue;
+            }
+            sum += volume ? itemVolume(stack) : itemWeight(stack);
         }
         return sum;
+    }
+
+    /** Is this exact stack currently equipped in an armour slot (as opposed to sitting in the pack)? */
+    private static boolean isWornArmor(Player player, ItemStack stack) {
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            if (player.getItemBySlot(slot) == stack) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Recompute the weight → movement penalty and apply it. Call each server tick. */

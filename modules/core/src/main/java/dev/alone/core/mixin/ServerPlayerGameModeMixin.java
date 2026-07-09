@@ -53,11 +53,15 @@ public abstract class ServerPlayerGameModeMixin {
         if (action != ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK || !this.isDestroyingBlock) {
             return;
         }
-        if (this.level.getBlockState(this.destroyPos).isAir()) {
+        net.minecraft.world.level.block.state.BlockState state = this.level.getBlockState(this.destroyPos);
+        if (state.isAir()) {
             return;
         }
         int ticks = this.gameTicks - this.destroyProgressStart;
-        if (ticks > 1) {
+        // Only remember a dig that's actually underway (≥10%). A barely-scratched block heals back to
+        // pristine, matching the client, so a stray click doesn't leave a permanent chip.
+        float fraction = state.getDestroyProgress(this.player, this.level, this.destroyPos) * ticks;
+        if (ticks > 1 && fraction >= 0.10f) {
             this.alone$savedTicks().put(this.destroyPos.immutable(), ticks);
         }
     }

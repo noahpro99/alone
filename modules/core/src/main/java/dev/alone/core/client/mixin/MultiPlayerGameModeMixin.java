@@ -111,9 +111,13 @@ public class MultiPlayerGameModeMixin {
         }
     }
 
+    /** Below this, a dig is "barely scratched" — let it heal back to a pristine block instead of saving. */
+    @Unique
+    private static final float alone$MIN_SAVE = 0.10F;
+
     @Unique
     private void alone$stash() {
-        if (this.isDestroying && this.destroyProgress > 0.0F && this.destroyProgress < 1.0F) {
+        if (this.isDestroying && this.destroyProgress >= alone$MIN_SAVE && this.destroyProgress < 1.0F) {
             BlockPos pos = this.destroyBlockPos.immutable();
             alone$saved().put(pos, this.destroyProgress);
             if (this.minecraft.level != null && this.minecraft.player != null) {

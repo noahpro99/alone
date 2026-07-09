@@ -10,17 +10,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 /**
  * Torch fuel (proposal §5.6). A lit torch is burning fuel:
@@ -46,25 +43,25 @@ public final class Torches {
             burnPlaced(server); // mounted torches burn down too
         });
 
-        // Mining a tracked torch returns a torch carrying its remaining fuel, not a fresh vanilla one.
-        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, be) -> {
+        // Breaking a torch is ours to handle end-to-end (proposal §5.6): we own the drop so the vanilla
+        // torch item never appears. We cancel the default break, clear the block ourselves, and pop a
+        // single alone torch carrying whatever fuel was left. A tracked (alone-placed) torch keeps its
+        // remaining fuel; any other world torch converts to a full one. Vanilla torches are abolished.
+        PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, be) -> {
             if (level.isClientSide() || !(level instanceof ServerLevel serverLevel)) {
-                return;
+                return true;
+            }
+            if (!state.is(Blocks.TORCH) && !state.is(Blocks.WALL_TORCH)) {
+                return true; // not a plain torch (soul/redstone torches break normally)
             }
             Integer used = remove(serverLevel, pos);
-            if (used == null || player.isCreative()) {
-                return;
+            serverLevel.removeBlock(pos, false); // take it out with no vanilla drop
+            if (!player.isCreative()) {
+                ItemStack back = new ItemStack(AloneItems.TORCH_LIT);
+                back.setDamageValue(used != null ? used : 0); // untracked world torch → full fuel
+                Block.popResource(serverLevel, pos, back);
             }
-            // drop the fuel-carrying torch and remove the plain vanilla torch this break just spawned
-            for (ItemEntity ie : serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1.5))) {
-                if (ie.getItem().is(Items.TORCH)) {
-                    ie.discard();
-                    break;
-                }
-            }
-            ItemStack back = new ItemStack(AloneItems.TORCH_LIT);
-            back.setDamageValue(used);
-            Block.popResource(serverLevel, pos, back);
+            return false; // handled — skip vanilla break + its torch drop
         });
     }
 
