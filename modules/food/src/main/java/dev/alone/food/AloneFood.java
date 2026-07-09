@@ -31,6 +31,7 @@ public class AloneFood implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Alone: Table initializing — raw food is a gamble.");
-        Spoilage.init(); // §4.2 — perishable food rots over time
+        Spoilage.init();   // §4.2 — perishable food rots over time
+        Preserving.init(); // §4.2 — salt (from boiled seawater) preserves food for winter
     }
 }

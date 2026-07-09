@@ -51,6 +51,10 @@ public final class AloneItems {
     public static final Item WATERSKIN = register("waterskin",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key)));
 
+    /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
+    public static final Item SALT = register("salt",
+        key -> new Item(new Item.Properties().setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick

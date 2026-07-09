@@ -34,6 +34,12 @@ public final class Spoilage {
         Identifier.fromNamespaceAndPath("alone", "spoils_at"),
         DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
 
+    /** Salted/preserved food keeps indefinitely — spoilage skips it (§4.2). */
+    public static final DataComponentType<Boolean> PRESERVED = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        Identifier.fromNamespaceAndPath("alone", "preserved"),
+        DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
+
     public static final TagKey<Item> PERISHABLE =
         TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
 
@@ -54,8 +60,8 @@ public final class Spoilage {
 
     private static void tickStack(Inventory inventory, int slot, long now) {
         ItemStack stack = inventory.getItem(slot);
-        if (stack.isEmpty() || !stack.is(PERISHABLE)) {
-            return;
+        if (stack.isEmpty() || !stack.is(PERISHABLE) || stack.getOrDefault(PRESERVED, false)) {
+            return; // not perishable, or salted/preserved — it keeps
         }
         Long spoilsAt = stack.get(SPOILS_AT);
         if (spoilsAt == null) {

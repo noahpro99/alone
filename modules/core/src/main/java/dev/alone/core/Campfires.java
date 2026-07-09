@@ -45,9 +45,16 @@ public final class Campfires {
             // Boil water: hold a filled waterskin to a lit campfire → clean water + a sterile vessel (§2).
             if (held.getItem() instanceof WaterskinItem && held.getOrDefault(AloneItems.WATER_CHARGES, 0) > 0) {
                 if (!level.isClientSide()) {
+                    boolean wasSalt = held.getOrDefault(AloneItems.WATER_QUALITY, WaterskinItem.RAW) == WaterskinItem.SALT;
                     held.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
                     held.set(AloneItems.VESSEL_DIRTY, false);
-                    player.sendSystemMessage(Component.literal("The water boils clean."));
+                    if (wasSalt) {
+                        // desalination leaves the salt behind — a useful byproduct for preserving food
+                        net.minecraft.world.level.block.Block.popResource(level, pos, new ItemStack(AloneItems.SALT));
+                        player.sendSystemMessage(Component.literal("The seawater boils down to fresh water — and a little salt."));
+                    } else {
+                        player.sendSystemMessage(Component.literal("The water boils clean."));
+                    }
                 }
                 player.swing(hand);
                 return InteractionResult.SUCCESS;
