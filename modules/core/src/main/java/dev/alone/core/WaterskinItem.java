@@ -7,7 +7,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Waterskin (proposal §2) — carry water, with real quality. Right-click a water source to fill;
@@ -27,6 +31,27 @@ public class WaterskinItem extends Item {
 
     public WaterskinItem(Properties properties) {
         super(properties);
+    }
+
+    /** Right-click a cauldron of (rain) water to fill clean — a fuel-free clean source (§1.2). */
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+        if (state.is(Blocks.WATER_CAULDRON) && context.getPlayer() != null) {
+            if (!level.isClientSide()) {
+                ItemStack stack = context.getItemInHand();
+                int amount = Math.min(MAX_CHARGES, state.getValue(LayeredCauldronBlock.LEVEL));
+                stack.set(AloneItems.WATER_CHARGES, amount);
+                stack.set(AloneItems.WATER_QUALITY, CLEAN);
+                stack.set(AloneItems.VESSEL_DIRTY, false); // clean rain water; sterilises the vessel
+                level.setBlockAndUpdate(pos, Blocks.CAULDRON.defaultBlockState()); // drained
+            }
+            context.getPlayer().swing(context.getHand());
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
     }
 
     @Override

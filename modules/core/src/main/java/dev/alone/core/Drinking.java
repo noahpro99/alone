@@ -1,15 +1,20 @@
 package dev.alone.core;
 
 import dev.alone.core.net.DrinkRequestPayload;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -64,6 +69,26 @@ public final class Drinking {
         // Fabric invokes play payload receivers on the server thread, so we can apply directly.
         ServerPlayNetworking.registerGlobalReceiver(DrinkRequestPayload.TYPE,
             (payload, context) -> handleDrink(context.player()));
+
+        // Rain catch (§1.2): a cauldron collects clean rainwater. Bare-hand right-click to drink clean
+        // (no sickness), spending a level. (Filling a waterskin from it lives in WaterskinItem.)
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            if (hand != InteractionHand.MAIN_HAND || !player.getMainHandItem().isEmpty()) {
+                return InteractionResult.PASS;
+            }
+            BlockPos pos = hit.getBlockPos();
+            if (!level.getBlockState(pos).is(Blocks.WATER_CAULDRON)) {
+                return InteractionResult.PASS;
+            }
+            if (!level.isClientSide()) {
+                Hygiene.wash(player);
+                if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
+                    SurvivalMeters.drink(player, DRINK_AMOUNT); // rain water is clean — no sickness roll
+                }
+                LayeredCauldronBlock.lowerFillLevel(level.getBlockState(pos), level, pos);
+            }
+            return InteractionResult.SUCCESS;
+        });
     }
 
     /** The bucket's exact water-targeting: POV raycast clipping to SOURCE_ONLY fluids, at block reach. */
