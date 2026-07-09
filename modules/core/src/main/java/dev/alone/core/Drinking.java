@@ -34,13 +34,30 @@ public final class Drinking {
     private static final float SICKNESS_CHANCE = 0.15f;
     private static final float SALT_DEHYDRATE = 15f; // seawater pulls water OUT of you (§1.2)
 
+    // Ring of horizontal samples (~32 and ~64 blocks out, 8 compass points) to detect nearby open ocean.
+    private static final int[][] COAST_SAMPLES = {
+        {32, 0}, {-32, 0}, {0, 32}, {0, -32}, {23, 23}, {-23, 23}, {23, -23}, {-23, -23},
+        {64, 0}, {-64, 0}, {0, 64}, {0, -64}, {45, 45}, {-45, 45}, {45, -45}, {-45, -45}
+    };
+
     /**
-     * Coastal water is salt water — drinking it dehydrates unless boiled first. Covers oceans, beaches
-     * (water read from a beach column counts too), and rocky shores. Rivers, lakes, and swamps are fresh.
+     * Salt water — drinking it dehydrates unless boiled first. Open ocean/beach/shore is salt outright;
+     * and because Minecraft labels shallow coastal water with the neighbouring land/river biome, any
+     * water at sea level with open ocean nearby is treated as sea too. Genuinely inland water stays fresh.
      */
     public static boolean isSaltWater(Level level, BlockPos pos) {
         var biome = level.getBiome(pos);
-        return biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_BEACH) || biome.is(Biomes.STONY_SHORE);
+        if (biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_BEACH) || biome.is(Biomes.STONY_SHORE)) {
+            return true;
+        }
+        if (Math.abs(pos.getY() - level.getSeaLevel()) <= 2) {
+            for (int[] offset : COAST_SAMPLES) {
+                if (level.getBiome(pos.offset(offset[0], 0, offset[1])).is(BiomeTags.IS_OCEAN)) {
+                    return true; // coastal sea water mislabelled as land/river
+                }
+            }
+        }
+        return false;
     }
 
     public static void init() {
