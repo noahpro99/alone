@@ -58,6 +58,13 @@ public final class Climbing {
     private static final Map<Player, Boolean> JUMP_LATCH_CLIENT = new WeakHashMap<>();
     private static final Map<Player, Boolean> JUMP_LATCH_SERVER = new WeakHashMap<>();
 
+    // A one-block step and the top block of a tall wall look identical (solid at foot, air above), so we
+    // tell them apart by state: the "top block" is only climbable if you were gripping a full (≥2-tall)
+    // wall within the last few ticks — i.e. you're finishing a climb, not fresh-jumping at a lone step.
+    private static final int GRIP_GRACE = 8;
+    private static final Map<Player, Integer> LAST_GRIP_CLIENT = new WeakHashMap<>();
+    private static final Map<Player, Integer> LAST_GRIP_SERVER = new WeakHashMap<>();
+
     public static void init() {
         // Charge stamina off real vertical travel while against a climbable surface — the one signal the
         // server can trust for a client-driven player.
@@ -132,14 +139,21 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // Free-climbing a wall: only while pressed into it, and not while a jump is still carrying you up.
-        // Two guards together protect the FULL jump near a wall: the instantaneous check kills the fast
-        // rise (no stale state), and the latch covers the slow approach to the apex. The climb only takes
-        // over once you've peaked. No height limit; you climb as far as your stamina lasts.
-        return player.horizontalCollision
+        // A wall you can actually climb: a clear ≥2-tall face, or the last block of one you're already
+        // topping out. A lone 1-block step is neither, so it's ignored — you just jump it.
+        if (!hasClimbableWall(player)) {
+            return false;
+        }
+        // Only while pressed into it, and not while a jump is still carrying you up. Two guards together
+        // protect the FULL jump near a wall: the instantaneous check kills the fast rise (no stale state),
+        // and the latch covers the slow approach to the apex. The climb takes over once you've peaked.
+        boolean canGrab = player.horizontalCollision
             && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
-            && !jumpLatched(player)
-            && facingFlatWall(player);
+            && !jumpLatched(player);
+        if (canGrab) {
+            gripMap(player).put(player, player.tickCount); // remember the hold so we can finish the last block
+        }
+        return canGrab;
     }
 
     /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,
@@ -163,7 +177,32 @@ public final class Climbing {
         if (player.level().getBlockState(player.blockPosition()).is(BlockTags.CLIMBABLE)) {
             return false;
         }
-        return facingFlatWall(player);
+        return hasClimbableWall(player);
+    }
+
+    /**
+     * A wall you can climb here: a clear <b>≥2-tall</b> flat face at foot+head height, OR the last block
+     * of a wall you were <b>just gripping</b> (topping out). A lone 1-block step is neither — so it's left
+     * to a normal jump rather than being mistaken for a climb.
+     */
+    private static boolean hasClimbableWall(Player player) {
+        Level level = player.level();
+        Direction dir = player.getDirection();
+        BlockPos feet = player.blockPosition();
+        boolean foot = isFlatWall(level, feet.relative(dir));
+        boolean head = isFlatWall(level, feet.above().relative(dir));
+        if (foot && head) {
+            return true; // an unambiguous, at-least-2-tall wall
+        }
+        return foot && !head && recentlyGripped(player); // finishing the top block of a climb
+    }
+
+    private static boolean recentlyGripped(Player player) {
+        return player.tickCount - gripMap(player).getOrDefault(player, -GRIP_GRACE - 1) <= GRIP_GRACE;
+    }
+
+    private static Map<Player, Integer> gripMap(Player player) {
+        return player.level().isClientSide() ? LAST_GRIP_CLIENT : LAST_GRIP_SERVER;
     }
 
     /** Controlled downward speed when you crouch to lower yourself through a canopy (scaffolding-like). */
