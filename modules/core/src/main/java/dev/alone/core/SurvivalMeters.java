@@ -433,7 +433,9 @@ public final class SurvivalMeters {
             player.setSprinting(false); // you can't push past empty
             effect(player, MobEffects.SLOWNESS, 1);
             effect(player, MobEffects.MINING_FATIGUE, 1);
-            effect(player, MobEffects.WEAKNESS, 0);
+            // NOTE: no Weakness here. Weakness I removes 4 melee damage — more than a bare fist (1) or
+            // most early weapons deal — so an exhausted player couldn't hurt an animal at all. Tired =
+            // sluggish and digs poorly, but you can still land a hit.
         } else if (stamina < STAMINA_LOW) {
             effect(player, MobEffects.SLOWNESS, 0);
             effect(player, MobEffects.MINING_FATIGUE, 0);
