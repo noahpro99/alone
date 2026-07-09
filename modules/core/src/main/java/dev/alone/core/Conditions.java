@@ -94,19 +94,26 @@ public final class Conditions {
                 tickInfection(player);
             }
         });
-        // Damage lands as conditions (§1.5/§8.6): a claw/bite/arrow bleeds you; a bad fall sprains you.
+        // Damage lands as conditions (§1.5/§8.6), and armour blunts the chance and severity by type.
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
             if (!(entity instanceof ServerPlayer player)) {
                 return;
             }
-            if (damageTaken >= 2.0f && source.getEntity() instanceof LivingEntity) {
+            var rng = player.getRandom();
+            float armorGuard = 1.0f - Math.min(0.8f, player.getArmorValue() / 25.0f); // plate turns a slash into a bruise
+            // Cuts/claws/arrows open a bleeding wound — likelier the harder the hit, far rarer with armour.
+            if (damageTaken >= 2.0f && source.getEntity() instanceof LivingEntity
+                && rng.nextFloat() < Math.min(0.9f, damageTaken / 8.0f) * armorGuard) {
                 addBleeding(player, BLEED_TICKS);
             }
-            if (damageTaken >= 4.0f && source.is(DamageTypes.FALL)) {
+            // A bad fall sprains; heavy blunt trauma can fracture too (both splinted, §1.5).
+            if (source.is(DamageTypes.FALL) && damageTaken >= 4.0f) {
+                addSprain(player, SPRAIN_TICKS);
+            } else if (damageTaken >= 8.0f && rng.nextFloat() < 0.5f * armorGuard) {
                 addSprain(player, SPRAIN_TICKS);
             }
-            // A zombie-type bite can fester into infection (§1.5).
-            if (source.getEntity() instanceof Zombie && player.getRandom().nextFloat() < INFECT_CHANCE) {
+            // A zombie-type bite can fester into infection.
+            if (source.getEntity() instanceof Zombie && rng.nextFloat() < INFECT_CHANCE) {
                 addInfection(player, INFECTION_PER_BITE);
             }
         });
