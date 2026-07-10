@@ -29,9 +29,13 @@ public class PlayerDestroySpeedMixin {
     private static final float LOG_AXE_FACTOR = 0.04f; // an axe: slow but functional
     private static final float LOG_CRUDE_SPEED = 0.1f; // a sword/pickaxe: a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
-    private static final float DIRT_FACTOR = 0.08f;    // earth with a SHOVEL — quicker than stone but still work
-    private static final float CLAY_FACTOR = 0.04f;    // dense clay subsoil, with a shovel — twice the toil of loose earth
-    private static final float NO_SHOVEL_DIG = 0.03f;  // hands or the wrong tool — a brutal, fixed-slow scrape (no easy dugout)
+    // Digging earth is brutally slow — a 1x1x2 pit is the better part of a day's labour even with a shovel,
+    // and hopeless by hand (§5.4). Packed soil (dirt/clay) is the slog; loose sand/gravel scoops easily.
+    private static final float DIRT_FACTOR = 0.015f;   // packed earth WITH a shovel — ~25s a block by wooden shovel
+    private static final float CLAY_FACTOR = 0.008f;   // dense clay subsoil with a shovel — the hardest earth (~45s)
+    private static final float LOOSE_FACTOR = 0.12f;   // loose sand/gravel with a shovel — scoops quickly
+    private static final float NO_SHOVEL_DIG = 0.01f;  // packed earth by hand / wrong tool — near-hopeless (~75s a block)
+    private static final float LOOSE_HAND_DIG = 0.15f; // loose sand/gravel by hand — still scoopable (foraging works)
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
     private static final float MAX_BREAK_DIVISOR = 40f; // caps the worst-case time (~60s)
@@ -63,15 +67,17 @@ public class PlayerDestroySpeedMixin {
         }
 
         if (state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
+            boolean packed = state.is(BlockTags.DIRT) || state.is(Blocks.CLAY); // packed soil / dense subsoil
             if (!self.getMainHandItem().is(ItemTags.SHOVELS)) {
-                // No shovel — you can't claw a shelter out of the earth with bare hands (or a pot, or an
-                // axe). A fixed, very slow speed, NOT scaled by whatever you're holding, so a pot/axe is
-                // never faster than your hands, and a dugout without the right tool is a brutal slog (§5.4).
-                cir.setReturnValue(NO_SHOVEL_DIG);
+                // No shovel — a FIXED speed (not scaled by the held item), so a pot or an axe is never
+                // faster than bare hands. Loose sand/gravel still scoops by hand; packed earth barely
+                // yields, so you can't claw a shelter out of the ground without the right tool (§5.4).
+                cir.setReturnValue(packed ? NO_SHOVEL_DIG : LOOSE_HAND_DIG);
                 return;
             }
-            // With a shovel it's real work, and dense clay subsoil is the hardest of it.
-            float factor = state.is(Blocks.CLAY) ? CLAY_FACTOR : DIRT_FACTOR;
+            // With a shovel it's still heavy work — packed earth slow, dense clay subsoil slowest, loose
+            // sand/gravel quick.
+            float factor = state.is(Blocks.CLAY) ? CLAY_FACTOR : (packed ? DIRT_FACTOR : LOOSE_FACTOR);
             cir.setReturnValue(cir.getReturnValueF() * factor);
             return;
         }
