@@ -54,7 +54,9 @@ public final class AloneItems {
     }
 
     public static final Item BACKPACK = register("backpack",
-        key -> new Item(new Item.Properties().stacksTo(1).setId(key)));
+        key -> new BackpackItem(new Item.Properties().stacksTo(1).component(
+            net.minecraft.core.component.DataComponents.CONTAINER,
+            net.minecraft.world.item.component.ItemContainerContents.EMPTY).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));
