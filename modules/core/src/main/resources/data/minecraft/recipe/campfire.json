@@ -1,8 +1,14 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    "minecraft:barrier"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "SFS",
+    "S S"
   ],
+  "key": {
+    "S": "minecraft:stick",
+    "F": "alone:plant_fiber"
+  },
   "result": {
     "id": "minecraft:campfire",
     "count": 1

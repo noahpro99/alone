@@ -47,9 +47,9 @@ public class MinecraftUseItemMixin {
             return;
         }
 
-        // Sneak + hold right-click with a stick on solid ground → drill for fire.
+        // Sneak + hold right-click with a stick on an unlit campfire → drill it alight.
         if (main.is(Items.STICK) && mc.player.isShiftKeyDown()
-            && FireStarting.findDrillSpot(mc.player, mc.level) != null) {
+            && FireStarting.findUnlitCampfire(mc.player, mc.level) != null) {
             if (mc.player.tickCount - alone$lastSendTick >= 4) {
                 ClientPlayNetworking.send(FireDrillPayload.INSTANCE);
                 mc.player.swing(InteractionHand.MAIN_HAND);
