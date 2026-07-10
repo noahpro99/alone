@@ -102,6 +102,7 @@ public class AloneCore implements ModInitializer {
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
+        AdminCommand.init();    // debug — /alone reset refills meters, clears conditions, tops off vitals
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 
         // Proposal §8.1 — you fell a tree with the right tool, not your fist or a chicken.
