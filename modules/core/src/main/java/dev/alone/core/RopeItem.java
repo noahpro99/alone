@@ -1,7 +1,6 @@
 package dev.alone.core;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -13,17 +12,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A coil of rope (proposal §5.7). Aim at a block face near the top of a cliff and use it: the rope
- * <b>unrolls straight down</b> from that spot, filling the open air with climbable {@link AloneBlocks#ROPE}
- * — one length of rope per block, as far down as the coil reaches. Extending an existing line is
- * natural too: click the <b>top</b> of a rope to <b>lengthen it further down</b>, or a rope's <b>side</b>
- * to <b>grow it upward</b>. Then climb it up and down for free, no stamina. Break any part of a line to
- * roll the whole thing back into your pack (see {@link Ropes}).
+ * A coil of rope (proposal §5.7). Aim at a block face and use it to <b>anchor a rope that hangs down</b>
+ * one block; click the rope again (or hold) to <b>add one more length below it</b>, paying it out down
+ * the face a block at a time — rope only ever goes down. Climb it up and down for free (crouch to
+ * descend). Break any part of a line to roll the whole thing back into your pack (see {@link Ropes}).
  */
 public class RopeItem extends Item {
-    /** A single pass won't run forever — a sane maximum length per use. */
-    private static final int MAX_ROPE = 32;
-
     public RopeItem(Properties properties) {
         super(properties);
     }
@@ -32,57 +26,35 @@ public class RopeItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos clicked = context.getClickedPos();
-        Direction face = context.getClickedFace();
         BlockState clickedState = level.getBlockState(clicked);
 
-        BlockPos start;
-        Direction run;
-        if (clickedState.is(AloneBlocks.ROPE)) {
-            // Extending a line: a side grows it upward, the top (or bottom) lengthens it downward.
-            if (face.getAxis().isHorizontal()) {
-                start = columnEnd(level, clicked, Direction.UP).above();
-                run = Direction.UP;
-            } else {
-                start = columnEnd(level, clicked, Direction.DOWN).below();
-                run = Direction.DOWN;
-            }
-        } else {
-            // A fresh anchor on a solid block face — unroll straight down.
-            start = face == Direction.DOWN ? clicked.below() : clicked.relative(face);
-            run = Direction.DOWN;
-        }
+        // On an existing rope: pay out one more length below the bottom of that line. On a solid block:
+        // anchor a single length hanging off the face you clicked (a wall face hangs it down the wall).
+        BlockPos target = clickedState.is(AloneBlocks.ROPE)
+            ? columnBottom(level, clicked).below()
+            : clicked.relative(context.getClickedFace());
 
-        if (!level.getBlockState(start).canBeReplaced()) {
-            return InteractionResult.PASS; // no open air to run the rope into
+        if (!level.getBlockState(target).canBeReplaced()) {
+            return InteractionResult.PASS; // no open air there to run the rope into
         }
 
         Player player = context.getPlayer();
         ItemStack coil = context.getItemInHand();
         if (!level.isClientSide()) {
-            int available = (player != null && player.isCreative()) ? MAX_ROPE : coil.getCount();
-            int placed = 0;
-            BlockPos.MutableBlockPos cursor = start.mutable();
-            while (placed < available && placed < MAX_ROPE && level.getBlockState(cursor).canBeReplaced()) {
-                level.setBlockAndUpdate(cursor.immutable(), AloneBlocks.ROPE.defaultBlockState());
-                cursor.move(run);
-                placed++;
-            }
-            if (placed == 0) {
-                return InteractionResult.PASS;
-            }
+            level.setBlockAndUpdate(target, AloneBlocks.ROPE.defaultBlockState());
             if (player != null && !player.isCreative()) {
-                coil.shrink(placed);
+                coil.shrink(1);
             }
-            level.playSound(null, start, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 0.7f, 0.9f);
+            level.playSound(null, target, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 0.7f, 0.9f);
         }
         return InteractionResult.SUCCESS;
     }
 
-    /** Walk from a rope block to the far end of its contiguous vertical run in the given direction. */
-    private static BlockPos columnEnd(Level level, BlockPos from, Direction dir) {
+    /** The lowest rope block of the contiguous vertical line through this one. */
+    private static BlockPos columnBottom(Level level, BlockPos from) {
         BlockPos pos = from;
-        while (level.getBlockState(pos.relative(dir)).is(AloneBlocks.ROPE)) {
-            pos = pos.relative(dir);
+        while (level.getBlockState(pos.below()).is(AloneBlocks.ROPE)) {
+            pos = pos.below();
         }
         return pos;
     }

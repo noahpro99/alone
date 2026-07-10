@@ -61,12 +61,19 @@ public class AloneCore implements ModInitializer {
         PayloadTypeRegistry.serverboundPlay().register(FireDrillPayload.TYPE, FireDrillPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(
             dev.alone.core.net.BackpackOpenPayload.TYPE, dev.alone.core.net.BackpackOpenPayload.CODEC);
-        // Quick-open keybind: find the first backpack in the pack and open it (§6).
+        // Quick-open keybind: toggle the backpack — open the first one in your pack, or close it if
+        // that's what you're already looking at (§6).
         net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(
             dev.alone.core.net.BackpackOpenPayload.TYPE, (payload, context) -> {
-                var backpack = BackpackItem.findInInventory(context.player());
+                var player = context.player();
+                if (player.containerMenu instanceof net.minecraft.world.inventory.ChestMenu chest
+                    && chest.getContainer() instanceof BackpackContainer) {
+                    player.closeContainer(); // already in it — the key toggles it shut
+                    return;
+                }
+                var backpack = BackpackItem.findInInventory(player);
                 if (!backpack.isEmpty()) {
-                    BackpackItem.open(context.player(), backpack);
+                    BackpackItem.open(player, backpack);
                 }
             });
 
