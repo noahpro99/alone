@@ -8,14 +8,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * No vacuum pickup (proposal §5.1 / realism). Walking over a dropped item no longer sucks it into your
- * inventory — you pick things up deliberately by right-clicking them (see {@code Pickup}). This just
- * cancels the auto-pickup on touch; XP orbs and arrows (different entities) are unaffected.
+ * No vacuum pickup (proposal §5.1 / realism). Walking over a dropped item no longer sucks it in — you
+ * pick things up deliberately: right-click a specific item ({@code Pickup}), or, more reliably,
+ * <b>sneak-walk over items to scoop them up</b> (no fiddly aiming). Only the normal, non-sneaking
+ * walkover is cancelled here; XP orbs and arrows (different entities) are unaffected.
  */
 @Mixin(ItemEntity.class)
 public class ItemEntityPickupMixin {
     @Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
     private void alone$noAutoPickup(Player player, CallbackInfo ci) {
-        ci.cancel();
+        if (!player.isShiftKeyDown()) {
+            ci.cancel(); // walking over it doesn't grab it — crouch to scoop, or right-click it
+        }
     }
 }
