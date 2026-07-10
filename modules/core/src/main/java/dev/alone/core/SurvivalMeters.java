@@ -386,6 +386,12 @@ public final class SurvivalMeters {
         player.setAttached(STAMINA, stamina);
         player.setAttached(FATIGUE, fatigue);
 
+        // If you're slowed (exhaustion, cold, thirst…) you can't sprint — which also kills the flat
+        // sprint-jump boost that otherwise let a slowed player leap faster than they can walk (§1.4).
+        if (player.hasEffect(MobEffects.SLOWNESS)) {
+            player.setSprinting(false);
+        }
+
         // Thirst — only drains; drink to restore. Faster when exerting, and you sweat the hotter your
         // *body* runs (§1.2/§1.3): the desert, a fire, heavy clothing, and hard exertion all cost water.
         float thirst = getThirst(player);
