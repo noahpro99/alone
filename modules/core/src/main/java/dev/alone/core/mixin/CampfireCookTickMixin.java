@@ -4,12 +4,15 @@ import dev.alone.core.Campfires;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +30,20 @@ public class CampfireCookTickMixin {
     @SuppressWarnings("rawtypes")
     private static void alone$burnFuel(ServerLevel level, BlockPos pos, BlockState state,
                                        CampfireBlockEntity entity, RecipeManager.CachedCheck cache, CallbackInfo ci) {
+        // An open fire can't survive the rain (proposal §3.1). isRainingAt already requires open sky and a
+        // rainy biome, so a campfire under a roof (or in the desert/snow) is spared — shelter your fire.
+        // It hisses and steams for a few seconds, then goes out; the lay is only doused, not spent, so the
+        // fuel stays banked and you can relight it once things dry out (and drilling fails in rain anyway).
+        if (level.isRainingAt(pos.above())) {
+            level.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5,
+                4, 0.16, 0.05, 0.16, 0.008);
+            if (level.getRandom().nextInt(60) == 0) { // ~3s of exposure on average before it dies
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 2.6f);
+                level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, Boolean.FALSE));
+                return;
+            }
+        }
+
         int fuel = Campfires.getFuel(entity);
         if (fuel <= 0) {
             // Burnt out — the wood is spent. Drop any pot that was boiling on it, break the campfire (no
