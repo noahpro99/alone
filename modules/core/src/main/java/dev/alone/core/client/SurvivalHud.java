@@ -26,6 +26,7 @@ public final class SurvivalHud {
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
     private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);
+    private static final ItemStack ICON_WEIGHT = new ItemStack(Items.ANVIL);
 
     public static void render(GuiGraphicsExtractor g) {
         Minecraft mc = Minecraft.getInstance();
@@ -40,6 +41,7 @@ public final class SurvivalHud {
         int yFatigue = y0 + rowH;
         int yThirst = y0 + rowH * 2;
         int yVolume = y0 + rowH * 3;
+        int yWeight = y0 + rowH * 4;
 
         // NO single "health"/vitality bar (§1.5). The body is a set of separate systems: you bleed out,
         // freeze, dehydrate, starve, or die of trauma — each shows through its own meter, the body
@@ -59,6 +61,12 @@ public final class SurvivalHud {
         drawItemIcon(g, ICON_VOLUME, left, yVolume - 3);
         float volumePct = Carry.totalVolume(mc.player) / Carry.volumeLimit(mc.player);
         drawBar(g, barX, yVolume, volumePct, volumeColor(volumePct));
+
+        // Load (§5.1) — bundle is space, anvil is heft. Full bar = the crawling weight; the fill goes
+        // grey (no penalty) → amber (slowing) → red (near a crawl) as the load drags on your movement.
+        drawItemIcon(g, ICON_WEIGHT, left, yWeight - 3);
+        float weight = Carry.totalWeight(mc.player);
+        drawBar(g, barX, yWeight, weight / Carry.MAX_WEIGHT, weightColor(weight));
 
         // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot).
         int tx = barX + BAR_W + 6;
@@ -118,6 +126,15 @@ public final class SurvivalHud {
             return 0xFFD9A441; // getting full
         }
         return 0xFFB0B0B0;     // room to spare
+    }
+
+    /** Grey while under the free-carry weight (no penalty), then amber → red as the load slows you. */
+    private static int weightColor(float weight) {
+        if (weight <= Carry.FREE_WEIGHT) {
+            return 0xFFB0B0B0; // light — moving freely
+        }
+        float t = (weight - Carry.FREE_WEIGHT) / (Carry.MAX_WEIGHT - Carry.FREE_WEIGHT);
+        return t >= 0.7f ? 0xFFD9534A : 0xFFD9A441; // near a crawl → red, otherwise slowing → amber
     }
 
     /** A little triangle: pointing up + orange = warming, down + blue = cooling, nothing = steady. */

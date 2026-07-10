@@ -39,8 +39,8 @@ public final class Carry {
     /** Storage volume per slot: a 27-slot chest = 1 m³, so a double chest = 2 m³, a barrel = 1, etc. */
     public static final float STORAGE_VOLUME_PER_SLOT = 1.0f / 27f;
 
-    private static final float FREE_WEIGHT = 8f;    // kg carried with no movement penalty
-    private static final float MAX_WEIGHT = 45f;    // kg where you're at the slowest crawl
+    public static final float FREE_WEIGHT = 8f;     // kg carried with no movement penalty
+    public static final float MAX_WEIGHT = 45f;     // kg where you're at the slowest crawl
     private static final float MIN_SPEED_FACTOR = 0.35f;
 
     private static final Identifier CARRY_MODIFIER = Identifier.fromNamespaceAndPath("alone", "carry_weight");
