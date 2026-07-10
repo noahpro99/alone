@@ -59,6 +59,16 @@ public class AloneCore implements ModInitializer {
         PayloadTypeRegistry.clientboundPlay().register(SurvivalSyncPayload.TYPE, SurvivalSyncPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(DrinkRequestPayload.TYPE, DrinkRequestPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(FireDrillPayload.TYPE, FireDrillPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
+            dev.alone.core.net.BackpackOpenPayload.TYPE, dev.alone.core.net.BackpackOpenPayload.CODEC);
+        // Quick-open keybind: find the first backpack in the pack and open it (§6).
+        net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(
+            dev.alone.core.net.BackpackOpenPayload.TYPE, (payload, context) -> {
+                var backpack = BackpackItem.findInInventory(context.player());
+                if (!backpack.isEmpty()) {
+                    BackpackItem.open(context.player(), backpack);
+                }
+            });
 
         // The core survival systems everything else hooks into (proposal §1).
         Conditions.init();      // §1.5 — conditions/injuries (persistent, debilitating)

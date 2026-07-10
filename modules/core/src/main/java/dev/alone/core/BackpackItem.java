@@ -37,6 +37,18 @@ public class BackpackItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    /** The first backpack anywhere in the player's inventory, or empty — used by the quick-open keybind. */
+    public static ItemStack findInInventory(Player player) {
+        var inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(AloneItems.BACKPACK)) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
     /** Open a chest menu backed by the pack's stored contents, saving back to the item on every change. */
     public static void open(Player player, ItemStack backpack) {
         boolean[] loading = {true};

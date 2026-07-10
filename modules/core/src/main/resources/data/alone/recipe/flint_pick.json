@@ -1,6 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["FFF", " S ", " S "],
-  "key": {"F": "minecraft:flint", "S": "minecraft:stick"},
-  "result": {"id": "alone:flint_pick", "count": 1}
+  "pattern": [
+    "FFF",
+    "PSP",
+    " S "
+  ],
+  "key": {
+    "F": "minecraft:flint",
+    "S": "minecraft:stick",
+    "P": "alone:plant_fiber"
+  },
+  "result": {
+    "id": "alone:flint_pick",
+    "count": 1
+  }
 }

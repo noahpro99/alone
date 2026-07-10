@@ -433,6 +433,15 @@ public final class Carry {
                 continue;
             }
             sum += volume ? itemVolume(stack) : itemWeight(stack);
+            // A backpack's contents count too — so the pack raises your cap (§6) but you still can't
+            // stuff it past the limit; volume stays honest whether an item is loose or in the pack.
+            if (stack.is(AloneItems.BACKPACK)) {
+                var contents = stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER,
+                    net.minecraft.world.item.component.ItemContainerContents.EMPTY);
+                for (var inner : (Iterable<ItemStack>) contents.allItemsCopyStream()::iterator) {
+                    sum += volume ? itemVolume(inner) : itemWeight(inner);
+                }
+            }
         }
         return sum;
     }

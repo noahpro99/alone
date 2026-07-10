@@ -1,24 +1,39 @@
 package dev.alone.core.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.alone.core.AloneCore;
 import dev.alone.core.CraftingTime;
 import dev.alone.core.Forging;
 import dev.alone.core.SurvivalMeters;
+import dev.alone.core.net.BackpackOpenPayload;
 import dev.alone.core.net.SurvivalSyncPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 /** Client-only entrypoint: receive survival syncs and draw the HUD. */
 public class AloneCoreClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        // Quick-open backpack keybind (default B) — opens the first backpack in your pack (§6).
+        KeyMapping openBackpack = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+            "key.alone.open_backpack", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, KeyMapping.Category.INVENTORY));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (openBackpack.consumeClick()) {
+                if (client.player != null) {
+                    ClientPlayNetworking.send(BackpackOpenPayload.INSTANCE);
+                }
+            }
+        });
         ClientPlayNetworking.registerGlobalReceiver(SurvivalSyncPayload.TYPE,
             (payload, context) -> {
                 ClientSurvivalState.update(payload);
