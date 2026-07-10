@@ -42,6 +42,13 @@ public class LivingEntityClimbMixin {
             return;
         }
         Vec3 m = cir.getReturnValue();
+        // Rope behaves like scaffolding: you hold your vertical spot, crouch to lower yourself down, and
+        // jump/press up to climb up — no automatic sliding.
+        if (Climbing.onRope(player)) {
+            double vy = player.isShiftKeyDown() ? Climbing.ROPE_DESCEND_SPEED : Math.max(0.0, m.y);
+            cir.setReturnValue(new Vec3(m.x, vy, m.z));
+            return;
+        }
         if (Climbing.isDescendingLeaves(player)) {
             cir.setReturnValue(new Vec3(m.x, Climbing.LEAF_DESCEND_SPEED, m.z));
             return;

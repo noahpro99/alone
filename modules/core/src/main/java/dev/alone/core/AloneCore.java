@@ -77,6 +77,7 @@ public class AloneCore implements ModInitializer {
         Sharpening.init();       // §8.5 — hone a worn edge back up with a whetstone (off-hand, sneak+use)
         Embers.init();          // §3.1 — scoop a glowing ember from a fire and carry it to light the next
         Ropes.init();           // §5.7 — breaking a rope rolls the whole connected line back into your pack
+        Falls.init();           // §1.5 — water only breaks a fall if it's deep enough (else you hit bottom)
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 

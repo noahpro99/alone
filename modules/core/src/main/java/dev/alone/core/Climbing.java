@@ -49,6 +49,10 @@ public final class Climbing {
     private static final double CLIMB_ENGAGE_VY = 0.1;
     /** Per-block cost of climbing a tree — hard, but a full ~6 m tree stays doable on one wind. */
     private static final float LEAF_DRAIN_PER_BLOCK = 12f;
+    /** Per-tick grip cost of hanging on a rope — cheap (rope is easy), so it's the smart way down a cave. */
+    private static final float ROPE_HOLD_DRAIN = 0.15f;
+    /** Crouch to lower yourself down a rope at a controlled speed; otherwise you hold your spot. */
+    public static final double ROPE_DESCEND_SPEED = -0.16;
     /** Above this per-tick rise it's a jump/fall, not a climb — don't charge for it. */
     private static final double CLIMB_MOVE_CAP = 0.2;
 
@@ -77,6 +81,10 @@ public final class Climbing {
                 updateJumpLatch(player);
                 climbDrainTick(player);
                 applyLeafSlowdown(player);
+                // Hanging on a rope takes grip — a small steady stamina cost, far below free-climbing.
+                if (onRope(player) && !player.onGround() && !player.getAbilities().flying) {
+                    SurvivalMeters.exert(player, ROPE_HOLD_DRAIN);
+                }
             }
         });
     }
@@ -136,6 +144,9 @@ public final class Climbing {
         if (ady < 1.0e-4 || ady > CLIMB_MOVE_CAP) {
             return; // standing still, or a jump/fall rather than a controlled climb
         }
+        if (onRope(player)) {
+            return; // rope grip is charged per-tick in the main loop, not by distance
+        }
         if (inLeaves(player)) {
             if (dy > 0) { // hauling up a tree; dropping down through it is free
                 SurvivalMeters.exert(player, (float) (dy * LEAF_DRAIN_PER_BLOCK));
@@ -143,6 +154,14 @@ public final class Climbing {
         } else if (facingFlatWall(player)) {
             SurvivalMeters.exert(player, (float) (ady * WALL_DRAIN_PER_BLOCK)); // rock burns up or down
         }
+    }
+
+    /** You're hanging on a rope line. */
+    public static boolean onRope(Player player) {
+        Level level = player.level();
+        BlockPos feet = player.blockPosition();
+        return level.getBlockState(feet).is(AloneBlocks.ROPE)
+            || level.getBlockState(feet.above()).is(AloneBlocks.ROPE);
     }
 
     /** Can this player cling here right now? Called from the {@code onClimbable} mixin. */
