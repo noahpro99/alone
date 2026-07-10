@@ -53,9 +53,10 @@ public class LivingEntityClimbMixin {
             cir.setReturnValue(new Vec3(m.x, Climbing.LEAF_DESCEND_SPEED, m.z));
             return;
         }
-        // At the top of a wall, mantle up and over the lip instead of crawling and sliding back.
+        // Finishing the climb: over the lip, rise steadily up and let your forward input carry you onto
+        // the ledge — climb all the way up, no lurch.
         if (Climbing.isToppingOut(player)) {
-            cir.setReturnValue(Climbing.mantleMotion(player));
+            cir.setReturnValue(new Vec3(m.x, Climbing.TOP_OUT_LIFT, m.z));
             return;
         }
         double factor = Climbing.climbSpeedFactor(player);

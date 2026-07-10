@@ -78,6 +78,9 @@ public final class Campfires {
         });
     }
 
+    public static final int FUEL_PER_FIBER = 150; // dry tinder flares fast — a few seconds
+    public static final int FUEL_PER_LEAF = 100;
+
     private static int fuelValue(ItemStack stack) {
         if (stack.is(Items.STICK)) {
             return FUEL_PER_STICK;
@@ -87,6 +90,12 @@ public final class Campfires {
         }
         if (stack.is(ItemTags.PLANKS)) {
             return FUEL_PER_LOG / 2;
+        }
+        if (stack.is(AloneItems.PLANT_FIBER)) {
+            return FUEL_PER_FIBER; // kindling/tinder — burns quick, keeps a fire alive in a pinch
+        }
+        if (stack.is(Items.LEAF_LITTER) || stack.is(ItemTags.LEAVES)) {
+            return FUEL_PER_LEAF;
         }
         return 0;
     }

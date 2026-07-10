@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Free-climbing (proposal §5.4 / realism). Two ways up the world beyond ladders:
@@ -43,6 +42,8 @@ public final class Climbing {
     private static final float CLIMB_MAX_WEIGHT = 25f;      // more than ~one block's mass and you can't haul up at all
     /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate bare-rock climbing. */
     public static final double WALL_CLIMB_SPEED = 0.3;
+    /** Steady upward pace while cresting a wall's lip, so the climb lifts you up and over the edge. */
+    public static final double TOP_OUT_LIFT = 0.16;
     /** Tree/canopy pace — slow, but a touch quicker than bare rock since branches give you holds. */
     public static final double LEAF_CLIMB_SPEED = 0.4;
 
@@ -319,33 +320,32 @@ public final class Climbing {
         if (foot && head) {
             return true; // an unambiguous, at-least-2-tall wall
         }
-        return foot && !head && recentlyGripped(player); // finishing the top block of a climb
+        if (!recentlyGripped(player)) {
+            return false; // a lone step you weren't already climbing — just jump it
+        }
+        // Finishing a climb: the top block of the wall (foot hold, clear above), OR the block just
+        // above the lip (nothing at your feet yet, but the wall you climbed is right below) — so the
+        // climb carries you all the way up and over the edge instead of stranding you under it.
+        boolean belowFoot = isFlatWall(level, feet.below().relative(dir));
+        return (foot && !head) || (!foot && belowFoot);
+    }
+
+    /** In the finishing zone of a climb — cresting the wall's lip — where the climb should lift you
+     *  steadily up and over rather than clamp you to the wall face. */
+    public static boolean isToppingOut(Player player) {
+        return !inLeaves(player) && recentlyGripped(player) && hasClimbableWall(player) && isCresting(player);
+    }
+
+    private static boolean isCresting(Player player) {
+        Level level = player.level();
+        Direction dir = player.getDirection();
+        BlockPos feet = player.blockPosition();
+        boolean head = isFlatWall(level, feet.above().relative(dir));
+        return !head; // no wall at head height → you're at/over the top, not mid-face
     }
 
     private static boolean recentlyGripped(Player player) {
         return player.tickCount - gripMap(player).getOrDefault(player, -GRIP_GRACE - 1) <= GRIP_GRACE;
-    }
-
-    /**
-     * You're at the very lip of a wall you were climbing — a hold at your feet, clear air above it. A
-     * plain climb clamped to wall speed would strand you just under the edge (and flicker the grip), so
-     * this is where we mantle instead.
-     */
-    public static boolean isToppingOut(Player player) {
-        if (inLeaves(player) || !recentlyGripped(player)) {
-            return false;
-        }
-        Level level = player.level();
-        Direction dir = player.getDirection();
-        BlockPos feet = player.blockPosition();
-        return isFlatWall(level, feet.relative(dir)) && !isFlatWall(level, feet.above().relative(dir));
-    }
-
-    /** The mantle: a firm heave up and over the lip, so you actually clear the top block instead of
-     *  sliding back down it. Faster than the slow wall climb, with a forward push onto the ledge. */
-    public static Vec3 mantleMotion(Player player) {
-        Direction dir = player.getDirection();
-        return new Vec3(dir.getStepX() * 0.16, 0.32, dir.getStepZ() * 0.16);
     }
 
     private static Map<Player, Integer> gripMap(Player player) {
