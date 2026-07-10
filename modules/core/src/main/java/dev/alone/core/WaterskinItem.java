@@ -2,6 +2,8 @@ package dev.alone.core;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -94,6 +96,15 @@ public class WaterskinItem extends Item {
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
         return ItemUseAnimation.DRINK;
+    }
+
+    /** The potion-style glug while you sip from the vessel. */
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseTicks) {
+        if (!level.isClientSide() && remainingUseTicks % 5 == 0) {
+            level.playSound(null, entity.blockPosition(), SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS,
+                0.5f, 0.9f + entity.getRandom().nextFloat() * 0.2f);
+        }
     }
 
     /** The sip lands when the drinking animation completes. */
