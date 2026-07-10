@@ -2,7 +2,6 @@ package dev.alone.core;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,12 +44,11 @@ public class RopeItem extends Item {
         if (clickedState.is(AloneBlocks.ROPE)) {
             // You pay rope out from the anchor at the top: only the highest length of a line accepts more.
             // Clicking a lower length (say, while climbing) does nothing — go back to the top to feed out.
-            List<BlockPos> line = ropeLine(level, clicked);
-            int topY = line.stream().mapToInt(BlockPos::getY).max().orElse(clicked.getY());
-            if (clicked.getY() != topY) {
+            LineScan scan = scanFrom(level, clicked);
+            if (clicked.getY() != scan.topY()) {
                 return InteractionResult.PASS; // not the top of the line
             }
-            target = payOut(level, lineEnd(level, line));
+            target = payOut(level, scan.end());
         } else {
             BlockPos hung = clicked.relative(context.getClickedFace());
             target = level.getBlockState(hung).canBeReplaced() ? hung : null;
@@ -108,35 +106,35 @@ public class RopeItem extends Item {
         return false;
     }
 
-    /** The growing end of the line: the deepest length, preferring one that can still descend so the line
-     *  keeps heading down rather than spreading sideways forever. */
-    private static BlockPos lineEnd(Level level, List<BlockPos> line) {
-        return line.stream()
-            .min(Comparator.<BlockPos>comparingInt(BlockPos::getY)
-                .thenComparingInt(p -> level.getBlockState(p.below()).canBeReplaced() ? 0 : 1)
-                .thenComparingInt(BlockPos::getX)
-                .thenComparingInt(BlockPos::getZ))
-            .orElseThrow();
-    }
-
-    /** Every rope block connected to this one (orthogonally, in any direction), bounded for safety. */
-    private static List<BlockPos> ropeLine(Level level, BlockPos start) {
-        List<BlockPos> found = new ArrayList<>();
+    /**
+     * BFS the connected line from where you clicked. Returns the highest Y in the line (to enforce "add
+     * from the top") and the block <b>furthest along the rope</b> from here — the true growing end. Because
+     * BFS dequeues in order of increasing distance, the last block out is the farthest, so a line that
+     * jogs sideways at the bottom grows from the far end of the jog, not the nearest low block.
+     */
+    private static LineScan scanFrom(Level level, BlockPos start) {
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         BlockPos origin = start.immutable();
-        queue.add(origin);
         seen.add(origin);
-        while (!queue.isEmpty() && found.size() < MAX_LINE) {
+        queue.add(origin);
+        int topY = origin.getY();
+        BlockPos end = origin;
+        while (!queue.isEmpty() && seen.size() < MAX_LINE) {
             BlockPos pos = queue.poll();
-            found.add(pos);
+            end = pos; // last dequeued = greatest BFS distance = furthest end (sideways included)
+            topY = Math.max(topY, pos.getY());
             for (Direction d : Direction.values()) {
                 BlockPos n = pos.relative(d).immutable();
-                if (seen.add(n) && level.getBlockState(n).is(AloneBlocks.ROPE)) {
+                if (!seen.contains(n) && level.getBlockState(n).is(AloneBlocks.ROPE)) {
+                    seen.add(n);
                     queue.add(n);
                 }
             }
         }
-        return found;
+        return new LineScan(topY, end);
+    }
+
+    private record LineScan(int topY, BlockPos end) {
     }
 }
