@@ -122,6 +122,9 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Monsters only near loot structures (§7.1)** — the signature Alone spawn rule. **Natural** hostile spawns (anything implementing `Enemy`) are **vetoed unless within ~40 blocks of a generated structure** (ruins/dungeons/mineshafts/strongholds/villages…), so the open wilderness is lonely and (relatively) safe and danger clusters at loot. Only `NATURAL` spawns are touched — spawners, structure placement, breeding, reinforcements, and passive wildlife are untouched. Single `Mob.checkSpawnRules` mixin covers every vanilla hostile. **⚠ Needs live playtest** (headless can't observe spawns); tune the radius/samples in `Spawns` if too safe/dangerous. (`MobSpawnMixin`, `Spawns`.)
 
+- [x] **Backpack is real storage (§6)** — was a passive volume boost; now **right-click to open** a 27-slot pack (vanilla chest screen, contents on the item's `container` component, shown in tooltip). Plus: **quick-open keybind** (default **B**) opens the first pack in your inventory; **placeable** — sneak+right-click a surface to set it down as a block, right-click to open like a chest, break to get the pack back with contents (`BackpackBlock`/`BackpackBlockEntity`); and the pack's contents now **count toward carry volume** so it raises your cap without letting you overstuff. (`BackpackItem`, `Backpacks`, `BackpackOpenPayload`.)
+  - [ ] *Remaining: a dedicated body/back equip slot on the inventory screen (custom menu-slot injection + 26.2 extract-based screen rendering — needs live client iteration).*
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);
