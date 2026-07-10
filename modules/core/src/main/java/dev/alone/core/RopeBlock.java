@@ -87,9 +87,10 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    /** Constant time to hand-reel one 1 m length. Each completed break peels off the lowest length, so a
-     *  long line just takes more breaks — not a longer one. */
-    private static final int TICKS_PER_SEGMENT = 20;
+    /** Time to hand-reel one 1 m length. Coiling a metre is ~a second in real life, but a real second is
+     *  a big slice of Minecraft's compressed day, so at the game's scale it's near-instant — a quick flick
+     *  per length. Each break peels off the lowest length, so a long line just takes more (fast) breaks. */
+    private static final int TICKS_PER_SEGMENT = 5;
     private static final int MAX_LINE = 512;
 
     /**
