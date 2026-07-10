@@ -1,13 +1,10 @@
 package dev.alone.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
@@ -80,34 +77,9 @@ public class BackpackItem extends Item {
         return ItemStack.EMPTY;
     }
 
-    /** Open a chest menu backed by the pack's stored contents, saving back to the item on every change. */
+    /** Open a chest menu backed by the pack's stored contents (a {@link BackpackContainer}). */
     public static void open(Player player, ItemStack backpack) {
-        boolean[] loading = {true};
-        SimpleContainer container = new SimpleContainer(SLOTS) {
-            @Override
-            public boolean canPlaceItem(int slot, ItemStack stack) {
-                return !stack.is(AloneItems.BACKPACK); // no packing a backpack inside a backpack
-            }
-
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                if (loading[0]) {
-                    return; // don't write mid-load
-                }
-                List<ItemStack> out = new ArrayList<>(SLOTS);
-                for (int i = 0; i < SLOTS; i++) {
-                    out.add(this.getItem(i));
-                }
-                backpack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(out));
-            }
-        };
-        NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
-        for (int i = 0; i < SLOTS; i++) {
-            container.setItem(i, items.get(i));
-        }
-        loading[0] = false;
+        BackpackContainer container = new BackpackContainer(backpack);
         player.openMenu(new SimpleMenuProvider(
             (id, inventory, opener) -> ChestMenu.threeRows(id, inventory, container), backpack.getHoverName()));
     }

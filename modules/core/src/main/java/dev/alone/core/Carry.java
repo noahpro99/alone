@@ -398,13 +398,12 @@ public final class Carry {
     }
 
     /** The player's personal volume cap, raised by a backpack (§6). */
+    /** How much a backpack can hold, in m³ — its own separate volume budget (§6). */
+    public static final float BACKPACK_VOLUME_LIMIT = 1.5f;
+
+    /** Your body's volume cap. A backpack no longer raises this — it's separate storage with its own
+     *  cap ({@link #BACKPACK_VOLUME_LIMIT}); only its weight lands on you. */
     public static float volumeLimit(Player player) {
-        Inventory inventory = player.getInventory();
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            if (inventory.getItem(i).is(AloneItems.BACKPACK)) {
-                return PLAYER_VOLUME_LIMIT + 1.5f; // a backpack adds ~1.5 m³
-            }
-        }
         return PLAYER_VOLUME_LIMIT;
     }
 
@@ -412,6 +411,9 @@ public final class Carry {
     public static float containerVolumeLimit(Container container) {
         if (container instanceof Inventory inventory) {
             return volumeLimit(inventory.player);
+        }
+        if (container instanceof BackpackContainer || container instanceof BackpackBlockEntity) {
+            return BACKPACK_VOLUME_LIMIT; // a pack has its own volume budget (§6)
         }
         if (container instanceof RandomizableContainerBlockEntity || container instanceof CompoundContainer) {
             return container.getContainerSize() * STORAGE_VOLUME_PER_SLOT; // chests, barrels, shulkers…
@@ -433,13 +435,13 @@ public final class Carry {
                 continue;
             }
             sum += volume ? itemVolume(stack) : itemWeight(stack);
-            // A backpack's contents count too — so the pack raises your cap (§6) but you still can't
-            // stuff it past the limit; volume stays honest whether an item is loose or in the pack.
-            if (stack.is(AloneItems.BACKPACK)) {
+            // A backpack's contents don't touch your body's VOLUME (the pack has its own separate cap),
+            // but their WEIGHT still lands on you — hauling a full pack is heavy (§6).
+            if (!volume && stack.is(AloneItems.BACKPACK)) {
                 var contents = stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER,
                     net.minecraft.world.item.component.ItemContainerContents.EMPTY);
                 for (var inner : (Iterable<ItemStack>) contents.allItemsCopyStream()::iterator) {
-                    sum += volume ? itemVolume(inner) : itemWeight(inner);
+                    sum += itemWeight(inner);
                 }
             }
         }
