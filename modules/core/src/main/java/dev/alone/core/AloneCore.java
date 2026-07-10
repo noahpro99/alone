@@ -90,6 +90,7 @@ public class AloneCore implements ModInitializer {
         Falls.init();           // §1.5 — water only breaks a fall if it's deep enough (else you hit bottom)
         Backpacks.init();       // §6 — breaking a set-down backpack returns the pack with its contents
         Pickup.init();          // §5.1 — no vacuum pickup; right-click a dropped item to pick it up
+        Wildlife.init();        // §7.2 — wild animals are skittish; sneak to approach, else they bolt
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 
