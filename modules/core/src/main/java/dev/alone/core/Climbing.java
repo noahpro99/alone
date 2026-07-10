@@ -5,9 +5,12 @@ import java.util.WeakHashMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -72,6 +75,67 @@ public final class Climbing {
     private static final int GRIP_GRACE = 8;
     private static final Map<Player, Integer> LAST_GRIP_CLIENT = new WeakHashMap<>();
     private static final Map<Player, Integer> LAST_GRIP_SERVER = new WeakHashMap<>();
+
+    // The climb latch: once you've caught a wall you STAY caught while a climbable face is beside you,
+    // instead of re-earning the grab every tick off the flickery horizontalCollision flag. This is what
+    // stops the jitter — the grab decision is made once (engage), then held on a stable block scan.
+    private static final Map<Player, Boolean> GRIP_CLIENT = new WeakHashMap<>();
+    private static final Map<Player, Boolean> GRIP_SERVER = new WeakHashMap<>();
+
+    /** Surfaces rough enough to free-climb: raw rock, tree trunks, earth — never smooth/finished faces.
+     *  Datapack-defined ({@code data/alone/tags/block/climbable.json}), so the pack can tune it. */
+    private static final TagKey<Block> CLIMBABLE_ROUGH =
+        TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("alone", "climbable"));
+
+    private static boolean isGripping(Player player) {
+        return (player.level().isClientSide() ? GRIP_CLIENT : GRIP_SERVER).getOrDefault(player, false);
+    }
+
+    private static void setGripping(Player player, boolean gripping) {
+        (player.level().isClientSide() ? GRIP_CLIENT : GRIP_SERVER).put(player, gripping);
+    }
+
+    // A slip: even a skilled climber occasionally loses a hold. Rolled per tick on a bare-rock climb,
+    // rare when fresh and more likely as you tire. On a slip you come off the wall and fall — which is
+    // exactly why a rope or ladder is the safe way up. Server rolls it (so the fall counts for damage)
+    // and tells the client (so its predicted fall matches — no rubber-band).
+    private static final float SLIP_BASE = 0.0006f;   // fresh & rested: ~1.2% per second of clinging
+    private static final float SLIP_TIRED = 0.0034f;  // the more spent you are, the more your grip fails
+    private static final int SLIP_RECOVER = 12;       // ticks you can't re-grab after a slip — you fall first
+    private static final Map<Player, Integer> SLIP_UNTIL_CLIENT = new WeakHashMap<>();
+    private static final Map<Player, Integer> SLIP_UNTIL_SERVER = new WeakHashMap<>();
+
+    private static boolean slipping(Player player) {
+        Map<Player, Integer> map = player.level().isClientSide() ? SLIP_UNTIL_CLIENT : SLIP_UNTIL_SERVER;
+        return player.tickCount < map.getOrDefault(player, Integer.MIN_VALUE);
+    }
+
+    /** Roll for a grip slip while free-climbing bare rock; on a slip, drop off the wall and fall. */
+    private static void maybeSlip(ServerPlayer player) {
+        if (slipping(player)) {
+            return; // already coming off the wall
+        }
+        float frac = Math.max(0f, Math.min(1f,
+            SurvivalMeters.getStamina(player) / SurvivalMeters.MAX_STAMINA));
+        float chance = SLIP_BASE + SLIP_TIRED * (1f - frac);
+        if (player.getRandom().nextFloat() >= chance) {
+            return;
+        }
+        setGripping(player, false);
+        SLIP_UNTIL_SERVER.put(player, player.tickCount + SLIP_RECOVER);
+        player.level().playSound(null, player.blockPosition(),
+            net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP, net.minecraft.sounds.SoundSource.PLAYERS,
+            0.5f, 1.4f);
+        player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Your grip slips!"), true);
+        net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(
+            player, dev.alone.core.net.ClimbSlipPayload.INSTANCE);
+    }
+
+    /** Client side of a slip: drop the local grip and start falling in step with the server. */
+    public static void clientSlip(Player player) {
+        setGripping(player, false);
+        SLIP_UNTIL_CLIENT.put(player, player.tickCount + SLIP_RECOVER);
+    }
 
     public static void init() {
         // Charge stamina off real vertical travel while against a climbable surface — the one signal the
@@ -153,6 +217,7 @@ public final class Climbing {
             }
         } else if (facingFlatWall(player)) {
             SurvivalMeters.exert(player, (float) (ady * WALL_DRAIN_PER_BLOCK)); // rock burns up or down
+            maybeSlip(player); // even a skilled climber occasionally loses a hold and falls
         }
     }
 
@@ -167,37 +232,52 @@ public final class Climbing {
     /** Can this player cling here right now? Called from the {@code onClimbable} mixin. */
     public static boolean canClimb(Player player) {
         if (player.isSpectator() || player.getAbilities().flying) {
+            setGripping(player, false);
             return false;
         }
         // Too heavily loaded to pull yourself up anything — leaves or rock.
         if (Carry.totalWeight(player) > CLIMB_MAX_WEIGHT) {
+            setGripping(player, false);
             return false;
         }
-        // Both a canopy and a bare wall need stamina — run out and you lose your grip and fall.
+        // Both a canopy and a bare wall need stamina — run out and you lose your grip and fall. (The
+        // client mirrors synced stamina onto the player, so both sides gate on the real value.)
         if (SurvivalMeters.getStamina(player) <= CLIMB_MIN_STAMINA) {
+            setGripping(player, false);
+            return false;
+        }
+        // Just slipped — you're falling for a moment and can't catch anything until you recover.
+        if (slipping(player)) {
             return false;
         }
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // A wall you can actually climb: a clear ≥2-tall face, or the last block of one you're already
-        // topping out. A lone 1-block step is neither, so it's ignored — you just jump it.
+        // A wall you can actually climb: a clear ≥2-tall rough face, or the last block of one you're
+        // topping out. A lone 1-block step is neither, so it's ignored — you just jump it. No face → let
+        // go of any grip.
         if (!hasClimbableWall(player)) {
+            setGripping(player, false);
             return false;
         }
-        // Only while pressed into it, airborne, and not while a jump is still carrying you up. Requiring
-        // you to be off the ground is what stops the jitter: standing at the foot of a wall no longer
-        // auto-grabs and creeps you upward — you must actively hop/leap to catch it, then the climb takes
-        // over once you've peaked. The instantaneous velocity check kills the fast rise (no stale state);
-        // the latch covers the slow approach to the apex.
-        boolean canGrab = !player.onGround()
-            && player.horizontalCollision
+        // Already latched onto this wall? Stay latched. This is the anti-jitter core: we DON'T re-check
+        // horizontalCollision every tick (it blinks off whenever you're not driving into the face), so the
+        // grip no longer flickers. It holds until the wall runs out, stamina fails, or you climb clear.
+        if (isGripping(player)) {
+            gripMap(player).put(player, player.tickCount); // keep the top-out grace fresh while climbing
+            return true;
+        }
+        // Not yet on the wall — engage when you press into it and aren't mid-jump. Standing beside a wall
+        // without pushing into it does nothing (no auto-climb); a live jump keeps its momentum.
+        boolean engage = player.horizontalCollision
             && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
             && !jumpLatched(player);
-        if (canGrab) {
-            gripMap(player).put(player, player.tickCount); // remember the hold so we can finish the last block
+        if (engage) {
+            setGripping(player, true);
+            gripMap(player).put(player, player.tickCount);
+            return true;
         }
-        return canGrab;
+        return false;
     }
 
     /** Our climb speed as a fraction of ladder speed: slow for bare rock, a touch quicker for a tree,
@@ -283,9 +363,11 @@ public final class Climbing {
         return true;
     }
 
-    /** A full solid cube presents a flat face you can grip (stairs/fences/leaves don't). */
+    /** A grippable face: a full solid cube (stairs/fences/leaves don't count) that's also <b>rough</b>
+     *  enough to find holds on — raw rock, tree trunks, earth. You can't free-climb a smooth, finished
+     *  face (planks, bricks, glass, metal, polished stone); for those you need a rope or ladder. */
     private static boolean isFlatWall(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.isCollisionShapeFullBlock(level, pos);
+        return state.isCollisionShapeFullBlock(level, pos) && state.is(CLIMBABLE_ROUGH);
     }
 }

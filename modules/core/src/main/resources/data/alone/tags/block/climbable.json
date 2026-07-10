@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:base_stone_overworld",
+    "#minecraft:logs",
+    "#minecraft:dirt",
+    "minecraft:cobblestone",
+    "minecraft:mossy_cobblestone",
+    "minecraft:gravel",
+    "minecraft:packed_mud",
+    "minecraft:sandstone",
+    "minecraft:red_sandstone",
+    "minecraft:calcite",
+    "minecraft:dripstone_block"
+  ]
+}

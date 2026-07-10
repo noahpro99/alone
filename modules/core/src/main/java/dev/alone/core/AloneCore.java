@@ -57,6 +57,8 @@ public class AloneCore implements ModInitializer {
 
         // Sync channel so the client HUD can see the player's survival state; drink request goes back.
         PayloadTypeRegistry.clientboundPlay().register(SurvivalSyncPayload.TYPE, SurvivalSyncPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
+            dev.alone.core.net.ClimbSlipPayload.TYPE, dev.alone.core.net.ClimbSlipPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(DrinkRequestPayload.TYPE, DrinkRequestPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(FireDrillPayload.TYPE, FireDrillPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(

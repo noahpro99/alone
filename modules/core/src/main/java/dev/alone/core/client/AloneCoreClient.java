@@ -45,6 +45,14 @@ public class AloneCoreClient implements ClientModInitializer {
                     context.player().setAttached(SurvivalMeters.STAMINA, payload.stamina());
                 }
             });
+        // A slip on a rock climb: drop the local grip so the client falls in step with the server that
+        // rolled it, instead of predicting a climb the server has already ended (§5.4).
+        ClientPlayNetworking.registerGlobalReceiver(dev.alone.core.net.ClimbSlipPayload.TYPE,
+            (payload, context) -> {
+                if (context.player() != null) {
+                    dev.alone.core.Climbing.clientSlip(context.player());
+                }
+            });
 
         // Timed crafting (§8.2): tick the same craft-timer client-side so the result slot's "can I take
         // it yet?" gate agrees with the server (no take-then-snap-back on the crafting result).
