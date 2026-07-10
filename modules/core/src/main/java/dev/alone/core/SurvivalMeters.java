@@ -187,6 +187,17 @@ public final class SurvivalMeters {
         });
     }
 
+    /** True when there's a solid block within about a metre below the feet — you're on or just off the
+     *  bottom, close enough to push off it and rise a block even under a load that would otherwise sink you. */
+    private static boolean nearSolidBelow(Player player) {
+        if (player.onGround()) {
+            return true;
+        }
+        Level level = player.level();
+        BlockPos below = player.blockPosition().below();
+        return !level.getBlockState(below).getCollisionShape(level, below).isEmpty();
+    }
+
     public static float getStamina(Player player) {
         return player.getAttachedOrElse(STAMINA, MAX_STAMINA);
     }
@@ -469,8 +480,11 @@ public final class SurvivalMeters {
         // Carried weight → movement penalty (§5.1): heavier load, slower you move.
         Carry.applyWeightMovement(player);
 
-        // Swimming with a heavy load — too heavy and you can't stay afloat; you sink and can't rise (§5.1).
-        if (player.isInWater() && Carry.totalWeight(player) > SINK_WEIGHT) {
+        // Swimming with a heavy load — too heavy and you can't stay afloat in open water; you sink (§5.1).
+        // But you can always kick off the bottom to rise about a block — enough to not drown pinned against
+        // the floor, and to climb out of water in steps — so the sink only clamps you once you're clear of
+        // the bottom. Push up a block, sink back; push up a block, grab the ledge.
+        if (player.isInWater() && Carry.totalWeight(player) > SINK_WEIGHT && !nearSolidBelow(player)) {
             Vec3 motion = player.getDeltaMovement();
             float over = Carry.totalWeight(player) - SINK_WEIGHT;
             double sinkRate = -0.045 - Math.min(0.06, over * 0.004); // a slow, unstoppable sink — not a plummet
