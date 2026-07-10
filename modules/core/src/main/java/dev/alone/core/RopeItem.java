@@ -1,6 +1,13 @@
 package dev.alone.core;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -10,14 +17,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 
 /**
  * A coil of rope (proposal §5.7). Aim at a block face and use it to <b>anchor a rope that hangs down</b>
- * one block; click the rope again (or hold) to <b>add one more length below it</b>, paying it out down
- * the face a block at a time — rope only ever goes down. Climb it up and down for free (crouch to
- * descend). Break any part of a line to roll the whole thing back into your pack (see {@link Ropes}).
+ * one block; click the <b>top</b> of that line to <b>pay out one more length</b>. Rope only ever heads
+ * down — but if the space straight below is blocked (a ledge, an overhang), it <b>routes sideways</b>
+ * into an open neighbour so the line can work its way around the obstruction and keep descending. Climb
+ * it up and down for free (crouch to descend). Break any part of a line to roll the whole thing back
+ * into your pack (see {@link Ropes}).
  */
 public class RopeItem extends Item {
+    /** Safety bound on how big a connected rope line we'll trace. */
+    private static final int MAX_LINE = 512;
+
     public RopeItem(Properties properties) {
         super(properties);
     }
@@ -28,18 +41,22 @@ public class RopeItem extends Item {
         BlockPos clicked = context.getClickedPos();
         BlockState clickedState = level.getBlockState(clicked);
 
-        // You pay rope out from the anchor at the top: only the highest rope of a hanging line accepts
-        // more. Clicking a lower length (say, while climbing) does nothing — walk back up to the top to
-        // feed out more line. On a solid block: anchor a fresh length hanging off the face you clicked.
-        if (clickedState.is(AloneBlocks.ROPE) && level.getBlockState(clicked.above()).is(AloneBlocks.ROPE)) {
-            return InteractionResult.PASS; // not the top of the line — can't add here
+        BlockPos target;
+        if (clickedState.is(AloneBlocks.ROPE)) {
+            // You pay rope out from the anchor at the top: only the highest length of a line accepts more.
+            // Clicking a lower length (say, while climbing) does nothing — go back to the top to feed out.
+            List<BlockPos> line = ropeLine(level, clicked);
+            int topY = line.stream().mapToInt(BlockPos::getY).max().orElse(clicked.getY());
+            if (clicked.getY() != topY) {
+                return InteractionResult.PASS; // not the top of the line
+            }
+            target = payOut(level, lineEnd(level, line));
+        } else {
+            BlockPos hung = clicked.relative(context.getClickedFace());
+            target = level.getBlockState(hung).canBeReplaced() ? hung : null;
         }
-        BlockPos target = clickedState.is(AloneBlocks.ROPE)
-            ? columnBottom(level, clicked).below()
-            : clicked.relative(context.getClickedFace());
-
-        if (!level.getBlockState(target).canBeReplaced()) {
-            return InteractionResult.PASS; // no open air there to run the rope into
+        if (target == null) {
+            return InteractionResult.PASS; // nowhere open to run the rope into
         }
 
         Player player = context.getPlayer();
@@ -47,8 +64,7 @@ public class RopeItem extends Item {
         if (!level.isClientSide()) {
             // If the rope runs into water (a flooded cave, a lake off a dock), keep the water it hangs
             // in rather than carving a dry pocket — waterlogged, just like seagrass or kelp.
-            boolean inWater = level.getFluidState(target).getType()
-                == net.minecraft.world.level.material.Fluids.WATER;
+            boolean inWater = level.getFluidState(target).getType() == Fluids.WATER;
             level.setBlockAndUpdate(target,
                 AloneBlocks.ROPE.defaultBlockState().setValue(RopeBlock.WATERLOGGED, inWater));
             if (player != null && !player.isCreative()) {
@@ -59,12 +75,56 @@ public class RopeItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    /** The lowest rope block of the contiguous vertical line through this one. */
-    private static BlockPos columnBottom(Level level, BlockPos from) {
-        BlockPos pos = from;
-        while (level.getBlockState(pos.below()).is(AloneBlocks.ROPE)) {
-            pos = pos.below();
+    /** Where the next length should go: straight down if that's open, else sideways into an open
+     *  neighbour so the line can route around a ledge. Null if it's boxed in on all sides. The sideways
+     *  pick is deterministic from position so client and server agree on which way it jogs. */
+    private static BlockPos payOut(Level level, BlockPos end) {
+        BlockPos down = end.below();
+        if (level.getBlockState(down).canBeReplaced()) {
+            return down;
         }
-        return pos;
+        List<BlockPos> open = new ArrayList<>();
+        for (Direction d : new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST}) {
+            BlockPos side = end.relative(d);
+            if (level.getBlockState(side).canBeReplaced()) {
+                open.add(side);
+            }
+        }
+        if (open.isEmpty()) {
+            return null;
+        }
+        return open.get(Math.floorMod((int) (end.asLong() >> 2), open.size()));
+    }
+
+    /** The growing end of the line: the deepest length, preferring one that can still descend so the line
+     *  keeps heading down rather than spreading sideways forever. */
+    private static BlockPos lineEnd(Level level, List<BlockPos> line) {
+        return line.stream()
+            .min(Comparator.<BlockPos>comparingInt(BlockPos::getY)
+                .thenComparingInt(p -> level.getBlockState(p.below()).canBeReplaced() ? 0 : 1)
+                .thenComparingInt(BlockPos::getX)
+                .thenComparingInt(BlockPos::getZ))
+            .orElseThrow();
+    }
+
+    /** Every rope block connected to this one (orthogonally, in any direction), bounded for safety. */
+    private static List<BlockPos> ropeLine(Level level, BlockPos start) {
+        List<BlockPos> found = new ArrayList<>();
+        Set<BlockPos> seen = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        BlockPos origin = start.immutable();
+        queue.add(origin);
+        seen.add(origin);
+        while (!queue.isEmpty() && found.size() < MAX_LINE) {
+            BlockPos pos = queue.poll();
+            found.add(pos);
+            for (Direction d : Direction.values()) {
+                BlockPos n = pos.relative(d).immutable();
+                if (seen.add(n) && level.getBlockState(n).is(AloneBlocks.ROPE)) {
+                    queue.add(n);
+                }
+            }
+        }
+        return found;
     }
 }
