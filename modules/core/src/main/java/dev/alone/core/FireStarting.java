@@ -22,19 +22,31 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Friction fire (proposal §3.1) — no easy flint-and-steel. First lay an <b>unlit campfire</b> (crafted
- * from sticks + plant fibre); then sneak and hold right-click on it with a <b>stick</b> to drill it
- * alight. It's slow, drains stamina, and <b>fails in the rain or when you're wet</b>, so keeping the
- * fire dry matters. Each held right-click is one "stroke" (the client mixin sends them); enough strokes
- * on the same unlit campfire catch its built-in fibre tinder and it takes light. (§8.1 fibre → §3.1 fire.)
+ * from sticks + plant fibre); then hold right-click on it to drill it alight. Two tools work:
+ * <ul>
+ *   <li>A bare <b>stick</b> — a <i>hand drill</i>, spun between the palms: the desperate bootstrap. Slow,
+ *       exhausting, and a long gamble (many strokes, low odds).</li>
+ *   <li>A <b>{@link AloneItems#BOW_DRILL bow drill}</b> (two sticks + cordage) — the proper primitive fire
+ *       tool. The bow spins the spindle far faster, so it catches quicker, for less stamina, more reliably.
+ *       It wears with use.</li>
+ * </ul>
+ * Either way it's slow and <b>fails in the rain or when you're wet</b>, so keeping the fire dry matters.
+ * Each held right-click is one "stroke" (the client mixin sends them); enough strokes on the same unlit
+ * campfire catch its built-in fibre tinder and it takes light. (§8.1 fibre → §3.1 fire.)
  */
 public final class FireStarting {
     private FireStarting() {
     }
 
-    private static final int MIN_STROKES = 12;       // work up real heat before it can even catch
-    private static final float CATCH_CHANCE = 0.07f; // then every stroke is a gamble — lighting takes uncertain
-                                                     // time and stamina, so a carried ember (instant) is precious
-    private static final float STAMINA_PER_STROKE = 1.5f;
+    // Hand drill (bare stick): work up real heat, then every stroke is a long gamble — lighting takes
+    // uncertain time and a lot of stamina, so a carried ember (instant) or a bow drill is precious.
+    private static final int HAND_MIN_STROKES = 12;
+    private static final float HAND_CATCH_CHANCE = 0.07f;
+    private static final float HAND_STAMINA = 1.5f;
+    // Bow drill: the bow spins the spindle far faster — it catches sooner, for less effort, more reliably.
+    private static final int BOW_MIN_STROKES = 5;
+    private static final float BOW_CATCH_CHANCE = 0.22f;
+    private static final float BOW_STAMINA = 0.7f;
 
     private record Drill(BlockPos pos, int strokes, int atTick) {
     }
@@ -64,10 +76,14 @@ public final class FireStarting {
 
     private static void stroke(ServerPlayer player) {
         Level level = player.level();
-        if (!player.getMainHandItem().is(Items.STICK)) {
+        boolean bow = player.getMainHandItem().is(AloneItems.BOW_DRILL);
+        if (!bow && !player.getMainHandItem().is(Items.STICK)) {
             ACTIVE.remove(player.getUUID());
             return;
         }
+        int minStrokes = bow ? BOW_MIN_STROKES : HAND_MIN_STROKES;
+        float catchChance = bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE;
+        float staminaPerStroke = bow ? BOW_STAMINA : HAND_STAMINA;
         BlockPos fire = findUnlitCampfire(player, level);
         if (fire == null) {
             ACTIVE.remove(player.getUUID());
@@ -90,17 +106,21 @@ public final class FireStarting {
         boolean continuing = current != null && current.pos.equals(fire) && player.tickCount - current.atTick <= 20;
         int strokes = continuing ? current.strokes + 1 : 1;
 
-        SurvivalMeters.exert(player, STAMINA_PER_STROKE);
+        SurvivalMeters.exert(player, staminaPerStroke);
         serverLevel.sendParticles(ParticleTypes.SMOKE, fire.getX() + 0.5, fire.getY() + 0.5, fire.getZ() + 0.5,
             2, 0.08, 0.02, 0.08, 0.005);
 
-        if (strokes >= MIN_STROKES && player.getRandom().nextFloat() < CATCH_CHANCE) {
+        if (strokes >= minStrokes && player.getRandom().nextFloat() < catchChance) {
             // It catches — a gamble that can take a few strokes or a long slog. The campfire takes light
             // (§3), a full fuel load. (A carried ember lights one instantly; see Embers.)
             serverLevel.setBlockAndUpdate(fire,
                 level.getBlockState(fire).setValue(BlockStateProperties.LIT, Boolean.TRUE));
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.3, fire.getZ() + 0.5,
                 6, 0.15, 0.05, 0.15, 0.01);
+            if (bow) {
+                // The spindle burns down and the cordage frays a little with every fire it makes.
+                player.getMainHandItem().hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            }
             ACTIVE.remove(player.getUUID());
         } else {
             ACTIVE.put(player.getUUID(), new Drill(fire, strokes, player.tickCount));

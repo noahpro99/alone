@@ -22,7 +22,7 @@ public final class SurvivalHud {
     private static final int BAR_W = 80;
     private static final int BAR_H = 4;
 
-    private static final ItemStack ICON_STAMINA = new ItemStack(Items.FEATHER);
+    private static final ItemStack ICON_STAMINA = new ItemStack(Items.GOLDEN_PICKAXE);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
     private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);

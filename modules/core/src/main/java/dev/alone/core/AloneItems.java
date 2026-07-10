@@ -162,6 +162,11 @@ public final class AloneItems {
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",
         key -> new Item(new Item.Properties().sword(FLINT, 2.0F, -2.0F).setId(key)));
+    /** A bow drill (proposal §3.1) — a spindle spun by a corded bow: the proper primitive fire tool.
+     *  Far faster and less exhausting than palming a bare stick. The cordage frays and the spindle burns
+     *  down, so it wears out (durability) and eventually needs re-stringing. */
+    public static final Item BOW_DRILL = register("bow_drill",
+        key -> new Item(new Item.Properties().durability(24).setId(key)));
     // Copper (flint → copper → iron → steel) is vanilla in 26.2 — its tools/armour, recipes, and tool
     // tags are all built in, and it needs no forging (a soft metal), so it fits the pack as-is. Nothing
     // to add here; we just don't remove it the way wood/stone were removed.

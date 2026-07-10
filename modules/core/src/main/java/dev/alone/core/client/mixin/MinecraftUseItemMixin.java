@@ -49,8 +49,9 @@ public class MinecraftUseItemMixin {
             return;
         }
 
-        // Hold right-click with a stick on an unlit campfire → drill it alight (no crouch needed).
-        if (main.is(Items.STICK)
+        // Hold right-click with a stick (hand drill) or a bow drill on an unlit campfire → drill it
+        // alight (no crouch needed). The bow drill is faster/more reliable; both are handled server-side.
+        if ((main.is(Items.STICK) || main.is(AloneItems.BOW_DRILL))
             && FireStarting.findUnlitCampfire(mc.player, mc.level) != null) {
             if (mc.player.tickCount - alone$lastSendTick >= 4) {
                 ClientPlayNetworking.send(FireDrillPayload.INSTANCE);
