@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["#minecraft:small_flowers", "#minecraft:small_flowers", "alone:plant_fiber"],
+  "result": { "id": "alone:herbal_remedy", "count": 1 }
+}

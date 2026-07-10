@@ -116,6 +116,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Whetstone — tool maintenance (§8.5)** — the maintenance half of the tool loop that forging was missing. Craft `alone:whetstone` (2 smooth stone + stick); hold a worn tool/weapon, whetstone in the **off hand**, **sneak + right-click** to **re-hone the edge** — restores ~25% durability, wears the whetstone a little, ~2s cooldown per pass. Armour has no edge (excluded). Repairing an edge is cheap; only a forge **re-temper** changes a blade's *quality*. (`Sharpening`, `AloneItems.WHETSTONE`.)
 
+- [x] **Herbal remedy — medicine for sickness (§1.5)** — the treatment the **foodborne-illness** condition was missing (it used to just run its ~4-min course). Craft `alone:herbal_remedy` (2 flowers + plant fiber); **drink it** (~2s) to knock ~2.5 min off the sickness timer, ease an infection, and clear acute nausea/poison. Doesn't fully cure a deep infection (dress that with cloth). Completes the injury→treatment matrix: bleeding/infection → cloth, sprain → splint, **sickness → herbal remedy**. (`RemedyItem`, `Conditions.relieveSickness/relieveInfection`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

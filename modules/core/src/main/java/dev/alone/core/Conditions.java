@@ -273,6 +273,16 @@ public final class Conditions {
         player.setAttached(SICKNESS, Math.min(current + ticks, MAX_SICKNESS_TICKS));
     }
 
+    /** Ease a foodborne illness (herbal remedy) — knock the sickness timer down. */
+    public static void relieveSickness(Player player, int ticks) {
+        player.setAttached(SICKNESS, Math.max(0, player.getAttachedOrElse(SICKNESS, 0) - ticks));
+    }
+
+    /** Ease a festering wound (herbal remedy) — knock the infection back. */
+    public static void relieveInfection(Player player, int ticks) {
+        player.setAttached(INFECTION, Math.max(0, player.getAttachedOrElse(INFECTION, 0) - ticks));
+    }
+
     public static boolean isSick(Player player) {
         return player.getAttachedOrElse(SICKNESS, 0) > 0;
     }

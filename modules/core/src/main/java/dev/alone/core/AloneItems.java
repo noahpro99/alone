@@ -90,6 +90,11 @@ public final class AloneItems {
     public static final Item WHETSTONE = register("whetstone",
         key -> new Item(new Item.Properties().durability(128).setId(key)));
 
+    /** Herbal remedy (§1.5 medicine) — steeped herbs; drink it to settle a foodborne illness and ease
+     *  a festering wound. The treatment the sickness condition was missing. */
+    public static final Item HERBAL_REMEDY = register("herbal_remedy",
+        key -> new RemedyItem(new Item.Properties().stacksTo(16).setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick
