@@ -38,9 +38,12 @@ public class PlayerDestroySpeedMixin {
     // deliberately quick (granular, and foraging flint from gravel must remain viable). (§5.4)
     private static final float DIRT_FACTOR = 0.002f;    // packed earth WITH a shovel — ~190s (2.5–5h real @72x)
     private static final float CLAY_FACTOR = 0.0016f;   // dense clay subsoil with a shovel — hardest earth (~280s)
-    private static final float LOOSE_FACTOR = 0.12f;    // loose sand/gravel with a shovel — scoops quickly (~3s)
+    // Loose sand/gravel is granular so it's quicker than packed earth, but a whole cubic metre is still
+    // real labour: ~1–1.5h continuous, i.e. ~60–75s a block at 72x. Flint isn't gated behind fully
+    // clearing a gravel block, though — it shakes loose part-way through (see ServerPlayerGameModeMixin).
+    private static final float LOOSE_FACTOR = 0.006f;   // loose sand/gravel with a shovel — ~60–75s a block
     private static final float NO_SHOVEL_DIG = 0.0015f; // packed earth by hand / wrong tool — ~500s, near-hopeless
-    private static final float LOOSE_HAND_DIG = 0.15f;  // loose sand/gravel by hand — still scoopable (~5s)
+    private static final float LOOSE_HAND_DIG = 0.008f; // loose sand/gravel by hand — ~90–110s, scoopable but slow
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
     private static final float MAX_BREAK_DIVISOR = 40f; // caps the worst-case time (~60s)

@@ -1,13 +1,20 @@
 package dev.alone.core.mixin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Server half of saved mining progress (proposal §5.4). When you abandon a dig, we remember how many
@@ -44,6 +52,21 @@ public abstract class ServerPlayerGameModeMixin {
             this.alone$savedTicks = new HashMap<>();
         }
         return this.alone$savedTicks;
+    }
+
+    // You don't excavate a whole cubic metre of gravel to get flint — you disturb it and the flint
+    // nodules shake loose part-way through. So flint pops out at ~a third of the dig (see below), once
+    // per block, tracked here by packed position so you can't re-scrape the same block for more (§1.3).
+    @Unique private static final float FLINT_THRESHOLD = 0.30f; // how far into the dig flint shakes loose
+    @Unique private static final float FLINT_CHANCE = 0.60f;    // odds a disturbance yields a usable nodule
+    @Unique private Set<Long> alone$sifted;
+
+    @Unique
+    private Set<Long> alone$sifted() {
+        if (this.alone$sifted == null) {
+            this.alone$sifted = new HashSet<>();
+        }
+        return this.alone$sifted;
     }
 
     /** Abandoning a dig — remember the ticks of progress accrued so far. */
@@ -78,5 +101,31 @@ public abstract class ServerPlayerGameModeMixin {
                                    int maxY, int sequence) {
         Integer saved = this.alone$savedTicks().remove(pos);
         this.destroyProgressStart = saved != null ? value - saved : value;
+    }
+
+    /**
+     * Flint foraging (proposal §1.3). {@code incrementDestroyProgress} returns how far into the current
+     * dig the block is, every tick. On gravel, once you're a third of the way in, a flint nodule shakes
+     * loose (a chance, not a certainty) — you don't have to clear the whole cubic metre. It fires once
+     * per block (the {@code sifted} set), so you can't re-scrape one gravel block for endless flint.
+     */
+    @Inject(method = "incrementDestroyProgress", at = @At("RETURN"))
+    private void alone$siftFlint(BlockState state, BlockPos pos, int startTick,
+                                 CallbackInfoReturnable<Float> cir) {
+        if (!state.is(Blocks.GRAVEL) || cir.getReturnValueF() < FLINT_THRESHOLD) {
+            return;
+        }
+        long key = pos.asLong();
+        if (this.alone$sifted().add(key) && this.player.getRandom().nextFloat() < FLINT_CHANCE) {
+            Block.popResource(this.level, pos, new ItemStack(Items.FLINT));
+        }
+    }
+
+    /** Once a block is actually removed, forget it was sifted so its spot can be foraged again later. */
+    @Inject(method = "destroyBlock", at = @At("HEAD"))
+    private void alone$forgetSifted(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        if (this.alone$sifted != null) {
+            this.alone$sifted.remove(pos.asLong());
+        }
     }
 }
