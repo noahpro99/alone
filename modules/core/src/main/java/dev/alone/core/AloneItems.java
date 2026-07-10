@@ -85,6 +85,11 @@ public final class AloneItems {
     public static final Item SMITHING_HAMMER = register("smithing_hammer",
         key -> new Item(new Item.Properties().durability(512).setId(key)));
 
+    /** Whetstone (§8.5) — hone a worn edge back up. Hold the tool, whetstone in the off hand, sneak +
+     *  right-click to re-sharpen (restore durability); the stone itself wears with use. */
+    public static final Item WHETSTONE = register("whetstone",
+        key -> new Item(new Item.Properties().durability(128).setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick

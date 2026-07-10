@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:smooth_stone", "minecraft:smooth_stone", "minecraft:stick"],
+  "result": { "id": "alone:whetstone", "count": 1 }
+}
