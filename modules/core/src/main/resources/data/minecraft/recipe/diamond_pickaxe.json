@@ -1,9 +1,10 @@
 {
-  "fabric:load_conditions": [
-    { "condition": "fabric:not", "value": { "condition": "fabric:all_mods_loaded", "values": ["minecraft"] } }
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#alone:uncraftable"
   ],
-  "type": "minecraft:crafting_shaped",
-  "pattern": ["B"],
-  "key": { "B": "minecraft:barrier" },
-  "result": { "id": "minecraft:diamond_pickaxe" }
+  "result": {
+    "id": "minecraft:diamond_pickaxe",
+    "count": 1
+  }
 }
