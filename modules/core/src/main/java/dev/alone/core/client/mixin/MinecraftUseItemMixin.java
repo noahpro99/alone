@@ -6,8 +6,10 @@ import dev.alone.core.FireStarting;
 import dev.alone.core.net.DrinkRequestPayload;
 import dev.alone.core.net.FireDrillPayload;
 import dev.alone.core.net.KnapStrikePayload;
+import dev.alone.core.net.RiveStrokePayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -66,6 +68,19 @@ public class MinecraftUseItemMixin {
         if (mc.player.isShiftKeyDown() && haveFlint && haveRock) {
             if (mc.player.tickCount - alone$lastSendTick >= 5) {
                 ClientPlayNetworking.send(KnapStrikePayload.INSTANCE);
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                alone$lastSendTick = mc.player.tickCount;
+            }
+            ci.cancel();
+            return;
+        }
+
+        // Sneak + hold right-click with a log + flint hatchet (either hand) → rive it into boards. Slow.
+        boolean haveLog = main.is(ItemTags.LOGS) || off.is(ItemTags.LOGS);
+        boolean haveHatchet = main.is(AloneItems.FLINT_HATCHET) || off.is(AloneItems.FLINT_HATCHET);
+        if (mc.player.isShiftKeyDown() && haveLog && haveHatchet) {
+            if (mc.player.tickCount - alone$lastSendTick >= 6) {
+                ClientPlayNetworking.send(RiveStrokePayload.INSTANCE);
                 mc.player.swing(InteractionHand.MAIN_HAND);
                 alone$lastSendTick = mc.player.tickCount;
             }
