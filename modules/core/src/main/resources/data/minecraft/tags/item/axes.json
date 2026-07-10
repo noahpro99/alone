@@ -1,1 +1,1 @@
-{"values": ["alone:flint_hatchet"]}
+{ "replace": false, "values": ["alone:flint_hatchet", "alone:copper_axe", "alone:steel_axe"] }

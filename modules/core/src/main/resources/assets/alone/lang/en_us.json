@@ -35,5 +35,10 @@
   "item.alone.flint_shard": "Flint Shard",
   "block.alone.loose_rock": "Loose Rock",
   "item.alone.clay_pot": "Clay Pot",
-  "item.alone.unfired_clay_pot": "Unfired Clay Pot"
+  "item.alone.unfired_clay_pot": "Unfired Clay Pot",
+  "item.alone.copper_pickaxe": "Copper Pickaxe",
+  "item.alone.copper_axe": "Copper Axe",
+  "item.alone.copper_sword": "Copper Sword",
+  "item.alone.copper_shovel": "Copper Shovel",
+  "item.alone.copper_hoe": "Copper Hoe"
 }

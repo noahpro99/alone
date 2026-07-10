@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shaped", "pattern": ["II"," S"," S"], "key": {"I":"minecraft:copper_ingot","S":"minecraft:stick"}, "result": {"id":"alone:copper_hoe","count":1} }

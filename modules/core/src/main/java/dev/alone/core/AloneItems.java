@@ -143,6 +143,25 @@ public final class AloneItems {
     public static final Item FLINT_KNIFE = register("flint_knife",
         key -> new Item(new Item.Properties().sword(FLINT, 2.0F, -2.0F).setId(key)));
 
+    // Copper tier (§8.5) — the first metal, and a soft one: a real step up from flint (far more durable,
+    // quicker) but well short of iron, and worked straight from the ingot (no forge — copper is soft).
+    // Smelt copper ore, then craft. The progression is flint → copper → iron → steel.
+    private static final TagKey<Item> COPPER_INGOTS =
+        TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", "copper_ingots"));
+    private static final ToolMaterial COPPER =
+        new ToolMaterial(BlockTags.INCORRECT_FOR_STONE_TOOL, 160, 4.0F, 1.5F, 8, COPPER_INGOTS);
+
+    public static final Item COPPER_PICKAXE = register("copper_pickaxe",
+        key -> new Item(new Item.Properties().pickaxe(COPPER, 1.0F, -2.8F).setId(key)));
+    public static final Item COPPER_AXE = register("copper_axe",
+        key -> new Item(new Item.Properties().axe(COPPER, 6.0F, -3.15F).setId(key)));
+    public static final Item COPPER_SWORD = register("copper_sword",
+        key -> new Item(new Item.Properties().sword(COPPER, 3.0F, -2.4F).setId(key)));
+    public static final Item COPPER_SHOVEL = register("copper_shovel",
+        key -> new Item(new Item.Properties().shovel(COPPER, 1.5F, -3.0F).setId(key)));
+    public static final Item COPPER_HOE = register("copper_hoe",
+        key -> new Item(new Item.Properties().hoe(COPPER, -2.0F, -1.0F).setId(key)));
+
     // Steel tier (§8.5) — the new top of the tree now that diamond gear is abolished. Made by blasting
     // iron into steel (recipe). Steel armour reuses the iron equipment look for now (placeholder art).
     private static final TagKey<Item> STEEL_INGOTS =
