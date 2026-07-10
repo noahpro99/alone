@@ -5,8 +5,12 @@ import java.util.WeakHashMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,8 +76,26 @@ public final class Climbing {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 updateJumpLatch(player);
                 climbDrainTick(player);
+                applyLeafSlowdown(player);
             }
         });
+    }
+
+    private static final Identifier LEAF_SLOW_MODIFIER = Identifier.fromNamespaceAndPath("alone", "leaf_slow");
+    private static final double LEAF_SPEED_FACTOR = -0.5; // pushing through a canopy is half-speed, tugging work
+
+    /** Wading through dense foliage is slow going — apply a speed penalty while you're inside leaves. */
+    private static void applyLeafSlowdown(ServerPlayer player) {
+        AttributeInstance speed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed == null) {
+            return;
+        }
+        if (inLeaves(player) && !player.getAbilities().flying && !player.isSpectator()) {
+            speed.addOrUpdateTransientModifier(new AttributeModifier(
+                LEAF_SLOW_MODIFIER, LEAF_SPEED_FACTOR, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        } else {
+            speed.removeModifier(LEAF_SLOW_MODIFIER);
+        }
     }
 
     /**
