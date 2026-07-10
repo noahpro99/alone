@@ -7,19 +7,26 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
- * Campfire fuel (proposal §3). Every campfire burns fuel and goes out when spent — feed it sticks,
- * logs, or planks (right-click) to keep it going, and its warmth dwindles as the fuel runs down.
- * Fuel is stored on the campfire's block entity; an unfuelled/new campfire starts with a full load.
+ * Campfire fuel + cooking-pot boiling (proposal §2/§3). A campfire burns fuel and goes out when spent —
+ * feed it sticks, logs, planks, fibre, or leaves (right-click) to keep it going; warmth and smoke dwindle
+ * as the fuel runs down (see {@code CampfireCookTickMixin}). And you <b>set a fire-safe pot on it to
+ * boil</b>: right-click a lit campfire with a filled clay/iron pot to stand it in the flames, wait while
+ * it comes to a boil, then right-click empty-handed to lift it back off — clean and safe (§2). Salt water
+ * won't boil clean (that needs a still). Fuel and the boiling pot both live on the campfire's block entity.
  */
 public final class Campfires {
     private Campfires() {
@@ -29,53 +36,119 @@ public final class Campfires {
     public static final int FUEL_PER_STICK = 600;  // ~30s
     public static final int FUEL_PER_LOG = 2400;   // ~2 min
     public static final int MAX_FUEL = 24000;      // ~20 min cap
+    public static final int BOIL_TIME = 300;       // ~15s on the fire to bring a pot to a rolling boil
 
     public static final AttachmentType<Integer> FUEL =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "campfire_fuel"), Codec.INT);
+    /** The pot currently standing in the fire, boiling. */
+    public static final AttachmentType<ItemStack> BOIL_ITEM =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "boil_item"), ItemStack.CODEC);
+    /** Ticks of boiling left before it's clean; only counts down while the fire is lit. */
+    public static final AttachmentType<Integer> BOIL_LEFT =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "boil_left"), Codec.INT);
 
     public static void init() {
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
             BlockPos pos = hit.getBlockPos();
             BlockState state = level.getBlockState(pos);
-            if (!state.is(Blocks.CAMPFIRE) || !state.getValue(BlockStateProperties.LIT)) {
+            if (!state.is(Blocks.CAMPFIRE)) {
                 return InteractionResult.PASS;
             }
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be == null) {
+                return InteractionResult.PASS;
+            }
+            boolean lit = state.getValue(BlockStateProperties.LIT);
             ItemStack held = player.getItemInHand(hand);
 
-            // Boil water: hold a filled waterskin to a lit campfire → clean water + a sterile vessel (§2).
-            if (held.getItem() instanceof WaterskinItem && held.getOrDefault(AloneItems.WATER_CHARGES, 0) > 0) {
-                if (!level.isClientSide()) {
-                    boolean wasSalt = held.getOrDefault(AloneItems.WATER_QUALITY, WaterskinItem.RAW) == WaterskinItem.SALT;
-                    held.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
-                    held.set(AloneItems.VESSEL_DIRTY, false);
-                    if (wasSalt) {
-                        // desalination leaves the salt behind — a useful byproduct for preserving food
-                        net.minecraft.world.level.block.Block.popResource(level, pos, new ItemStack(AloneItems.SALT));
-                        player.sendSystemMessage(Component.literal("The seawater boils down to fresh water — and a little salt."));
-                    } else {
-                        player.sendSystemMessage(Component.literal("The water boils clean."));
-                    }
+            // Lift a pot back off the fire (plain empty hand — sneak+empty is the ember scoop, see Embers).
+            if (held.isEmpty() && !player.isShiftKeyDown() && be.hasAttached(BOIL_ITEM)) {
+                if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+                    retrievePot(sp, level, pos, be);
                 }
                 player.swing(hand);
                 return InteractionResult.SUCCESS;
             }
 
-            int add = fuelValue(held);
-            if (add <= 0) {
-                return InteractionResult.PASS; // let vanilla handle food (cooking), etc.
+            // Stand a filled fire-safe pot in the flames to boil (only on a lit fire).
+            if (lit && held.getItem() instanceof WaterskinItem vessel
+                && held.getOrDefault(AloneItems.WATER_CHARGES, 0) > 0) {
+                if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+                    placePot(sp, level, pos, be, vessel, held);
+                }
+                player.swing(hand);
+                return InteractionResult.SUCCESS;
             }
-            if (!level.isClientSide()) {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be != null) {
+
+            // Feed the fire (only a lit one).
+            if (lit) {
+                int add = fuelValue(held);
+                if (add <= 0) {
+                    return InteractionResult.PASS; // let vanilla handle food/pottery cooking, etc.
+                }
+                if (!level.isClientSide()) {
                     setFuel(be, Math.min(MAX_FUEL, getFuel(be) + add));
+                    if (!player.isCreative()) {
+                        held.shrink(1);
+                    }
                 }
-                if (!player.isCreative()) {
-                    held.shrink(1);
-                }
+                player.swing(hand);
+                return InteractionResult.SUCCESS;
             }
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
+            return InteractionResult.PASS;
         });
+    }
+
+    private static void placePot(ServerPlayer player, Level level, BlockPos pos, BlockEntity be,
+                                 WaterskinItem vessel, ItemStack held) {
+        if (be.hasAttached(BOIL_ITEM)) {
+            player.sendSystemMessage(Component.literal("There's already a pot on the fire."), true);
+            return;
+        }
+        int quality = held.getOrDefault(AloneItems.WATER_QUALITY, WaterskinItem.RAW);
+        if (quality == WaterskinItem.CLEAN) {
+            return; // already safe
+        }
+        if (!vessel.isFireSafe()) {
+            player.sendSystemMessage(Component.literal(
+                "A hide waterskin can't go over the flame — boil in a pot, or fill from clean rain."), true);
+            return;
+        }
+        if (quality == WaterskinItem.SALT) {
+            player.sendSystemMessage(Component.literal(
+                "Boiling won't take the salt out — you'd need to distil it. Find fresh water."), true);
+            return;
+        }
+        ItemStack pot = held.copy();
+        pot.setCount(1);
+        be.setAttached(BOIL_ITEM, pot);
+        be.setAttached(BOIL_LEFT, BOIL_TIME);
+        be.setChanged();
+        held.shrink(1); // it's standing in the fire now
+        level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.6f, 1.2f);
+        player.sendSystemMessage(Component.literal("You stand the pot in the fire to boil."), true);
+    }
+
+    private static void retrievePot(ServerPlayer player, Level level, BlockPos pos, BlockEntity be) {
+        ItemStack pot = be.getAttached(BOIL_ITEM);
+        int left = be.getAttachedOrElse(BOIL_LEFT, BOIL_TIME);
+        be.removeAttached(BOIL_ITEM);
+        be.removeAttached(BOIL_LEFT);
+        be.setChanged();
+        if (pot == null) {
+            return;
+        }
+        if (left <= 0) {
+            pot.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
+            pot.set(AloneItems.VESSEL_DIRTY, false);
+            level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.7f, 1.3f);
+            player.sendSystemMessage(Component.literal("The water has boiled clean and safe."), true);
+        } else {
+            player.sendSystemMessage(Component.literal("It hasn't come to a boil yet — leave it longer."), true);
+        }
+        if (!player.getInventory().add(pot)) {
+            player.drop(pot, false);
+        }
     }
 
     public static final int FUEL_PER_FIBER = 150; // dry tinder flares fast — a few seconds

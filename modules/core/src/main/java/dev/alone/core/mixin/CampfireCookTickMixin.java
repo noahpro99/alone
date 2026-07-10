@@ -29,12 +29,28 @@ public class CampfireCookTickMixin {
                                        CampfireBlockEntity entity, RecipeManager.CachedCheck cache, CallbackInfo ci) {
         int fuel = Campfires.getFuel(entity);
         if (fuel <= 0) {
-            // Burnt out — the wood is spent. Break the campfire (no campfire drop) and leave charcoal.
+            // Burnt out — the wood is spent. Drop any pot that was boiling on it, break the campfire (no
+            // campfire drop), and leave charcoal.
+            ItemStack boilingPot = entity.getAttached(Campfires.BOIL_ITEM);
+            if (boilingPot != null) {
+                Block.popResource(level, pos, boilingPot);
+            }
             level.destroyBlock(pos, false);
             Block.popResource(level, pos, new ItemStack(Items.CHARCOAL));
             return;
         }
         Campfires.setFuel(entity, fuel - 1);
+
+        // A pot standing in the fire comes to a boil over time (only while lit); steam wisps up as it works.
+        int boilLeft = entity.getAttachedOrElse(Campfires.BOIL_LEFT, -1);
+        if (boilLeft > 0) {
+            entity.setAttached(Campfires.BOIL_LEFT, boilLeft - 1);
+            entity.setChanged();
+            if (level.getGameTime() % 5L == 0L) {
+                level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5,
+                    2, 0.1, 0.02, 0.1, 0.01);
+            }
+        }
 
         // The fire's smoke reads its life: a well-fed blaze billows, a dying one barely wisps. Scaled by
         // how much fuel is banked (server-sent, so every nearby player sees the same living fire).
