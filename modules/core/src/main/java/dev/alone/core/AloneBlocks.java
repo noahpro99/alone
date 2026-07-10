@@ -78,11 +78,27 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A kiln (§3.2) — a brick heat structure that fires unfired pottery/clay into hardened ware over a
+     *  couple of fuel-hungry minutes. Load ware + fuel by hand; take the finished piece out (see KilnBlock). */
+    public static final Block KILN = register("kiln",
+        key -> new KilnBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.TERRACOTTA_RED)
+            .sound(SoundType.STONE)
+            .strength(2.0F)
+            .requiresCorrectToolForDrops()
+            .setId(key)));
+
     /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
+    /** The kiln's firing state (loaded ware, fuel, progress). Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
 
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
+        KILN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "kiln"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                KilnBlockEntity::new, java.util.Set.of(KILN)));
         BACKPACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("alone", "backpack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(

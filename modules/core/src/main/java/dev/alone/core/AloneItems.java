@@ -75,6 +75,10 @@ public final class AloneItems {
     public static final Item CLAY_POT = register("clay_pot",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 4, true));
 
+    /** The kiln as a placeable item (§3.2) — lay it down and fire your pottery in it. */
+    public static final Item KILN = register("kiln",
+        key -> new net.minecraft.world.item.BlockItem(AloneBlocks.KILN, new Item.Properties().setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

@@ -154,7 +154,7 @@ public final class Campfires {
     public static final int FUEL_PER_FIBER = 150; // dry tinder flares fast — a few seconds
     public static final int FUEL_PER_LEAF = 100;
 
-    private static int fuelValue(ItemStack stack) {
+    public static int fuelValue(ItemStack stack) {
         if (stack.is(Items.STICK)) {
             return FUEL_PER_STICK;
         }

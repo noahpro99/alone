@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shaped", "pattern": ["BBB","B B","BBB"], "key": { "B": "minecraft:brick" }, "result": { "id": "alone:kiln", "count": 1 } }

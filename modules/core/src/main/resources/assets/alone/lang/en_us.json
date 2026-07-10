@@ -35,5 +35,7 @@
   "item.alone.flint_shard": "Flint Shard",
   "block.alone.loose_rock": "Loose Rock",
   "item.alone.clay_pot": "Clay Pot",
-  "item.alone.unfired_clay_pot": "Unfired Clay Pot"
+  "item.alone.unfired_clay_pot": "Unfired Clay Pot",
+  "block.alone.kiln": "Kiln",
+  "item.alone.kiln": "Kiln"
 }
