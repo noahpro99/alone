@@ -98,8 +98,19 @@ public final class AloneBlocks {
             .requiresCorrectToolForDrops()
             .setId(key)));
 
+    /** A clay pot set down in the open to catch rain (§2). Fills clean while it rains; place empty. */
+    public static final Block CLAY_POT = register("clay_pot",
+        key -> new ClayPotBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.TERRACOTTA_BROWN)
+            .sound(SoundType.DECORATED_POT)
+            .strength(0.4F)
+            .noOcclusion()
+            .setId(key)));
+
     /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
+    /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The kiln's firing state (loaded ware, fuel, progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
     /** The bloomery's smelting state (loaded ore, fuel, progress). Assigned in {@link #init()}. */
@@ -119,6 +130,10 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "backpack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 BackpackBlockEntity::new, java.util.Set.of(BACKPACK_BLOCK)));
+        CLAY_POT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "clay_pot"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                ClayPotBlockEntity::new, java.util.Set.of(CLAY_POT)));
 
         // Rope is dry plant fibre — it catches readily and burns up fast, so fire runs up a hung line.
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);
