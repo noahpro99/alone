@@ -7,7 +7,9 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -73,9 +75,14 @@ public final class SurvivalMeters {
     private static final float SWIM_FREE_WEIGHT = 8f;   // load past this makes staying afloat real work
     private static final float SWIM_WEIGHT_DRAIN = 0.012f; // extra stamina/tick per kg over, while in water
 
-    /** Realistic block reach — shorter than vanilla's 4.5 (also used for the drink raycast). */
-    public static final double BLOCK_REACH = 2.75;
+    /** Realistic block reach — shorter than vanilla's 4.5, but long enough to place a block beneath your
+     *  feet at the top of a jump (~eye 1.6 + jump 1.25), so pillar-jumping works. Also the drink raycast. */
+    public static final double BLOCK_REACH = 3.0;
     private static final double ENTITY_REACH = 2.5; // shorter reach is realism; combat worked once Weakness was fixed
+
+    /** Game time of the last "too exhausted to hit" message, so it doesn't spam on every swing. */
+    public static final AttachmentType<Long> LAST_EXHAUSTION_MSG =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "last_exhaustion_msg"), Codec.LONG);
 
     public static final AttachmentType<Float> STAMINA =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "stamina"), Codec.FLOAT);
@@ -142,6 +149,19 @@ public final class SurvivalMeters {
             Conditions.addSprain(newPlayer, 600); // you didn't walk home unscathed
             newPlayer.sendSystemMessage(Component.literal(
                 "You wake at your homestead, days later — battered, hungry, and weak."));
+        });
+
+        // Exhaustion makes your hits feeble (Weakness at 0 stamina). When a spent player swings at a
+        // mob, tell them why it did nothing — otherwise "hitting cows doesn't work" reads as a bug.
+        AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
+            if (!level.isClientSide() && !player.isCreative() && getStamina(player) <= 0f) {
+                long now = level.getGameTime();
+                if (now - player.getAttachedOrElse(LAST_EXHAUSTION_MSG, -100L) >= 30L) {
+                    player.setAttached(LAST_EXHAUSTION_MSG, now);
+                    player.sendSystemMessage(Component.literal("You're too exhausted to land a solid blow — rest first."));
+                }
+            }
+            return InteractionResult.PASS;
         });
 
         // A night's sleep restores you (§1.4) — but only as well as you were comfortable (§5.5). Warm

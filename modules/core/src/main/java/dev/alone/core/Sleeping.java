@@ -43,6 +43,12 @@ public final class Sleeping {
             }
             var ground = level.getBlockState(hit.getBlockPos());
             if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND)) {
+                // Sneaking on a hard floor clearly means "I want to sleep here" — so say why you can't,
+                // instead of a silent no-op.
+                if (player.isShiftKeyDown() && ground.isFaceSturdy(level, hit.getBlockPos(), Direction.UP)) {
+                    say(player, level, "You can't bed down on this — you need soft ground (dirt, grass, sand) or a bedroll.");
+                    return InteractionResult.SUCCESS;
+                }
                 return InteractionResult.PASS;
             }
             return tryRest(player, level, FATIGUE_SHED, STAMINA_RESTORE, "You rest fitfully on the cold ground.")
