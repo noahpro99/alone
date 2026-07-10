@@ -42,8 +42,9 @@ public final class Climbing {
     private static final float CLIMB_MAX_WEIGHT = 25f;      // more than ~one block's mass and you can't haul up at all
     /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate bare-rock climbing. */
     public static final double WALL_CLIMB_SPEED = 0.3;
-    /** Steady upward pace while cresting a wall's lip, so the climb lifts you up and over the edge. */
-    public static final double TOP_OUT_LIFT = 0.16;
+    /** Upward pace while cresting a wall's lip — the same slow, steady climb as the rest of the face, so
+     *  finishing a climb doesn't lurch; it just carries you over the edge at climbing speed. */
+    public static final double TOP_OUT_LIFT = 0.07;
     /** Tree/canopy pace — slow, but a touch quicker than bare rock since branches give you holds. */
     public static final double LEAF_CLIMB_SPEED = 0.4;
 

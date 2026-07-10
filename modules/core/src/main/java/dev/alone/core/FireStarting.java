@@ -62,7 +62,7 @@ public final class FireStarting {
 
     private static void stroke(ServerPlayer player) {
         Level level = player.level();
-        if (!player.getMainHandItem().is(Items.STICK) || !player.isShiftKeyDown()) {
+        if (!player.getMainHandItem().is(Items.STICK)) {
             ACTIVE.remove(player.getUUID());
             return;
         }

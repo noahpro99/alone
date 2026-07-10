@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.EntityBlock;
 
 /**
@@ -120,6 +121,9 @@ public final class CraftingTime {
         if (result.is(ItemTags.SWORDS) || result.is(ItemTags.AXES) || result.is(ItemTags.PICKAXES)
             || result.is(ItemTags.SHOVELS) || result.is(ItemTags.HOES) || result.isDamageableItem()) {
             return TOOL;
+        }
+        if (result.is(Items.CAMPFIRE) || result.is(Items.SOUL_CAMPFIRE)) {
+            return SIMPLE; // just kindling laid in one spot — quick, not workshop joinery (despite its BE)
         }
         if (result.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof EntityBlock) {
             return STATION; // chests, furnaces, barrels — anything with a block entity is involved work
