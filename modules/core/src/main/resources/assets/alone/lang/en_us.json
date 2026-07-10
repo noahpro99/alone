@@ -37,5 +37,10 @@
   "item.alone.clay_pot": "Clay Pot",
   "item.alone.unfired_clay_pot": "Unfired Clay Pot",
   "block.alone.kiln": "Kiln",
-  "item.alone.kiln": "Kiln"
+  "item.alone.kiln": "Kiln",
+  "item.alone.grog": "Grog",
+  "item.alone.refractory_clay": "Refractory Clay",
+  "item.alone.iron_bloom": "Iron Bloom",
+  "item.alone.bloomery": "Bloomery",
+  "block.alone.bloomery": "Bloomery"
 }

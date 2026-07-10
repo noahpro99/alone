@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shapeless", "ingredients": ["minecraft:brick"], "result": { "id": "alone:grog", "count": 1 } }

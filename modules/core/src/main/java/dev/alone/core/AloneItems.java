@@ -79,6 +79,22 @@ public final class AloneItems {
     public static final Item KILN = register("kiln",
         key -> new net.minecraft.world.item.BlockItem(AloneBlocks.KILN, new Item.Properties().setId(key)));
 
+    /** Grog (§3.2) — crushed, previously-fired clay/brick. Mixed into raw clay as temper so it survives
+     *  the heat of a smelt (raw clay alone shrinks and cracks). Crush a brick to get it. */
+    public static final Item GROG = register("grog",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** Refractory clay (§3.2) — raw clay tempered with sand or grog so it won't crack when fired hot.
+     *  The heat-resistant stuff a {@link AloneBlocks#BLOOMERY bloomery} is built from. */
+    public static final Item REFRACTORY_CLAY = register("refractory_clay",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** A bloom of raw iron (§8.2) — the spongy, slag-riddled lump a bloomery yields; hammer it to
+     *  consolidate it into a usable iron ingot. */
+    public static final Item IRON_BLOOM = register("iron_bloom",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** The bloomery as a placeable item (§3.2/§8.2) — the primitive iron furnace. */
+    public static final Item BLOOMERY = register("bloomery",
+        key -> new net.minecraft.world.item.BlockItem(AloneBlocks.BLOOMERY, new Item.Properties().setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

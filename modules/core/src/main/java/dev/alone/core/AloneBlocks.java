@@ -88,10 +88,22 @@ public final class AloneBlocks {
             .requiresCorrectToolForDrops()
             .setId(key)));
 
+    /** A bloomery (§3.2/§8.2) — the primitive iron furnace, built of heat-resistant refractory clay.
+     *  Load iron + charcoal and it smelts a bloom of iron over a long, fuel-hungry burn (see BloomeryBlock). */
+    public static final Block BLOOMERY = register("bloomery",
+        key -> new BloomeryBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_GRAY)
+            .sound(SoundType.STONE)
+            .strength(2.5F)
+            .requiresCorrectToolForDrops()
+            .setId(key)));
+
     /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
     /** The kiln's firing state (loaded ware, fuel, progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
+    /** The bloomery's smelting state (loaded ore, fuel, progress). Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<BloomeryBlockEntity> BLOOMERY_BLOCK_ENTITY;
 
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
@@ -99,6 +111,10 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "kiln"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 KilnBlockEntity::new, java.util.Set.of(KILN)));
+        BLOOMERY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "bloomery"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                BloomeryBlockEntity::new, java.util.Set.of(BLOOMERY)));
         BACKPACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("alone", "backpack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(

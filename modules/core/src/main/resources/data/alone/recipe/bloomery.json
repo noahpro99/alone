@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shaped", "pattern": ["RRR","R R","RRR"], "key": { "R": "alone:refractory_clay" }, "result": { "id": "alone:bloomery", "count": 1 } }
