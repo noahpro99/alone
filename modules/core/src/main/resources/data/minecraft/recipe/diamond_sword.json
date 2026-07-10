@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "#alone:uncraftable"
+    "minecraft:barrier"
   ],
   "result": {
     "id": "minecraft:diamond_sword",
