@@ -3,7 +3,6 @@ package dev.alone.core;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,21 +65,21 @@ public final class Embers {
                 return InteractionResult.SUCCESS;
             }
 
-            // Coax a carried ember into a fresh campfire on the top of solid ground.
-            if (held.is(AloneItems.EMBER) && hit.getDirection() == Direction.UP) {
-                BlockPos fire = pos.above();
-                if (state.isFaceSturdy(level, pos, Direction.UP) && level.getBlockState(fire).isAir()) {
-                    if (!level.isClientSide()) {
-                        level.setBlockAndUpdate(fire,
-                            Blocks.CAMPFIRE.defaultBlockState().setValue(BlockStateProperties.LIT, true));
-                        held.shrink(1); // the ember becomes the new fire
-                        if (player instanceof ServerPlayer sp) {
-                            sp.sendSystemMessage(Component.literal("You coax the ember into a fresh fire."), true);
-                        }
+            // Nestle a carried ember into an UNLIT campfire — it catches at once. The instant, sure-thing
+            // alternative to gambling with the friction drill, which is exactly why carrying one is worth it.
+            if (held.is(AloneItems.EMBER)
+                && (state.is(Blocks.CAMPFIRE) || state.is(Blocks.SOUL_CAMPFIRE))
+                && !state.getValue(BlockStateProperties.LIT)) {
+                if (!level.isClientSide()) {
+                    level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, true));
+                    held.shrink(1); // the ember becomes the fire
+                    level.playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.7f, 1.0f);
+                    if (player instanceof ServerPlayer sp) {
+                        sp.sendSystemMessage(Component.literal("You nestle the ember in — the campfire catches at once."), true);
                     }
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
                 }
+                player.swing(hand);
+                return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
         });

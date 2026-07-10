@@ -31,7 +31,9 @@ public final class FireStarting {
     private FireStarting() {
     }
 
-    private static final int STROKES_TO_LIGHT = 15; // ~3 seconds of drilling
+    private static final int MIN_STROKES = 12;       // work up real heat before it can even catch
+    private static final float CATCH_CHANCE = 0.07f; // then every stroke is a gamble — lighting takes uncertain
+                                                     // time and stamina, so a carried ember (instant) is precious
     private static final float STAMINA_PER_STROKE = 1.5f;
 
     private record Drill(BlockPos pos, int strokes, int atTick) {
@@ -92,8 +94,9 @@ public final class FireStarting {
         serverLevel.sendParticles(ParticleTypes.SMOKE, fire.getX() + 0.5, fire.getY() + 0.5, fire.getZ() + 0.5,
             2, 0.08, 0.02, 0.08, 0.005);
 
-        if (strokes >= STROKES_TO_LIGHT) {
-            // The ember catches the fibre laid in the campfire — it takes light (§3), a full fuel load.
+        if (strokes >= MIN_STROKES && player.getRandom().nextFloat() < CATCH_CHANCE) {
+            // It catches — a gamble that can take a few strokes or a long slog. The campfire takes light
+            // (§3), a full fuel load. (A carried ember lights one instantly; see Embers.)
             serverLevel.setBlockAndUpdate(fire,
                 level.getBlockState(fire).setValue(BlockStateProperties.LIT, Boolean.TRUE));
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.3, fire.getZ() + 0.5,

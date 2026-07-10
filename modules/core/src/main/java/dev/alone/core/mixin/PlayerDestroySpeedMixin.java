@@ -38,10 +38,15 @@ public class PlayerDestroySpeedMixin {
         Player self = (Player) (Object) this;
 
         if (state.is(BlockTags.LOGS)) {
-            switch (AloneCore.classifyForLog(self.getMainHandItem())) {
-                case AXE -> cir.setReturnValue(cir.getReturnValueF() * LOG_AXE_FACTOR);
-                case CRUDE -> cir.setReturnValue(LOG_CRUDE_SPEED);
-                case NONE -> cir.setReturnValue(0.0f);
+            // if/else, not switch: a switch on an enum makes the compiler emit a synthetic inner class
+            // ($SwitchMap), which mixin then has to relocate into Player and can choke on — avoid it.
+            AloneCore.LogTool tool = AloneCore.classifyForLog(self.getMainHandItem());
+            if (tool == AloneCore.LogTool.AXE) {
+                cir.setReturnValue(cir.getReturnValueF() * LOG_AXE_FACTOR);
+            } else if (tool == AloneCore.LogTool.CRUDE) {
+                cir.setReturnValue(LOG_CRUDE_SPEED);
+            } else {
+                cir.setReturnValue(0.0f);
             }
             return;
         }
