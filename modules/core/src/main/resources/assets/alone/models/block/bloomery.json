@@ -1,1 +1,12 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "minecraft:block/deepslate_bricks" } }
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "alone:block/bloomery_side",
+    "down": "alone:block/bloomery_side",
+    "up": "alone:block/bloomery_top",
+    "north": "alone:block/bloomery_side",
+    "south": "alone:block/bloomery_side",
+    "east": "alone:block/bloomery_side",
+    "west": "alone:block/bloomery_side"
+  }
+}

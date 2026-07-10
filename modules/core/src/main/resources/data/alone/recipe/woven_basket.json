@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SFS", "F F", "SFS"],
+  "key": {
+    "S": "minecraft:stick",
+    "F": "alone:plant_fiber"
+  },
+  "result": {"id": "alone:woven_basket", "count": 1}
+}

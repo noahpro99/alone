@@ -1,8 +1,8 @@
 {
   "parent": "block/block",
   "textures": {
-    "pot": "minecraft:block/terracotta",
-    "particle": "minecraft:block/terracotta"
+    "pot": "alone:block/clay_pot",
+    "particle": "alone:block/clay_pot"
   },
   "elements": [
     {

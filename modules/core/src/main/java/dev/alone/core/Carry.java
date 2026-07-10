@@ -278,6 +278,7 @@ public final class Carry {
         if (item == AloneItems.CLAY_POT) return 1.50f;   // fired clay — lighter than iron, but fragile
         if (item == AloneItems.UNFIRED_CLAY_POT) return 1.60f; // wet clay, a touch heavier
         if (item == AloneItems.BACKPACK) return 1.50f;
+        if (item == AloneItems.WOVEN_BASKET) return 0.50f; // woven plant fibre — light but bulky
         if (item == AloneItems.SALT) return 0.05f;
         if (item == AloneItems.PLANT_FIBER) return 0.01f;
         if (item == AloneItems.SPLINT) return 0.40f;
@@ -415,10 +416,25 @@ public final class Carry {
     /** How much a backpack can hold, in m³ — its own separate volume budget (§6). */
     public static final float BACKPACK_VOLUME_LIMIT = 1.5f;
 
+    /** A woven pack basket slung on the back raises how much you can carry — the pre-leather carry aid (§6). */
+    public static final float BASKET_VOLUME_BONUS = 0.5f;
+
     /** Your body's volume cap. A backpack no longer raises this — it's separate storage with its own
-     *  cap ({@link #BACKPACK_VOLUME_LIMIT}); only its weight lands on you. */
+     *  cap ({@link #BACKPACK_VOLUME_LIMIT}); only its weight lands on you. A woven basket, though, is worn
+     *  and simply lets you carry more (no leather, no animals needed). */
     public static float volumeLimit(Player player) {
-        return PLAYER_VOLUME_LIMIT;
+        return PLAYER_VOLUME_LIMIT + (hasBasket(player) ? BASKET_VOLUME_BONUS : 0f);
+    }
+
+    /** True if the player is carrying a woven basket (one is enough — extras don't stack the bonus). */
+    private static boolean hasBasket(Player player) {
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            if (inventory.getItem(i).is(AloneItems.WOVEN_BASKET)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Volume cap for a container, or {@link Float#MAX_VALUE} for uncapped (functional) containers. */

@@ -57,6 +57,11 @@ public final class AloneItems {
         key -> new BackpackItem(new Item.Properties().stacksTo(1).component(
             net.minecraft.core.component.DataComponents.CONTAINER,
             net.minecraft.world.item.component.ItemContainerContents.EMPTY).setId(key)));
+    /** A woven pack basket (proposal §6) — the day-one carry aid, made of plant fibre and withies (no
+     *  leather, no animals). Slung on the back, it raises how much you can carry ({@link Carry#volumeLimit});
+     *  smaller than the leather backpack, which is a proper openable pack. */
+    public static final Item WOVEN_BASKET = register("woven_basket",
+        key -> new Item(new Item.Properties().stacksTo(1).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));
