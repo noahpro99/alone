@@ -42,3 +42,7 @@ module wasn't on the classpath; add a tab + real textures/models later.
 - **Farming realism (§4.1)** — ~~seasonal planting windows~~ DONE (crops pause in winter, `CropGrowthMixin`).
   Still open: weeds on farmland (weed block/state).
 - ~~**Boiling purifies water (§2/§3)**~~ DONE (`WaterskinItem` + `Campfires`).
+- **Hire villagers (§7.4, idea — not yet scoped)** — pay a villager in food per day to work for you:
+  labour like mining/hauling/wood-cutting, or guard/protect your homestead. They eat daily (a running
+  food wage); stop paying and they leave. Living infrastructure you feed, echoing the pack-animal and
+  hired-help logic (§6/§7). Needs custom villager AI goals + a hire/wage bookkeeping system.
