@@ -1,3 +1,6 @@
 {
-  "model": { "type": "minecraft:model", "model": "minecraft:item/iron_pickaxe" }
+  "model": {
+    "type": "minecraft:model",
+    "model": "alone:item/steel_pickaxe"
+  }
 }

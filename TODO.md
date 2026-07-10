@@ -120,6 +120,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Ember carrying (§3.1)** — the *Alone* fire-transport technique, so you're not friction-drilling at every camp. **Sneak + right-click a lit campfire empty-handed** to scoop a glowing `alone:ember` (costs the fire a little fuel); it **cools as you carry it** (durability bar = remaining glow, ~3.3 min), and **right-click the top of the ground** with it to coax a **fresh lit campfire** — no drill, no tinder. Let it run out and it dies to cold charcoal. (`Embers`, `AloneItems.EMBER`.)
 
+- [x] **Monsters only near loot structures (§7.1)** — the signature Alone spawn rule. **Natural** hostile spawns (anything implementing `Enemy`) are **vetoed unless within ~40 blocks of a generated structure** (ruins/dungeons/mineshafts/strongholds/villages…), so the open wilderness is lonely and (relatively) safe and danger clusters at loot. Only `NATURAL` spawns are touched — spawners, structure placement, breeding, reinforcements, and passive wildlife are untouched. Single `Mob.checkSpawnRules` mixin covers every vanilla hostile. **⚠ Needs live playtest** (headless can't observe spawns); tune the radius/samples in `Spawns` if too safe/dangerous. (`MobSpawnMixin`, `Spawns`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);

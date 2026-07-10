@@ -1,3 +1,6 @@
 {
-  "model": { "type": "minecraft:model", "model": "minecraft:item/honey_bottle" }
+  "model": {
+    "type": "minecraft:model",
+    "model": "alone:item/herbal_remedy"
+  }
 }

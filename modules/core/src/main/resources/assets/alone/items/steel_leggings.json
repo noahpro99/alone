@@ -1,3 +1,6 @@
 {
-  "model": { "type": "minecraft:model", "model": "minecraft:item/iron_leggings" }
+  "model": {
+    "type": "minecraft:model",
+    "model": "alone:item/steel_leggings"
+  }
 }
