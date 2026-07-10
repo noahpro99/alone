@@ -20,7 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *       bare hand not at all.</li>
  *   <li><b>Stone / ore</b> is real quarrying work — tens of seconds, not a fraction (with a
  *       worst-case cap so obsidian-tier blocks stay brutal but finite).</li>
- *   <li><b>Dirt / sand / gravel</b> and plants stay vanilla-fast — the ground cooperates.</li>
+ *   <li><b>Packed earth</b> (dirt/clay) is real excavation — ~3 in-game min a block with a shovel,
+ *       near-hopeless by hand — calibrated to the 72x day/night time compression. <b>Loose</b> sand
+ *       and gravel still scoop fast, and plants stay vanilla-fast.</li>
  * </ul>
  * Creative instabreak bypasses all of this.
  */
@@ -29,13 +31,16 @@ public class PlayerDestroySpeedMixin {
     private static final float LOG_AXE_FACTOR = 0.04f; // an axe: slow but functional
     private static final float LOG_CRUDE_SPEED = 0.1f; // a sword/pickaxe: a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
-    // Digging earth is brutally slow — a 1x1x2 pit is the better part of a day's labour even with a shovel,
-    // and hopeless by hand (§5.4). Packed soil (dirt/clay) is the slog; loose sand/gravel scoops easily.
-    private static final float DIRT_FACTOR = 0.015f;   // packed earth WITH a shovel — ~25s a block by wooden shovel
-    private static final float CLAY_FACTOR = 0.008f;   // dense clay subsoil with a shovel — the hardest earth (~45s)
-    private static final float LOOSE_FACTOR = 0.12f;   // loose sand/gravel with a shovel — scoops quickly
-    private static final float NO_SHOVEL_DIG = 0.01f;  // packed earth by hand / wrong tool — near-hopeless (~75s a block)
-    private static final float LOOSE_HAND_DIG = 0.15f; // loose sand/gravel by hand — still scoopable (foraging works)
+    // Calibrated to Minecraft's time compression: a 20-min day stands in for 24 real hours, so real
+    // time reads at 72x (1 real hour ≈ 50 in-game seconds). Real continuous excavation of 1 m³ of
+    // average soil is ~2.5–5 h, i.e. ~125–250s a block at 72x. So packed earth with a wooden shovel
+    // lands at ~190s (~3 in-game min); bare-handed it's ~500s, near-hopeless. Loose sand/gravel stays
+    // deliberately quick (granular, and foraging flint from gravel must remain viable). (§5.4)
+    private static final float DIRT_FACTOR = 0.002f;    // packed earth WITH a shovel — ~190s (2.5–5h real @72x)
+    private static final float CLAY_FACTOR = 0.0016f;   // dense clay subsoil with a shovel — hardest earth (~280s)
+    private static final float LOOSE_FACTOR = 0.12f;    // loose sand/gravel with a shovel — scoops quickly (~3s)
+    private static final float NO_SHOVEL_DIG = 0.0015f; // packed earth by hand / wrong tool — ~500s, near-hopeless
+    private static final float LOOSE_HAND_DIG = 0.15f;  // loose sand/gravel by hand — still scoopable (~5s)
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
     private static final float MAX_BREAK_DIVISOR = 40f; // caps the worst-case time (~60s)
