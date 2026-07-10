@@ -31,6 +31,12 @@ public final class Ropes {
                 return true; // creative: just break the one block, no roll-up
             }
             Set<BlockPos> line = collectConnected(level, pos);
+            // You respool from the anchor: only the top length reels the line in. A lower one won't break
+            // (its destroy speed is zero), but guard here too so nothing can pull a rope from the middle.
+            int topY = line.stream().mapToInt(BlockPos::getY).max().orElse(pos.getY());
+            if (pos.getY() < topY) {
+                return false; // not the top — leave the whole line hanging
+            }
             for (BlockPos p : line) {
                 level.removeBlock(p, false); // pull it all down with no drops
             }

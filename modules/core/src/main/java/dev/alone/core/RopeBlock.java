@@ -1,9 +1,14 @@
 package dev.alone.core;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
@@ -80,5 +85,49 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
     @Override
     protected FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    /** ~1 s of hand-coiling per 1 m length, so breaking a rope takes exactly as long as respooling it. */
+    private static final int TICKS_PER_METER = 20;
+    private static final int MAX_LINE = 512;
+
+    /**
+     * Breaking a rope <em>is</em> respooling it (see {@link Ropes}), so two rules fall out of the line's
+     * shape: you can only reel it in from the <b>top</b> (a lower length won't break at all), and the
+     * time to break the top scales <b>linearly with the whole line's length</b> — a 1 m coil is a
+     * second, a 20 m line is twenty.
+     */
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        RopeLine line = traceLine(level, pos);
+        if (pos.getY() < line.topY) {
+            return 0f; // not the top of the line — you respool from the anchor, not the middle
+        }
+        return 1.0f / (Math.max(1, line.count) * TICKS_PER_METER);
+    }
+
+    /** Flood-fill the connected rope line (6-connected) for its length and its highest block. */
+    private RopeLine traceLine(BlockGetter level, BlockPos start) {
+        Set<BlockPos> seen = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        BlockPos origin = start.immutable();
+        seen.add(origin);
+        queue.add(origin);
+        int topY = origin.getY();
+        while (!queue.isEmpty() && seen.size() < MAX_LINE) {
+            BlockPos p = queue.poll();
+            topY = Math.max(topY, p.getY());
+            for (Direction d : Direction.values()) {
+                BlockPos n = p.relative(d).immutable();
+                if (!seen.contains(n) && level.getBlockState(n).is(this)) {
+                    seen.add(n);
+                    queue.add(n);
+                }
+            }
+        }
+        return new RopeLine(seen.size(), topY);
+    }
+
+    private record RopeLine(int count, int topY) {
     }
 }
