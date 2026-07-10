@@ -28,8 +28,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(Player.class)
 public class PlayerDestroySpeedMixin {
-    private static final float LOG_AXE_FACTOR = 0.04f; // an axe: slow but functional
-    private static final float LOG_CRUDE_SPEED = 0.1f; // a sword/pickaxe: a real slog
+    // A hafted axe fells a log in ~30s (a mature 5–7 log tree is ~3 in-game min ≈ several real hours at
+    // the 72x day/night scale — matching a knapped, chipped hand-axe). A crude chopper — a knife or an
+    // improvised blade with no proper edge or haft — hacks at ~75s a log, a genuine ordeal by comparison.
+    private static final float LOG_AXE_FACTOR = 0.04f;  // a real axe: slow but functional (~30s/log for flint)
+    private static final float LOG_CRUDE_SPEED = 0.04f; // a knife/improvised chopper: ~75s a log, a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
     // Calibrated to Minecraft's time compression: a 20-min day stands in for 24 real hours, so real
     // time reads at 72x (1 real hour ≈ 50 in-game seconds). Real continuous excavation of 1 m³ of
