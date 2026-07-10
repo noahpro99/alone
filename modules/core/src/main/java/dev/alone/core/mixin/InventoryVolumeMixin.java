@@ -32,7 +32,8 @@ public class InventoryVolumeMixin {
         if (unit <= 0f) {
             return; // no volume — let vanilla handle it
         }
-        float remaining = Carry.volumeLimit(player) + 0.001f - Carry.totalVolume(player);
+        // Bucket-aware: a bulky item draws on the hands budget, a small one on the separate pocket budget.
+        float remaining = Carry.remainingFor(self, stack);
         int fit = (int) Math.floor(remaining / unit);
         if (fit >= stack.getCount()) {
             return; // it all fits — let vanilla handle it normally

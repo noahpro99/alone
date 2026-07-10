@@ -25,12 +25,12 @@ public class SlotVolumeMixin {
     @Inject(method = "mayPlace", at = @At("HEAD"), cancellable = true)
     private void alone$mayPlaceByVolume(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         Container container = ((Slot) (Object) this).container;
-        float limit = Carry.containerVolumeLimit(container);
-        if (limit == Float.MAX_VALUE) {
+        float remaining = Carry.remainingFor(container, stack); // bucket-aware for the player's inventory
+        if (remaining == Float.MAX_VALUE) {
             return; // uncapped container
         }
         // Allow if even one more unit fits; the actual count is trimmed on insert.
-        if (Carry.containerVolume(container) + Carry.unitVolume(stack) > limit + 0.001f) {
+        if (remaining < Carry.unitVolume(stack)) {
             cir.setReturnValue(false);
         }
     }
@@ -39,15 +39,15 @@ public class SlotVolumeMixin {
         at = @At("HEAD"), argsOnly = true, index = 2)
     private int alone$capInsert(int inputAmount, ItemStack inputStack) {
         Container container = ((Slot) (Object) this).container;
-        float limit = Carry.containerVolumeLimit(container);
-        if (limit == Float.MAX_VALUE) {
+        float remaining = Carry.remainingFor(container, inputStack);
+        if (remaining == Float.MAX_VALUE) {
             return inputAmount;
         }
         float unit = Carry.unitVolume(inputStack);
         if (unit <= 0f) {
             return inputAmount;
         }
-        int fit = (int) Math.floor((limit + 0.001f - Carry.containerVolume(container)) / unit);
+        int fit = (int) Math.floor(remaining / unit);
         return Math.max(0, Math.min(inputAmount, fit));
     }
 }

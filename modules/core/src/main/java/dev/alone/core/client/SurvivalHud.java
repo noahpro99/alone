@@ -59,7 +59,7 @@ public final class SurvivalHud {
         drawBar(g, barX, yThirst, ClientSurvivalState.thirst / SurvivalMeters.MAX_THIRST, 0xFF4A90D9);
 
         drawItemIcon(g, ICON_VOLUME, left, yVolume - 3);
-        float volumePct = Carry.totalVolume(mc.player) / Carry.volumeLimit(mc.player);
+        float volumePct = Carry.volumeFullnessPct(mc.player); // fuller of hands vs. pockets (§5.1)
         drawBar(g, barX, yVolume, volumePct, volumeColor(volumePct));
 
         // Load (§5.1) — bundle is space, anvil is heft. Full bar = the crawling weight; the fill goes

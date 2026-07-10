@@ -33,8 +33,15 @@ public final class Carry {
     private Carry() {
     }
 
-    /** Hard volume cap on the person, in m³. (~0.3 is closer to a real pack; 1.0 per request — tunable.) */
+    /** The <b>hands/carry</b> budget, in m³ — the bulky things you hold or sling: a block, tools, boards.
+     *  You can only manage a couple. (Small items don't count here — they go in {@link #POCKET_VOLUME_LIMIT}.) */
     public static final float PLAYER_VOLUME_LIMIT = 1.0f;
+    /** A <b>separate</b> pocket budget for small items (seeds, flint, bones, nuggets, a bit of food). It's
+     *  additive: filling your pockets never eats into your ability to carry a bulky thing, and vice versa. */
+    public static final float POCKET_VOLUME_LIMIT = 0.30f;
+    /** Items with a unit volume at or below this go in pockets; anything bigger is bulky and hand-carried
+     *  (a shovel can't be pocketed, so extra shovels have nowhere to go). Tunable size threshold. */
+    public static final float POCKET_ITEM_MAX = 0.05f;
 
     /** Storage volume per slot: a 27-slot chest = 1 m³, so a double chest = 2 m³, a barrel = 1, etc. */
     public static final float STORAGE_VOLUME_PER_SLOT = 1.0f / 27f;
@@ -116,7 +123,7 @@ public final class Carry {
         if (item instanceof BlockItem blockItem) {
             float shape = blockShapeVolume(blockItem);
             if (shape >= 0.4f) {
-                return Math.min(1.0f, shape); // a real block
+                return Math.min(0.6f, shape); // a real block — a full one nearly fills the hands (carry ~one)
             }
             // else: a small placed thing — treat like any small item below
         }
@@ -132,13 +139,13 @@ public final class Carry {
         if (item == AloneItems.SALT) return 0.001f;
         if (item == AloneItems.PLANT_FIBER) return 0.001f;
         if (item == AloneItems.SPLINT) return 0.005f;
-        if (item == AloneItems.SMITHING_HAMMER) return 0.010f;
+        if (item == AloneItems.SMITHING_HAMMER) return 0.300f; // a heavy, unwieldy tool — hand-carried
         if (item == AloneItems.WHETSTONE) return 0.002f;
         if (item == AloneItems.HERBAL_REMEDY) return 0.003f;
         if (item == AloneItems.EMBER) return 0.001f;
         if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.002f;
         if (item == AloneItems.ROPE) return 0.005f;
-        if (item == AloneItems.BEDROLL) return 0.050f;
+        if (item == AloneItems.BEDROLL) return 0.150f; // a bulky roll — hand-carried, not pocketed
 
         // Vanilla item paths
         if (path.contains("ingot") || path.contains("brick") || path.contains("raw_")) {
@@ -147,10 +154,16 @@ public final class Carry {
         if (path.contains("nugget")) {
             return 0.001f;
         }
-        if (path.contains("sword") || path.contains("pickaxe") || path.contains("axe") || 
-            path.contains("shovel") || path.contains("hoe") || path.contains("shield") || 
-            path.contains("bow") || path.contains("crossbow")) {
-            return 0.010f;
+        // Long, awkward tools ride in your hands or lashed on your back, never your pockets — you can
+        // manage a couple, not a stack (§5.1). Custom flint/steel tools are caught by their names too.
+        if (path.contains("sword") || path.contains("axe") || path.contains("hatchet")
+            || path.contains("pick") || path.contains("shovel") || path.contains("hoe")
+            || path.contains("shield") || path.contains("bow") || path.contains("crossbow")
+            || path.contains("hammer") || path.contains("scythe")) {
+            return 0.35f;
+        }
+        if (path.contains("knife") || path.contains("shears")) {
+            return 0.20f; // a blade is less unwieldy than a hafted tool, but still not pocket-small
         }
         if (path.contains("helmet") || path.contains("cap") || path.contains("boots")) {
             return 0.020f;
@@ -449,6 +462,76 @@ public final class Carry {
             return container.getContainerSize() * STORAGE_VOLUME_PER_SLOT; // chests, barrels, shulkers…
         }
         return Float.MAX_VALUE; // furnaces, crafting, brewing, etc.
+    }
+
+    // ── Hands vs. pockets (§5.1) ─────────────────────────────────────────────────────────────────
+    // Your body carry is two independent budgets: bulky things you hold/sling (hands) and small things
+    // you pocket. A shovel is too big to pocket, so extra shovels can only compete for the limited hand
+    // space — one in hand is fine, two more won't fit. Small items get their own budget on top.
+
+    /** True if this item is small enough to go in a pocket (vs. bulky, hand-carried). */
+    public static boolean isPocketable(ItemStack stack) {
+        return unitVolume(stack) <= POCKET_ITEM_MAX;
+    }
+
+    /** The hands budget — bulky items you hold or sling; raised by a woven basket. */
+    public static float handLimit(Player player) {
+        return volumeLimit(player);
+    }
+
+    /** The pocket budget — small items only. */
+    public static float pocketLimit(Player player) {
+        return POCKET_VOLUME_LIMIT;
+    }
+
+    /** m³ of bulky (hand) or small (pocket) items currently on the body — worn gear and the basket itself
+     *  don't count (they're on your body / are the carry aid, not part of the load). */
+    private static float bucketVolume(Player player, boolean pocket) {
+        Inventory inventory = player.getInventory();
+        float sum = 0f;
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.isEmpty() || stack.is(AloneItems.WOVEN_BASKET) || isWornArmor(player, stack)) {
+                continue;
+            }
+            if (isPocketable(stack) == pocket) {
+                sum += itemVolume(stack);
+            }
+        }
+        return sum;
+    }
+
+    public static float handVolume(Player player) {
+        return bucketVolume(player, false);
+    }
+
+    public static float pocketVolume(Player player) {
+        return bucketVolume(player, true);
+    }
+
+    /** How much more volume this item could take in the given container — bucket-aware for the player's
+     *  own inventory (pockets vs. hands), plain single-budget for chests/backpacks. {@link Float#MAX_VALUE}
+     *  means uncapped. Used by the pickup and slot-placement caps so both honour the two budgets. */
+    public static float remainingFor(Container container, ItemStack stack) {
+        if (container instanceof Inventory inventory) {
+            boolean pocket = isPocketable(stack);
+            float used = pocket ? pocketVolume(inventory.player) : handVolume(inventory.player);
+            float limit = pocket ? pocketLimit(inventory.player) : handLimit(inventory.player);
+            return limit + 0.001f - used;
+        }
+        float limit = containerVolumeLimit(container);
+        if (limit == Float.MAX_VALUE) {
+            return Float.MAX_VALUE;
+        }
+        return limit + 0.001f - containerVolume(container);
+    }
+
+    /** For the HUD: how full the body is, as the fuller of the two budgets (so the bar warns when EITHER
+     *  hands or pockets is full, not a misleading average). */
+    public static float volumeFullnessPct(Player player) {
+        float hand = handVolume(player) / Math.max(0.0001f, handLimit(player));
+        float pocket = pocketVolume(player) / Math.max(0.0001f, pocketLimit(player));
+        return Math.max(hand, pocket);
     }
 
     private static float total(Player player, boolean volume) {
