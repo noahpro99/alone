@@ -102,6 +102,7 @@ public class AloneCore implements ModInitializer {
         Wildlife.init();        // §7.2 — wild animals are skittish; sneak to approach, else they bolt
         Hunting.init();         // §7.3 — a blade kill salvages the hide (leather) from a hide-bearing animal
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
+        WorldGen.init();        // §8.1 — scatter loose rocks across the surface like grass, to pick up
         Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
         AdminCommand.init();    // debug — /alone reset refills meters, clears conditions, tops off vitals

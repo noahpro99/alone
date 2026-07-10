@@ -56,6 +56,18 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** Loose rocks scattered on the ground (§8.1) — generated like grass tufts, break instantly by hand
+     *  for a {@link AloneItems#ROCK}. The day-one stone source you can see and grab. */
+    public static final Block LOOSE_ROCK = register("loose_rock",
+        key -> new LooseRockBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.STONE)
+            .sound(SoundType.STONE)
+            .instabreak()
+            .noCollision()
+            .noOcclusion()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** A backpack set down as a block (§6) — right-click opens its 27 slots; break it to pick it up. */
     public static final Block BACKPACK_BLOCK = register("backpack",
         key -> new BackpackBlock(BlockBehaviour.Properties.of()

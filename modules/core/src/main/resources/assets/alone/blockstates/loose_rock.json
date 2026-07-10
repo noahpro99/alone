@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "alone:block/loose_rock" },
+      { "model": "alone:block/loose_rock", "y": 90 },
+      { "model": "alone:block/loose_rock", "y": 180 },
+      { "model": "alone:block/loose_rock", "y": 270 }
+    ]
+  }
+}

@@ -32,5 +32,6 @@
   "item.alone.steel_leggings": "Steel Leggings",
   "item.alone.steel_boots": "Steel Boots",
   "item.alone.rock": "Rock",
-  "item.alone.flint_shard": "Flint Shard"
+  "item.alone.flint_shard": "Flint Shard",
+  "block.alone.loose_rock": "Loose Rock"
 }
