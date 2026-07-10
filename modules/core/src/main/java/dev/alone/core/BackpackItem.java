@@ -2,6 +2,7 @@ package dev.alone.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
@@ -33,6 +34,36 @@ public class BackpackItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
             open(player, player.getItemInHand(hand));
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Sneak + right-click a surface to <b>set the backpack down as a block</b>, contents and all. */
+    @Override
+    public InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        Player player = context.getPlayer();
+        if (player == null || !player.isSecondaryUseActive()) {
+            return InteractionResult.PASS; // not sneaking → fall through to use() (open it in hand)
+        }
+        Level level = context.getLevel();
+        BlockPos placePos = context.getClickedPos().relative(context.getClickedFace());
+        if (!level.getBlockState(placePos).canBeReplaced()) {
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide()) {
+            level.setBlockAndUpdate(placePos, AloneBlocks.BACKPACK_BLOCK.defaultBlockState());
+            ItemStack backpack = context.getItemInHand();
+            if (level.getBlockEntity(placePos) instanceof BackpackBlockEntity be) {
+                NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+                backpack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
+                for (int i = 0; i < SLOTS; i++) {
+                    be.setItem(i, items.get(i));
+                }
+                be.setChanged();
+            }
+            if (!player.isCreative()) {
+                backpack.shrink(1);
+            }
         }
         return InteractionResult.SUCCESS;
     }

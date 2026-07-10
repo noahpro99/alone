@@ -54,8 +54,25 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A backpack set down as a block (§6) — right-click opens its 27 slots; break it to pick it up. */
+    public static final Block BACKPACK_BLOCK = register("backpack",
+        key -> new BackpackBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_BROWN)
+            .sound(SoundType.WOOL)
+            .strength(0.6F)
+            .noOcclusion()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
+    /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
+
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
+        BACKPACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "backpack"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                BackpackBlockEntity::new, java.util.Set.of(BACKPACK_BLOCK)));
     }
 
     private static Block register(String path, Function<ResourceKey<Block>, Block> factory) {
