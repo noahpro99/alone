@@ -98,6 +98,7 @@ public class AloneCore implements ModInitializer {
         Backpacks.init();       // §6 — breaking a set-down backpack returns the pack with its contents
         Pickup.init();          // §5.1 — no vacuum pickup; right-click a dropped item to pick it up
         Wildlife.init();        // §7.2 — wild animals are skittish; sneak to approach, else they bolt
+        Hunting.init();         // §7.3 — a blade kill salvages the hide (leather) from a hide-bearing animal
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 

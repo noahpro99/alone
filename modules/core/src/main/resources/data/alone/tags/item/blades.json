@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:swords",
+    "#minecraft:axes",
+    "alone:flint_knife",
+    "alone:flint_hatchet",
+    "alone:steel_sword",
+    "alone:steel_axe"
+  ]
+}
