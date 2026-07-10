@@ -25,6 +25,8 @@ import net.minecraft.world.level.Level;
  * strikes on the same core flake off a sharp {@link AloneItems#FLINT_SHARD}. If you're holding only one
  * of the two, it tells you what's missing.
  */
+// Hold flint in one hand and a rock in the other, then hold right-click to strike it, again and again —
+// no crouch needed. Enough strikes flake off a sharp flint shard (or the flint shatters).
 public final class Knapping {
     private Knapping() {
     }
@@ -45,9 +47,9 @@ public final class Knapping {
             (payload, context) -> strike(context.player()));
 
         // Holding just one of the pair while trying to strike — point them at the missing half. (The
-        // client only intercepts the click when you hold BOTH, so this fires only on a near-miss.)
+        // client intercepts the click when you hold BOTH, so this fires only on a near-miss.)
         UseItemCallback.EVENT.register((player, level, hand) -> {
-            if (hand != InteractionHand.MAIN_HAND || !player.isShiftKeyDown()) {
+            if (hand != InteractionHand.MAIN_HAND) {
                 return InteractionResult.PASS;
             }
             ItemStack main = player.getMainHandItem();
@@ -69,7 +71,7 @@ public final class Knapping {
         ItemStack off = player.getOffhandItem();
         boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
         boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
-        if (!player.isShiftKeyDown() || !haveFlint || !haveRock) {
+        if (!haveFlint || !haveRock) {
             ACTIVE.remove(player.getUUID());
             return;
         }
