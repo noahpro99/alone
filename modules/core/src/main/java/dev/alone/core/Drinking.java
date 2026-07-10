@@ -114,7 +114,8 @@ public final class Drinking {
         Hygiene.wash(player); // cupping water also rinses your hands (§5.6)
         if (isSaltWater(player.level(), water)) {
             SurvivalMeters.drink(player, -SALT_DEHYDRATE); // seawater only makes you thirstier (§1.2)
-            player.sendSystemMessage(Component.literal("The seawater is salty — it only makes you thirstier. Boil it first."));
+            player.sendSystemMessage(Component.literal(
+                "The seawater is salty — it only makes you thirstier. Boiling won't help; you'd need to distil it, or find fresh water."));
             return;
         }
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
