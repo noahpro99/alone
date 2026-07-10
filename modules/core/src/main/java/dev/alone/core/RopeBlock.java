@@ -87,27 +87,24 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    /** ~1 s of hand-coiling per 1 m length, so breaking a rope takes exactly as long as respooling it. */
-    private static final int TICKS_PER_METER = 20;
+    /** Constant time to hand-reel one 1 m length. Each completed break peels off the lowest length, so a
+     *  long line just takes more breaks — not a longer one. */
+    private static final int TICKS_PER_SEGMENT = 20;
     private static final int MAX_LINE = 512;
 
     /**
-     * Breaking a rope <em>is</em> respooling it (see {@link Ropes}), so two rules fall out of the line's
-     * shape: you can only reel it in from the <b>top</b> (a lower length won't break at all), and the
-     * time to break the top scales <b>linearly with the whole line's length</b> — a 1 m coil is a
-     * second, a 20 m line is twenty.
+     * Breaking a rope <em>is</em> reeling it in (see {@link Ropes}). You can only do it from the <b>top</b>
+     * of a line — a lower length won't break at all — and each break takes the same short time, peeling a
+     * single length off the free bottom end. Hold the break on the top rope and the whole line walks back
+     * into your pack a metre at a time.
      */
     @Override
     protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        RopeLine line = traceLine(level, pos);
-        if (pos.getY() < line.topY) {
-            return 0f; // not the top of the line — you respool from the anchor, not the middle
-        }
-        return 1.0f / (Math.max(1, line.count) * TICKS_PER_METER);
+        return pos.getY() < lineTopY(level, pos) ? 0f : 1.0f / TICKS_PER_SEGMENT;
     }
 
-    /** Flood-fill the connected rope line (6-connected) for its length and its highest block. */
-    private RopeLine traceLine(BlockGetter level, BlockPos start) {
+    /** The highest Y among the rope blocks connected (6-connected) to this one. */
+    private int lineTopY(BlockGetter level, BlockPos start) {
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         BlockPos origin = start.immutable();
@@ -125,9 +122,6 @@ public class RopeBlock extends Block implements SimpleWaterloggedBlock {
                 }
             }
         }
-        return new RopeLine(seen.size(), topY);
-    }
-
-    private record RopeLine(int count, int topY) {
+        return topY;
     }
 }

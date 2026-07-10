@@ -86,14 +86,26 @@ public class RopeItem extends Item {
         List<BlockPos> open = new ArrayList<>();
         for (Direction d : new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST}) {
             BlockPos side = end.relative(d);
-            if (level.getBlockState(side).canBeReplaced()) {
+            if (level.getBlockState(side).canBeReplaced() && !foldsBack(level, side, end)) {
                 open.add(side);
             }
         }
         if (open.isEmpty()) {
-            return null;
+            return null; // boxed in — don't force a length onto the top; the line just stops here
         }
         return open.get(Math.floorMod((int) (end.asLong() >> 2), open.size()));
+    }
+
+    /** A sideways cell that touches any rope other than the end we're growing from would double the line
+     *  back on itself — skip it, so a jog always heads out into clear space, never back toward the line. */
+    private static boolean foldsBack(Level level, BlockPos candidate, BlockPos end) {
+        for (Direction d : Direction.values()) {
+            BlockPos n = candidate.relative(d);
+            if (!n.equals(end) && level.getBlockState(n).is(AloneBlocks.ROPE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** The growing end of the line: the deepest length, preferring one that can still descend so the line

@@ -1,6 +1,7 @@
 package dev.alone.core;
 
 import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,9 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * Rope handling (proposal §5.7). Breaking any part of a hung line <b>rolls the whole connected run
- * back into your pack</b> — you recover every length at once instead of picking off one block at a
- * time, and nothing litters the ground. (Placement/extension lives in {@link RopeItem}.)
+ * Rope handling (proposal §5.7). Breaking the <b>top</b> of a hung line reels it in one length at a
+ * time from the free bottom end — each break peels off the lowest length and returns one coil, so
+ * holding the break walks the whole line back into your pack a metre a second. A lower length can't be
+ * broken at all. Nothing litters the ground. (Placement/extension lives in {@link RopeItem}.)
  */
 public final class Ropes {
     private Ropes() {
@@ -31,16 +33,21 @@ public final class Ropes {
                 return true; // creative: just break the one block, no roll-up
             }
             Set<BlockPos> line = collectConnected(level, pos);
-            // You respool from the anchor: only the top length reels the line in. A lower one won't break
-            // (its destroy speed is zero), but guard here too so nothing can pull a rope from the middle.
+            // You reel in from the anchor: only the top length works. A lower one won't break (its destroy
+            // speed is zero), but guard here too so nothing can pull a rope from the middle.
             int topY = line.stream().mapToInt(BlockPos::getY).max().orElse(pos.getY());
             if (pos.getY() < topY) {
                 return false; // not the top — leave the whole line hanging
             }
-            for (BlockPos p : line) {
-                level.removeBlock(p, false); // pull it all down with no drops
-            }
-            giveOrDrop(player, line.size());
+            // Peel off just the free (lowest) end and return one coil; the top stays so another break
+            // takes the next one up. Holding the break walks the whole line in a length at a time.
+            BlockPos lowest = line.stream()
+                .min(Comparator.<BlockPos>comparingInt(BlockPos::getY)
+                    .thenComparingInt(BlockPos::getX)
+                    .thenComparingInt(BlockPos::getZ))
+                .orElse(pos);
+            level.removeBlock(lowest, false);
+            giveOrDrop(player, 1);
             return false; // we handled the break
         });
     }
