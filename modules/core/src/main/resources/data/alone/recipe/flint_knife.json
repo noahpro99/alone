@@ -1,15 +1,10 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "F",
-    "P",
-    "S"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "alone:flint_shard",
+    "alone:plant_fiber",
+    "minecraft:stick"
   ],
-  "key": {
-    "F": "alone:flint_shard",
-    "S": "minecraft:stick",
-    "P": "alone:plant_fiber"
-  },
   "result": {
     "id": "alone:flint_knife",
     "count": 1
