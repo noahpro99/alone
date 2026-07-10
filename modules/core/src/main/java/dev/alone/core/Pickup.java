@@ -1,12 +1,15 @@
 package dev.alone.core;
 
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Pick things up by hand (proposal §5.1 / realism). Auto-pickup is off ({@code ItemEntityPickupMixin});
@@ -18,6 +21,26 @@ public final class Pickup {
     }
 
     public static void init() {
+        // What YOU break, you keep: a block you mine drops straight into your pack (volume-permitting),
+        // so you don't have to fish tiny items off the ground for things you deliberately harvested.
+        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+            if (level.isClientSide() || player.isCreative() || !(level instanceof ServerLevel serverLevel)) {
+                return;
+            }
+            for (ItemEntity item : serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1.6))) {
+                if (item.getAge() > 3 || item.getItem().isEmpty()) {
+                    continue; // only the fresh drops from this break, not items already lying about
+                }
+                ItemStack stack = item.getItem();
+                player.getInventory().add(stack); // capped by the volume system (InventoryVolumeMixin)
+                if (stack.isEmpty()) {
+                    item.discard();
+                } else {
+                    item.setItem(stack); // pack full — the rest stays on the ground
+                }
+            }
+        });
+
         // A swing near dropped items shouldn't smash them — cancel attacks on item entities.
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
             entity instanceof ItemEntity ? InteractionResult.FAIL : InteractionResult.PASS);

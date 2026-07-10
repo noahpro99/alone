@@ -36,16 +36,23 @@ public final class Sleeping {
             // Bare-handed right-click on the top of bare ground (grass/dirt/sand). No sneak needed —
             // but we only react when the hand is empty and you're aiming at the top face, so normal
             // play doesn't trip it. grass_block is in BlockTags.DIRT, so grass counts.
-            if (hand != InteractionHand.MAIN_HAND
-                || !player.getMainHandItem().isEmpty()
-                || hit.getDirection() != Direction.UP) {
+            if (hand != InteractionHand.MAIN_HAND || !player.getMainHandItem().isEmpty()) {
                 return InteractionResult.PASS;
             }
-            var ground = level.getBlockState(hit.getBlockPos());
-            if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND)) {
+            var groundPos = hit.getBlockPos();
+            var ground = level.getBlockState(groundPos);
+            // You may have clicked the grass/fern/flower growing on the soil — look through it to the
+            // ground beneath (so grassy terrain works, not just bare dirt).
+            if (!isSoftGround(ground) && ground.canBeReplaced()
+                && isSoftGround(level.getBlockState(groundPos.below()))) {
+                groundPos = groundPos.below();
+                ground = level.getBlockState(groundPos);
+            }
+            if (!isSoftGround(ground)) {
                 // Sneaking on a hard floor clearly means "I want to sleep here" — so say why you can't,
                 // instead of a silent no-op.
-                if (player.isShiftKeyDown() && ground.isFaceSturdy(level, hit.getBlockPos(), Direction.UP)) {
+                if (player.isShiftKeyDown() && hit.getDirection() == Direction.UP
+                    && ground.isFaceSturdy(level, groundPos, Direction.UP)) {
                     say(player, level, "You can't bed down on this — you need soft ground (dirt, grass, sand) or a bedroll.");
                     return InteractionResult.SUCCESS;
                 }
@@ -84,6 +91,11 @@ public final class Sleeping {
             }
         }
         return true;
+    }
+
+    /** Soft enough to bed down on — dirt/grass or sand. */
+    private static boolean isSoftGround(net.minecraft.world.level.block.state.BlockState state) {
+        return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND);
     }
 
     private static void say(Player player, Level level, String text) {
