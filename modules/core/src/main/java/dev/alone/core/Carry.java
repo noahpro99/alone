@@ -126,6 +126,8 @@ public final class Carry {
         // Specific custom Alone items
         if (item == AloneItems.WATERSKIN) return 0.005f; // 5 liters
         if (item == AloneItems.IRON_POT) return 0.015f;  // 15 liters
+        if (item == AloneItems.CLAY_POT) return 0.012f;  // 12 liters
+        if (item == AloneItems.UNFIRED_CLAY_POT) return 0.010f;
         if (item == AloneItems.BACKPACK) return 0.080f;
         if (item == AloneItems.SALT) return 0.001f;
         if (item == AloneItems.PLANT_FIBER) return 0.001f;
@@ -273,6 +275,8 @@ public final class Carry {
         // 1. Specific custom Alone items
         if (item == AloneItems.WATERSKIN) return 0.20f; // empty waterskin
         if (item == AloneItems.IRON_POT) return 3.00f;   // solid iron pot
+        if (item == AloneItems.CLAY_POT) return 1.50f;   // fired clay — lighter than iron, but fragile
+        if (item == AloneItems.UNFIRED_CLAY_POT) return 1.60f; // wet clay, a touch heavier
         if (item == AloneItems.BACKPACK) return 1.50f;
         if (item == AloneItems.SALT) return 0.05f;
         if (item == AloneItems.PLANT_FIBER) return 0.01f;

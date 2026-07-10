@@ -66,6 +66,15 @@ public final class AloneItems {
     public static final Item IRON_POT = register("iron_pot",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 6, true));
 
+    /** An unfired clay pot (§2/§3) — shaped from clay by hand; useless as a vessel until you <b>bake it
+     *  in a fire</b> (campfire or furnace) into a {@link #CLAY_POT}. The first step of the heat-tech tree. */
+    public static final Item UNFIRED_CLAY_POT = register("unfired_clay_pot",
+        key -> new Item(new Item.Properties().stacksTo(16).setId(key)));
+    /** Clay pot (§2 vessel ladder) — the first <b>fire-safe</b> pot, before metal: set it on a fire to
+     *  boil water clean and to cook. The stone-age answer to the iron pot, fired from clay. */
+    public static final Item CLAY_POT = register("clay_pot",
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 4, true));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

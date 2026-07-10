@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "alone:unfired_clay_pot",
+  "result": { "id": "alone:clay_pot" },
+  "experience": 0.1,
+  "cookingtime": 600
+}
