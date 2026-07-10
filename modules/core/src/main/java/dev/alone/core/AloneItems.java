@@ -95,6 +95,13 @@ public final class AloneItems {
     public static final Item HERBAL_REMEDY = register("herbal_remedy",
         key -> new RemedyItem(new Item.Properties().stacksTo(16).setId(key)));
 
+    /** A glowing ember (§3.1) — scoop it from a fire and carry it to the next camp to light a fresh
+     *  one without drilling. It cools as you carry it (the durability bar is its remaining life) and
+     *  dies to cold charcoal if you don't use it in time. */
+    public static final int EMBER_LIFE = 4000; // ~3.3 min of glow before it dies
+    public static final Item EMBER = register("ember",
+        key -> new Item(new Item.Properties().stacksTo(1).durability(EMBER_LIFE).setId(key)));
+
     // Torch as a fuel item (§5.6): crafted unlit at full durability; light it and it burns down. The
     // durability bar IS the remaining fuel. A shader lights a held lit torch.
     public static final int TORCH_FUEL = 6000; // ~5 min of burn at 1/tick

@@ -118,6 +118,8 @@ and the whole pack headless boot-checked (`:dev:runServer` → both mods load, n
 
 - [x] **Herbal remedy — medicine for sickness (§1.5)** — the treatment the **foodborne-illness** condition was missing (it used to just run its ~4-min course). Craft `alone:herbal_remedy` (2 flowers + plant fiber); **drink it** (~2s) to knock ~2.5 min off the sickness timer, ease an infection, and clear acute nausea/poison. Doesn't fully cure a deep infection (dress that with cloth). Completes the injury→treatment matrix: bleeding/infection → cloth, sprain → splint, **sickness → herbal remedy**. (`RemedyItem`, `Conditions.relieveSickness/relieveInfection`.)
 
+- [x] **Ember carrying (§3.1)** — the *Alone* fire-transport technique, so you're not friction-drilling at every camp. **Sneak + right-click a lit campfire empty-handed** to scoop a glowing `alone:ember` (costs the fire a little fuel); it **cools as you carry it** (durability bar = remaining glow, ~3.3 min), and **right-click the top of the ground** with it to coax a **fresh lit campfire** — no drill, no tinder. Let it run out and it dies to cold charcoal. (`Embers`, `AloneItems.EMBER`.)
+
 ## Later phases (need assets/models or large scope)
 Custom items/blocks (knapping tools, bedroll, vessels — need textures); timed crafting (§8.2);
 torches burning out (§5.6); seasons (§10); transport tree (§6); structures/loot/relics (§12);
