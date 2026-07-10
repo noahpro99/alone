@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
@@ -20,11 +21,23 @@ public final class WorldGen {
 
     private static final ResourceKey<PlacedFeature> LOOSE_ROCKS = ResourceKey.create(
         Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("alone", "loose_rocks"));
+    private static final ResourceKey<PlacedFeature> LOOSE_ROCKS_DENSE = ResourceKey.create(
+        Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("alone", "loose_rocks_dense"));
 
     public static void init() {
+        // A light scatter everywhere — you can find a stone in any biome.
         BiomeModifications.addFeature(
             BiomeSelectors.foundInOverworld(),
             GenerationStep.Decoration.VEGETAL_DECORATION,
             LOOSE_ROCKS);
+        // And a much denser scatter where the ground is bare rock and scree — peaks, windswept hills,
+        // stony shores are strewn with loose stone, as they are in life.
+        BiomeModifications.addFeature(
+            BiomeSelectors.includeByKey(
+                Biomes.STONY_PEAKS, Biomes.JAGGED_PEAKS, Biomes.FROZEN_PEAKS,
+                Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_FOREST,
+                Biomes.STONY_SHORE),
+            GenerationStep.Decoration.VEGETAL_DECORATION,
+            LOOSE_ROCKS_DENSE);
     }
 }

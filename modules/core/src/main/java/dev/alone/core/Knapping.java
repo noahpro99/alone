@@ -11,11 +11,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * Knapping (proposal §8.1/§8.4). Your first sharp edge: hold <b>flint</b>, a <b>{@link AloneItems#ROCK
- * rock}</b> as a hammerstone in your off hand, and <b>sneak + right-click</b> to strike. It often flakes
- * off a sharp {@link AloneItems#FLINT_SHARD}, but sometimes the flint just <b>shatters</b> — you learn
- * the technique the hard way (skill-by-doing, §8.4). Those shards are what flint tools are built from,
- * so a knife/axe/pick begins with knapping, not a crafting grid full of raw flint.
+ * Knapping (proposal §8.1/§8.4). Your first sharp edge: hold <b>flint</b> in one hand and a
+ * <b>{@link AloneItems#ROCK rock}</b> (a hammerstone) in the other, then <b>sneak + right-click</b> to
+ * strike. It often flakes off a sharp {@link AloneItems#FLINT_SHARD}, but sometimes the flint just
+ * <b>shatters</b> — you learn the technique the hard way (skill-by-doing, §8.4). Those shards are what
+ * flint tools are built from, so a knife/axe/pick begins with knapping, not a grid full of raw flint.
+ * If you're holding only one of the two, it tells you what's missing.
  */
 public final class Knapping {
     private Knapping() {
@@ -29,11 +30,27 @@ public final class Knapping {
             if (hand != InteractionHand.MAIN_HAND || !player.isShiftKeyDown()) {
                 return InteractionResult.PASS;
             }
-            ItemStack flint = player.getMainHandItem();
-            ItemStack hammerstone = player.getOffhandItem();
-            if (!flint.is(Items.FLINT) || !hammerstone.is(AloneItems.ROCK)) {
+            ItemStack main = player.getMainHandItem();
+            ItemStack off = player.getOffhandItem();
+            boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
+            boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
+
+            // Holding just one of the pair while trying to strike — point them at the missing half.
+            if (haveFlint ^ haveRock) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.sendSystemMessage(Component.literal(haveFlint
+                        ? "You need a rock in your other hand to knap the flint."
+                        : "You need flint in your other hand to knap against the rock."), true);
+                }
                 return InteractionResult.PASS;
             }
+            if (!haveFlint || !haveRock) {
+                return InteractionResult.PASS; // neither piece — not a knapping attempt
+            }
+
+            // Either arrangement works — flint in whichever hand, rock in the other.
+            ItemStack flint = main.is(Items.FLINT) ? main : off;
+            ItemStack hammerstone = main.is(AloneItems.ROCK) ? main : off;
             if (!level.isClientSide()) {
                 var rng = player.getRandom();
                 flint.shrink(1); // struck — spent whether it flakes clean or shatters
