@@ -185,10 +185,13 @@ public final class Climbing {
         if (!hasClimbableWall(player)) {
             return false;
         }
-        // Only while pressed into it, and not while a jump is still carrying you up. Two guards together
-        // protect the FULL jump near a wall: the instantaneous check kills the fast rise (no stale state),
-        // and the latch covers the slow approach to the apex. The climb takes over once you've peaked.
-        boolean canGrab = player.horizontalCollision
+        // Only while pressed into it, airborne, and not while a jump is still carrying you up. Requiring
+        // you to be off the ground is what stops the jitter: standing at the foot of a wall no longer
+        // auto-grabs and creeps you upward — you must actively hop/leap to catch it, then the climb takes
+        // over once you've peaked. The instantaneous velocity check kills the fast rise (no stale state);
+        // the latch covers the slow approach to the apex.
+        boolean canGrab = !player.onGround()
+            && player.horizontalCollision
             && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
             && !jumpLatched(player);
         if (canGrab) {
