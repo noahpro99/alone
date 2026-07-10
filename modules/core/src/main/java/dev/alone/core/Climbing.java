@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Free-climbing (proposal §5.4 / realism). Two ways up the world beyond ladders:
@@ -72,7 +73,7 @@ public final class Climbing {
     // A one-block step and the top block of a tall wall look identical (solid at foot, air above), so we
     // tell them apart by state: the "top block" is only climbable if you were gripping a full (≥2-tall)
     // wall within the last few ticks — i.e. you're finishing a climb, not fresh-jumping at a lone step.
-    private static final int GRIP_GRACE = 8;
+    private static final int GRIP_GRACE = 20;
     private static final Map<Player, Integer> LAST_GRIP_CLIENT = new WeakHashMap<>();
     private static final Map<Player, Integer> LAST_GRIP_SERVER = new WeakHashMap<>();
 
@@ -323,6 +324,28 @@ public final class Climbing {
 
     private static boolean recentlyGripped(Player player) {
         return player.tickCount - gripMap(player).getOrDefault(player, -GRIP_GRACE - 1) <= GRIP_GRACE;
+    }
+
+    /**
+     * You're at the very lip of a wall you were climbing — a hold at your feet, clear air above it. A
+     * plain climb clamped to wall speed would strand you just under the edge (and flicker the grip), so
+     * this is where we mantle instead.
+     */
+    public static boolean isToppingOut(Player player) {
+        if (inLeaves(player) || !recentlyGripped(player)) {
+            return false;
+        }
+        Level level = player.level();
+        Direction dir = player.getDirection();
+        BlockPos feet = player.blockPosition();
+        return isFlatWall(level, feet.relative(dir)) && !isFlatWall(level, feet.above().relative(dir));
+    }
+
+    /** The mantle: a firm heave up and over the lip, so you actually clear the top block instead of
+     *  sliding back down it. Faster than the slow wall climb, with a forward push onto the ledge. */
+    public static Vec3 mantleMotion(Player player) {
+        Direction dir = player.getDirection();
+        return new Vec3(dir.getStepX() * 0.16, 0.32, dir.getStepZ() * 0.16);
     }
 
     private static Map<Player, Integer> gripMap(Player player) {

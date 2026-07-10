@@ -53,6 +53,11 @@ public class LivingEntityClimbMixin {
             cir.setReturnValue(new Vec3(m.x, Climbing.LEAF_DESCEND_SPEED, m.z));
             return;
         }
+        // At the top of a wall, mantle up and over the lip instead of crawling and sliding back.
+        if (Climbing.isToppingOut(player)) {
+            cir.setReturnValue(Climbing.mantleMotion(player));
+            return;
+        }
         double factor = Climbing.climbSpeedFactor(player);
         if (factor < 1.0 && m.y > 0.0) { // slow the climb up; leave the climb down ladder-smooth
             cir.setReturnValue(new Vec3(m.x, m.y * factor, m.z));

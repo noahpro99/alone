@@ -602,7 +602,8 @@ public final class SurvivalMeters {
                         continue;
                     }
                     double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    float falloff = (float) Math.max(0.0, 1.0 - dist / (HEAT_RADIUS + 1));
+                    // Gentle falloff so a fire's warmth carries across the whole radius, not just point-blank.
+                    float falloff = (float) Math.max(0.0, 1.0 - dist / (HEAT_RADIUS + 2));
                     best = Math.max(best, heat * falloff);
                 }
             }
