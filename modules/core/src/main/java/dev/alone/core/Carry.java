@@ -63,6 +63,11 @@ public final class Carry {
         return perItemWeight(stack.getItem()) * stack.getCount();
     }
 
+    /** Weight (kg) of a single item of this stack's type. */
+    public static float unitWeight(ItemStack stack) {
+        return perItemWeight(stack.getItem());
+    }
+
     private static float perItemVolume(Item item) {
         return VOLUME_CACHE.computeIfAbsent(item, Carry::computeVolume);
     }
