@@ -6,6 +6,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +29,9 @@ public class PlayerDestroySpeedMixin {
     private static final float LOG_AXE_FACTOR = 0.04f; // an axe: slow but functional
     private static final float LOG_CRUDE_SPEED = 0.1f; // a sword/pickaxe: a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
-    private static final float DIRT_FACTOR = 0.08f;    // earth is quicker than stone but still work
+    private static final float DIRT_FACTOR = 0.08f;    // earth with a SHOVEL — quicker than stone but still work
+    private static final float CLAY_FACTOR = 0.04f;    // dense clay subsoil, with a shovel — twice the toil of loose earth
+    private static final float NO_SHOVEL_DIG = 0.03f;  // hands or the wrong tool — a brutal, fixed-slow scrape (no easy dugout)
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
     private static final float MAX_BREAK_DIVISOR = 40f; // caps the worst-case time (~60s)
@@ -60,8 +63,16 @@ public class PlayerDestroySpeedMixin {
         }
 
         if (state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
-            // Digging a cubic metre of earth is still real work, even with a shovel (§5.4).
-            cir.setReturnValue(cir.getReturnValueF() * DIRT_FACTOR);
+            if (!self.getMainHandItem().is(ItemTags.SHOVELS)) {
+                // No shovel — you can't claw a shelter out of the earth with bare hands (or a pot, or an
+                // axe). A fixed, very slow speed, NOT scaled by whatever you're holding, so a pot/axe is
+                // never faster than your hands, and a dugout without the right tool is a brutal slog (§5.4).
+                cir.setReturnValue(NO_SHOVEL_DIG);
+                return;
+            }
+            // With a shovel it's real work, and dense clay subsoil is the hardest of it.
+            float factor = state.is(Blocks.CLAY) ? CLAY_FACTOR : DIRT_FACTOR;
+            cir.setReturnValue(cir.getReturnValueF() * factor);
             return;
         }
 
