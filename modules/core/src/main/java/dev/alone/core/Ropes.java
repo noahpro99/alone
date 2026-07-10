@@ -1,7 +1,6 @@
 package dev.alone.core;
 
 import java.util.ArrayDeque;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,43 +31,39 @@ public final class Ropes {
             if (player.isCreative()) {
                 return true; // creative: just break the one block, no roll-up
             }
-            Set<BlockPos> line = collectConnected(level, pos);
+            // BFS the line from the broken block: its highest Y (only the top reels in) and the block
+            // furthest along the rope — the true free end, following every sideways jog to the very tip.
+            // BFS dequeues in distance order, so the last one out is the farthest.
+            Set<BlockPos> seen = new HashSet<>();
+            Deque<BlockPos> queue = new ArrayDeque<>();
+            BlockPos origin = pos.immutable();
+            seen.add(origin);
+            queue.add(origin);
+            int topY = origin.getY();
+            BlockPos end = origin;
+            while (!queue.isEmpty() && seen.size() < MAX_COLLECT) {
+                BlockPos current = queue.poll();
+                end = current;
+                topY = Math.max(topY, current.getY());
+                for (Direction dir : Direction.values()) {
+                    BlockPos next = current.relative(dir).immutable();
+                    if (!seen.contains(next) && level.getBlockState(next).is(AloneBlocks.ROPE)) {
+                        seen.add(next);
+                        queue.add(next);
+                    }
+                }
+            }
             // You reel in from the anchor: only the top length works. A lower one won't break (its destroy
             // speed is zero), but guard here too so nothing can pull a rope from the middle.
-            int topY = line.stream().mapToInt(BlockPos::getY).max().orElse(pos.getY());
             if (pos.getY() < topY) {
                 return false; // not the top — leave the whole line hanging
             }
-            // Peel off just the free (lowest) end and return one coil; the top stays so another break
-            // takes the next one up. Holding the break walks the whole line in a length at a time.
-            BlockPos lowest = line.stream()
-                .min(Comparator.<BlockPos>comparingInt(BlockPos::getY)
-                    .thenComparingInt(BlockPos::getX)
-                    .thenComparingInt(BlockPos::getZ))
-                .orElse(pos);
-            level.removeBlock(lowest, false);
+            // Peel off just the free end and return one coil; the top stays so another break takes the
+            // next one up. Holding the break walks the whole line in a length at a time, from the tip up.
+            level.removeBlock(end, false);
             giveOrDrop(player, 1);
             return false; // we handled the break
         });
-    }
-
-    /** Flood-fill every rope block reachable (6-connected) from the broken one — the whole line. */
-    private static Set<BlockPos> collectConnected(Level level, BlockPos start) {
-        Set<BlockPos> found = new HashSet<>();
-        Deque<BlockPos> queue = new ArrayDeque<>();
-        found.add(start);
-        queue.add(start);
-        while (!queue.isEmpty() && found.size() < MAX_COLLECT) {
-            BlockPos current = queue.poll();
-            for (Direction dir : Direction.values()) {
-                BlockPos next = current.relative(dir);
-                if (!found.contains(next) && level.getBlockState(next).is(AloneBlocks.ROPE)) {
-                    found.add(next);
-                    queue.add(next);
-                }
-            }
-        }
-        return found;
     }
 
     private static void giveOrDrop(Player player, int count) {

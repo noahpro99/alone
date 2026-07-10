@@ -91,7 +91,16 @@ public class RopeItem extends Item {
         if (open.isEmpty()) {
             return null; // boxed in — don't force a length onto the top; the line just stops here
         }
-        return open.get(Math.floorMod((int) (end.asLong() >> 2), open.size()));
+        // Prefer a jog that can then keep descending — a side cell with open space under it — over one
+        // that dead-ends over solid ground. That routes the line around the obstacle and back downward.
+        List<BlockPos> canDescend = new ArrayList<>();
+        for (BlockPos side : open) {
+            if (level.getBlockState(side.below()).canBeReplaced()) {
+                canDescend.add(side);
+            }
+        }
+        List<BlockPos> choices = canDescend.isEmpty() ? open : canDescend;
+        return choices.get(Math.floorMod((int) (end.asLong() >> 2), choices.size()));
     }
 
     /** A sideways cell that touches any rope other than the end we're growing from would double the line
