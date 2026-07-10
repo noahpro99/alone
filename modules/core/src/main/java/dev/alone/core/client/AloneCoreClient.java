@@ -24,9 +24,11 @@ import org.lwjgl.glfw.GLFW;
 public class AloneCoreClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        // Quick-open backpack keybind (default B) — opens the first backpack in your pack (§6).
+        // Quick-open backpack keybind (default B) — opens the first backpack in your pack (§6). Filed
+        // under a dedicated "Alone" category in the controls screen, where it can be rebound.
+        KeyMapping.Category aloneKeys = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("alone", "main"));
         KeyMapping openBackpack = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.alone.open_backpack", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, KeyMapping.Category.INVENTORY));
+            "key.alone.open_backpack", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, aloneKeys));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openBackpack.consumeClick()) {
                 if (client.player != null) {
