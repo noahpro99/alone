@@ -47,6 +47,23 @@ public class ItemStackFinishUsingMixin {
         } else if (self.is(AloneFood.JUICY_FOODS)) {
             SurvivalMeters.drink(player, 6f);
         }
+
+        // Energy from food (§1.4): quick-carb / sugary foods give a little stamina straight back.
+        if (self.is(AloneFood.ENERGY_FOODS)) {
+            SurvivalMeters.restoreStamina(player, 15f);
+        }
+        // Golden apples stay fantasy — a restorative "second wind" retuned to the body's systems rather
+        // than raw hearts: refill stamina, shed fatigue, quench thirst, and a window of vigor (fast
+        // recovery, no soreness). The enchanted one lasts far longer.
+        if (self.is(net.minecraft.world.item.Items.GOLDEN_APPLE)
+            || self.is(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE)) {
+            SurvivalMeters.rest(player, 100f, SurvivalMeters.MAX_STAMINA);
+            SurvivalMeters.drink(player, 40f);
+            SurvivalMeters.grantVigor(player,
+                self.is(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE) ? 2400 : 900);
+            player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                "A golden warmth floods through you — a second wind."));
+        }
         // Per-tier odds (§4.2): raw chicken is a real gamble, fish much safer.
         float chance = 0f;
         int illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS;

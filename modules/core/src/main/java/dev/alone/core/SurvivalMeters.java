@@ -84,6 +84,11 @@ public final class SurvivalMeters {
     public static final AttachmentType<Long> LAST_EXHAUSTION_MSG =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "last_exhaustion_msg"), Codec.LONG);
 
+    /** Game time until which "vigor" lasts — a golden-apple second wind: fast recovery, no fatigue (§1.4). */
+    public static final AttachmentType<Long> VIGOR_UNTIL =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "vigor_until"), Codec.LONG);
+    private static final float VIGOR_REGEN_MULT = 3f;
+
     public static final AttachmentType<Float> STAMINA =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "stamina"), Codec.FLOAT);
     /** Medium-term soreness (0..100): the higher it is, the lower your usable stamina ceiling (§1.4). */
@@ -225,6 +230,21 @@ public final class SurvivalMeters {
         }
     }
 
+    /** Restore stamina directly (energy from food). */
+    public static void restoreStamina(Player player, float amount) {
+        player.setAttached(STAMINA, Math.max(0f, Math.min(MAX_STAMINA, getStamina(player) + amount)));
+    }
+
+    /** Grant a "vigor" window (a golden-apple second wind): fast stamina recovery and no fatigue build. */
+    public static void grantVigor(Player player, int ticks) {
+        long until = player.level().getGameTime() + ticks;
+        player.setAttached(VIGOR_UNTIL, Math.max(player.getAttachedOrElse(VIGOR_UNTIL, 0L), until));
+    }
+
+    public static boolean isVigorous(Player player) {
+        return player.level().getGameTime() < player.getAttachedOrElse(VIGOR_UNTIL, 0L);
+    }
+
     /** Spend stamina on effort (mining, chopping, …). */
     public static void exert(Player player, float amount) {
         if (amount > 0f) {
@@ -333,10 +353,13 @@ public final class SurvivalMeters {
         if (afloat) {
             swimLoadDrain = Math.max(0f, Carry.totalWeight(player) - SWIM_FREE_WEIGHT) * SWIM_WEIGHT_DRAIN;
         }
+        boolean vigor = isVigorous(player); // golden-apple second wind: fast recovery, no soreness
         if (exerting || swimLoadDrain > 0f) {
             float drain = (player.isSprinting() ? SPRINT_DRAIN : (exerting ? SWING_DRAIN : 0f)) + swimLoadDrain;
             stamina -= drain;
-            fatigue = Math.min(100f, fatigue + drain * FATIGUE_GAIN);
+            if (!vigor) {
+                fatigue = Math.min(100f, fatigue + drain * FATIGUE_GAIN); // vigor spares you the soreness
+            }
         } else {
             float regen = player.isShiftKeyDown() ? REST_REGEN * 2f : REST_REGEN; // sit still to recover faster
             if (player.isSleeping()) {
@@ -348,8 +371,12 @@ public final class SurvivalMeters {
             if (getBodyTemp(player) <= COLD_SHIVER) {
                 regen *= 0.5f; // shivering, stiff — the cold blunts recovery (§1.3)
             }
+            if (vigor) {
+                regen *= VIGOR_REGEN_MULT; // a second wind — you bounce back fast
+            }
             stamina += regen;
-            fatigue = Math.max(0f, fatigue - (player.isSleeping() ? FATIGUE_SLEEP_RECOVER : FATIGUE_RECOVER));
+            float shed = (player.isSleeping() ? FATIGUE_SLEEP_RECOVER : FATIGUE_RECOVER) * (vigor ? 4f : 1f);
+            fatigue = Math.max(0f, fatigue - shed);
         }
         stamina = Math.max(0f, Math.min(effectiveMax, stamina)); // soreness caps how far it refills
         applyStaminaPenalties(player, stamina);

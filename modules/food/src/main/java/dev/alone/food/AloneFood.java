@@ -26,6 +26,7 @@ public class AloneFood implements ModInitializer {
     public static final TagKey<Item> HOT_MEALS = tag("hot_meals");            // cooked food/stews that warm you (§1.3)
     public static final TagKey<Item> DRY_FOODS = tag("dry_foods");            // bread/jerky/dried — costs thirst (§1.2)
     public static final TagKey<Item> JUICY_FOODS = tag("juicy_foods");        // fruit/soups — gives a little water back
+    public static final TagKey<Item> ENERGY_FOODS = tag("energy_foods");      // quick carbs/sugars — a little stamina back (§1.4)
 
     private static TagKey<Item> tag(String path) {
         return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", path));
