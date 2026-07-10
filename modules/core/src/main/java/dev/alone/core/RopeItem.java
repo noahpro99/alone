@@ -28,8 +28,12 @@ public class RopeItem extends Item {
         BlockPos clicked = context.getClickedPos();
         BlockState clickedState = level.getBlockState(clicked);
 
-        // On an existing rope: pay out one more length below the bottom of that line. On a solid block:
-        // anchor a single length hanging off the face you clicked (a wall face hangs it down the wall).
+        // You pay rope out from the anchor at the top: only the highest rope of a hanging line accepts
+        // more. Clicking a lower length (say, while climbing) does nothing — walk back up to the top to
+        // feed out more line. On a solid block: anchor a fresh length hanging off the face you clicked.
+        if (clickedState.is(AloneBlocks.ROPE) && level.getBlockState(clicked.above()).is(AloneBlocks.ROPE)) {
+            return InteractionResult.PASS; // not the top of the line — can't add here
+        }
         BlockPos target = clickedState.is(AloneBlocks.ROPE)
             ? columnBottom(level, clicked).below()
             : clicked.relative(context.getClickedFace());
@@ -41,7 +45,12 @@ public class RopeItem extends Item {
         Player player = context.getPlayer();
         ItemStack coil = context.getItemInHand();
         if (!level.isClientSide()) {
-            level.setBlockAndUpdate(target, AloneBlocks.ROPE.defaultBlockState());
+            // If the rope runs into water (a flooded cave, a lake off a dock), keep the water it hangs
+            // in rather than carving a dry pocket — waterlogged, just like seagrass or kelp.
+            boolean inWater = level.getFluidState(target).getType()
+                == net.minecraft.world.level.material.Fluids.WATER;
+            level.setBlockAndUpdate(target,
+                AloneBlocks.ROPE.defaultBlockState().setValue(RopeBlock.WATERLOGGED, inWater));
             if (player != null && !player.isCreative()) {
                 coil.shrink(1);
             }

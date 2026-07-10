@@ -45,7 +45,7 @@ public final class AloneBlocks {
      * down a cliff face by {@link RopeItem}.
      */
     public static final Block ROPE = register("rope",
-        key -> new Block(BlockBehaviour.Properties.of()
+        key -> new RopeBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOD)
             .sound(SoundType.WOOL)
             .strength(0.4F)
