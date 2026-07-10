@@ -33,6 +33,14 @@ public final class Pickup {
             if (item.hasPickUpDelay()) {
                 return InteractionResult.PASS; // just thrown / not settled — let it be for a moment
             }
+            // One backpack per person (§6) — say so instead of silently refusing.
+            if (item.getItem().is(AloneItems.BACKPACK) && !BackpackItem.findInInventory(player).isEmpty()) {
+                if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                    serverPlayer.sendSystemMessage(
+                        net.minecraft.network.chat.Component.literal("You can only carry one backpack."), true);
+                }
+                return InteractionResult.SUCCESS;
+            }
             ItemStack stack = item.getItem();
             int before = stack.getCount();
             player.getInventory().add(stack); // takes what fits
