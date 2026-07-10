@@ -122,6 +122,9 @@ public final class SurvivalMeters {
     private static final float SEVERE_COLD = -85f;
     private static final float HEATSTROKE = 50f;
     private static final float SEVERE_HOT = 85f;
+    // Temperature is a slow, telegraphed killer in real life — once you're at the extreme, ~1 HP / 5s
+    // (~100s from full), so the shivering/roasting warning band gives you time to reach fire or shade.
+    private static final int TEMP_DAMAGE_INTERVAL = 100;
 
     public static final AttachmentType<Float> BODY_TEMP =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "body_temp"), Codec.FLOAT);
@@ -507,14 +510,14 @@ public final class SurvivalMeters {
             effect(player, MobEffects.SLOWNESS, severe);
             effect(player, MobEffects.MINING_FATIGUE, severe);
             effect(player, MobEffects.WEAKNESS, 0);
-            if (bodyTemp <= SEVERE_COLD && player.tickCount % 40 == 0) {
+            if (bodyTemp <= SEVERE_COLD && player.tickCount % TEMP_DAMAGE_INTERVAL == 0) {
                 player.hurtServer(level, level.damageSources().freeze(), 1.0f);
             }
         } else if (bodyTemp >= HEATSTROKE) {
             int severe = bodyTemp >= SEVERE_HOT ? 1 : 0;
             effect(player, MobEffects.SLOWNESS, severe);
             effect(player, MobEffects.WEAKNESS, severe);
-            if (bodyTemp >= SEVERE_HOT && player.tickCount % 40 == 0) {
+            if (bodyTemp >= SEVERE_HOT && player.tickCount % TEMP_DAMAGE_INTERVAL == 0) {
                 player.hurtServer(level, level.damageSources().onFire(), 1.0f);
             }
         }
