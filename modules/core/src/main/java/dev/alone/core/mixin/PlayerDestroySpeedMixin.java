@@ -35,17 +35,17 @@ public class PlayerDestroySpeedMixin {
     private static final float LOG_CRUDE_SPEED = 0.04f; // a knife/improvised chopper: ~75s a log, a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
     // Calibrated to Minecraft's time compression: a 20-min day stands in for 24 real hours, so real
-    // time reads at 72x (1 real hour ≈ 50 in-game seconds). Real continuous excavation of 1 m³ of
-    // average soil is ~2.5–5 h, i.e. ~125–250s a block at 72x. So packed earth with a wooden shovel
-    // lands at ~190s (~3 in-game min); bare-handed it's ~500s, near-hopeless. Loose sand/gravel stays
-    // deliberately quick (granular, and foraging flint from gravel must remain viable). (§5.4)
-    private static final float DIRT_FACTOR = 0.002f;    // packed earth WITH a shovel — ~190s (2.5–5h real @72x)
+    // time reads at 72x (1 real hour ≈ 50 in-game seconds). Real excavation of 1 m³ of dirt is ~1–4h
+    // WITH a shovel but a grueling 12–24h+ by hand — so bare hands are ~6x slower than a shovel. At 72x:
+    // a shovel is ~190s a block (~3.5h), bare hands ~1080s (~18 min ≈ 21h) — genuinely near-hopeless.
+    // Loose sand/gravel stays deliberately quick (granular, and foraging flint from gravel must work). (§5.4)
+    private static final float DIRT_FACTOR = 0.002f;    // packed earth WITH a shovel — ~190s (1–4h real @72x)
     private static final float CLAY_FACTOR = 0.0016f;   // dense clay subsoil with a shovel — hardest earth (~280s)
     // Loose sand/gravel is granular so it's quicker than packed earth, but a whole cubic metre is still
     // real labour: ~1–1.5h continuous, i.e. ~60–75s a block at 72x. Flint isn't gated behind fully
     // clearing a gravel block, though — it shakes loose part-way through (see ServerPlayerGameModeMixin).
     private static final float LOOSE_FACTOR = 0.006f;   // loose sand/gravel with a shovel — ~60–75s a block
-    private static final float NO_SHOVEL_DIG = 0.0015f; // packed earth by hand / wrong tool — ~500s, near-hopeless
+    private static final float NO_SHOVEL_DIG = 0.0007f; // packed earth by hand / wrong tool — ~1080s (~18 min), ~6x a shovel
     private static final float LOOSE_HAND_DIG = 0.008f; // loose sand/gravel by hand — ~90–110s, scoopable but slow
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
@@ -78,18 +78,22 @@ public class PlayerDestroySpeedMixin {
         }
 
         if (state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
-            boolean packed = state.is(BlockTags.DIRT) || state.is(Blocks.CLAY); // packed soil / dense subsoil
-            if (!self.getMainHandItem().is(ItemTags.SHOVELS)) {
-                // No shovel — a FIXED speed (not scaled by the held item), so a pot or an axe is never
-                // faster than bare hands. Loose sand/gravel still scoops by hand; packed earth barely
-                // yields, so you can't claw a shelter out of the ground without the right tool (§5.4).
-                cir.setReturnValue(packed ? NO_SHOVEL_DIG : LOOSE_HAND_DIG);
-                return;
-            }
-            // With a shovel it's still heavy work — packed earth slow, dense clay subsoil slowest, loose
-            // sand/gravel quick.
-            float factor = state.is(Blocks.CLAY) ? CLAY_FACTOR : (packed ? DIRT_FACTOR : LOOSE_FACTOR);
-            cir.setReturnValue(cir.getReturnValueF() * factor);
+            // "Loose" = genuinely granular material that scoops fast. Everything else in the shovel tag is
+            // packed soil (grass, dirt, podzol, mycelium, path, farmland, mud…) and digs slow. We can't use
+            // #minecraft:dirt to mean "soil": in 26.2 that tag is tiny (dirt/coarse/rooted only) — grass_block
+            // and the rest are NOT in it — so relying on it made grass fall through to the loose path.
+            boolean loose = state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SUSPICIOUS_SAND) || state.is(Blocks.SUSPICIOUS_GRAVEL);
+            boolean clay = state.is(Blocks.CLAY); // dense subsoil — the hardest earth, its own factor
+            boolean hasShovel = self.getMainHandItem().is(ItemTags.SHOVELS);
+            float speed = hasShovel
+                ? cir.getReturnValueF() * (clay ? CLAY_FACTOR : (loose ? LOOSE_FACTOR : DIRT_FACTOR))
+                : (loose ? LOOSE_HAND_DIG : NO_SHOVEL_DIG);
+            // No shovel gives a FIXED speed (not scaled by the held item), so a pot or an axe is never
+            // faster than bare hands; packed earth barely yields, so you can't claw a shelter out of the
+            // ground without the right tool. With a shovel it's still heavy work — dirt slow, dense clay
+            // subsoil slowest, loose sand/gravel quick (§5.4).
+            cir.setReturnValue(speed);
             return;
         }
 
