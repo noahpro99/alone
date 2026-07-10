@@ -76,6 +76,7 @@ public class AloneCore implements ModInitializer {
         Forging.init();         // §8.2 — forge & temper: heat + hammer metal gear to quality at an anvil
         Sharpening.init();       // §8.5 — hone a worn edge back up with a whetstone (off-hand, sneak+use)
         Embers.init();          // §3.1 — scoop a glowing ember from a fire and carry it to light the next
+        Ropes.init();           // §5.7 — breaking a rope rolls the whole connected line back into your pack
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 

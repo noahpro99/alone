@@ -31,7 +31,12 @@ public final class AloneBlocks {
             .noOcclusion()
             .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
-            .setId(key)));
+            .setId(key)) {
+            @Override
+            public net.minecraft.world.level.block.RenderShape getRenderShape(net.minecraft.world.level.block.state.BlockState state) {
+                return net.minecraft.world.level.block.RenderShape.MODEL;
+            }
+        });
 
     /**
      * Rope (proposal §5.7) — a hanging climb line. No collision (you move through it) and it's in the
