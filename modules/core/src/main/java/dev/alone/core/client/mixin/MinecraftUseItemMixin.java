@@ -1,9 +1,11 @@
 package dev.alone.core.client.mixin;
 
+import dev.alone.core.AloneItems;
 import dev.alone.core.Drinking;
 import dev.alone.core.FireStarting;
 import dev.alone.core.net.DrinkRequestPayload;
 import dev.alone.core.net.FireDrillPayload;
+import dev.alone.core.net.KnapStrikePayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
@@ -50,6 +52,20 @@ public class MinecraftUseItemMixin {
             && FireStarting.findDrillSpot(mc.player, mc.level) != null) {
             if (mc.player.tickCount - alone$lastSendTick >= 4) {
                 ClientPlayNetworking.send(FireDrillPayload.INSTANCE);
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                alone$lastSendTick = mc.player.tickCount;
+            }
+            ci.cancel();
+            return;
+        }
+
+        // Sneak + hold right-click with flint + a rock (either hand) → strike to knap a sharp flake.
+        ItemStack off = mc.player.getOffhandItem();
+        boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
+        boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
+        if (mc.player.isShiftKeyDown() && haveFlint && haveRock) {
+            if (mc.player.tickCount - alone$lastSendTick >= 5) {
+                ClientPlayNetworking.send(KnapStrikePayload.INSTANCE);
                 mc.player.swing(InteractionHand.MAIN_HAND);
                 alone$lastSendTick = mc.player.tickCount;
             }

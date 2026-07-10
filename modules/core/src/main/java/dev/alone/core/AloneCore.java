@@ -62,6 +62,8 @@ public class AloneCore implements ModInitializer {
         PayloadTypeRegistry.serverboundPlay().register(DrinkRequestPayload.TYPE, DrinkRequestPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(FireDrillPayload.TYPE, FireDrillPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(
+            dev.alone.core.net.KnapStrikePayload.TYPE, dev.alone.core.net.KnapStrikePayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
             dev.alone.core.net.BackpackOpenPayload.TYPE, dev.alone.core.net.BackpackOpenPayload.CODEC);
         // Quick-open keybind: toggle the backpack — open the first one in your pack, or close it if
         // that's what you're already looking at (§6).
