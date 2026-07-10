@@ -107,6 +107,12 @@ public final class Carry {
      * flowers, carpets) — those fall through to the small-item tiers, so a seed isn't a block's weight.
      */
     private static float computeVolume(Item item) {
+        // Planks are thin sawn boards, not a solid cube of wood: a log's worth splits into ~4 and they
+        // stack compact, so a handful carries easily (you can hold 4 to craft a table) and the wood
+        // roughly conserves from log → planks instead of quadrupling out of nowhere.
+        if (BuiltInRegistries.ITEM.getKey(item).getPath().endsWith("_planks")) {
+            return 0.15f;
+        }
         if (item instanceof BlockItem blockItem) {
             float shape = blockShapeVolume(blockItem);
             if (shape >= 0.4f) {
@@ -252,6 +258,10 @@ public final class Carry {
 
     /** Weight (kg). Coarse tiers — real blocks scale with volume, tools moderate, food a portion, rest light. */
     private static float perItemWeight(Item item) {
+        // A single sawn board — a quarter of a log's mass, so 4 planks ≈ one log (mass conserves).
+        if (BuiltInRegistries.ITEM.getKey(item).getPath().endsWith("_planks")) {
+            return 1.5f;
+        }
         if (item instanceof BlockItem && perItemVolume(item) >= 0.4f) {
             float shape = perItemVolume(item);
             String path = BuiltInRegistries.BLOCK.getKey(((BlockItem) item).getBlock()).getPath();
