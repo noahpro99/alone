@@ -100,6 +100,8 @@ public class AloneCore implements ModInitializer {
         Wildlife.init();        // §7.2 — wild animals are skittish; sneak to approach, else they bolt
         Hunting.init();         // §7.3 — a blade kill salvages the hide (leather) from a hide-bearing animal
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
+        Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
+        Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 
         // Proposal §8.1 — you fell a tree with the right tool, not your fist or a chicken.
@@ -110,9 +112,24 @@ public class AloneCore implements ModInitializer {
             if (player.isCreative()) {
                 return true;
             }
-            return !(state.is(BlockTags.LOGS)
-                && classifyForLog(player.getMainHandItem()) == LogTool.NONE);
+            var held = player.getMainHandItem();
+            // You fell a tree with an axe (or barely, a crude blade) — never a bare fist.
+            if (state.is(BlockTags.LOGS) && classifyForLog(held) == LogTool.NONE) {
+                return false;
+            }
+            // And you can't claw stone apart bare-handed — quarrying needs a pickaxe (start with a
+            // knapped flint one). Loose rock is foraged; worked stone is mined (§8.1).
+            if (state.is(BlockTags.MINEABLE_WITH_PICKAXE) && !isPickaxe(held)) {
+                return false;
+            }
+            return true;
         });
 
+    }
+
+    /** A pickaxe of any tier — vanilla, flint, or steel — enough to break stone at all. */
+    private static boolean isPickaxe(net.minecraft.world.item.ItemStack held) {
+        return held.is(net.minecraft.tags.ItemTags.PICKAXES)
+            || held.is(AloneItems.FLINT_PICK) || held.is(AloneItems.STEEL_PICKAXE);
     }
 }

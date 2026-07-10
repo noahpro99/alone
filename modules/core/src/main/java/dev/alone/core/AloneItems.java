@@ -70,6 +70,14 @@ public final class AloneItems {
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** A loose rock (§8.1) — foraged off the ground / from gravel; your day-one stone, and the
+     *  hammerstone you knap flint with. */
+    public static final Item ROCK = register("rock",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** A knapped flint flake (§8.1) — struck from flint with a rock; the sharp edge for flint tools. */
+    public static final Item FLINT_SHARD = register("flint_shard",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Rope coil (§5.7) — throw it down a cliff face to hang a free, safe climb line. */
     public static final Item ROPE = register("rope",
         key -> new RopeItem(new Item.Properties().stacksTo(64).setId(key)));
