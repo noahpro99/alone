@@ -1,6 +1,8 @@
 package dev.alone.core;
 
 import com.mojang.serialization.Codec;
+import java.util.Map;
+import java.util.WeakHashMap;
 import dev.alone.core.net.SurvivalSyncPayload;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -74,6 +76,12 @@ public final class SurvivalMeters {
     private static final int HEAL_INTERVAL = 200;   // 1 HP / ~10s in good conditions (full heal ≈ 3–4 min)
     private static final float SWIM_FREE_WEIGHT = 8f;   // load past this makes staying afloat real work
     private static final float SWIM_WEIGHT_DRAIN = 0.012f; // extra stamina/tick per kg over, while in water
+
+    // Hauling uphill (§1.4/§5.1) — climbing terrain is work against gravity, and a load makes it bite.
+    // Flat ground costs nothing here; only elevation gained does, scaled by everything you're carrying.
+    private static final float ASCENT_BASE = 0.2f;    // stamina per block climbed unloaded — stairs are light
+    private static final float ASCENT_PER_KG = 0.04f; // …and each kg on your back makes the hill hurt more
+    private static final Map<Player, Double> LAST_GROUND_Y = new WeakHashMap<>();
 
     /** Realistic block reach — shorter than vanilla's 4.5, but long enough to place a block beneath your
      *  feet at the top of a jump (~eye 1.6 + jump 1.25), so pillar-jumping works. Also the drink raycast. */
@@ -344,6 +352,33 @@ public final class SurvivalMeters {
             || stack.is(Items.TURTLE_HELMET);
     }
 
+    /**
+     * Stamina cost of the elevation you actually gain, weighted by your load. Measured between times
+     * you're on the ground, so a real hill or a flight of steps costs stamina but a flat hop (up and
+     * back to the same level) doesn't. Wall/ladder/rope climbing is airborne, so it's left to {@link
+     * Climbing}; this is purely walking terrain uphill.
+     */
+    private static float uphillDrain(ServerPlayer player) {
+        if (player.isInWater() || player.getAbilities().flying) {
+            LAST_GROUND_Y.remove(player);
+            return 0f;
+        }
+        if (!player.onGround()) {
+            return 0f; // still airborne — wait until we land to bank the net climb
+        }
+        double y = player.getY();
+        Double prev = LAST_GROUND_Y.put(player, y);
+        if (prev == null) {
+            return 0f;
+        }
+        double ascent = y - prev;
+        if (ascent <= 0.02) {
+            return 0f; // level, or descending — going down is free
+        }
+        ascent = Math.min(ascent, 1.5); // clamp a single step so a hop/teleport isn't a spike
+        return (float) (ascent * (ASCENT_BASE + Carry.totalWeight(player) * ASCENT_PER_KG));
+    }
+
     private static void tick(ServerPlayer player) {
         // Realistic reach, shorter than vanilla 4.5. Creative keeps vanilla values for building.
         setBaseValue(player, Attributes.BLOCK_INTERACTION_RANGE, player.isCreative() ? 4.5 : BLOCK_REACH);
@@ -367,9 +402,12 @@ public final class SurvivalMeters {
         if (afloat) {
             swimLoadDrain = Math.max(0f, Carry.totalWeight(player) - SWIM_FREE_WEIGHT) * SWIM_WEIGHT_DRAIN;
         }
+        // Climbing terrain with a load is work — a hill hits harder the more you haul (flat ground is free).
+        float uphillDrain = uphillDrain(player);
         boolean vigor = isVigorous(player); // golden-apple second wind: fast recovery, no soreness
-        if (exerting || swimLoadDrain > 0f) {
-            float drain = (player.isSprinting() ? SPRINT_DRAIN : (exerting ? SWING_DRAIN : 0f)) + swimLoadDrain;
+        if (exerting || swimLoadDrain > 0f || uphillDrain > 0f) {
+            float drain = (player.isSprinting() ? SPRINT_DRAIN : (exerting ? SWING_DRAIN : 0f))
+                + swimLoadDrain + uphillDrain;
             stamina -= drain;
             if (!vigor) {
                 fatigue = Math.min(100f, fatigue + drain * FATIGUE_GAIN); // vigor spares you the soreness
