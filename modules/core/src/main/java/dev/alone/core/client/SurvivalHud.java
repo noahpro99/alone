@@ -5,15 +5,15 @@ import dev.alone.core.Conditions;
 import dev.alone.core.SurvivalMeters;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Matrix3x2fStack;
 
 /**
- * A small corner HUD (proposal §1: small, unobtrusive). Each meter has a game icon so it reads at a
- * glance: ❤ vitality, feather stamina, phantom-membrane fatigue, water-bucket thirst, bundle volume.
+ * A small corner HUD (proposal §1: small, unobtrusive). No single health bar — the body is separate
+ * systems, each with a game icon: feather stamina, golden-carrot endurance, water-bucket thirst,
+ * bundle volume, a temperature square, and a paper-doll of injuries. You die from a <em>system</em>
+ * failing (bleeding out, freezing, dehydration, starvation, trauma), not from an abstract HP pool.
  */
 public final class SurvivalHud {
     private SurvivalHud() {
@@ -22,7 +22,6 @@ public final class SurvivalHud {
     private static final int BAR_W = 80;
     private static final int BAR_H = 4;
 
-    private static final Identifier HEART = Identifier.withDefaultNamespace("hud/heart/full");
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.FEATHER);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
@@ -37,16 +36,14 @@ public final class SurvivalHud {
         int barX = left + 13;         // leave room for a ~10px icon left of each bar
         int rowH = BAR_H + 8;         // taller rows so an icon fits per meter
         int y0 = 6;
-        int yVitality = y0;
-        int yStamina = y0 + rowH;
-        int yFatigue = y0 + rowH * 2;
-        int yThirst = y0 + rowH * 3;
-        int yVolume = y0 + rowH * 4;
+        int yStamina = y0;
+        int yFatigue = y0 + rowH;
+        int yThirst = y0 + rowH * 2;
+        int yVolume = y0 + rowH * 3;
 
-        // Vitality (§1.5) — replaces the hearts bar; drops from bleeding/injury. A real heart icon.
-        float vitality = mc.player.getHealth() / Math.max(1f, mc.player.getMaxHealth());
-        g.blitSprite(RenderPipelines.GUI_TEXTURED, HEART, left, yVitality - 2, 9, 9);
-        drawBar(g, barX, yVitality, vitality, vitalityColor(vitality));
+        // NO single "health"/vitality bar (§1.5). The body is a set of separate systems: you bleed out,
+        // freeze, dehydrate, starve, or die of trauma — each shows through its own meter, the body
+        // temperature square, or the injury figure, never one abstract HP pool.
 
         drawItemIcon(g, ICON_STAMINA, left, yStamina - 3);
         drawBar(g, barX, yStamina, ClientSurvivalState.stamina / SurvivalMeters.MAX_STAMINA, 0xFF3AA655);
@@ -65,12 +62,12 @@ public final class SurvivalHud {
 
         // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot).
         int tx = barX + BAR_W + 6;
-        g.fill(tx - 1, yVitality - 1, tx + 9, yVitality + 9, 0xAA000000);
-        g.fill(tx, yVitality, tx + 8, yVitality + 8, temperatureColor(ClientSurvivalState.temperature));
-        drawTrendArrow(g, tx + 11, yVitality, ClientSurvivalState.temperatureTrend);
+        g.fill(tx - 1, yStamina - 1, tx + 9, yStamina + 9, 0xAA000000);
+        g.fill(tx, yStamina, tx + 8, yStamina + 8, temperatureColor(ClientSurvivalState.temperature));
+        drawTrendArrow(g, tx + 11, yStamina, ClientSurvivalState.temperatureTrend);
 
         // A little figure — a paper-doll of your body: bleeding torso, sprained legs, dirty hands, illness.
-        drawPerson(g, tx + 24, yVitality, ClientSurvivalState.conditions);
+        drawPerson(g, tx + 24, yStamina, ClientSurvivalState.conditions);
     }
 
     /** Draw a game item as a ~10px icon (item icons are 16px, so scale them down). */
@@ -81,17 +78,6 @@ public final class SurvivalHud {
         pose.scale(0.625f, 0.625f);
         g.item(stack, 0, 0);
         pose.popMatrix();
-    }
-
-    /** Vitality reads like blood: healthy deep red, amber when hurt, bright alarm red when critical. */
-    private static int vitalityColor(float pct) {
-        if (pct <= 0.25f) {
-            return 0xFFE23B2E; // critical
-        }
-        if (pct <= 0.5f) {
-            return 0xFFCC6633; // hurt
-        }
-        return 0xFFB23A3A;     // healthy
     }
 
     private static void drawPerson(GuiGraphicsExtractor g, int x, int y, int conditions) {
