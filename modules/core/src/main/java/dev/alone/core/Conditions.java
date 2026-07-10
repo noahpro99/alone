@@ -183,6 +183,52 @@ public final class Conditions {
         player.setAttached(BLEEDING, Math.min(player.getAttachedOrElse(BLEEDING, 0) + ticks, MAX_SICKNESS_TICKS));
     }
 
+    /**
+     * Realistic fall consequences through the injury system, not a raw health bar (§1.5). Real fall
+     * outcomes for a fit adult on hard ground: safe under ~3.5 m, injury from ~4–6 m, and a rising
+     * <b>chance of death</b> — ~50% around 15 m (the classic LD50), near-certain past ~22 m. So a fall
+     * <em>rolls</em> for death like real life; survive it and the cost is <b>injuries</b> (a sprain,
+     * often a fracture, sometimes internal bleeding) plus a modest hit — the limp and the blood, not
+     * just a number. {@code damageMultiplier} (&lt;1 on hay/honey) softens everything. Returns whether
+     * any harm landed. Called from {@code PlayerFallMixin}; vanilla fall damage is skipped.
+     */
+    public static boolean applyFall(ServerPlayer player, double fallDistance, float damageMultiplier,
+                                    net.minecraft.world.damagesource.DamageSource source) {
+        if (fallDistance <= 3.5 || damageMultiplier <= 0f) {
+            return false; // an athlete walks off a small drop
+        }
+        ServerLevel level = (ServerLevel) player.level();
+        var rng = player.getRandom();
+
+        // Death roll: 0 below ~8 m, ~50% at ~15 m, ~certain by ~22 m. Softened by hay/honey.
+        float deathChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 8.0) / 14.0), 0f, 1f)
+            * damageMultiplier;
+        if (rng.nextFloat() < deathChance) {
+            player.hurtServer(level, source, 1000f); // the fall was fatal
+            return true;
+        }
+
+        // Survived — the injuries are the real cost. A twist/sprain always; a fracture the harder you land.
+        addSprain(player, SPRAIN_TICKS);
+        float fractureChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 6.0) / 12.0), 0f, 0.9f)
+            * damageMultiplier;
+        if (rng.nextFloat() < fractureChance) {
+            addSprain(player, SPRAIN_TICKS); // a fracture stacks into a longer, worse limp
+        }
+        float bleedChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 8.0) / 16.0), 0f, 0.85f)
+            * damageMultiplier;
+        if (rng.nextFloat() < bleedChance) {
+            addBleeding(player, BLEED_TICKS * 2); // internal/open injury
+        }
+
+        // A modest hit on top — you're hurt, but you won't simply die from the number.
+        float hurt = (float) ((fallDistance - 3.5) * 0.6) * damageMultiplier;
+        if (hurt > 0f) {
+            player.hurtServer(level, source, hurt);
+        }
+        return true;
+    }
+
     private static void tickBleeding(ServerPlayer player) {
         int remaining = player.getAttachedOrElse(BLEEDING, 0);
         if (remaining <= 0) {
