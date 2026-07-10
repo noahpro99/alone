@@ -36,7 +36,8 @@ public final class CraftingTime {
     }
 
     // Craft durations in ticks (20/s) — compressed real-world effort. Tunable; a datapack could refine.
-    private static final int SIMPLE = 40;    // ~2s: planks, sticks, a torch
+    private static final int SIMPLE = 40;    // ~2s: sticks, a torch
+    private static final int PLANK = 240;    // ~12s: riving/sawing a log into boards is slow, real work
     private static final int FOOD = 100;     // ~5s: prep a meal
     private static final int STATION = 1200; // ~60s: a chest, furnace — real joinery/masonry
     private static final int TOOL = 300;     // ~15s: shape and haft a tool or weapon (metal ones then forge)
@@ -121,6 +122,9 @@ public final class CraftingTime {
         if (result.is(ItemTags.SWORDS) || result.is(ItemTags.AXES) || result.is(ItemTags.PICKAXES)
             || result.is(ItemTags.SHOVELS) || result.is(ItemTags.HOES) || result.isDamageableItem()) {
             return TOOL;
+        }
+        if (result.is(ItemTags.PLANKS)) {
+            return PLANK; // riving a log into boards by hand is hard, laborious work (§5.4)
         }
         if (result.is(Items.CAMPFIRE) || result.is(Items.SOUL_CAMPFIRE)) {
             return SIMPLE; // just kindling laid in one spot — quick, not workshop joinery (despite its BE)
