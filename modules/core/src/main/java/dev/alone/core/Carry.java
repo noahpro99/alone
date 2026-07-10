@@ -74,7 +74,7 @@ public final class Carry {
         float baseWeight = perItemWeight(stack.getItem());
         if (stack.getItem() instanceof WaterskinItem) {
             int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
-            baseWeight += charges * 0.25f; // 0.25 kg of water per charge
+            baseWeight += charges * 1.0f; // water is 1 kg/L, and a charge is ~1 L (matches unitVolume) — it's HEAVY
         }
         return baseWeight;
     }
