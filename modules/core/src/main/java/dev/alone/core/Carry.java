@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -51,25 +52,53 @@ public final class Carry {
     private static final Map<Item, Float> VOLUME_CACHE = new ConcurrentHashMap<>();
 
     public static float itemVolume(ItemStack stack) {
-        return perItemVolume(stack.getItem()) * stack.getCount();
+        return unitVolume(stack) * stack.getCount();
     }
 
     /** Volume (m³) of a single item of this stack's type. */
     public static float unitVolume(ItemStack stack) {
-        return perItemVolume(stack.getItem());
+        float baseVolume = perItemVolume(stack.getItem());
+        if (stack.getItem() instanceof WaterskinItem) {
+            int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
+            baseVolume += charges * 0.001f; // 1 liter (0.001 m³) per charge
+        }
+        return baseVolume;
     }
 
     public static float itemWeight(ItemStack stack) {
-        return perItemWeight(stack.getItem()) * stack.getCount();
+        return unitWeight(stack) * stack.getCount();
     }
 
     /** Weight (kg) of a single item of this stack's type. */
     public static float unitWeight(ItemStack stack) {
-        return perItemWeight(stack.getItem());
+        float baseWeight = perItemWeight(stack.getItem());
+        if (stack.getItem() instanceof WaterskinItem) {
+            int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
+            baseWeight += charges * 0.25f; // 0.25 kg of water per charge
+        }
+        return baseWeight;
     }
 
     private static float perItemVolume(Item item) {
         return VOLUME_CACHE.computeIfAbsent(item, Carry::computeVolume);
+    }
+
+    /**
+     * A "substantial" block-item is a solid building block (a full collision cube: dirt, stone, logs,
+     * planks, ore, wool, glass…). These are the ones the no-throw rule (§5.1) refuses — place or store
+     * them. It's <em>false</em> for context-placed things (seeds, sugar cane, saplings, flowers, crops,
+     * torches, rails…), which have no full collision and so can be dropped/thrown like any small item.
+     */
+    public static boolean isSubstantialBlock(ItemStack stack) {
+        if (!(stack.getItem() instanceof BlockItem blockItem)) {
+            return false;
+        }
+        try {
+            return blockItem.getBlock().defaultBlockState()
+                .isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+        } catch (Exception ignored) {
+            return false; // shapes that need world context → treat as a droppable small thing
+        }
     }
 
     /**
@@ -85,14 +114,58 @@ public final class Carry {
             }
             // else: a small placed thing — treat like any small item below
         }
+
+        String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+
+        // Specific custom Alone items
+        if (item == AloneItems.WATERSKIN) return 0.005f; // 5 liters
+        if (item == AloneItems.IRON_POT) return 0.015f;  // 15 liters
+        if (item == AloneItems.BACKPACK) return 0.080f;
+        if (item == AloneItems.SALT) return 0.001f;
+        if (item == AloneItems.PLANT_FIBER) return 0.001f;
+        if (item == AloneItems.SPLINT) return 0.005f;
+        if (item == AloneItems.SMITHING_HAMMER) return 0.010f;
+        if (item == AloneItems.WHETSTONE) return 0.002f;
+        if (item == AloneItems.HERBAL_REMEDY) return 0.003f;
+        if (item == AloneItems.EMBER) return 0.001f;
+        if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.002f;
+        if (item == AloneItems.ROPE) return 0.005f;
+        if (item == AloneItems.BEDROLL) return 0.050f;
+
+        // Vanilla item paths
+        if (path.contains("ingot") || path.contains("brick") || path.contains("raw_")) {
+            return 0.010f;
+        }
+        if (path.contains("nugget")) {
+            return 0.001f;
+        }
+        if (path.contains("sword") || path.contains("pickaxe") || path.contains("axe") || 
+            path.contains("shovel") || path.contains("hoe") || path.contains("shield") || 
+            path.contains("bow") || path.contains("crossbow")) {
+            return 0.010f;
+        }
+        if (path.contains("helmet") || path.contains("cap") || path.contains("boots")) {
+            return 0.020f;
+        }
+        if (path.contains("chestplate") || path.contains("tunic") || path.contains("leggings") || path.contains("pants")) {
+            return 0.050f;
+        }
+        if (path.equals("bucket") || path.contains("bucket")) {
+            return 0.025f;
+        }
+        if (path.contains("stick") || path.contains("string") || path.contains("feather") || path.contains("paper")) {
+            return 0.001f;
+        }
+        
         ItemStack def = item.getDefaultInstance();
         if (def.isDamageableItem()) {
-            return 0.02f; // tools, weapons, armour
+            return 0.02f; // default damageable item
         }
         if (def.has(DataComponents.FOOD)) {
-            return 0.012f; // a portion of food
+            return 0.005f; // food portion (5 liters)
         }
-        return 0.003f; // seeds, dust, bones… (a stack of 64 ≈ 0.19 m³)
+
+        return 0.003f; // default for seeds, dust, bones…
     }
 
     private static float blockShapeVolume(BlockItem blockItem) {
@@ -109,19 +182,200 @@ public final class Carry {
         return 0.25f; // unknown → below the block threshold, treated as a small item
     }
 
+    private static float getBlockDensity(String path) {
+        if (path.equals("gold_block") || path.equals("raw_gold_block")) {
+            return 19300f;
+        }
+        if (path.equals("netherite_block")) {
+            return 20000f;
+        }
+        if (path.equals("iron_block") || path.equals("raw_iron_block")) {
+            return 7870f;
+        }
+        if (path.equals("copper_block") || path.equals("raw_copper_block") || path.contains("cut_copper")) {
+            return 8960f;
+        }
+        if (path.contains("anvil")) {
+            return 7870f;
+        }
+        if (path.contains("coal_block")) {
+            return 1500f;
+        }
+        if (path.contains("obsidian")) {
+            return 2600f;
+        }
+        if (path.contains("stone") || path.contains("cobblestone") || path.contains("granite") ||
+            path.contains("diorite") || path.contains("andesite") || path.contains("deepslate") ||
+            path.contains("tuff") || path.contains("calcite") || path.contains("bricks") ||
+            path.contains("basalt") || path.contains("blackstone") || path.contains("netherrack") ||
+            path.contains("end_stone") || path.contains("prismarine")) {
+            return 2700f;
+        }
+        if (path.contains("sand") || path.contains("gravel") || path.contains("concrete_powder")) {
+            return 1600f;
+        }
+        if (path.contains("clay")) {
+            return 1800f;
+        }
+        if (path.contains("dirt") || path.contains("grass") || path.contains("podzol") ||
+            path.contains("mycelium") || path.contains("farmland") || path.contains("mud") ||
+            path.contains("soil") || path.contains("peat") || path.contains("roots")) {
+            return 1200f;
+        }
+        if (path.contains("log") || path.contains("wood") || path.contains("stem") || path.contains("hyphae")) {
+            return 700f;
+        }
+        if (path.contains("planks") || path.contains("fence") || path.contains("gate") ||
+            path.contains("stair") || path.contains("slab") || path.contains("door") || path.contains("trapdoor")) {
+            return 500f;
+        }
+        if (path.contains("leaves")) {
+            return 100f;
+        }
+        if (path.contains("wool") || path.contains("carpet")) {
+            return 100f;
+        }
+        if (path.contains("hay") || path.contains("thatch") || path.contains("target")) {
+            return 150f;
+        }
+        if (path.contains("glass")) {
+            return 2500f;
+        }
+        if (path.contains("ice")) {
+            return 900f;
+        }
+        if (path.contains("snow")) {
+            return 300f;
+        }
+        return 1500f; // default density (medium block)
+    }
+
     /** Weight (kg). Coarse tiers — real blocks scale with volume, tools moderate, food a portion, rest light. */
     private static float perItemWeight(Item item) {
         if (item instanceof BlockItem && perItemVolume(item) >= 0.4f) {
-            return perItemVolume(item) * 30f; // a full block ≈ 30 kg; a slab ≈ 15
+            float shape = perItemVolume(item);
+            String path = BuiltInRegistries.BLOCK.getKey(((BlockItem) item).getBlock()).getPath();
+            return shape * getBlockDensity(path) / 90f;
         }
+
+        String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+
+        // 1. Specific custom Alone items
+        if (item == AloneItems.WATERSKIN) return 0.20f; // empty waterskin
+        if (item == AloneItems.IRON_POT) return 3.00f;   // solid iron pot
+        if (item == AloneItems.BACKPACK) return 1.50f;
+        if (item == AloneItems.SALT) return 0.05f;
+        if (item == AloneItems.PLANT_FIBER) return 0.01f;
+        if (item == AloneItems.SPLINT) return 0.40f;
+        if (item == AloneItems.SMITHING_HAMMER) return 2.50f;
+        if (item == AloneItems.WHETSTONE) return 0.50f;
+        if (item == AloneItems.HERBAL_REMEDY) return 0.25f;
+        if (item == AloneItems.EMBER) return 0.15f;
+        if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.25f;
+        if (item == AloneItems.ROPE) return 0.30f;
+        if (item == AloneItems.BEDROLL) return 2.00f;
+
+        // 2. Specific vanilla items matching real life
+        if (path.contains("ingot") || path.contains("brick")) {
+            if (path.contains("gold")) return 19.30f / 9f; // in-game weight matches realistic fraction
+            if (path.contains("netherite")) return 20.00f / 9f;
+            if (path.contains("iron")) return 7.87f / 9f;
+            if (path.contains("copper")) return 8.96f / 9f;
+            return 1.50f; // default ingot
+        }
+        if (path.contains("nugget")) {
+            if (path.contains("gold")) return (19.30f / 9f) / 9f;
+            if (path.contains("iron")) return (7.87f / 9f) / 9f;
+            return 0.15f;
+        }
+        if (path.contains("raw_")) {
+            if (path.contains("gold")) return 2.00f;
+            if (path.contains("iron")) return 1.20f;
+            if (path.contains("copper")) return 1.30f;
+            return 1.20f;
+        }
+
+        // Tools, weapons, shields, bows
+        if (path.contains("sword")) return 1.20f;
+        if (path.contains("pickaxe")) return 2.00f;
+        if (path.contains("axe")) return 1.80f;
+        if (path.contains("shovel")) return 1.50f;
+        if (path.contains("hoe")) return 1.20f;
+        if (path.contains("shield")) return 5.00f;
+        if (path.contains("bow")) return 1.00f;
+        if (path.contains("crossbow")) return 3.00f;
+        if (path.contains("arrow")) return 0.05f;
+
+        // Armor pieces
+        if (path.contains("helmet") || path.contains("cap")) {
+            if (path.contains("leather")) return 1.00f;
+            if (path.contains("chainmail")) return 2.00f;
+            if (path.contains("iron") || path.contains("steel")) return 2.50f;
+            if (path.contains("gold")) return 5.00f;
+            if (path.contains("netherite")) return 6.00f;
+            return 2.00f;
+        }
+        if (path.contains("chestplate") || path.contains("tunic")) {
+            if (path.contains("leather")) return 3.00f;
+            if (path.contains("chainmail")) return 8.00f;
+            if (path.contains("iron") || path.contains("steel")) return 10.00f;
+            if (path.contains("gold")) return 20.00f;
+            if (path.contains("netherite")) return 25.00f;
+            return 8.00f;
+        }
+        if (path.contains("leggings") || path.contains("pants")) {
+            if (path.contains("leather")) return 2.00f;
+            if (path.contains("chainmail")) return 5.00f;
+            if (path.contains("iron") || path.contains("steel")) return 6.50f;
+            if (path.contains("gold")) return 12.00f;
+            if (path.contains("netherite")) return 15.00f;
+            return 5.00f;
+        }
+        if (path.contains("boots")) {
+            if (path.contains("leather")) return 0.80f;
+            if (path.contains("chainmail")) return 1.50f;
+            if (path.contains("iron") || path.contains("steel")) return 2.00f;
+            if (path.contains("gold")) return 4.00f;
+            if (path.contains("netherite")) return 5.00f;
+            return 1.50f;
+        }
+
+        // Buckets
+        if (path.equals("bucket")) return 3.00f;
+        if (path.equals("water_bucket")) return 13.00f;
+        if (path.equals("lava_bucket")) return 33.00f;
+        if (path.equals("milk_bucket")) return 13.30f;
+
+        // Common resources
+        if (path.contains("stick")) return 0.20f;
+        if (path.contains("coal") || path.contains("charcoal")) return 0.20f;
+        if (path.contains("flint")) return 0.30f;
+        if (path.contains("string")) return 0.01f;
+        if (path.contains("feather")) return 0.005f;
+        if (path.contains("leather")) return 1.00f;
+        if (path.contains("paper")) return 0.01f;
+        if (path.contains("wheat")) return 0.10f;
+        if (path.contains("bone")) return 0.20f;
+        if (path.contains("clay_ball")) return 0.50f;
+        if (path.contains("egg")) return 0.06f;
+        if (path.contains("ender_pearl")) return 0.50f;
+
+        // Food
         ItemStack def = item.getDefaultInstance();
-        if (def.isDamageableItem()) {
-            return 1.5f; // tools, weapons, armour
-        }
         if (def.has(DataComponents.FOOD)) {
-            return 0.35f; // a portion of food (a steak, a loaf) — a stack of 64 ≈ 22 kg
+            if (path.contains("berry") || path.contains("cookie") || path.contains("kelp")) {
+                return 0.05f; // small snacks
+            }
+            if (path.contains("apple") || path.contains("melon")) {
+                return 0.15f;
+            }
+            if (path.contains("stew") || path.contains("soup")) {
+                return 0.50f;
+            }
+            return 0.35f; // standard portion
         }
-        return 0.05f; // seeds and other small items
+
+        return 0.05f; // default weight for small misc items
     }
 
     public static float totalVolume(Player player) {

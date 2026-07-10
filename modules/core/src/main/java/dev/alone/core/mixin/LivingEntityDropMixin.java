@@ -4,7 +4,6 @@ import dev.alone.core.Carry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,12 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * Two rules on dropping items (proposal §5.1):
  * <ul>
- *   <li><b>You can't throw block-type items out of your inventory</b> — place them or store them in a
- *       chest. A player-initiated throw of a {@link BlockItem} is refused and the item goes back.</li>
+ *   <li><b>You can't throw <em>building</em> blocks out of your inventory</b> — place them or store
+ *       them in a chest. Only substantial full-cube blocks (see {@link Carry#isSubstantialBlock}) are
+ *       refused; context-placed things like seeds, sugar cane, saplings and flowers drop normally.</li>
  *   <li>You can't <em>throw</em> anything heavy far — the horizontal toss scales down by weight, so a
  *       full block just drops at your feet.</li>
  * </ul>
- * Both apply to player throws only ({@code thrownFromHand}); mob and death drops are untouched.
+ * The no-throw rule applies to living players only (death drops still fall); mobs are untouched.
  */
 @Mixin(LivingEntity.class)
 public class LivingEntityDropMixin {
@@ -35,8 +35,8 @@ public class LivingEntityDropMixin {
     private void alone$noThrowingBlocks(ItemStack stack, boolean randomly, boolean thrownFromHand,
                                         CallbackInfoReturnable<ItemEntity> cir) {
         if ((Object) this instanceof Player player && player.isAlive() && !player.isCreative()
-            && stack.getItem() instanceof BlockItem) {
-            player.getInventory().add(stack); // put it back; you place blocks, you don't chuck them
+            && Carry.isSubstantialBlock(stack)) {
+            player.getInventory().add(stack); // put it back; you place building blocks, you don't chuck them
             if (stack.isEmpty()) {
                 cir.setReturnValue(null); // fully returned — nothing gets thrown
             }
