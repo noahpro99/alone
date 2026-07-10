@@ -49,6 +49,7 @@ public class BackpackItem extends Item {
         }
         if (!level.isClientSide()) {
             level.setBlockAndUpdate(placePos, AloneBlocks.BACKPACK_BLOCK.defaultBlockState());
+            PlacedBlocks.markPlaced(level, placePos); // set down by the player — loose, quick to pick up
             ItemStack backpack = context.getItemInHand();
             if (level.getBlockEntity(placePos) instanceof BackpackBlockEntity be) {
                 NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);

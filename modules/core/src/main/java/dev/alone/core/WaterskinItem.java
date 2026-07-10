@@ -83,6 +83,7 @@ public class WaterskinItem extends Item {
             if (level.getBlockState(placePos).canBeReplaced() && target.canSurvive(level, placePos)) {
                 if (!level.isClientSide()) {
                     level.setBlockAndUpdate(placePos, target);
+                    PlacedBlocks.markPlaced(level, placePos); // you set it down — loose, quick to pick back up
                     if (!context.getPlayer().isCreative()) {
                         context.getItemInHand().shrink(1);
                     }
