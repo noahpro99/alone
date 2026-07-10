@@ -1,5 +1,52 @@
 {
-  "variants": {
-    "": { "model": "alone:block/rope" }
-  }
+  "multipart": [
+    {
+      "when": {
+        "up": "false",
+        "down": "false",
+        "north": "false",
+        "south": "false",
+        "east": "false",
+        "west": "false"
+      },
+      "apply": { "model": "alone:block/rope_vertical" }
+    },
+    {
+      "when": {
+        "OR": [
+          {"up": "true"},
+          {"down": "true"},
+          {"north": "true"},
+          {"south": "true"},
+          {"east": "true"},
+          {"west": "true"}
+        ]
+      },
+      "apply": { "model": "alone:block/rope_core" }
+    },
+    {
+      "when": { "up": "true" },
+      "apply": { "model": "alone:block/rope_up" }
+    },
+    {
+      "when": { "down": "true" },
+      "apply": { "model": "alone:block/rope_down" }
+    },
+    {
+      "when": { "north": "true" },
+      "apply": { "model": "alone:block/rope_side" }
+    },
+    {
+      "when": { "south": "true" },
+      "apply": { "model": "alone:block/rope_side", "y": 180 }
+    },
+    {
+      "when": { "east": "true" },
+      "apply": { "model": "alone:block/rope_side", "y": 90 }
+    },
+    {
+      "when": { "west": "true" },
+      "apply": { "model": "alone:block/rope_side", "y": 270 }
+    }
+  ]
 }

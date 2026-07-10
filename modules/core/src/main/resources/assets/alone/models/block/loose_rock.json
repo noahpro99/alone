@@ -1,20 +1,32 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "alone:item/rock",
-    "all": "alone:item/rock"
+    "particle": "minecraft:block/stone",
+    "all": "minecraft:block/stone"
   },
   "elements": [
     {
-      "from": [2, 0, 2],
-      "to": [14, 1.5, 14],
+      "from": [4, 0, 5],
+      "to": [9, 3, 10],
       "faces": {
-        "up":   { "uv": [2, 2, 14, 14], "texture": "#all" },
-        "down": { "uv": [2, 2, 14, 14], "texture": "#all" },
-        "north":{ "uv": [2, 14, 14, 15.5], "texture": "#all" },
-        "south":{ "uv": [2, 14, 14, 15.5], "texture": "#all" },
-        "east": { "uv": [2, 14, 14, 15.5], "texture": "#all" },
-        "west": { "uv": [2, 14, 14, 15.5], "texture": "#all" }
+        "up":    { "uv": [4, 5, 9, 10], "texture": "#all" },
+        "down":  { "uv": [4, 5, 9, 10], "texture": "#all" },
+        "north": { "uv": [4, 13, 9, 16], "texture": "#all" },
+        "south": { "uv": [4, 13, 9, 16], "texture": "#all" },
+        "east":  { "uv": [4, 13, 9, 16], "texture": "#all" },
+        "west":  { "uv": [4, 13, 9, 16], "texture": "#all" }
+      }
+    },
+    {
+      "from": [10, 0, 9],
+      "to": [13, 2, 12],
+      "faces": {
+        "up":    { "uv": [10, 9, 13, 12], "texture": "#all" },
+        "down":  { "uv": [10, 9, 13, 12], "texture": "#all" },
+        "north": { "uv": [10, 14, 13, 16], "texture": "#all" },
+        "south": { "uv": [10, 14, 13, 16], "texture": "#all" },
+        "east":  { "uv": [10, 14, 13, 16], "texture": "#all" },
+        "west":  { "uv": [10, 14, 13, 16], "texture": "#all" }
       }
     }
   ]
