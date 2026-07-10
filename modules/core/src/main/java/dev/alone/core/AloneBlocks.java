@@ -42,7 +42,8 @@ public final class AloneBlocks {
      * Rope (proposal §5.7) — a hanging climb line. No collision (you move through it) and it's in the
      * {@code minecraft:climbable} tag, so vanilla treats it exactly like a ladder: full-speed, no-cost,
      * safe up-and-down climbing — the civilized alternative to brutal free-climbing. Deployed as a run
-     * down a cliff face by {@link RopeItem}.
+     * down a cliff face by {@link RopeItem}. Dry plant fibre, so it's <b>very flammable</b>: lava lights
+     * it and fire climbs a line fast (see {@link #init()}) — keep your ropes away from flame.
      */
     public static final Block ROPE = register("rope",
         key -> new RopeBlock(BlockBehaviour.Properties.of()
@@ -51,6 +52,7 @@ public final class AloneBlocks {
             .strength(0.4F)
             .noCollision()
             .noOcclusion()
+            .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
@@ -73,6 +75,9 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "backpack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 BackpackBlockEntity::new, java.util.Set.of(BACKPACK_BLOCK)));
+
+        // Rope is dry plant fibre — it catches readily and burns up fast, so fire runs up a hung line.
+        net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);
     }
 
     private static Block register(String path, Function<ResourceKey<Block>, Block> factory) {

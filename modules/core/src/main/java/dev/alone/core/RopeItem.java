@@ -74,8 +74,9 @@ public class RopeItem extends Item {
     }
 
     /** Where the next length should go: straight down if that's open, else sideways into an open
-     *  neighbour so the line can route around a ledge. Null if it's boxed in on all sides. The sideways
-     *  pick is deterministic from position so client and server agree on which way it jogs. */
+     *  neighbour so the line can route around a ledge. Null if it's boxed in on all sides. With more than
+     *  one way to go it picks at random, so re-running the same spot doesn't always jog the same way (the
+     *  actual placement is server-side, so the random pick can't desync). */
     private static BlockPos payOut(Level level, BlockPos end) {
         BlockPos down = end.below();
         if (level.getBlockState(down).canBeReplaced()) {
@@ -100,7 +101,7 @@ public class RopeItem extends Item {
             }
         }
         List<BlockPos> choices = canDescend.isEmpty() ? open : canDescend;
-        return choices.get(Math.floorMod((int) (end.asLong() >> 2), choices.size()));
+        return choices.get(level.getRandom().nextInt(choices.size()));
     }
 
     /** A sideways cell that touches any rope other than the end we're growing from would double the line
