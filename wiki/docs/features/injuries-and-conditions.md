@@ -44,7 +44,7 @@ Bites from **zombie-type mobs** have about a **30% chance** to fester into an in
 
 ### Sickness (foodborne illness)
 
-Several things can make you **sick** — a lingering illness that keeps you weak and hungry and persists even through a relog: drinking untreated or tainted water, eating raw or spoiled food, or eating with dirty hands. See [Food & Eating](./food-and-eating.md) for the per-food sickness odds and [Water, Thirst & Vessels](./water-and-drinking.md) for water quality. **Drink an herbal remedy** (crafted from 2 flowers + plant fiber) to knock time off the sickness, ease an infection, and clear acute nausea and poison. Otherwise it runs its multi-minute course on its own.
+Several things can make you **sick** — a lingering illness that keeps you weak and hungry and persists even through a relog: drinking untreated or tainted water, eating raw or spoiled food, eating with dirty hands, or **a chill from prolonged cold-and-wet exposure** (see [Body Temperature](./body-temperature.md#cold--hypothermia)). See [Food & Eating](./food-and-eating.md) for the per-food sickness odds and [Water, Thirst & Vessels](./water-and-drinking.md) for water quality. **Drink an herbal remedy** (crafted from 2 flowers + plant fiber) to knock time off the sickness, ease an infection, and clear acute nausea and poison. Otherwise it runs its multi-minute course on its own.
 
 ### Dysentery
 

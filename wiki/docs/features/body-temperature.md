@@ -30,6 +30,8 @@ Your body temperature is pushed around by your surroundings:
 
 Linger in the cold and you first **slow down**, then start taking **freezing damage**. Cold also has knock-on costs before it's outright deadly: below a hard chill your **stamina recovers at half rate** (you're stiff and shivering) and your body **burns extra food** to hold its heat.
 
+**Cold *and* wet gives you a chill.** The real danger isn't dry cold — it's the **wet-cold combination** (soaked clothing insulates nothing). Stay **cold and wet** for a few minutes — caught in freezing rain, or after falling through the ice — and a **chill sets in**: a lingering [sickness](./injuries-and-conditions.md#sickness-foodborne-illness) that stays with you even after you've warmed up. **Dry off or get to a fire** before it takes hold; an herbal remedy will treat it once it has.
+
 ### Heat → heatstroke
 
 Overheat and you take **burning damage** as if you were on fire. Standing in lava or a desert at noon in heavy clothing will push you there fast.
