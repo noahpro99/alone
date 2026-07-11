@@ -76,6 +76,7 @@ A craft is not instant. Once a valid recipe sits in the grid, it must be **worke
 | Planks & string (riven / twisted by hand) | ~12s |
 | Food | ~5s |
 | Tools & weapons | ~15s |
+| Working an iron bloom into an ingot | ~30s |
 | Stations (chest, furnace) | ~60s |
 | Armor | ~2 min |
 

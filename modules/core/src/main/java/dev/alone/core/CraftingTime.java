@@ -44,6 +44,7 @@ public final class CraftingTime {
     private static final int STATION = 1200; // ~60s: a chest, furnace — real joinery/masonry
     private static final int TOOL = 300;     // ~15s: shape and haft a tool or weapon (metal ones then forge)
     private static final int ARMOR = 2400;   // ~2 min assembling the piece — metal is then forged on top
+    private static final int BLOOM_WORK = 600; // ~30s: hammering a spongy bloom to consolidate iron and drive out slag
 
     // Per player, the accumulated ticks worked on each result item (by item id) — kept so a craft you
     // stepped away from resumes. Side-separated so the integrated server and client don't collide.
@@ -124,6 +125,11 @@ public final class CraftingTime {
         if (result.is(ItemTags.SWORDS) || result.is(ItemTags.AXES) || result.is(ItemTags.PICKAXES)
             || result.is(ItemTags.SHOVELS) || result.is(ItemTags.HOES) || result.isDamageableItem()) {
             return TOOL;
+        }
+        if (result.is(Items.IRON_INGOT)) {
+            // Working a bloomery bloom into a usable ingot is real hammering — consolidating the spongy,
+            // slag-riddled lump — not an instant craft. (This is the only way to grid-craft an iron ingot.)
+            return BLOOM_WORK;
         }
         if (result.is(ItemTags.PLANKS)) {
             return PLANK; // riving a log into boards by hand is hard, laborious work (§5.4)

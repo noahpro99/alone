@@ -120,8 +120,10 @@ sharper, and permanent.*
 
 1. **Mine and smelt iron.** Iron ore needs a **copper pick** to work (a flint pick just shatters on it) —
    so Age 3 gates this. Then charge a **[bloomery](./features/fire.md)** with the ore and **charcoal** and
-   let it run a long, hot, fuel-hungry burn into a **bloom**, and hammer the bloom into an ingot. Iron needs
-   more heat and more fuel than copper ever did — that's why it comes later.
+   let it run a long, hot, fuel-hungry burn into a **bloom** — then **hammer that spongy bloom into an ingot**,
+   which is real work in its own right (about half a minute at the grid, consolidating the lump and driving
+   out slag), not a free step. Iron needs more heat, more fuel, and more sweat than copper ever did — that's
+   why it comes later.
 2. **Forge and temper.** A grid-crafted iron or steel piece comes out a **brittle unforged blank**. Heat it
    at a forge and **hammer it on an anvil** — [many blows across several heats](./features/tools-and-crafting.md#forge--temper--metal-gear)
    — and it rolls a **quality** from crude to masterwork. Re-tempering rerolls it (and repairs it), but
