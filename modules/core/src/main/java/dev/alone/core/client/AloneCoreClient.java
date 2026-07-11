@@ -69,6 +69,34 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.TRAVOIS, TravoisRenderer::new);
 
+        // Hauling must slow the LOCAL player through jumps and sprints too — and player movement is
+        // client-authoritative, so a server-side cap can't hold it. If the local player is dragging a
+        // travois, cancel sprint here (kills the sprint-jump momentum burst) and cap horizontal speed to
+        // the synced haul factor. This is what actually stops "jump to skip the slowdown". (§6)
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null || client.level == null) {
+                return;
+            }
+            dev.alone.core.TravoisEntity hauling = null;
+            for (net.minecraft.world.entity.Entity entity : client.level.entitiesForRendering()) {
+                if (entity instanceof dev.alone.core.TravoisEntity travois
+                    && client.player.getId() == travois.getDraggerId()) {
+                    hauling = travois;
+                    break;
+                }
+            }
+            if (hauling != null) {
+                client.player.setSprinting(false);
+                double cap = 0.14 * hauling.getHaulFactor();
+                net.minecraft.world.phys.Vec3 v = client.player.getDeltaMovement();
+                double horiz = Math.sqrt(v.x * v.x + v.z * v.z);
+                if (horiz > cap) {
+                    double s = cap / horiz;
+                    client.player.setDeltaMovement(v.x * s, v.y, v.z * s);
+                }
+            }
+        });
+
         // The Condition Panel (§1.5): no hearts bar — the body is a vitality bar + the injury readout,
         // both drawn by our HUD. Hide the vanilla hearts.
         HudElementRegistry.removeElement(VanillaHudElements.HEALTH_BAR);

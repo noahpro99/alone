@@ -2,11 +2,12 @@ package dev.alone.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -56,9 +57,35 @@ public class TravoisEntity extends Entity implements Container {
     public static final AttachmentType<List<ItemStack>> CARGO = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "travois_cargo"), ItemStack.CODEC.listOf());
 
+    // Synced to nearby clients so the client can enforce the haul on the LOCAL player — player movement is
+    // client-authoritative, so jump/sprint limiting has to happen client-side (see AloneCoreClient).
+    private static final EntityDataAccessor<Integer> DATA_DRAGGER =
+        SynchedEntityData.defineId(TravoisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_HAUL_FACTOR =
+        SynchedEntityData.defineId(TravoisEntity.class, EntityDataSerializers.FLOAT);
+
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private boolean loaded = false;
-    private UUID draggerUuid; // who's dragging right now (transient — you re-grab after a reload)
+
+    /** Entity id of who's dragging, or -1. Client reads this to know if it should slow the local player. */
+    public int getDraggerId() {
+        return getEntityData().get(DATA_DRAGGER);
+    }
+
+    private void setDraggerId(int id) {
+        getEntityData().set(DATA_DRAGGER, id);
+    }
+
+    /** The dragging player, either side, or null. */
+    private Player draggerPlayer() {
+        int id = getDraggerId();
+        return id != -1 && level().getEntity(id) instanceof Player player ? player : null;
+    }
+
+    /** The current haul slowdown factor (1 = none), synced so the client caps the hauler's speed to match. */
+    public float getHaulFactor() {
+        return getEntityData().get(DATA_HAUL_FACTOR);
+    }
 
     public TravoisEntity(EntityType<? extends TravoisEntity> type, Level level) {
         super(type, level);
@@ -67,7 +94,8 @@ public class TravoisEntity extends Entity implements Container {
     // ── Entity plumbing ──────────────────────────────────────────────────────────────────────────
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        // no synched state for now — the visual is a fixed block model
+        builder.define(DATA_DRAGGER, -1);
+        builder.define(DATA_HAUL_FACTOR, 1.0f);
     }
 
     @Override
@@ -128,10 +156,10 @@ public class TravoisEntity extends Entity implements Container {
         }
         if (player.isSecondaryUseActive()) {
             // Grab or drop the handles.
-            if (draggerUuid != null) {
+            if (getDraggerId() != -1) {
                 releaseDragger();
             } else {
-                draggerUuid = player.getUUID();
+                setDraggerId(player.getId());
             }
             return InteractionResult.SUCCESS;
         }
@@ -152,13 +180,11 @@ public class TravoisEntity extends Entity implements Container {
         if (!onGround()) {
             setDeltaMovement(getDeltaMovement().add(0.0, -0.08, 0.0));
         }
-        if (draggerUuid != null) {
-            Player dragger = level().getPlayerByUUID(draggerUuid);
-            if (dragger == null || dragger.isRemoved() || dragger.distanceToSqr(this) > GRAB_RANGE_SQR) {
-                releaseDragger();
-            } else {
-                followAndSlow(dragger);
-            }
+        Player dragger = draggerPlayer();
+        if (dragger != null && !dragger.isRemoved() && dragger.distanceToSqr(this) <= GRAB_RANGE_SQR) {
+            followAndSlow(dragger);
+        } else if (getDraggerId() != -1) {
+            releaseDragger();
         }
         move(MoverType.SELF, getDeltaMovement());
         double friction = onGround() ? 0.55 : 0.96;
@@ -166,16 +192,22 @@ public class TravoisEntity extends Entity implements Container {
     }
 
     private void followAndSlow(Player dragger) {
-        // Trail a metre or so behind the hauler, on their heading.
-        Vec3 heading = dragger.getLookAngle().multiply(1, 0, 1);
-        if (heading.lengthSqr() < 1.0e-4) {
-            heading = new Vec3(0, 0, 1);
-        }
-        Vec3 behind = dragger.position().subtract(heading.normalize().scale(1.3));
-        Vec3 toTarget = behind.subtract(position());
-        setDeltaMovement(toTarget.x * 0.5, getDeltaMovement().y, toTarget.z * 0.5);
-        if (toTarget.horizontalDistanceSqr() > 1.0e-4) {
-            setYRot((float) (Math.toDegrees(Math.atan2(-toTarget.x, toTarget.z))));
+        // Trail based on where the hauler WALKS, not where they look: just get pulled toward them once the
+        // tether goes taut. Standing still and turning your head doesn't swing the sled around — it only
+        // moves when you actually walk away from it, so it naturally follows your path of travel.
+        Vec3 toPlayer = dragger.position().subtract(position());
+        double dist = Math.sqrt(toPlayer.x * toPlayer.x + toPlayer.z * toPlayer.z);
+        double tether = 1.4;
+        boolean beingPulled = dist > tether;
+        if (beingPulled) {
+            double nx = toPlayer.x / dist;
+            double nz = toPlayer.z / dist;
+            double pull = dist - tether;
+            setDeltaMovement(nx * pull * 0.6, getDeltaMovement().y, nz * pull * 0.6);
+            setYRot((float) Math.toDegrees(Math.atan2(-nx, nz))); // face the way it's being pulled
+        } else {
+            Vec3 dm = getDeltaMovement();
+            setDeltaMovement(dm.x * 0.5, dm.y, dm.z * 0.5); // within reach — settle, don't reorient
         }
 
         float loadT = Math.min(1.0f, cargoWeight() / FULL_LOAD_KG);
@@ -183,26 +215,19 @@ public class TravoisEntity extends Entity implements Container {
         if (dragger.getY() > getY() + 0.5) {
             factor *= 0.8f; // hauling uphill is worse
         }
-        // Slow the walk via the movement attribute...
+        getEntityData().set(DATA_HAUL_FACTOR, factor); // sync so the client can cap the hauler to match
+
+        // Slow the walk via the movement attribute (client respects it). The jump/sprint ceiling can't be
+        // done here — player movement is client-authoritative — so the client enforces that (AloneCoreClient).
         AttributeInstance speed = dragger.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
             speed.addOrUpdateTransientModifier(new AttributeModifier(
                 DRAG_MODIFIER, factor - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         }
-        // ...but the attribute only governs walking — a sprint-jump keeps its own momentum and skips it.
-        // So no sprinting while hauling, and a hard horizontal-speed ceiling that a jump can't cheat past.
-        dragger.setSprinting(false);
-        Vec3 dv = dragger.getDeltaMovement();
-        double horiz = Math.sqrt(dv.x * dv.x + dv.z * dv.z);
-        double cap = 0.12 * factor;
-        if (horiz > cap) {
-            double s = cap / horiz;
-            dragger.setDeltaMovement(dv.x * s, dv.y, dv.z * s);
-            dragger.hurtMarked = true; // force the corrected velocity to the client
-        }
-        // Dragging a loaded sled is real work — it costs stamina while you're actually moving it.
-        if (horiz > 0.02) {
-            SurvivalMeters.exert(dragger, 0.05f + 0.20f * loadT);
+        // Dragging a loaded sled is real work — it costs stamina while it's actually being hauled. We gate
+        // on the sled being pulled (server-reliable), NOT the player's delta, which reads ~0 server-side.
+        if (beingPulled) {
+            SurvivalMeters.exert(dragger, 0.06f + 0.24f * loadT);
         }
     }
 
@@ -219,16 +244,15 @@ public class TravoisEntity extends Entity implements Container {
     }
 
     private void releaseDragger() {
-        if (draggerUuid != null) {
-            Player dragger = level().getPlayerByUUID(draggerUuid);
-            if (dragger != null) {
-                AttributeInstance speed = dragger.getAttribute(Attributes.MOVEMENT_SPEED);
-                if (speed != null) {
-                    speed.removeModifier(DRAG_MODIFIER);
-                }
+        Player dragger = draggerPlayer();
+        if (dragger != null) {
+            AttributeInstance speed = dragger.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (speed != null) {
+                speed.removeModifier(DRAG_MODIFIER);
             }
-            draggerUuid = null;
         }
+        setDraggerId(-1);
+        getEntityData().set(DATA_HAUL_FACTOR, 1.0f);
     }
 
     private void dropAll() {
