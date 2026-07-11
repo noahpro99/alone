@@ -1,10 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/template_spawn_egg",
-    "tints": [
-      { "type": "minecraft:constant", "value": 6046259 },
-      { "type": "minecraft:constant", "value": 9132587 }
-    ]
+    "model": "alone:item/brown_bear_spawn_egg"
   }
 }
