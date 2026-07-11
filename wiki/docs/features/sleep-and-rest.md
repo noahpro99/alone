@@ -15,7 +15,7 @@ There are two ways to rest, and they are not equal.
 
 In a pinch, you can bed down on the ground with no gear:
 
-- **Right-click** bare ground (grass, dirt, sand) with an **empty hand** — no crouch needed. It **lays you down** on the spot, the same as a bed, and from there the clock [fast-forwards](#sleeping-fast-forwards-the-night--it-doesnt-skip-it) to first light — just at the worst comfort.
+- **Sneak + right-click** bare ground (grass, dirt, sand) with an **empty hand**. It **lays you down** on the spot, the same as a bed, and from there the clock [fast-forwards](#sleeping-fast-forwards-the-night--it-doesnt-skip-it) to first light — just at the worst comfort. (The sneak is so you don't lie down by accident, since resting works any time now.)
 - It works **any time of day** — at night it's sleep; **by day it's how you pass the hours**: lie down to fast-forward through a long wait (mending an injury, waiting out weather, letting a crop grow). This is the pack's answer to its realistically-long durations — you don't sit in real time, you rest and the clock runs.
 - It only works at **night**.
 - The spot must be **dry** — no rain falling on you.

@@ -48,10 +48,11 @@ public final class Sleeping {
             }
         });
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
-            // Bare-handed right-click on the top of bare ground (grass/dirt/sand). No sneak needed —
-            // but we only react when the hand is empty and you're aiming at the top face, so normal
-            // play doesn't trip it. grass_block is in BlockTags.DIRT, so grass counts.
-            if (hand != InteractionHand.MAIN_HAND || !player.getMainHandItem().isEmpty()) {
+            // Deliberate: SNEAK + bare hand + right-click the top of bare ground (grass/dirt/sand). Since
+            // resting works any time of day now, the sneak means a stray ground-click during normal play
+            // won't lie you down and fast-forward the clock by accident. grass_block is in BlockTags.DIRT.
+            if (hand != InteractionHand.MAIN_HAND || !player.getMainHandItem().isEmpty()
+                || !player.isShiftKeyDown()) {
                 return InteractionResult.PASS;
             }
             var groundPos = hit.getBlockPos();
