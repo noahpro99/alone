@@ -95,7 +95,9 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 
 ## The world & navigation
 
-- **Weather with teeth:** storms that fray builds, blizzards, droughts, telegraphed fronts.
+- **Weather with teeth:** storms that fray builds, droughts, telegraphed fronts. *(**Blizzards** have
+  shipped — a winter storm freezes the exposed fast and slows you to a trudge, and any roof + fire is the
+  race-to-shelter answer; see [Body Temperature](./features/body-temperature.md#what-warms-and-cools-you).)*
 - **Biome strategies** — each biome a different opening hand.
 - **Navigation without coordinates:** a craftable compass, hand-drawn maps that fill as you walk,
   celestial direction, and cairns. Getting lost becomes possible.

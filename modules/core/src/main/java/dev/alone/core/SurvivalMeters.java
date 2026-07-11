@@ -119,6 +119,7 @@ public final class SurvivalMeters {
     private static final int CAVE_VARIABLE_DEPTH = 15; // m over which the surface's influence fades underground
     private static final int CAVE_DEEP_DEPTH = 110;    // m below the cold zone at which the chill bottoms out (~bedrock)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
+    private static final float BLIZZARD_CHILL = 0.6f;   // a winter storm freezes the exposed fast — any roof breaks it
     private static final float ROOF_INSULATION = 0.4f;  // a bare roof (open lean-to) blunts ~40% of cold/heat (§5.5)
     private static final float MAX_INSULATION = 0.78f;   // a snug, fully-walled shelter — holds heat far better
     private static final int WALL_REACH = 4;             // a wall within this many blocks shelters that side
@@ -383,6 +384,9 @@ public final class SurvivalMeters {
         } else {
             if (level.isRainingAt(pos)) {
                 temp -= level.isThundering() ? 0.35f : 0.2f; // rain/snow/storm chills the exposed
+            }
+            if (isBlizzard(level)) {
+                temp -= BLIZZARD_CHILL; // a winter storm: driving snow and wind, deadly in the open
             }
             long timeOfDay = level.getOverworldClockTime() % 24000L;
             if (timeOfDay >= 13000L && timeOfDay < 23000L) {
@@ -668,6 +672,22 @@ public final class SurvivalMeters {
             player.sendSystemMessage(Component.literal(
                 "The wet cold has settled into your chest — you've caught a chill."));
         }
+
+        // A blizzard caught in the open (weather with teeth): the killing cold is already in the ambient
+        // above; out under the driving snow it also slows you to a trudge and tells you to get to cover.
+        if (isBlizzard(level) && level.canSeeSky(player.blockPosition())) {
+            effect(player, MobEffects.SLOWNESS, 0); // whiteout — you can barely push through the wind and snow
+            if (player.tickCount % 200 == 0) {
+                player.sendSystemMessage(Component.literal(
+                    "A blizzard drives snow sideways — get under a roof and to a fire, or the cold will take you."),
+                    true);
+            }
+        }
+    }
+
+    /** A blizzard — a winter thunderstorm of driving snow. Deadly cold in the open; any roof breaks the worst. */
+    public static boolean isBlizzard(Level level) {
+        return level.isThundering() && Seasons.isWinter(level);
     }
 
     private static void effect(ServerPlayer player, Holder<MobEffect> which, int amplifier) {
