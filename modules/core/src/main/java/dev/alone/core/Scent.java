@@ -40,6 +40,10 @@ import net.minecraft.world.phys.Vec3;
  * <p>The same nose finds <b>carrion</b>: fresh meat <b>dropped on the ground</b> — a kill left behind, or
  * the pile where you died — draws predators that <b>eat it where it lies</b>, so don't dawdle recovering a
  * meat-laden death pile. (See {@link #scavenge}.)
+ *
+ * <p>And it smells <b>blood</b>: while you're <b>bleeding</b> (an open wound, see {@link Conditions}) you
+ * reek like a fresh kill, so a wound in predator country draws them to you — bind it fast, for more than
+ * just the health.
  */
 public final class Scent {
     private Scent() {
@@ -51,6 +55,7 @@ public final class Scent {
     private static final int SCAN = 40;              // sniff the air ~every 2s
     private static final double BASE_RADIUS = 14.0;  // a little carried meat carries this far
     private static final double MAX_RADIUS = 30.0;   // a heavy load, this far
+    private static final double BLOOD_BONUS = 8.0;   // an open, bleeding wound carries about this far on its own
     private static final double APPROACH_SPEED = 1.15;
     private static final double GRAB_RANGE = 2.6;        // this close, a predator can snatch a piece
     private static final long RAID_COOLDOWN_TICKS = 160L; // ~8s between snatches so a pack can't strip you at once
@@ -78,10 +83,12 @@ public final class Scent {
 
     private static void tick(ServerLevel level, ServerPlayer player) {
         int freshMeat = countFreshMeat(player);
-        if (freshMeat <= 0) {
+        boolean bleeding = Conditions.isBleeding(player); // an open wound reeks of blood, same as raw meat
+        if (freshMeat <= 0 && !bleeding) {
             return;
         }
-        double radius = Math.min(MAX_RADIUS, BASE_RADIUS + freshMeat * 2.0); // more meat, stronger scent
+        double radius = Math.min(MAX_RADIUS,
+            BASE_RADIUS + freshMeat * 2.0 + (bleeding ? BLOOD_BONUS : 0.0)); // meat and fresh blood both carry
         double radiusSq = radius * radius;
         AABB box = player.getBoundingBox().inflate(radius);
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
@@ -114,8 +121,9 @@ public final class Scent {
             }
         }
         if (drewOne && player.tickCount % (SCAN * 8) == 0) {
-            player.sendSystemMessage(
-                Component.literal("The raw meat you're carrying has caught something's nose…"), true);
+            player.sendSystemMessage(Component.literal(freshMeat > 0
+                ? "The raw meat you're carrying has caught something's nose…"
+                : "Something has caught the scent of your blood…"), true); // bleeding, no meat to blame
         }
     }
 
