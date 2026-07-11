@@ -42,6 +42,7 @@
           jdk
           pkgs.gradle_9        # 9.5.1 — matches Loom 1.17; the default `gradle` is 8.14.4 and too old
           pkgs.prismlauncher   # playtesting the assembled modpack
+          pkgs.nodejs_22       # building the Docusaurus wiki in ./wiki
           pkgs.git
         ];
 
@@ -54,6 +55,7 @@
           echo "  First time: gradle wrapper --gradle-version 9.5.1"
           echo "  Dev client: ./gradlew :core:runClient"
           echo "  Playtest:   prismlauncher"
+          echo "  Wiki:       cd wiki && npm install && npm start"
         '';
       };
     };
