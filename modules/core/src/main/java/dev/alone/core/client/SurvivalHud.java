@@ -112,10 +112,12 @@ public final class SurvivalHud {
         boolean sprained = (conditions & Conditions.FLAG_SPRAINED) != 0;
         boolean dirty = (conditions & Conditions.FLAG_DIRTY_HANDS) != 0;
         boolean infected = (conditions & Conditions.FLAG_INFECTED) != 0;
+        boolean dysentery = (conditions & Conditions.FLAG_DYSENTERY) != 0;
 
         int body = sick ? 0xFF7BA05B : 0xFFCBB89A; // sickly green, else skin tone
         int hands = dirty ? 0xFF6B4A2B : body;      // brown when dirty
-        int torso = bleeding ? 0xFFB53030 : body;   // red when bleeding
+        // Bleeding (acute) wins the torso; a bilious yellow marks the gut illness of dysentery otherwise.
+        int torso = bleeding ? 0xFFB53030 : (dysentery ? 0xFFB0A83A : body);
         int legs = sprained ? 0xFFCC7A33 : body;    // orange when sprained
         int arms = infected ? 0xFF7A4FA3 : body;    // purple when a wound's infected
 
