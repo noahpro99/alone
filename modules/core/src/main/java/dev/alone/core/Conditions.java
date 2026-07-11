@@ -58,6 +58,7 @@ public final class Conditions {
     private static final int BLEED_TICKS = 200;   // ~10s per wound (stacks with more hits)
     private static final int SPRAIN_TICKS = 2400;  // ~2 min limping per bad fall (splint it to mend in ~30s)
     private static final int INFECTION_PER_BITE = 4000; // one bite ≈ a fever that clears; bites compound
+    private static final float WOUND_INFECT_CHANCE = 0.2f; // odds a dirty-handled open wound festers, per ~10s
     private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
     private static final float INFECT_CHANCE = 0.30f;   // odds a zombie-type bite gets infected
     public static final int DYSENTERY_TICKS = 4800;     // ~4 min of gut-wrenching illness
@@ -247,6 +248,14 @@ public final class Conditions {
         if (remaining % 40 == 0) { // lose a little blood every couple of seconds
             ServerLevel level = (ServerLevel) player.level();
             player.hurtServer(level, level.damageSources().generic(), 1.0f);
+        }
+        // An open wound worked with dirty hands festers (§5.6/§1.5): field-dressing a kill with bloody
+        // hands, or clutching a cut with filthy ones, contaminates it. Wash up, or bind it, before it turns.
+        if (Hygiene.handsDirty(player) && !isInfected(player)
+            && player.tickCount % 200 == 0 && player.getRandom().nextFloat() < WOUND_INFECT_CHANCE) {
+            addInfection(player, INFECTION_PER_BITE / 2);
+            player.sendSystemMessage(Component.literal(
+                "Filthy hands on an open wound — it's turning. Clean it, or bind it, before it festers."));
         }
         player.setAttached(BLEEDING, remaining - 1);
     }
