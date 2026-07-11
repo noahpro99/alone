@@ -142,8 +142,11 @@ nose for it.
 
 - Carrying **loose, unpreserved perishable food** (raw or cooked meat, fish) draws a nearby **wolf or
   polar bear** toward you — from about **14 blocks**, and **further the more you carry** (up to ~30).
+- If one **reaches you**, it **snatches a piece of raw meat and bolts** with it — a hungry raid that
+  costs you **food, not health**. It takes no more than **one piece every ~8 seconds**, so a pack can't
+  strip you all at once, but standing in the open with a full load of venison is a losing game.
 - **Salted or dried food doesn't reek** — preservation seals the smell, so a pack of jerky travels
-  clean where a pack of raw meat would trail predators.
+  clean where a pack of raw meat would trail predators (and a raider can't take what it can't smell).
 - Food **stashed in a chest or backpack** — rather than loose on your body — isn't on you to smell, so
   **caching your meat** is the other way to travel unnoticed.
 - **Foxes stay skittish** and keep their distance; only bold predators track you. Wolves and polar
@@ -151,5 +154,5 @@ nose for it.
 
 So the trade is real: **haul raw meat and attract danger, or preserve/cache it and travel clean.**
 
-*(For now the smell draws predators in to investigate — their approach is the warning. Escalation to a
-hungry raid, and dedicated sealed caches/smokehouses, are planned.)*
+*(Dedicated sealed barrels, hung caches, and smokehouses — purpose-built stores that beat the scent
+better than a plain chest — are still planned.)*
