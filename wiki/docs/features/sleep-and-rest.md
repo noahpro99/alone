@@ -43,6 +43,15 @@ How much you recover depends on how **comfortable** you were while you slept —
 
 Sleeping cold or hot doesn't just risk your temperature meters — it **robs you of rest**. A freezing night in the open leaves you waking up almost as tired as you lay down. Because wet clothing insulates nothing, being wet at bedtime counts as sleeping cold.
 
+## A night's rest mends illness
+
+Bed rest is the oldest medicine, and it works here. Sleeping a full night **eases illness** — **sickness**
+(including a cold-and-wet chill), a **festering infection**, and **dysentery** all ebb faster while you
+sleep, knocked back by roughly **half the night** you slept. But it's **scaled by how well you rested**: a
+**warm, comfortable** night clears a typical sickness outright, while a **shivering** one barely helps (and
+may even give you a *worse* chill). So when you're ill, the move is the real one — **a fed, warm, sheltered
+night's sleep** — which is exactly where a good shelter, a fire, and full stores pay off.
+
 ## Sleep isn't free — you wake hungry and dry
 
 Skipping the night doesn't skip the night's **metabolism**. You still **burn food and water while you
