@@ -21,6 +21,7 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BedItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
@@ -65,6 +66,9 @@ public final class AloneItems {
     /** A travois (proposal §6) — a dragged cargo sled. Right-click ground to set it down. */
     public static final Item TRAVOIS = register("travois",
         key -> new TravoisItem(new Item.Properties().stacksTo(1).setId(key)));
+    /** Spawn egg for the {@link BrownBear} (§7.2) — every custom mob ships one. */
+    public static final Item BROWN_BEAR_SPAWN_EGG = register("brown_bear_spawn_egg",
+        key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.BROWN_BEAR).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));
