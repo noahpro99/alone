@@ -57,6 +57,11 @@ public final class PlacedBlocks {
         return set != null && set.contains(pos.asLong());
     }
 
+    /** Commit a loose placed block back into rooted structure (it breaks slow again) — e.g. after tamping. */
+    public static void reRoot(Level level, BlockPos pos) {
+        unmark(level, pos);
+    }
+
     private static void unmark(Level level, BlockPos pos) {
         LevelChunk chunk = level.getChunkAt(pos);
         Set<Long> set = chunk.getAttached(PLACED);

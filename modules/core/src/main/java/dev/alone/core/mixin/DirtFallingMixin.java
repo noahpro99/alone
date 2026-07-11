@@ -52,10 +52,15 @@ public class DirtFallingMixin {
     }
 
     /** A support can bear earth: a solid, non-soil, non-falling block that is itself grounded (stands on
-     *  something) — a beam/post/wall. Loose soil can't hold soil, so you shore with timber or stone. */
+     *  something) — a beam/post/wall, or a block of <b>tamped rammed earth</b> ({@link dev.alone.core.Tamping}).
+     *  Loose soil can't hold soil, so you shore with timber, stone, or earth you've packed firm. */
     private static boolean alone$isSupport(ServerLevel level, BlockPos p) {
         BlockState s = level.getBlockState(p);
-        if (s.isAir() || alone$soil(s) || s.getBlock() instanceof FallingBlock) {
+        if (alone$soil(s)) {
+            // Rammed earth bears load like a post; loose soil can't hold soil.
+            return dev.alone.core.Tamping.isTamped(level, p) && !level.getBlockState(p.below()).isAir();
+        }
+        if (s.isAir() || s.getBlock() instanceof FallingBlock) {
             return false;
         }
         if (s.getCollisionShape(level, p).isEmpty()) {
@@ -87,7 +92,8 @@ public class DirtFallingMixin {
                             CallbackInfo ci) {
         if (alone$soil(state) && pos.getY() >= level.getMinY()
             && FallingBlock.isFree(level.getBlockState(pos.below()))
-            && !alone$shored(level, pos)) { // timber/stone within span holds the roof up
+            && !dev.alone.core.Tamping.isTamped(level, pos) // rammed earth holds itself up
+            && !alone$shored(level, pos)) { // timber/stone/rammed earth within span holds the roof up
             FallingBlockEntity.fall(level, pos, state);
         }
     }
