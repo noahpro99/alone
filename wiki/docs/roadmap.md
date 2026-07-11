@@ -58,9 +58,9 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 - **More tracking sign:** footprints, wind direction, and snow tracking, to follow quarry you can't see.
   *(Persistence hunting, blood trails, and bleed-out have shipped; see
   [Hunting & Wildlife](./features/hunting.md#persistence-hunting--run-it-down).)*
-- **Fuller butchering:** **fat** (→ tallow, candles) and **sinew** (→ cordage) from a carcass. *(A
-  blade kill already yields meat, hide, and bone; see
-  [Hunting & Wildlife](./features/hunting.md#a-blade-kill-butchers-the-carcass--hide-and-bone).)*
+- **Fat from a carcass** (→ rendered tallow → candles) — the last piece of full-animal use. *(A blade
+  kill already yields meat, hide, bone, and sinew; see
+  [Hunting & Wildlife](./features/hunting.md#a-blade-kill-butchers-the-carcass--hide-bone-and-sinew).)*
 - **Netting** as a second counter to insect pressure, and insect-borne disease. *(Insect pressure near
   standing water, countered by a smudge fire, has shipped — see
   [World & Seasons](./features/world-and-seasons.md#biting-insects).)*

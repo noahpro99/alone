@@ -54,15 +54,21 @@ the bleeding finishes the work.
 > A bleed-out death isn't a blade kill, so it still **forfeits the hide** (same as an arrow kill) — finish
 > it with a blade if you want the leather.
 
-## A blade kill butchers the carcass — hide and bone
+## A blade kill butchers the carcass — hide, bone, and sinew
 
 Killing a hide-bearing animal with a **blade** (knife, sword, axe, or **spear**) lets you work the whole
-carcass: it salvages **leather (hide)** *and* **bone**, on top of the meat. Kill it with a blunt tool or
-bare hands and you waste **both** — no clean butchering. See [Tools & Crafting](./tools-and-crafting.md).
+carcass: it salvages **leather (hide)**, **bone**, and often a strand of **sinew** (cordage), on top of the
+meat. Kill it with a blunt tool or bare hands and you waste it all — no clean butchering. See
+[Tools & Crafting](./tools-and-crafting.md).
 
-The **bone** isn't just a by-product: crafted into **bonemeal** it feeds your crops, so a good hunt with a
-blade helps grow the produce that keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet)
-at bay. (Fat and sinew — the rest of full-animal use — are still to come.)
+Every part has a use:
+
+- **Bone** → crafted into **bonemeal**, it feeds your crops — so a good hunt helps grow the produce that
+  keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet) at bay.
+- **Sinew** (string) → **animal cordage**, an alternative to twisting plant fibre — for rope, bandages,
+  bows, and more.
+
+(Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
 
 ## Carrying meat draws predators
 
