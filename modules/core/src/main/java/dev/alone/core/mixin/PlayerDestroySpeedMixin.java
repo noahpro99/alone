@@ -50,6 +50,10 @@ public class PlayerDestroySpeedMixin {
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
     private static final float MAX_BREAK_DIVISOR = 40f; // caps the worst-case time (~60s)
+    // De-turfing: clearing the grass off a square metre of ground. Laborious by hand (~26s), quicker with
+    // a hoe or shovel (~9s) — the surface job before the real excavation of the dirt beneath (§5.4).
+    private static final float GRASS_CLEAR_TOOL = 0.09f; // hoe/shovel — ~9s to clear the turf
+    private static final float GRASS_CLEAR_HAND = 0.03f; // by hand — ~26s, pulling grass and roots
 
     @Inject(method = "getDestroySpeed", at = @At("RETURN"), cancellable = true)
     private void alone$destroySpeed(BlockState state, CallbackInfoReturnable<Float> cir) {
@@ -77,6 +81,16 @@ public class PlayerDestroySpeedMixin {
             float speed = Math.max(slowed, floor)
                 * (1.0f + 0.5f * dev.alone.core.Skills.proficiency(self, dev.alone.core.Skills.MINING));
             cir.setReturnValue(speed);
+            return;
+        }
+
+        if (state.is(Blocks.GRASS_BLOCK)) {
+            // Clearing the turf is its own job, distinct from excavating the dirt beneath: breaking a
+            // grass block only strips the grass to bare dirt (see Turf), which you then dig at the packed-
+            // earth rate below. De-turfing a square metre is real labour — laborious by hand, quicker with
+            // a hoe or shovel — but nowhere near as long as digging out the whole cubic metre of soil.
+            boolean tool = self.getMainHandItem().is(ItemTags.HOES) || self.getMainHandItem().is(ItemTags.SHOVELS);
+            cir.setReturnValue(tool ? GRASS_CLEAR_TOOL : GRASS_CLEAR_HAND);
             return;
         }
 

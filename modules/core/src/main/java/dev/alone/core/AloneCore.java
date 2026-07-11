@@ -117,6 +117,7 @@ public class AloneCore implements ModInitializer {
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         PlacedBlocks.init();    // §5.1 — remember player-placed blocks so they break loose, not rooted
         Tamping.init();         // §5.3 — ram soil into rammed earth: it won't cave and shores like a post
+        Turf.init();            // §5.4 — clear grass to bare dirt first (de-turfing), then dig the soil
         WorldGen.init();        // §8.1 — scatter loose rocks across the surface like grass, to pick up
         Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
