@@ -15,10 +15,12 @@ import net.minecraft.world.level.Level;
 
 /**
  * The bottom rung of the shelter ladder (proposal §1.4/§5.2): right-click bare ground with an empty
- * hand to catch a fitful rest — the <b>worst</b> sleep, only <b>at night</b> with <b>no rain on you</b>.
- * It sheds some fatigue and restores some stamina, then <b>lays you down</b> on the spot the way a bed
- * does; {@link GradualSleep} runs the clock fast to dawn from there, just at the worst comfort. The
- * bedroll (a real bed block) does it warmer, and sets your spawn.
+ * hand to catch a fitful rest — the <b>worst</b> sleep, needing only that <b>no rain is on you</b>. It
+ * works <b>any time of day</b>: a night's sleep, or by day a way to <b>lie down and pass the hours</b>
+ * (mending an injury, waiting out weather, letting crops grow). It sheds some fatigue and stamina, then
+ * <b>lays you down</b> on the spot the way a bed does, and {@link GradualSleep} runs the clock fast to
+ * first light from there — just at the worst comfort. The bedroll (a real bed block) does it warmer, and
+ * sets your spawn.
  */
 public final class Sleeping {
     private Sleeping() {
@@ -77,16 +79,12 @@ public final class Sleeping {
     }
 
     /**
-     * Rest, if it's night and no rain is on you (shared by ground-sleep and the bedroll). Tells you
-     * <em>why</em> it won't work so it isn't a silent no-op; a cooldown gates the actual recovery.
+     * Rest on the ground, so long as no rain is on you — <b>any time of day</b>. At night it's sleep; by
+     * day it's lying down to <b>pass the hours</b> (convalescing an injury, waiting out weather, letting a
+     * crop grow), which {@link GradualSleep} fast-forwards to first light. Tells you why it won't work so
+     * it isn't a silent no-op; a cooldown gates the actual recovery.
      */
     public static boolean tryRest(Player player, Level level, float fatigueShed, float staminaRestore, String message) {
-        long timeOfDay = level.getOverworldClockTime() % 24000L;
-        boolean night = timeOfDay >= 13000L && timeOfDay < 23000L;
-        if (!night) {
-            say(player, level, "It's not dark enough to bed down — wait for night.");
-            return true; // consume the click; we explained why
-        }
         if (player.isInWaterOrRain()) {
             say(player, level, "You're too exposed to the rain to rest — find cover.");
             return true;

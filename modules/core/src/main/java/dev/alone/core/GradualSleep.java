@@ -19,12 +19,11 @@ public final class GradualSleep {
     private GradualSleep() {
     }
 
-    /** ~15x real time — a full night fast-forwards in roughly half a minute, fast but still perceptibly a night. */
+    /** ~15x real time — a full night fast-forwards in roughly half a minute, fast but still perceptibly time. */
     private static final float SLEEP_TICK_RATE = 300f;
     private static final float NORMAL_TICK_RATE = 20f;
-    /** Night window (matches the ground-rest rules) — sleeping fast-forwards only across the dark hours. */
-    private static final long NIGHT_START = 13000L;
-    private static final long NIGHT_END = 23000L;
+    /** First light (just after sunrise) — whoever's lying down rises here, so a rest always ends at dawn. */
+    private static final long MORNING_RISE = 1000L;
 
     private static boolean fastForwarding = false;
 
@@ -33,13 +32,15 @@ public final class GradualSleep {
     }
 
     private static void onServerTick(MinecraftServer server) {
-        boolean anySleeping = anyPlayerSleeping(server);
+        boolean anyResting = anyPlayerSleeping(server);
         long timeOfDay = server.overworld().getOverworldClockTime() % 24000L;
-        boolean night = timeOfDay >= NIGHT_START && timeOfDay < NIGHT_END;
+        boolean morning = timeOfDay < MORNING_RISE; // first light — time to get up
         var tickRate = server.tickRateManager();
 
-        // Someone's bedded down during the night: run the clock fast until dawn.
-        if (anySleeping && night) {
+        // Anyone lying down — a night's sleep OR a daytime rest to pass the hours (convalescing an injury,
+        // waiting out weather, letting a crop grow) — fast-forwards the world until first light. It's the
+        // one way to skip the long real durations the pack models: you rest, and the clock runs.
+        if (anyResting && !morning) {
             if (!fastForwarding) {
                 tickRate.setTickRate(SLEEP_TICK_RATE);
                 fastForwarding = true;
@@ -47,14 +48,13 @@ public final class GradualSleep {
             return;
         }
 
-        // Otherwise we're not fast-forwarding a night any more — either dawn arrived, or the sleeper woke
-        // (or was woken). Hand the tick rate back to real time...
+        // First light (or everyone got up on their own): hand the tick rate back to real time...
         if (fastForwarding) {
             tickRate.setTickRate(NORMAL_TICK_RATE);
             fastForwarding = false;
         }
-        // ...and if morning has come while someone's still lying down, get them up.
-        if (anySleeping && !night) {
+        // ...and rouse anyone still lying down when morning comes.
+        if (anyResting) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player.isSleeping()) {
                     player.stopSleeping();

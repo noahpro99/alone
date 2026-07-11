@@ -34,7 +34,7 @@ An open wound also **reeks of blood**: while you're bleeding, **predators are dr
 
 ### Sprains and fractures
 
-A bad fall gives you a **sprain** — you limp, slowed, for about **2 minutes**. A heavy blow (8 or more damage) can **fracture** the same way. Craft a **splint** from 2 sticks and string, then sneak + right-click while injured to bind the joint — this cuts recovery time to about a **quarter** (roughly 30 seconds).
+A bad fall gives you a **sprain** — you limp, slowed, until it mends, which takes about a **week** (in-game). A heavy blow (8+ damage) can **break a bone** — a far graver injury that takes roughly **three weeks** to heal. These are real durations, so you don't sit and wait them out in real time: you **[rest to pass the days](./sleep-and-rest.md)** — lie down, day or night, to fast-forward the clock. A **splint** (2 sticks + string; sneak + right-click while injured) cuts the remaining time to about a **quarter**, so a break is a genuine convalescence you splint, then rest and eat your way through.
 
 A serious fall can also **kill outright**. Falls under about **3.5 blocks** are harmless; above roughly **8 blocks** the fall rolls for death — about a **coin-flip at 15 blocks** and near-certain past about **22 blocks** (deep water, hay, or honey soften it). Survive the fall and you're left with the injuries: a sprain, often a fracture, and sometimes internal bleeding.
 

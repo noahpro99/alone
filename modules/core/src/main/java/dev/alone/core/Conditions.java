@@ -56,7 +56,13 @@ public final class Conditions {
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "dysentery"), Codec.INT);
 
     private static final int BLEED_TICKS = 200;   // ~10s per wound (stacks with more hits)
-    private static final int SPRAIN_TICKS = 2400;  // ~2 min limping per bad fall (splint it to mend in ~30s)
+    // Real injuries take real time — WEEKS, not minutes (a broken bone doesn't mend over lunch). You pass
+    // that time by RESTING: lie down day or night to fast-forward the clock (see Sleeping / GradualSleep),
+    // exactly as you sleep off a night. A splint cuts what's left to a quarter, and a break is far graver
+    // than a turned ankle. So a fracture is a genuine convalescence you must eat and rest through (§1.5).
+    private static final int SPRAIN_TICKS = 168000;   // a sprain: ~1 week (7 in-game days) hobbled
+    private static final int FRACTURE_TICKS = 504000;  // a break: ~3 weeks (21 in-game days) — far graver
+    private static final int MAX_INJURY_TICKS = FRACTURE_TICKS; // a limb injury can run its full real length
     private static final int INFECTION_PER_BITE = 4000; // one bite ≈ a fever that clears; bites compound
     private static final float WOUND_INFECT_CHANCE = 0.2f; // odds a dirty-handled open wound festers, per ~10s
     private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
@@ -121,11 +127,16 @@ public final class Conditions {
                 && rng.nextFloat() < Math.min(0.9f, damageTaken / 8.0f) * armorGuard) {
                 addBleeding(player, BLEED_TICKS);
             }
-            // A bad fall sprains; heavy blunt trauma can fracture too (both splinted, §1.5).
+            // A bad fall turns an ankle; a heavy blow can break a bone — a far graver, weeks-longer injury.
+            // Both hobble you, both are eased by a splint and passed by rest (§1.5).
             if (source.is(DamageTypes.FALL) && damageTaken >= 4.0f) {
                 addSprain(player, SPRAIN_TICKS);
+                player.sendSystemMessage(Component.literal(
+                    "You turn an ankle in the fall — it'll trouble you for a week or more. Splint it and rest."), true);
             } else if (damageTaken >= 8.0f && rng.nextFloat() < 0.5f * armorGuard) {
-                addSprain(player, SPRAIN_TICKS);
+                addSprain(player, FRACTURE_TICKS);
+                player.sendSystemMessage(Component.literal(
+                    "The blow breaks a bone — weeks of mending. Splint it and rest, or it'll cripple you far longer."));
             }
             // A zombie-type bite can fester into infection.
             if (source.getEntity() instanceof Zombie && rng.nextFloat() < INFECT_CHANCE) {
@@ -179,7 +190,7 @@ public final class Conditions {
 
     /** A bad fall — limp for a while (§1.5). */
     public static void addSprain(Player player, int ticks) {
-        player.setAttached(SPRAIN, Math.min(player.getAttachedOrElse(SPRAIN, 0) + ticks, MAX_SICKNESS_TICKS));
+        player.setAttached(SPRAIN, Math.min(player.getAttachedOrElse(SPRAIN, 0) + ticks, MAX_INJURY_TICKS));
     }
 
     private static void tickSprain(ServerPlayer player) {
