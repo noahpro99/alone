@@ -28,6 +28,7 @@ public final class Skills {
     public static final String FIRECRAFT = "firecraft";
     public static final String MINING = "mining";
     public static final String SMITHING = "smithing";
+    public static final String TRACKING = "tracking";
 
     /** Practice count at which you're halfway to mastery — sets the pace of the learning curve. */
     private static final int HALF_MASTERY = 30;

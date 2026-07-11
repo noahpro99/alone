@@ -55,6 +55,8 @@ public final class Tracking {
 
     private static void pursue(ServerLevel level, ServerPlayer player) {
         double radiusSq = RADIUS * RADIUS;
+        // Skill by doing (§8.4): a practised tracker reads the quarry and presses it harder — it tires faster.
+        float gain = GAIN * (1f + 0.6f * Skills.proficiency(player, Skills.TRACKING));
         AABB box = player.getBoundingBox().inflate(RADIUS);
         List<Animal> game = level.getEntitiesOfClass(Animal.class, box, Tracking::isWildGame);
         for (Animal animal : game) {
@@ -63,7 +65,7 @@ public final class Tracking {
             boolean running = (v.x * v.x + v.z * v.z) > FLEE_SPEED_SQ
                 && animal.distanceToSqr(player) <= radiusSq;
             if (running) {
-                fatigue = Math.min(MAX, fatigue + GAIN);
+                fatigue = Math.min(MAX, fatigue + gain);
                 if (fatigue >= SLOW_THRESHOLD) {
                     // The more spent it is, the harder it flags — Slowness I..III as it approaches collapse.
                     int amplifier = (int) ((fatigue - SLOW_THRESHOLD) / (MAX - SLOW_THRESHOLD) * 2f);

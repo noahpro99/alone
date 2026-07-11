@@ -37,8 +37,12 @@ public final class Hunting {
             if (!entity.getType().builtInRegistryHolder().is(HIDE_BEARING)) {
                 return;
             }
-            if (!(source.getEntity() instanceof Player player) || !player.getMainHandItem().is(BLADES)) {
+            if (!(source.getEntity() instanceof Player player)) {
                 return;
+            }
+            Skills.gain(player, Skills.TRACKING, 1); // you learn the quarry by taking it — blade or not
+            if (!player.getMainHandItem().is(BLADES)) {
+                return; // no blade → no clean butchering (but the hunt still taught you)
             }
             int hide = 1 + player.getRandom().nextInt(2); // 1–2 leather salvaged from the skin
             entity.spawnAtLocation(level, new ItemStack(Items.LEATHER, hide));
