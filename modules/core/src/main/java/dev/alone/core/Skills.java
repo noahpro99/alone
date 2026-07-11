@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +35,25 @@ public final class Skills {
     private static final int HALF_MASTERY = 30;
 
     private static final String[] TIERS = {"a Novice", "an Apprentice", "Skilled", "an Expert", "a Master"};
+    private static final String[] TIER_NAMES = {"Novice", "Apprentice", "Skilled", "Expert", "Master"};
+
+    /** All practised skills, in display order, with a readable label — for the /skills readout. */
+    private static final String[][] LISTING = {
+        {FLINTWORKING, "Flintworking"}, {FIRECRAFT, "Firecraft"}, {MINING, "Mining"},
+        {SMITHING, "Smithing"}, {TRACKING, "Tracking"},
+    };
+
+    /** A readable summary of a player's skills (tier + %), for the player-facing readout. */
+    public static MutableComponent summary(Player player) {
+        MutableComponent c = Component.literal("Your skills — earned by doing:").withStyle(ChatFormatting.GOLD);
+        for (String[] entry : LISTING) {
+            int tier = tierIndex(proficiency(player, entry[0]));
+            int pct = Math.round(proficiency(player, entry[0]) * 100f);
+            c.append(Component.literal("\n  " + entry[1] + " — " + TIER_NAMES[tier] + " (" + pct + "%)")
+                .withStyle(tier >= 3 ? ChatFormatting.GREEN : ChatFormatting.GRAY));
+        }
+        return c;
+    }
 
     /** Practice is persisted per player (survives death and relog) as a map of skill name to count. */
     public static final AttachmentType<Map<String, Integer>> SKILLS = AttachmentRegistry.createPersistent(

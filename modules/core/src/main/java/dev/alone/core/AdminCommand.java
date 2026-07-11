@@ -16,7 +16,7 @@ public final class AdminCommand {
     }
 
     public static void init() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Commands.literal("alone")
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("reset").executes(ctx -> {
@@ -25,7 +25,15 @@ public final class AdminCommand {
                     ctx.getSource().sendSuccess(
                         () -> Component.literal("Alone: all meters refilled, conditions cleared."), false);
                     return Command.SINGLE_SUCCESS;
-                }))));
+                })));
+
+            // Player-facing: check your skill levels (they otherwise only surface on a tier-up). No op needed.
+            dispatcher.register(Commands.literal("skills").executes(ctx -> {
+                ServerPlayer player = ctx.getSource().getPlayerOrException();
+                ctx.getSource().sendSuccess(() -> Skills.summary(player), false);
+                return Command.SINGLE_SUCCESS;
+            }));
+        });
     }
 
     /** Refill every Alone meter, clear every condition, and top off the vanilla vitals. */
@@ -43,7 +51,10 @@ public final class AdminCommand {
         player.setAttached(Conditions.BLEEDING, 0);
         player.setAttached(Conditions.SPRAIN, 0);
         player.setAttached(Conditions.INFECTION, 0);
+        player.setAttached(Conditions.DYSENTERY, 0);
         player.setAttached(Hygiene.HANDS_DIRTY, Boolean.FALSE);
+        // Reset the scurvy clock (no fresh-food deficiency right after a reset).
+        player.setAttached(Nutrition.LAST_VITAMIN, player.level().getGameTime());
 
         // Vanilla vitals — full health, fed, unhurt by fire/drowning, no lingering effects.
         player.setHealth(player.getMaxHealth());
