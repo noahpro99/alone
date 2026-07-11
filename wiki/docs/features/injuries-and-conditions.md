@@ -30,6 +30,8 @@ When you take damage, it can leave a lasting condition rather than just a number
 
 Cuts, claws, and arrows can open a bleed that **steadily drains your health** (about 1 HP every couple of seconds) until it clots on its own or you bandage it. **Bandaging** is done by holding cloth — string, wool, or paper — and **sneaking + right-clicking**.
 
+An open wound also **reeks of blood**: while you're bleeding, **predators are drawn to you** — a wolf or polar bear in the area smells it from about 8 blocks off (and it stacks with any raw meat you carry — see [Food Preservation](./preservation.md#fresh-meat-draws-predators)). So in predator country, **bind a wound fast for more than just the health** — bleeding is what brings them.
+
 ### Sprains and fractures
 
 A bad fall gives you a **sprain** — you limp, slowed, for about **2 minutes**. A heavy blow (8 or more damage) can **fracture** the same way. Craft a **splint** from 2 sticks and string, then sneak + right-click while injured to bind the joint — this cuts recovery time to about a **quarter** (roughly 30 seconds).
