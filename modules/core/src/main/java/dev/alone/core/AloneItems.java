@@ -214,6 +214,11 @@ public final class AloneItems {
         key -> new Item(new Item.Properties().pickaxe(STEEL, 1.0F, -2.8F).setId(key)));
     public static final Item STEEL_AXE = register("steel_axe",
         key -> new Item(new Item.Properties().axe(STEEL, 6.0F, -3.1F).setId(key)));
+    /** The top-tier reach weapon (§8.5/§8.6) — completes the spear line (flint → copper → iron → steel).
+     *  A steel head on a stout shaft: the vanilla spear thrust/reach/pierce at the pack's best tier. */
+    public static final Item STEEL_SPEAR = register("steel_spear",
+        key -> new Item(new Item.Properties()
+            .spear(STEEL, 0.95F, 0.95F, 0.6F, 2.5F, 11.0F, 6.75F, 5.1F, 11.25F, 4.6F).setId(key)));
     public static final Item STEEL_SHOVEL = register("steel_shovel",
         key -> new Item(new Item.Properties().shovel(STEEL, 1.5F, -3.0F).setId(key)));
     public static final Item STEEL_HOE = register("steel_hoe",
