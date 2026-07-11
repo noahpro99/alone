@@ -42,8 +42,9 @@ import net.minecraft.world.phys.Vec3;
  */
 public class TravoisEntity extends Entity implements Container {
     public static final int SIZE = 27; // must match ChestMenu.threeRows, or opening it indexes out of bounds
-    /** The block model the travois is drawn as (a low platform) until it gets real art. */
-    public static final BlockState SHOWN_BLOCK = Blocks.SPRUCE_SLAB.defaultBlockState();
+    /** Drawn as a low plank platform with two trailing log poles (see the renderer) until it gets real art. */
+    public static final BlockState PLATFORM_BLOCK = Blocks.OAK_PLANKS.defaultBlockState();
+    public static final BlockState POLE_BLOCK = Blocks.STRIPPED_SPRUCE_LOG.defaultBlockState();
 
     private static final Identifier DRAG_MODIFIER = Identifier.fromNamespaceAndPath("alone", "travois_drag");
     private static final double GRAB_RANGE_SQR = 400.0; // let go if the hauler gets more than 20 blocks off
