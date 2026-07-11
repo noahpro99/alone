@@ -82,8 +82,18 @@ public final class Insects {
         // Every so often the swarm gets the better of you — a spell of miserable clumsiness, plus a hint.
         if (player.tickCount % (SCAN * 6) == 0) {
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0, false, false, true));
-            player.sendSystemMessage(
-                Component.literal("Biting insects swarm you — a smoky fire would keep them off."), true);
+            // Wetland insects don't only annoy — they carry fever (malaria, dengue). Lingering unprotected
+            // in their worst country is how you catch it; the humid tropics are the real danger, warm-night
+            // country far less so. A smudge fire (which stops the biting entirely, above) prevents it.
+            float feverOdds = humid ? 0.025f : 0.008f;
+            if (player.getRandom().nextFloat() < feverOdds) {
+                Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS);
+                player.sendSystemMessage(Component.literal(
+                    "A bite has taken hold — a fever rises. The wetland's sickness is in your blood now."));
+            } else {
+                player.sendSystemMessage(
+                    Component.literal("Biting insects swarm you — a smoky fire would keep them off."), true);
+            }
         }
     }
 

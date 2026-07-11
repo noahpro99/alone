@@ -43,11 +43,16 @@ Camp by standing water in the warmth and the bugs will find you — just as they
   nights**. They **die back in winter** and leave you be while you're **in the water**.
 - **The bite:** a nuisance, not a wound. The constant swatting **drains your stamina**, and a heavy swarm
   briefly leaves you **weak and clumsy**.
+- **They carry fever.** Wetland insects aren't just an annoyance — they spread **disease** (malaria,
+  dengue). Lingering **unprotected** in their worst country risks catching a **fever** (a bout of the
+  [sickness](./injuries-and-conditions.md) illness — weak, feverish, burning calories). The danger is
+  real in the **humid tropics** (jungle, swamp) and much smaller on a merely warm night elsewhere. A
+  single pass is usually fine; it's **sustained** exposure that gets in your blood.
 - **The counter — a smudge fire:** stand near a **lit campfire** (within ~5 blocks) and the smoke keeps
-  them off. Since you'd usually have a fire going at night anyway, the real bite is being caught at a
-  waterside camp **without** one.
+  them off — which stops the bites **and** the fever with them. Since you'd usually have a fire going at
+  night anyway, the real danger is being caught at a waterside camp **without** one.
 
-*(Netting is planned as a second counter; insect-borne disease isn't modelled yet.)*
+*(Netting is planned as a second counter to the biting.)*
 
 ## Torches burn out
 

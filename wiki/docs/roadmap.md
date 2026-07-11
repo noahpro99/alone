@@ -64,8 +64,9 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 - **Fat from a carcass** (→ rendered tallow → candles) — the last piece of full-animal use. *(A blade
   kill already yields meat, hide, bone, and sinew; see
   [Hunting & Wildlife](./features/hunting.md#a-blade-kill-butchers-the-carcass--hide-bone-and-sinew).)*
-- **Netting** as a second counter to insect pressure, and insect-borne disease. *(Insect pressure near
-  standing water, countered by a smudge fire, has shipped — see
+- **Netting** as a second counter to insect pressure. *(Insect pressure near standing water — countered by
+  a smudge fire — and **insect-borne fever** (sustained unprotected exposure in humid wetlands can give you
+  the sickness illness) have both shipped; see
   [World & Seasons](./features/world-and-seasons.md#biting-insects).)*
 
 ## Building & shelter
