@@ -63,6 +63,25 @@ cool dark.** An earned root cellar, not a free hole in the ground.
 > temperature — so the same barrel keeps food far longer sitting in a deep cellar than it would in a
 > sunlit surface hut.
 
+## The ice house
+
+When you can't dig a cellar — or you're in a warm climate where the ground isn't cold — you can make
+your own cold with **ice**, exactly as people did before refrigeration.
+
+**Harvest ice.** Breaking plain ice normally just leaves a puddle of meltwater. Cut it with a
+**pickaxe or axe** instead and you lift out a **whole block of ice** to carry. Ice only forms in the
+cold (frozen lakes and rivers, cold biomes, winter), so this is a **seasonal harvest** — and blocks
+of ice are **heavy** to haul.
+
+**Pack it around your store.** Ice or snow placed **around a chest or barrel** chills it like a
+cellar: one block against it is about **−12°**, and packing it in on **every side** approaches
+**−40°** — enough to keep food for **weeks**, above ground and even in a hot biome.
+
+**Keep it dark and enclosed.** Plain ice **melts near light** (torches, lava), so a working ice house
+must be **shuttered and dark**, its ice packed and out of the sun — just like the real thing. In a
+warm biome no ice forms locally, so you must **haul it in** from the cold and race to get it walled up
+before it melts. That hauling and insulating **is** the ice house.
+
 ## Salting
 
 Salting marks a food as **preserved** (the ~30-day shelf life):

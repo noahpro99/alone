@@ -31,11 +31,9 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 
 ## Food, farming & preservation
 
-- **Deeper farming:** fishing as a primary food source with finite, slow-recovering stocks; more
-  preservation (smoking, drying) beyond salting.
-- **Ice houses:** winter ice harvesting (cut lake ice, insulate it) to hold a cold store through
-  summer, above what a dug cellar already gives you. *(Dug root cellars have shipped — see
-  [Food Preservation](./features/preservation.md#cold-storage-the-root-cellar).)*
+- **Deeper farming:** fishing as a primary food source with finite, slow-recovering stocks. *(Salting,
+  drying racks, smoking, root cellars, and ice houses have shipped — see
+  [Food Preservation](./features/preservation.md).)*
 - **Food security:** fresh food emits **scent** that draws bears and predators, countered by sealed
   barrels, hung caches, and smokehouses. Carry food and attract predators, or cache it and pay
   travel time.
