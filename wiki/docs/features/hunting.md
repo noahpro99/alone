@@ -45,7 +45,14 @@ other half of tracking.
 - Pairs with persistence hunting: **wound it, then stay on it** — the blood shows you where it went, and
   the chase wears it down.
 
-> Blood trails are a tracking aid for now; an animal actually **bleeding out** from its wounds is planned.
+**A deep wound is mortal.** While an animal is **badly** bleeding it **loses blood and weakens** — about
+**1 health a second**, tapering as the wound clots. So a **solid hit bleeds it out** and drops small game
+(a rabbit, a chicken) outright, while a **graze only clots** and heals. Big game needs more than one good
+wound. This is what makes a well-placed shot worth landing: put a real wound in it, follow the blood, and
+the bleeding finishes the work.
+
+> A bleed-out death isn't a blade kill, so it still **forfeits the hide** (same as an arrow kill) — finish
+> it with a blade if you want the leather.
 
 ## A blade kill saves the hide
 
