@@ -49,6 +49,21 @@ Foods belong to groups — **protein, vegetable, grain, fruit**. Eating the same
 - High fatigue **shrinks the usable maximum hunger** (down to roughly 12), so a monotonous diet cannot fill you up as much.
 - **Eating a variety** lets the fatigue recover and restores the full hunger cap.
 
+## Scurvy — keep fresh food in your diet
+
+Variety isn't the only diet rule: you also need **fresh food** — **fruit and vegetables**, your vitamin C.
+Go too long on a diet without any (a meat-only winter, a long hunting trip) and you get **scurvy**:
+
+- After about **6 in-game days** with **no fruit or vegetables**, symptoms begin — **weakness and
+  lethargy**, with a warning.
+- By about **10 days** it turns **deadly**: sluggishness plus a **slow health drain** as your gums bleed
+  and old wounds reopen — untreated scurvy will kill you.
+- The cure is the historical one: **a little fresh food reverses it fast.** Eating any fruit or vegetable
+  resets the clock and the symptoms clear.
+
+So keep some produce in your stores — forage berries, farm carrots or potatoes — especially heading into
+**winter**, when crops won't grow and a meat-only diet is easy to fall into.
+
 ## Food and your other meters
 
 What you eat also nudges warmth and thirst:
