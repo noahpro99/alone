@@ -87,3 +87,21 @@ You can only break or place blocks within about **3 blocks** (down from vanilla'
 - Either way, vanilla **saplings and apples still drop**.
 
 Leaf litter is a fire tinder.
+
+## Soil has no cohesion — dig with care
+
+Loose soil doesn't float. **Dirt, grass, coarse dirt, podzol, mud, and the like fall like gravel** the moment nothing holds them up — undercut a dirt wall or knock out the block beneath one and it collapses. (Sand and gravel already did this in vanilla; clay is cohesive and stays put.) You can't build a floating dirt bridge or leave an overhang hanging in the air.
+
+### Timber holds up the roof
+
+Real diggers don't tunnel through bare earth — they **shore it**. Undercut soil stays put as long as there's a **grounded structural support within about 4 blocks horizontally**: a placed **beam, post, plank, log, or stone wall** — anything solid that stands on something. More loose soil doesn't count; only real timber or masonry bears the earth.
+
+So a proper dugout is buildable:
+
+- **Set posts or beams** as you dig and the earth **between supports holds** — you can hollow out a room or run a tunnel without the ceiling caving.
+- **Dig past the reach of any support** (more than ~4 blocks from timber) and the unsupported span **still collapses**.
+- A **bare-earth room with no supports caves in**, because soil can't hold soil. Keeping a dugout open is an investment in timber or stone, exactly as real excavation demands.
+
+This is what makes a dug **[root cellar](./preservation.md#cold-storage-the-root-cellar)** an earned build rather than a free hole: you shore the roof, and the cool covered space it creates keeps your food for weeks.
+
+> One current limitation: pulling out a support doesn't *instantly* drop the roof it was holding — collapse near a removed beam is checked the next time that spot is disturbed, so it can lag rather than cave the moment the timber is gone.

@@ -9,15 +9,44 @@ Perishable food rots over time. Preservation converts it to a form with a much l
 
 ## Spoilage
 
-Perishable foods (raw meat, fish, and other items in the perishable list) carry a shelf-life timer:
+Perishable foods (raw meat, fish, and other items in the perishable list) carry a **freshness
+budget** that drains over time — but **how fast it drains depends on temperature**, because before
+refrigeration, *where and when you keep food is the whole game*.
 
-- **Fresh** perishable food spoils after **~1 in-game day** carried in your inventory. When the
-  timer runs out, the item turns into **rotten flesh**.
-- **Preserved** food (salted or dried) lasts **~30 in-game days** — long, but not infinite; even
-  jerky eventually goes rancid and turns to rotten flesh.
+- A **fresh** perishable has enough budget for **~1 in-game day at comfortable temperature**. When
+  it runs out, the item turns into **rotten flesh**.
+- **Heat drains it faster, cold drains it slower**: the rate roughly **doubles for every +25°** and
+  **halves for every −25°**. A warm summer hut rots meat fast; a cold biome, winter, or a cool
+  cellar stretches the same piece for much longer (see [Cold storage](#cold-storage-the-root-cellar)).
+- **Preserved** food (salted or dried) carries a much bigger budget — **~30 in-game days** — long,
+  but not infinite; even jerky eventually goes rancid and turns to rotten flesh.
+
+Spoilage only advances while the food is being **watched** — carried on you, or sitting in a
+container in the chunks around you. **Leaving your base pauses** the food you left behind, so it
+won't silently rot away while you're off exploring.
 
 Non-perishable items (bread, golden apples, and similar keepers) are not on the list and do not
 spoil. See [Food & Eating](./food-and-eating.md) for the risks of eating spoiled or raw food.
+
+## Cold storage: the root cellar
+
+Because spoilage is temperature-driven, **a cold place is itself a preservation method** — no salt,
+no fire, just the cool of the earth.
+
+Dig a storage space that is **covered (no open sky above it) and below sea level**, and it reads as
+an **earth-cooled root cellar**: the food in any chest or barrel down there spoils at a deep-cold
+rate — roughly **−20° just under the surface, down to about −50° in a deep cellar** — which stretches
+a fresh perishable's ~1-day shelf life into **weeks**. The **deeper you dig, the colder** it gets.
+
+The catch is that you have to **build the cellar honestly**. Loose soil caves when you undercut it
+(see [Soil has no cohesion](./building-and-blocks.md#soil-has-no-cohesion--dig-with-care)), so a
+real cellar means **shoring the roof with timber or stone** — or digging into solid rock. The full
+loop is: **dig down, shore or line the space so it doesn't collapse, and store your harvest in the
+cool dark.** An earned root cellar, not a free hole in the ground.
+
+> Chests and barrels within the loaded chunks around you are swept for spoilage at their own local
+> temperature — so the same barrel keeps food far longer sitting in a deep cellar than it would in a
+> sunlit surface hut.
 
 ## Salting
 

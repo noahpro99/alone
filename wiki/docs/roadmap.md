@@ -33,8 +33,9 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 
 - **Deeper farming:** fishing as a primary food source with finite, slow-recovering stocks; more
   preservation (smoking, drying) beyond salting.
-- **Cold storage:** dug cellars and winter **ice houses** (harvest lake ice, insulate it) to hold a
-  harvest across seasons.
+- **Ice houses:** winter ice harvesting (cut lake ice, insulate it) to hold a cold store through
+  summer, above what a dug cellar already gives you. *(Dug root cellars have shipped — see
+  [Food Preservation](./features/preservation.md#cold-storage-the-root-cellar).)*
 - **Food security:** fresh food emits **scent** that draws bears and predators, countered by sealed
   barrels, hung caches, and smokehouses. Carry food and attract predators, or cache it and pay
   travel time.
@@ -53,7 +54,8 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 - **The shelter ladder:** light stick-frame blocks (that weather and can be broken by a bear),
   through log and stone tiers.
 - **Shelter Quality** ratings governing sleep recovery and temperature protection.
-- **Structural gravity/support** (no floating dirt bridges) and **fire spread**.
+- **Fire spread** through built structures. *(Structural gravity has shipped — loose soil falls and
+  must be shored with timber; see [Weight, Carrying & Blocks](./features/building-and-blocks.md#soil-has-no-cohesion--dig-with-care).)*
 - A **re-root / tamp tool** to commit loose-placed blocks back into secure structure.
 
 ## Transport
