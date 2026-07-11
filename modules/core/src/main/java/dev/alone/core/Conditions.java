@@ -51,12 +51,17 @@ public final class Conditions {
     /** Remaining infection in ticks — a dirty (zombie) bite festers: fever, and if it deepens, it kills. */
     public static final AttachmentType<Integer> INFECTION =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "infection"), Codec.INT);
+    /** Remaining dysentery in ticks — waterborne gut illness that dehydrates you fast (§1.6). */
+    public static final AttachmentType<Integer> DYSENTERY =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "dysentery"), Codec.INT);
 
     private static final int BLEED_TICKS = 200;   // ~10s per wound (stacks with more hits)
     private static final int SPRAIN_TICKS = 2400;  // ~2 min limping per bad fall (splint it to mend in ~30s)
     private static final int INFECTION_PER_BITE = 4000; // one bite ≈ a fever that clears; bites compound
     private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
     private static final float INFECT_CHANCE = 0.30f;   // odds a zombie-type bite gets infected
+    public static final int DYSENTERY_TICKS = 4800;     // ~4 min of gut-wrenching illness
+    private static final float DYSENTERY_THIRST_DRAIN = 0.8f; // thirst lost per second — you must out-drink it
 
     // Condition flags synced to the HUD.
     public static final int FLAG_SICK = 1;
@@ -64,6 +69,7 @@ public final class Conditions {
     public static final int FLAG_SPRAINED = 4;
     public static final int FLAG_DIRTY_HANDS = 8;
     public static final int FLAG_INFECTED = 16;
+    public static final int FLAG_DYSENTERY = 32;
 
     public static int flags(Player player) {
         int f = 0;
@@ -82,6 +88,9 @@ public final class Conditions {
         if (player.getAttachedOrElse(INFECTION, 0) > 0) {
             f |= FLAG_INFECTED;
         }
+        if (player.getAttachedOrElse(DYSENTERY, 0) > 0) {
+            f |= FLAG_DYSENTERY;
+        }
         return f;
     }
 
@@ -92,6 +101,7 @@ public final class Conditions {
                 tickBleeding(player);
                 tickSprain(player);
                 tickInfection(player);
+                tickDysentery(player);
             }
         });
         // Damage lands as conditions (§1.5/§8.6), and armour blunts the chance and severity by type.
@@ -283,6 +293,34 @@ public final class Conditions {
         player.setAttached(INFECTION, Math.max(0, player.getAttachedOrElse(INFECTION, 0) - ticks));
     }
 
+    public static void addDysentery(Player player, int ticks) {
+        player.setAttached(DYSENTERY, Math.min(player.getAttachedOrElse(DYSENTERY, 0) + ticks, MAX_SICKNESS_TICKS));
+    }
+
+    /** Ease dysentery (herbal remedy) — knock the timer down; rehydration is still the real cure. */
+    public static void relieveDysentery(Player player, int ticks) {
+        player.setAttached(DYSENTERY, Math.max(0, player.getAttachedOrElse(DYSENTERY, 0) - ticks));
+    }
+
+    public static boolean hasDysentery(Player player) {
+        return player.getAttachedOrElse(DYSENTERY, 0) > 0;
+    }
+
+    /**
+     * Contract a waterborne illness from a bad mouthful. Warm, stagnant water (severe) is far likelier to
+     * be the dysentery kind — an acute dehydration emergency — than a passing stomach upset (§1.6).
+     */
+    public static void contractWaterIllness(Player player, boolean severe) {
+        float dysenteryOdds = severe ? 0.40f : 0.10f;
+        if (player.getRandom().nextFloat() < dysenteryOdds) {
+            addDysentery(player, DYSENTERY_TICKS);
+            player.sendSystemMessage(Component.literal(
+                "Your gut twists — dysentery. It'll dry you out fast; keep clean water in you or it kills."));
+        } else {
+            addSickness(player, FOODBORNE_ILLNESS_TICKS / 4);
+        }
+    }
+
     public static boolean isSick(Player player) {
         return player.getAttachedOrElse(SICKNESS, 0) > 0;
     }
@@ -303,5 +341,23 @@ public final class Conditions {
             player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 30, 0, false, false, true));
         }
         player.setAttached(SICKNESS, remaining - 1);
+    }
+
+    private static void tickDysentery(ServerPlayer player) {
+        Integer remaining = player.getAttached(DYSENTERY);
+        if (remaining == null || remaining <= 0) {
+            if (remaining != null) {
+                player.removeAttached(DYSENTERY); // it finally passes
+            }
+            return;
+        }
+        // Acute dehydration: it pulls water straight out of you, with the weakness and nausea of the gut
+        // illness. The only way through is to keep drinking clean water faster than it drains you.
+        if (remaining % 20 == 0) {
+            SurvivalMeters.drink(player, -DYSENTERY_THIRST_DRAIN);
+            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30, 0, false, false, true));
+            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 40, 0, false, false, true));
+        }
+        player.setAttached(DYSENTERY, remaining - 1);
     }
 }

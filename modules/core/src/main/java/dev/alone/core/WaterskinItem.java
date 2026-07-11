@@ -173,7 +173,8 @@ public class WaterskinItem extends Item {
                 stack.set(AloneItems.VESSEL_DIRTY, true); // raw/tainted water leaves residue
             }
             if (player.getRandom().nextFloat() < sicknessChance) {
-                Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 4);
+                // Murky (tainted) water is the dysentery kind; plain raw water a milder upset.
+                Conditions.contractWaterIllness(player, quality == TAINTED);
             }
         }
         stack.set(AloneItems.WATER_CHARGES, charges - 1);

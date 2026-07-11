@@ -149,7 +149,8 @@ public final class Drinking {
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
             SurvivalMeters.drink(player, DRINK_AMOUNT);
             if (player.getRandom().nextFloat() < rawSicknessChance(player.level(), water)) {
-                Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 4);
+                // Warm stagnant water is the dysentery kind; a passing upset otherwise.
+                Conditions.contractWaterIllness(player, isStagnantWater(player.level(), water));
             }
         }
     }

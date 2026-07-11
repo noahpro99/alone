@@ -48,6 +48,7 @@ public class RemedyItem extends Item {
             if (!level.isClientSide()) {
                 Conditions.relieveSickness(player, SICKNESS_RELIEF);
                 Conditions.relieveInfection(player, INFECTION_RELIEF);
+                Conditions.relieveDysentery(player, SICKNESS_RELIEF);
                 player.removeEffect(MobEffects.NAUSEA);
                 player.removeEffect(MobEffects.POISON);
                 player.sendSystemMessage(Component.literal("The bitter brew settles your stomach."));
