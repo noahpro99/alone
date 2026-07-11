@@ -61,6 +61,8 @@ public final class Scent {
     private static final double GRAB_RANGE = 2.6;        // this close, a predator can snatch a piece
     private static final long RAID_COOLDOWN_TICKS = 160L; // ~8s between snatches so a pack can't strip you at once
     private static final double FLEE_SPEED = 1.45;       // it runs off with its prize
+    private static final double WIND_STRENGTH = 0.6;     // scent on the wind: downwind ~1.6x reach, upwind ~0.4x
+    private static final int WIND_NOTE_INTERVAL = 1200;  // ~once a minute, note the wind while you carry meat
 
     private static final TagKey<Item> PERISHABLE =
         TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
@@ -90,10 +92,17 @@ public final class Scent {
         }
         double radius = Math.min(MAX_RADIUS,
             BASE_RADIUS + freshMeat * 2.0 + (bleeding ? BLOOD_BONUS : 0.0)); // meat and fresh blood both carry
-        double radiusSq = radius * radius;
-        AABB box = player.getBoundingBox().inflate(radius);
+        // Scent rides the wind (§7.3): a predator downwind smells you from far off, one upwind barely at all.
+        Vec3 wind = Wind.direction(level);
+        AABB box = player.getBoundingBox().inflate(radius * (1.0 + WIND_STRENGTH)); // reach as far as downwind allows
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
-            m -> PREDATORS.contains(m.getType()) && m.isAlive() && m.distanceToSqr(player) <= radiusSq);
+            m -> PREDATORS.contains(m.getType()) && m.isAlive() && smellsAcross(player, m, radius, wind));
+        // A hunter reads the wind — while you carry meat, you feel where it's blowing from and can keep
+        // predators upwind of you (so your scent blows away from them, not toward them).
+        if (freshMeat > 0 && player.tickCount % WIND_NOTE_INTERVAL < SCAN) {
+            player.sendSystemMessage(Component.literal(
+                "You feel the wind out of the " + Wind.comingFrom(level) + " — keep predators upwind of you."), true);
+        }
 
         PathfinderMob raider = null;
         boolean drewOne = false;
@@ -159,6 +168,16 @@ public final class Scent {
     }
 
     /** Fresh (unpreserved) perishable food carried loose on your body — a full stack reeks more than one piece. */
+    /** Does your scent reach this predator, given the wind? Downwind (it lies where the wind blows) stretches
+     *  your reach toward it; upwind shrinks it. {@code wind} is a horizontal unit vector. */
+    private static boolean smellsAcross(ServerPlayer player, Mob mob, double radius, Vec3 wind) {
+        Vec3 toMob = mob.position().subtract(player.position());
+        double horizontal = Math.sqrt(toMob.x * toMob.x + toMob.z * toMob.z);
+        double align = horizontal < 1.0e-3 ? 0.0 : (toMob.x * wind.x + toMob.z * wind.z) / horizontal;
+        double effective = radius * (1.0 + WIND_STRENGTH * align);
+        return mob.distanceToSqr(player) <= effective * effective;
+    }
+
     private static int countFreshMeat(ServerPlayer player) {
         DataComponentType<Boolean> preserved = booleanComponent("preserved");
         Inventory inventory = player.getInventory();

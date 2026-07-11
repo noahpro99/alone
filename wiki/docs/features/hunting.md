@@ -71,6 +71,16 @@ Every part has a use:
 
 (Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
 
+## The wind carries your scent
+
+There is a **prevailing wind** — a single direction the whole map shares, steady through the day and **shifting from one day to the next**. It matters because **scent travels downwind**:
+
+- A predator that lies **downwind** of you (where the wind is blowing) smells your carried meat and blood from **much further** — up to about **1.6×** the normal reach.
+- A predator **upwind** of you barely catches you at all — down to about **0.4×**.
+- So you can slip past a bear, or work a carcass, by keeping **predators upwind of you**, so your scent blows away from them rather than toward them.
+
+While you're carrying fresh meat you **feel the wind** — the game tells you which way it's blowing from — so you can plan your line. It's the same read a real hunter makes before every stalk.
+
 ## Carrying meat draws predators
 
 Fresh meat you carry **reeks**, drawing wolves, **brown bears**, and polar bears — which will **snatch it
