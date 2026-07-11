@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -109,7 +110,9 @@ public final class SurvivalMeters {
     private static final float WATER_TARGET = -30f;    // being IN water pulls you to at least "slightly cold"
     private static final float CAVE_TEMPERATURE = 0.7f; // underground: a stable, mild refuge (biome scale)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
-    private static final float ROOF_INSULATION = 0.4f;  // a roof blunts ~40% of the cold/heat (§5.5)
+    private static final float ROOF_INSULATION = 0.4f;  // a bare roof (open lean-to) blunts ~40% of cold/heat (§5.5)
+    private static final float MAX_INSULATION = 0.78f;   // a snug, fully-walled shelter — holds heat far better
+    private static final int WALL_REACH = 4;             // a wall within this many blocks shelters that side
     private static final float HOT_MEAL_CAP = 15f;       // a hot meal warms you toward comfort, not heatstroke
     // Clothing insulation (§1.3/§5.5): leather/hide layers trap body heat — a blessing in the cold,
     // a burden in the heat; metal plates insulate little and bake in the sun.
@@ -332,9 +335,11 @@ public final class SurvivalMeters {
         float temp = level.getBiome(pos).value().getBaseTemperature(); // biome
         temp += Seasons.temperatureOffset(level);                      // §10 — winter cold, summer hot
         if (roofed) {
-            // Under a roof (§5.5): shielded from rain and the cold night sky, and insulated part-way
-            // toward comfort. A shelter blunts the extremes; a fire inside (radiant heat) does the rest.
-            temp += (NEUTRAL_AMBIENT - temp) * ROOF_INSULATION;
+            // Under a roof (§5.5): shielded from rain and the cold night sky, and insulated toward comfort.
+            // But a bare roof is only a lean-to — the more WALLED you are, the better it holds heat, so a
+            // snug enclosed cabin blunts the extremes far more than an open shelter. A fire inside does the rest.
+            float insulation = ROOF_INSULATION + (MAX_INSULATION - ROOF_INSULATION) * enclosure(level, pos);
+            temp += (NEUTRAL_AMBIENT - temp) * insulation;
         } else {
             if (level.isRainingAt(pos)) {
                 temp -= level.isThundering() ? 0.35f : 0.2f; // rain/snow/storm chills the exposed
@@ -345,6 +350,28 @@ public final class SurvivalMeters {
             }
         }
         return temp;
+    }
+
+    /**
+     * How enclosed a roofed spot is, 0 (open lean-to) .. 1 (walled on all sides) — walls block the wind and
+     * hold heat, so a snug cabin shelters far better than a bare roof (§5.5). Each of the four sides counts
+     * if there's a solid block within {@link #WALL_REACH}.
+     */
+    private static float enclosure(Level level, BlockPos pos) {
+        int walls = 0;
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            p.set(pos);
+            for (int i = 1; i <= WALL_REACH; i++) {
+                p.move(d);
+                var state = level.getBlockState(p);
+                if (!state.isAir() && !state.getCollisionShape(level, p).isEmpty()) {
+                    walls++;
+                    break; // this side is sheltered
+                }
+            }
+        }
+        return walls / 4f;
     }
 
     /**
