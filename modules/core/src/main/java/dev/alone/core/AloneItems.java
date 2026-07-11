@@ -118,6 +118,13 @@ public final class AloneItems {
     public static final Item FLINT_SHARD = register("flint_shard",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** A stone heated in a fire (§2) for <b>hot-rock boiling</b> — dropped into a hide skin or bark cup
+     *  that can't sit over the flame, it brings the water to a boil and turns it clean. It cools as you
+     *  carry it (the durability bar is its remaining heat), reverting to a plain {@link #ROCK} once cold. */
+    public static final int HOT_ROCK_LIFE = 2400; // ~2 min of usable heat before it cools to a plain rock
+    public static final Item HOT_ROCK = register("hot_rock",
+        key -> new Item(new Item.Properties().stacksTo(1).durability(HOT_ROCK_LIFE).setId(key)));
+
     /** Rope coil (§5.7) — throw it down a cliff face to hang a free, safe climb line. */
     public static final Item ROPE = register("rope",
         key -> new RopeItem(new Item.Properties().stacksTo(64).setId(key)));

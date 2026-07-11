@@ -102,6 +102,7 @@ public class AloneCore implements ModInitializer {
         Forging.init();         // §8.2 — forge & temper: heat + hammer metal gear to quality at an anvil
         Sharpening.init();       // §8.5 — hone a worn edge back up with a whetstone (off-hand, sneak+use)
         Embers.init();          // §3.1 — scoop a glowing ember from a fire and carry it to light the next
+        HotRocks.init();        // §2 — heat a stone in the fire, drop it in a hide skin to boil water clean
         Ropes.init();           // §5.7 — breaking a rope rolls the whole connected line back into your pack
         Falls.init();           // §1.5 — water only breaks a fall if it's deep enough (else you hit bottom)
         Backpacks.init();       // §6 — breaking a set-down backpack returns the pack with its contents
