@@ -84,6 +84,18 @@ public class TravoisEntity extends Entity implements Container {
         return !isRemoved(); // so you can right-click / hit it
     }
 
+    // A wooden sled shouldn't read as "on fire" — being fire-immune stops the base renderer drawing the
+    // flame overlay (which showed up as a red glow), and it won't burn up under you either.
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
+    public boolean displayFireAnimation() {
+        return false;
+    }
+
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (isRemoved() || !(source.getEntity() instanceof Player)) {
