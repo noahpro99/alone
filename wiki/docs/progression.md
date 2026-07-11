@@ -50,7 +50,8 @@ The four ages below map to the real arc:
    the early game's best weapon; [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the
-   meat over your fire.
+   meat over your fire. You can also **fish** for an easier, renewable catch — but a spot can be
+   **[fished out](./features/food-and-eating.md#fishing)**, so work a lake or shore, not a puddle.
 7. **Get out of the weather.** [Bed down on the ground](./features/sleep-and-rest.md) at first, then build
    a **roof and real walls** — [shelter and dryness](./features/body-temperature.md) are what keep the cold
    (and a [blizzard](./features/body-temperature.md#what-warms-and-cools-you)) off. Wear **leather from your

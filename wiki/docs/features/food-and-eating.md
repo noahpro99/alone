@@ -80,6 +80,16 @@ What you eat also nudges warmth and thirst:
 
 Hunger gates recovery: **below 6 hunger, stamina recovers poorly.** Running hungry risks both starvation and being unable to catch your breath.
 
+## Fishing
+
+Fishing works as it does in vanilla — but **a spot can be fished out.** Every water area holds a **finite stock of fish**, and pulling fish out of the same place fast enough **empties it**: the catches dry up (you'll reel in junk or nothing) until the stock **recovers over the following days**, or you move to fresh water.
+
+- **A small pond empties fast** — it's only a spot or two of water. **A lake or the sea is many spots**, so it lasts far longer and you can work along it.
+- **Fished-out water recovers on its own** — leave a spot alone and the fish return over a couple of in-game days, so a well-managed shoreline keeps feeding you.
+- Only **actual fish** count against the stock; junk and treasure catches don't.
+
+So fishing is a real, renewable food source you have to **manage, not strip** — exactly the pressure a survivor living off the water faces.
+
 ## Related pages
 
 - [Water, Thirst & Vessels](./water-and-drinking.md) — drinking to wash your hands, foods that affect thirst.

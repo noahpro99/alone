@@ -42,9 +42,10 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 
 ## Food, farming & preservation
 
-- **Deeper farming:** fishing as a primary food source with finite, slow-recovering stocks. *(Salting,
-  drying racks, smoking, root cellars, and ice houses have shipped — see
-  [Food Preservation](./features/preservation.md).)*
+- **Deeper fishing:** bait, tackle tiers, and the right spots (a fishing rod is still vanilla otherwise).
+  *(**Finite, slow-recovering fish stocks** have shipped — fish out a spot and the catches dry up until it
+  recovers over the following days, so a small pond empties fast while a lake or the sea lasts; see
+  [Food & Eating](./features/food-and-eating.md#fishing).)*
 - **Purpose-built food stores:** **sealed barrels, hung caches, and smokehouses** that beat the scent
   better than a plain chest. *(The scent system has shipped — carried fresh meat draws wolves and polar
   bears, which will **snatch it and bolt** if they reach you, countered by preserving or caching it; see
