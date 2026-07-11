@@ -137,6 +137,12 @@ public final class SurvivalMeters {
     public static final AttachmentType<Integer> WETNESS =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "wetness"), Codec.INT);
     private static final int MAX_WETNESS = 600;   // ~30s to dry naturally
+
+    /** Clock time you lay down, so waking can charge you the metabolism of the night you slept through. */
+    public static final AttachmentType<Long> SLEEP_START =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "sleep_start"), Codec.LONG);
+    private static final float SLEEP_THIRST_PER_DAY = 40f; // water lost sleeping a whole day (a night ≈ half)
+    private static final int SLEEP_HUNGER_PER_DAY = 8;      // food burned sleeping a whole day
     private static final int DRY_NATURAL = 1;
     private static final int DRY_BY_FIRE = 5;     // a fire dries you ~5x faster
 
@@ -177,8 +183,17 @@ public final class SurvivalMeters {
             return InteractionResult.PASS;
         });
 
+        // Remember when you lay down, so waking can charge the night's metabolism (§1.4).
+        EntitySleepEvents.START_SLEEPING.register((entity, sleepingPos) -> {
+            if (entity instanceof ServerPlayer player) {
+                player.setAttached(SLEEP_START, player.level().getOverworldClockTime());
+            }
+        });
+
         // A night's sleep restores you (§1.4) — but only as well as you were comfortable (§5.5). Warm
-        // and sheltered = a full night; cold or roasting = a poor one. Applied on waking.
+        // and sheltered = a full night; cold or roasting = a poor one. Applied on waking. And sleep is
+        // NOT free: you wake having burned the night's food and water, so a long rest leaves you hungry
+        // and dry — you can't skip the night's metabolism by skipping the night.
         EntitySleepEvents.STOP_SLEEPING.register((entity, sleepingPos) -> {
             if (entity instanceof ServerPlayer player) {
                 float quality = restQuality(player);
@@ -188,6 +203,21 @@ public final class SurvivalMeters {
                         ? "You slept poorly — too cold to rest well."
                         : "You slept poorly — too hot to rest well."));
                 }
+
+                // Charge the metabolism of the time actually slept (the clock jumps to morning).
+                long start = player.getAttachedOrElse(SLEEP_START, player.level().getOverworldClockTime());
+                long slept = ((player.level().getOverworldClockTime() - start) % 24000L + 24000L) % 24000L;
+                float dayFraction = slept / 24000f;
+                drink(player, -SLEEP_THIRST_PER_DAY * dayFraction);
+                int hunger = Math.round(SLEEP_HUNGER_PER_DAY * dayFraction);
+                if (hunger > 0) {
+                    player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - hunger));
+                }
+                if (slept > 3000L) {
+                    player.sendSystemMessage(Component.literal(
+                        "You wake rested — but the night has left you hungry and dry."));
+                }
+                player.removeAttached(SLEEP_START);
             }
         });
     }
