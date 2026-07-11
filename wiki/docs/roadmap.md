@@ -15,10 +15,11 @@ about maintenance,* with a long-horizon goal (the Dragon) that takes seasons to 
 
 ## Fire, heat & industry
 
-The campfire exists; the rest of the heat-tech tree does not yet.
+The campfire, the clay kiln (fires pottery), and the bellows-fed bloomery (smelts iron ore to a bloom)
+exist; the rest of the heat-tech tree does not yet.
 
-- **Furnace tiers** above the campfire: a clay kiln (fires pottery, makes charcoal), a charcoal
-  clamp (bulk charcoal), a bellows-fed bloomery/forge for smelting, and a glass furnace.
+- **Higher furnace tiers:** a **charcoal clamp** (bulk charcoal from a covered wood pile) and a **glass
+  furnace**, above the kiln and bloomery already in the pack.
 - **The ash economy:** hardwood ash → lye → potash, feeding soap and glass flux.
 - **Glass that gates itself** behind forge heat + flux + lime, arriving late as the trophy it
   historically was.
@@ -53,7 +54,6 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 
 ## Wildlife & hunting
 
-- **Scent-driven predator AI** — bears above all — that raid unsecured food.
 - **Deer and rabbit populations** with seasonal breeding and local overhunting.
 - **More tracking sign:** footprints, wind direction, and snow tracking, to follow quarry you can't see.
   *(Persistence hunting, blood trails, and bleed-out have shipped; see
@@ -83,11 +83,11 @@ tamp tool) — and fire spread — an open campfire catches wood it touches — 
 
 ## Transport
 
-The backpack exists; the rest of the logistics tree is planned.
+The backpack, the **travois/sledge** (a dragged cargo frame), and **rivers as highways** (loose logs and
+light goods float downstream) exist; the rest of the logistics tree is planned.
 
-- **Wheelbarrow**, **travois/sledge**, **rafts and boats**, **rivers as highways** for floating
-  logs, **pack animals**, and the big unlock — a **horse + cart** whose demands make **road-building
-  emergent gameplay** — up to **rails** as the endgame.
+- **Wheelbarrow**, **rafts and boats**, **pack animals**, and the big unlock — a **horse + cart** whose
+  demands make **road-building emergent gameplay** — up to **rails** as the endgame.
 
 ## The world & navigation
 
