@@ -48,8 +48,11 @@ public final class BloodTrail {
             if (blocked || takenDamage <= 0f || !(entity instanceof Animal animal) || !animal.isAlive()) {
                 return;
             }
-            if (source.getEntity() instanceof Player) {
-                int added = Math.round(takenDamage * BLEED_TICKS_PER_DAMAGE);
+            if (source.getEntity() instanceof Player hunter) {
+                // A practised tracker's quarry leaves a longer, more followable trail (§8.4) — skill reads
+                // the blood better and presses the wounded animal harder.
+                float trackBonus = 1f + 0.5f * Skills.proficiency(hunter, Skills.TRACKING);
+                int added = Math.round(takenDamage * BLEED_TICKS_PER_DAMAGE * trackBonus);
                 int bleed = Math.min(MAX_BLEED, animal.getAttachedOrElse(BLEED, 0) + added);
                 animal.setAttached(BLEED, bleed);
             }
