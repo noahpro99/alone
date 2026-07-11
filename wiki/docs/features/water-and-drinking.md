@@ -19,16 +19,24 @@ Every drink and every vessel has a quality. It decides how likely a sip is to ca
 
 | Quality | Where it comes from | Sickness chance |
 | --- | --- | --- |
-| **Raw / murky** | Straight from a river, lake, or pond | ~15% |
-| **Tainted / dirty** | Filled into a dirty vessel | ~45% |
+| **Raw** | Straight from a river, lake, or pond | source-dependent (see below) |
+| **Tainted / murky** | A dirty vessel, **or warm stagnant swamp/jungle water** | ~45% |
 | **Clean** | Boiled, or caught as rainwater | Safe (0%) |
 | **Salt** | Ocean, beach, or shore water | Dehydrates instead of quenching |
 
 ## Drinking from a source
 
-Pointing at a water source and **right-clicking bare-handed** drinks straight from it. It refills thirst, but untreated water carries risk:
+Pointing at a water source and **right-clicking bare-handed** drinks straight from it. It refills thirst, but untreated water carries risk — and **where you drink matters**, following the real rule that cold, clear, moving water is far safer than warm, still water:
 
-- Raw water from a river, lake, or pond has a **~15% chance to cause sickness** each time.
+| Source | Bare-hand sickness chance |
+| --- | --- |
+| **Swamp / jungle / mangrove** (warm, stagnant, murky) | **~45%** — a bad idea raw |
+| **Warm, dry country** (savanna, desert oasis) | ~25% |
+| **Temperate** (plains, forest) | ~15% |
+| **Cold biomes** (mountains, tundra, snowy) | **~6%** — much safer, but never zero |
+
+- No source is ever *truly* safe raw — even a clear cold stream keeps a small floor of risk (giardia doesn't care how pretty the water is). **Boiling is the only sure cure.**
+- A **vessel filled from swamp/jungle water fills murky** (tainted, the ~45% tier), so you must boil it before it's safe — via a fire-safe pot, or **[hot-rock boiling](#hot-rock-boiling--for-the-waterskin)** for a hide waterskin.
 - Sickness is a lingering foodborne illness.
 
 ## Salt water
