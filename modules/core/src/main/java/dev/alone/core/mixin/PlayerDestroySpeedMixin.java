@@ -73,7 +73,10 @@ public class PlayerDestroySpeedMixin {
             float hardness = state.getDestroySpeed(self.level(), BlockPos.ZERO);
             float slowed = cir.getReturnValueF() * STONE_FACTOR;
             float floor = hardness > 0f ? hardness / MAX_BREAK_DIVISOR : 0f;
-            cir.setReturnValue(Math.max(slowed, floor));
+            // Skill by doing (§8.4): a practised miner quarries faster — up to ~1.5x at mastery.
+            float speed = Math.max(slowed, floor)
+                * (1.0f + 0.5f * dev.alone.core.Skills.proficiency(self, dev.alone.core.Skills.MINING));
+            cir.setReturnValue(speed);
             return;
         }
 

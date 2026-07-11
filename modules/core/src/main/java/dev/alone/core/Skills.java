@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -24,6 +26,8 @@ public final class Skills {
 
     public static final String FLINTWORKING = "flintworking";
     public static final String FIRECRAFT = "firecraft";
+    public static final String MINING = "mining";
+    public static final String SMITHING = "smithing";
 
     /** Practice count at which you're halfway to mastery — sets the pace of the learning curve. */
     private static final int HALF_MASTERY = 30;
@@ -35,8 +39,15 @@ public final class Skills {
         Identifier.fromNamespaceAndPath("alone", "skills"),
         Codec.unboundedMap(Codec.STRING, Codec.INT));
 
-    /** No-op: forces this class (and its attachment) to load and register at mod init. */
+    /** Registers the skill-granting hooks (and forces the attachment to load) at mod init. */
     public static void init() {
+        // Quarrying stone/ore builds the miner's hand — dig speed then rises (see PlayerDestroySpeedMixin).
+        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, be) -> {
+            if (!level.isClientSide() && !player.isCreative()
+                && state.is(BlockTags.MINEABLE_WITH_PICKAXE) && state.getDestroySpeed(level, pos) > 0f) {
+                gain(player, MINING, 1);
+            }
+        });
     }
 
     public static int practice(Player player, String skill) {

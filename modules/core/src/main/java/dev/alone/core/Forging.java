@@ -215,6 +215,10 @@ public final class Forging {
         boolean reforge = isForged(piece);
         int reforgeCount = piece.getOrDefault(REFORGE, 0) + (reforge ? 1 : 0);
         float quality = quality(player.getRandom());
+        // Skill by doing (§8.4): a practised smith draws better steel — the roll is nudged toward mastery.
+        float skill = Skills.proficiency(player, Skills.SMITHING);
+        quality = Math.min(1.0f, quality + (1.0f - quality) * 0.4f * skill);
+        Skills.gain(player, Skills.SMITHING, 2); // every piece worked teaches the hammer
         piece.set(QUALITY, quality);
         piece.set(REFORGE, reforgeCount);
         piece.set(HEAT, 0);
