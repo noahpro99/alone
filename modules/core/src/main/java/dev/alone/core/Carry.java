@@ -138,6 +138,13 @@ public final class Carry {
         if (BuiltInRegistries.ITEM.getKey(item).getPath().endsWith("_planks")) {
             return 0.15f;
         }
+        // The drying rack is an open lashed-stick frame, not a solid cube. Its collision box is near-full
+        // (needed so you can click/hang food on it), which would otherwise read as a ~0.6 m³ block — but
+        // you carry it as its handful of sticks: bulky and awkward to lug, yet light. So a quarter of your
+        // hands each (you can manage a few), sized to its ~5-stick build rather than its footprint.
+        if (item instanceof BlockItem drackVol && drackVol.getBlock() == AloneBlocks.DRYING_RACK) {
+            return 0.25f;
+        }
         if (item instanceof BlockItem blockItem) {
             float shape = blockShapeVolume(blockItem);
             if (shape >= 0.4f) {
@@ -297,6 +304,11 @@ public final class Carry {
         // A single sawn board — a quarter of a log's mass, so 4 planks ≈ one log (mass conserves).
         if (BuiltInRegistries.ITEM.getKey(item).getPath().endsWith("_planks")) {
             return 1.5f;
+        }
+        // A drying rack is ~5 sticks lashed together — light, whatever its footprint (see computeVolume).
+        // 5 × the ~0.2 kg stick, plus a little for lashing.
+        if (item instanceof BlockItem drackWt && drackWt.getBlock() == AloneBlocks.DRYING_RACK) {
+            return 1.2f;
         }
         if (item instanceof BlockItem && perItemVolume(item) >= 0.4f) {
             float shape = perItemVolume(item);
