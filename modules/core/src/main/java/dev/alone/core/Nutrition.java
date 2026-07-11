@@ -6,7 +6,11 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
@@ -37,12 +41,23 @@ public final class Nutrition {
     public static final AttachmentType<Float> FAT_GRAIN = fatigue("diet_grain");
     public static final AttachmentType<Float> FAT_FRUIT = fatigue("diet_fruit");
 
+    // Scurvy (§1.1): fresh food — fruit and vegetables, your vitamin C — staves it off. Go long enough
+    // without any and you sicken: weakness first, then bleeding gums and reopening wounds. The classic
+    // survival killer, and the classic cure: a little fresh food reverses it fast.
+    public static final AttachmentType<Long> LAST_VITAMIN =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "last_vitamin"), Codec.LONG);
+    private static final long SCURVY_ONSET = 144000L;  // ~6 in-game days with no fresh food → symptoms begin
+    private static final long SCURVY_SEVERE = 240000L; // ~10 in-game days → it turns deadly
+
     /** Touching this class registers its attachments. */
     public static void init() {
     }
 
     /** Call when a player finishes eating a food. Server-side. */
     public static void onEat(Player player, ItemStack food) {
+        if (food.is(FRUIT) || food.is(VEGETABLE)) {
+            player.setAttached(LAST_VITAMIN, player.level().getGameTime()); // fresh food resets the scurvy clock
+        }
         AttachmentType<Float> group = groupOf(food);
         if (group == null) {
             return; // untagged food — neutral
@@ -67,6 +82,38 @@ public final class Nutrition {
         FoodData food = player.getFoodData();
         if (food.getFoodLevel() > cap) {
             food.setFoodLevel(cap);
+        }
+        tickScurvy(player);
+    }
+
+    /** Deficiency: too long without fresh food brings on scurvy — weakness, then it kills. */
+    private static void tickScurvy(Player player) {
+        if (player.tickCount % 20 != 0 || !(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        long now = level.getGameTime();
+        Long last = player.getAttached(LAST_VITAMIN);
+        if (last == null) {
+            player.setAttached(LAST_VITAMIN, now); // first seen — start the clock, no instant scurvy
+            return;
+        }
+        long without = now - last;
+        if (without < SCURVY_ONSET) {
+            return;
+        }
+        boolean severe = without >= SCURVY_SEVERE;
+        // Weakness and lethargy set in; a severe case adds sluggishness and reopens wounds.
+        player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0, false, false, true));
+        if (severe) {
+            player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 40, 0, false, false, true));
+            if (player.tickCount % 100 == 0) {
+                player.hurtServer(level, level.damageSources().generic(), 1.0f); // bleeding gums, failing body
+            }
+        }
+        if (player.tickCount % 600 == 0) {
+            player.sendSystemMessage(Component.literal(severe
+                ? "Your gums bleed and old wounds reopen — scurvy. You need fresh food, now."
+                : "You feel weak and listless — you've had no fresh fruit or vegetables in days."));
         }
     }
 
