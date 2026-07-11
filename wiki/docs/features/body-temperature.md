@@ -38,7 +38,10 @@ Overheat and you take **burning damage** as if you were on fire. Standing in lav
 
 ## What warms and cools you
 
-- **Wetness multiplies cold.** **Wet clothing insulates nothing** until it dries.
+- **Wetness multiplies cold — and ruins your clothing's warmth.** Soaked hide and wool hold **almost no
+  heat** (they keep only about **a quarter** of their insulation until they dry), so being **wet in the
+  cold is dangerous even fully dressed**. This is why wet-cold, not dry-cold, is the real killer — and why
+  drying off by a fire is worth more than another layer.
 - **A fire dries you** about five times faster than air alone, and warms you at the same time.
 - **Heat sources warm you:** stand near a **lit campfire**, open **fire**, **torches**, or **lava** and the square climbs back toward green. Lava is strong enough to overheat you.
 - **Shelter insulates — and walls matter.** Being under cover (no open sky above you) shields you from rain and the cold night sky. A **bare roof** (an open lean-to) pulls the temperature about **40% toward comfortable**, but the more **walled in** you are the better it holds heat: a **fully enclosed shelter** (a solid wall within about 4 blocks on all four sides) reaches roughly **78%**. So building real walls, not just a roof, is what makes a cabin beat winter.

@@ -129,6 +129,7 @@ public final class SurvivalMeters {
     private static final float LEATHER_INSULATION = 9f;  // per hide piece — a full set (~36) beats a cold night
     private static final float METAL_INSULATION = 2f;    // per metal plate — barely a windbreak
     private static final float HEAT_TRAP = 0.4f;         // fraction of your insulation that turns into a burden when hot
+    private static final float WET_INSULATION_FACTOR = 0.25f; // soaked hide/wool holds almost no heat — wet is deadly
     private static final float METAL_SUN_HEAT = 4f;      // per metal plate baking under an open sky
     private static final EquipmentSlot[] ARMOR_SLOTS =
         {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
@@ -430,7 +431,7 @@ public final class SurvivalMeters {
      * in the heat they trap warmth and make it worse. Bare metal plates barely insulate and, under an
      * open sky in the heat, bake you. Returns the adjusted environmental target.
      */
-    private static float clothingShift(Player player, float envTarget) {
+    private static float clothingShift(Player player, float envTarget, boolean wet) {
         float insulation = 0f; // hide layers that trap body heat
         int metal = 0;         // conducting plates
         for (EquipmentSlot slot : ARMOR_SLOTS) {
@@ -444,6 +445,11 @@ public final class SurvivalMeters {
                 metal++;
                 insulation += METAL_INSULATION;
             }
+        }
+        if (wet) {
+            // Soaked layers hold almost no heat — the whole reason wet cold kills. So rain-drenched hide
+            // barely warms you, and in the heat it traps far less warmth (evaporation, even). Dry off.
+            insulation *= WET_INSULATION_FACTOR;
         }
         if (envTarget < 0f) {
             // Cold: clothing warms you back toward comfort, but can't push you past it.
@@ -566,9 +572,9 @@ public final class SurvivalMeters {
             // still drives it lower (icy water stays deadly).
             envTarget = Math.min(envTarget, WATER_TARGET);
         } else {
-            // What you're wearing shifts how the environment reaches you (§1.3/§5.5) — but only in air;
-            // soaked clothing insulates nothing.
-            envTarget = clothingShift(player, envTarget);
+            // What you're wearing shifts how the environment reaches you (§1.3/§5.5). Submerged, clothing is
+            // moot (handled above); in air it insulates — but soaked layers keep only a fraction of it.
+            envTarget = clothingShift(player, envTarget, wet);
         }
         envTarget = clampTemp(envTarget);
         float envRate = Math.abs(envTarget) > Math.abs(bodyTemp) ? EXPOSURE_RATE : RECOVERY_RATE;
