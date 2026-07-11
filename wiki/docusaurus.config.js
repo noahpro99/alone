@@ -103,7 +103,7 @@ const config = {
             title: 'Wiki',
             items: [
               {label: 'Overview', to: '/'},
-              {label: 'Download & Play', to: '/download'},
+              {label: 'Download', to: '/download'},
               {label: 'Features', to: '/features/survival-meters'},
               {label: 'Roadmap', to: '/roadmap'},
               {label: 'Engineering', to: '/engineering/toolchain'},

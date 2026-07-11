@@ -12,7 +12,7 @@ The vanilla hearts are gone. In their place, the HUD shows:
 - **A vitality bar** — blood-red fading to amber, at the top of the corner meters. This is your overall condition. It's drained by bleeding and severe conditions, and it comes back **slowly**.
 - **A paper-doll injury figure** — a small body that shows where you're hurt (for example, arms turn **purple when infected**).
 
-Because health no longer snaps back, staying whole is about **avoiding and treating wounds**, not out-tanking damage.
+Because health no longer snaps back, damage persists as wounds that must be treated rather than out-healed.
 
 ## Conditions and how to treat them
 
@@ -27,7 +27,7 @@ When you take damage, it can leave a lasting condition rather than just a number
 
 ### Bleeding
 
-Cuts, claws, and arrows can open a bleed that **drains your vitality** until it clots on its own or you bandage it. **Bandage it** by holding cloth — string, wool, or paper — and **sneaking + right-clicking**. Don't wait for it to stop on its own if you can help it; every second bleeding is vitality lost.
+Cuts, claws, and arrows can open a bleed that **drains your vitality** until it clots on its own or you bandage it. **Bandaging** is done by holding cloth — string, wool, or paper — and **sneaking + right-clicking**.
 
 ### Sprains and fractures
 
@@ -45,7 +45,7 @@ Eating raw or spoiled food, drinking untreated or tainted water, or eating with 
 
 Armor now has a role in the injury system: it **reduces the chance and severity of bleeding and fractures**. Bleeding is a damage-scaled chance — a harder hit is likelier to open a wound — and **a full set of armor cuts that chance to roughly a fifth**. Fractures from heavy blows are reduced the same way. Wearing armor means fewer wounds to treat, not just more hits absorbed.
 
-## Healing is slow — treat first, then recover
+## Healing is slow
 
 Vanilla's fast food-powered regeneration is gone. You mend only about **1 HP every 10 seconds**, and only when **all** of these are true:
 
@@ -53,7 +53,7 @@ Vanilla's fast food-powered regeneration is gone. You mend only about **1 HP eve
 - You're **hydrated** (thirst at least 30)
 - You're **not bleeding, infected, or sick**
 
-That last point is the whole design: **you cannot heal while wounded**. Treat your bleeding, infection, and sickness first, get fed and watered, and only then does your body slowly knit back together. Rushing back into a fight while bleeding just digs the hole deeper.
+**You cannot heal while wounded:** any active bleeding, infection, or sickness blocks regeneration until it is cleared.
 
 ## Death is a setback, not a reset
 

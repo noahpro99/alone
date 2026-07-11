@@ -26,16 +26,11 @@ Stamina is your immediate wind — the effort you can spend before you have to s
 - A hard sprint empties the bar in about **40 seconds** — this is a real run, not a quick dash.
 - It **recovers** when you rest and stop exerting, refilling over roughly **25 seconds** of standing still.
 - When it runs **near-empty**, your body gives out: you're **slowed**, hit with **mining fatigue**, and **can't sustain a sprint** until you've caught your breath.
-
-Practical tips:
-
-- Don't sprint everywhere. Save your wind for when you need to cross open ground or flee.
-- Mining and chopping cost stamina per swing, so a long quarrying session will wear you down — pace it.
-- If you run out of stamina while climbing, **you fall** — never start a climb on an empty bar.
+- If your stamina runs out while climbing, **you fall**.
 
 ### Hunger gates recovery
 
-Stamina only rebuilds properly when you're fed. **Below 6 hunger, stamina recovers poorly** — an empty stomach leaves you unable to catch your breath, so keep eating if you plan to work.
+Stamina only rebuilds properly when you're fed. **Below 6 hunger, stamina recovers poorly.**
 
 ## Endurance reserve (fatigue)
 
@@ -62,7 +57,7 @@ Weight is separate and softer: the heavier your load, the **slower you move**. O
 
 ## Condition markers
 
-Below the temperature square, small colored markers flag active conditions so you can treat them:
+Below the temperature square, small colored markers flag active conditions:
 
 - **Sick** — green
 - **Bleeding** — red
