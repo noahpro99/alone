@@ -26,9 +26,14 @@ import net.minecraft.world.level.chunk.LevelChunk;
  * the whole game before refrigeration. Each perishable carries a freshness budget that drains faster in
  * the heat and slower in the cold: a warm summer hut rots meat in a day, but a <b>root cellar</b> (dug in,
  * lined against the caving earth, and cool from the ground) — or a cold biome, or winter — keeps it for
- * weeks. Preserving (salting/drying) just buys a much bigger budget, not immortality. The budget only
- * drains while the food is being watched (in a pocket, or a chest near you), so leaving your base pauses
- * it; when it runs out the food turns to rotten flesh.
+ * weeks. Preserving (salting/drying) just buys a much bigger budget, not immortality.
+ *
+ * <p>The budget drains by the <b>in-game time that actually elapses</b> — measured against the world
+ * clock ({@link Level#getGameTime()}), not real seconds — so food <b>keeps rotting while you're away</b>.
+ * Leave meat in a warm base and go exploring, and you come home to spoilage; leave it in a cold cellar
+ * and it barely ticks. We only re-check a stack when it's near you again (carried, or in a loaded
+ * container nearby), but the drain then covers the <b>whole</b> stretch of world-time since it was last
+ * seen — nothing is paused or forgiven by leaving. When the budget runs out the food turns to rotten flesh.
  */
 public final class Spoilage {
     private Spoilage() {
@@ -37,7 +42,6 @@ public final class Spoilage {
     public static final long SPOIL_TICKS = 24000L;            // fresh perishable: ~1 in-game day at comfortable temp
     public static final long PRESERVED_SHELF_TICKS = 720000L; // salted/dried: ~30 in-game days — long, not forever
     private static final int SCAN_INTERVAL = 40;              // check food every ~2s
-    private static final long MAX_STEP = 200L;                // cap per-scan drain so away-time stays paused
 
     /** Remaining freshness, in comfortable-temperature ticks; when it hits 0 the food spoils. */
     public static final DataComponentType<Long> FRESHNESS = Registry.register(
@@ -121,7 +125,10 @@ public final class Spoilage {
             stack.set(FRESHNESS_SEEN, now);
             return;
         }
-        long elapsed = Math.max(0L, Math.min(MAX_STEP, now - stack.getOrDefault(FRESHNESS_SEEN, now)));
+        // Full world-time since we last saw this stack — uncapped, so away-time counts and food rots
+        // while you're gone. (now - seen is 0 the tick it's stamped, small between scans while you're
+        // present, and the entire absence the first time it's re-checked after you return.)
+        long elapsed = Math.max(0L, now - stack.getOrDefault(FRESHNESS_SEEN, now));
         stack.set(FRESHNESS_SEEN, now);
         if (elapsed <= 0) {
             return;

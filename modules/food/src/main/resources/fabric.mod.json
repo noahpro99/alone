@@ -9,7 +9,8 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["dev.alone.food.AloneFood"]
+    "main": ["dev.alone.food.AloneFood"],
+    "client": ["dev.alone.food.client.AloneFoodClient"]
   },
   "mixins": ["alone-food.mixins.json"],
   "depends": {
