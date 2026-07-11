@@ -292,6 +292,16 @@ public final class SurvivalMeters {
         }
     }
 
+    /** A cool drink eases the heat (§1.2/§1.3) — lowers an overheated body toward comfort, never into a
+     *  chill (a drink can't make a comfortable body cold). Drifts back toward the environment over time. */
+    public static void cool(Player player, float amount) {
+        float current = getBodyTemp(player);
+        if (current <= 0f) {
+            return; // only relief when you're actually hot
+        }
+        player.setAttached(BODY_TEMP, Math.max(0f, current - amount));
+    }
+
     /** Restore stamina directly (energy from food). */
     public static void restoreStamina(Player player, float amount) {
         player.setAttached(STAMINA, Math.max(0f, Math.min(MAX_STAMINA, getStamina(player) + amount)));

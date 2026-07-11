@@ -168,6 +168,7 @@ public class WaterskinItem extends Item {
             player.sendSystemMessage(Component.literal("Salty — it only dries you out. Distil it, or find fresh water."));
         } else {
             SurvivalMeters.drink(player, THIRST_PER_SIP);
+            SurvivalMeters.cool(player, 8f); // a sip eases the heat when you're overheated
             float sicknessChance = quality == CLEAN ? 0f : (quality == TAINTED ? 0.45f : 0.15f);
             if (quality != CLEAN) {
                 stack.set(AloneItems.VESSEL_DIRTY, true); // raw/tainted water leaves residue

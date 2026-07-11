@@ -146,6 +146,7 @@ public final class Drinking {
                 "The seawater is salty — it only makes you thirstier. Boiling won't help; you'd need to distil it, or find fresh water."));
             return;
         }
+        SurvivalMeters.cool(player, 10f); // a mouthful of water eases the heat if you're overheated
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
             SurvivalMeters.drink(player, DRINK_AMOUNT);
             if (player.getRandom().nextFloat() < rawSicknessChance(player.level(), water)) {
