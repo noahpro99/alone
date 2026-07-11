@@ -21,7 +21,11 @@ import net.minecraft.world.phys.AABB;
  *
  * <p>The drops fade within a second or two of hitting the ground (as real blood sign goes cold), so what
  * you see is a short, fresh dotted line trailing the animal — enough to follow it through brush and over a
- * rise. Purely a tracking aid for now; a wounded beast bleeding out is left for later.
+ * rise.
+ *
+ * <p>And a deep wound is mortal: while an animal is <b>badly</b> bleeding it <b>loses blood and weakens</b>,
+ * so a solid hit will <b>bleed it out</b> and drop small game outright, while a graze only clots. A good
+ * shot is worth more than a lucky one — land it, follow the blood, and the wound finishes the work.
  */
 public final class BloodTrail {
     private BloodTrail() {
@@ -31,6 +35,8 @@ public final class BloodTrail {
     private static final int BLEED_TICKS_PER_DAMAGE = 40;    // each half-heart of damage → ~2s of bleeding
     private static final int MAX_BLEED = 600;               // a bad wound bleeds up to ~30s
     private static final double TRACK_RADIUS = 26.0;         // drops render for players within this range
+    private static final int MORTAL_BLEED = 60;             // only a real wound (≥~1.5 dmg) is deep enough to bleed out
+    private static final float BLEED_OUT_DAMAGE = 1.0f;     // blood loss, per second, while the wound runs deep
 
     /** Remaining bleed time in ticks on a wounded animal. Transient — a session state, not saved. */
     public static final AttachmentType<Integer> BLEED = AttachmentRegistry.createDefaulted(
@@ -72,6 +78,11 @@ public final class BloodTrail {
             level.sendParticles(DustParticleOptions.REDSTONE,
                 animal.getX(), animal.getY() + 0.1, animal.getZ(),
                 2, 0.12, 0.02, 0.12, 0.0);
+            // A deep, fresh wound bleeds it out — once a second (clear of hurt-immunity frames), tapering
+            // as the wound clots. Small game drops from one good hit; big game needs more.
+            if (bleed >= MORTAL_BLEED && animal.tickCount % 20 == 0) {
+                animal.hurtServer(level, level.damageSources().generic(), BLEED_OUT_DAMAGE);
+            }
             animal.setAttached(BLEED, Math.max(0, bleed - DRIP_INTERVAL));
         }
     }
