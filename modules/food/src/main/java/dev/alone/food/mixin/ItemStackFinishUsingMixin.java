@@ -64,16 +64,22 @@ public class ItemStackFinishUsingMixin {
             player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                 "A golden warmth floods through you — a second wind."));
         }
-        // Per-tier odds (§4.2): raw chicken is a real gamble, fish much safer.
+        // Per-tier odds (§4.2): raw chicken is a real gamble, fish much safer. But DRYING/SMOKING is what
+        // makes raw meat safe to eat in the first place — jerky is dried raw meat, not cooked — so a piece
+        // that's been dried (or smoked) carries no raw-meat gamble at all. (Old jerky can still turn: the
+        // freshness "going off" risk below is separate and still applies.)
         float chance = 0f;
         int illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS;
-        if (self.is(AloneFood.RAW_HIGH_RISK)) {
-            chance = 0.8f;
-        } else if (self.is(AloneFood.RAW_MEDIUM_RISK)) {
-            chance = 0.45f;
-        } else if (self.is(AloneFood.RAW_LOW_RISK)) {
-            chance = 0.2f;
-            illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS / 2;
+        boolean dried = self.getOrDefault(dev.alone.food.Spoilage.DRIED, false);
+        if (!dried) {
+            if (self.is(AloneFood.RAW_HIGH_RISK)) {
+                chance = 0.8f;
+            } else if (self.is(AloneFood.RAW_MEDIUM_RISK)) {
+                chance = 0.45f;
+            } else if (self.is(AloneFood.RAW_LOW_RISK)) {
+                chance = 0.2f;
+                illnessTicks = Conditions.FOODBORNE_ILLNESS_TICKS / 2;
+            }
         }
         // Eating with dirty hands contaminates even safe food (§5.6).
         if (Hygiene.handsDirty(player)) {

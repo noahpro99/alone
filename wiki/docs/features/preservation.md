@@ -122,6 +122,12 @@ time even while the area is unloaded.
 Finished food becomes **jerky**: it is marked **preserved** (~30-day shelf life) and **dried**,
 which also makes it **lighter to carry** (the water is gone).
 
+**You dry meat *raw* — you don't cook it first.** Jerky *is* dried raw meat, and cold-smoking over the
+campfire is the same: the drying (and the smoke) are what make it keep, and what make it **safe to eat**.
+So hang raw beef straight on the rack, and eating the finished jerky carries **no raw-meat sickness** — the
+drying dealt with that. (Old jerky can still turn once it's deep into its 30-day shelf life; that's the
+freshness gamble, not a raw-meat one.)
+
 ### Drying speed depends on conditions
 
 Air-drying a piece takes about **1.5 in-game days** in normal temperate, dry conditions. Temperature,
