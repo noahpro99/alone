@@ -42,6 +42,11 @@ module wasn't on the classpath; add a tab + real textures/models later.
 - **Farming realism (§4.1)** — ~~seasonal planting windows~~ DONE (crops pause in winter, `CropGrowthMixin`).
   Still open: weeds on farmland (weed block/state).
 - ~~**Boiling purifies water (§2/§3)**~~ DONE (`WaterskinItem` + `Campfires`).
+- **Re-root / tamp tool (§5.1, idea — not yet scoped)** — the inverse of the loose-placed system: a
+  maul/tamper you hold-use on a block *you* placed to work it back into place (timed + stamina), which
+  un-marks it from `PlacedBlocks` so it's rooted again — slow to break, needs the proper tool, drop no
+  longer comes free. Build loose → set it → committed/secure structures. Later: material-specific (tamp
+  dirt, peg/lash wood, mortar stone — mortar gates stone behind clay).
 - **Hire villagers (§7.4, idea — not yet scoped)** — pay a villager in food per day to work for you:
   labour like mining/hauling/wood-cutting, or guard/protect your homestead. They eat daily (a running
   food wage); stop paying and they leave. Living infrastructure you feed, echoing the pack-animal and
