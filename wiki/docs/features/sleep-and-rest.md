@@ -42,3 +42,11 @@ How much you recover depends on how **comfortable** you were while you slept —
 | **Freezing or roasting** | About **30%** — you "slept poorly" |
 
 Sleeping cold or hot doesn't just risk your temperature meters — it **robs you of rest**. A freezing night in the open leaves you waking up almost as tired as you lay down. Because wet clothing insulates nothing, being wet at bedtime counts as sleeping cold.
+
+## Sleep isn't free — you wake hungry and dry
+
+Skipping the night doesn't skip the night's **metabolism**. You still **burn food and water while you
+sleep**, so you **wake rested but hungry and thirsty** — a full night costs roughly **18 thirst and ~4
+food** (a short, late-night sleep costs less, scaled to the time you actually slept). Sleep **trades food
+and water for the fatigue and stamina it restores**, so you need reserves before a rest, and you'll want a
+drink and a bite on waking. You can't dodge a night of hunger by sleeping through it.

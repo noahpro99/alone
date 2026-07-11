@@ -114,9 +114,10 @@ The backpack exists; the rest of the logistics tree is planned.
   projects you *actively engage* to enter a time-compressed "spent the afternoon on it" mode — meters
   keep draining, and a nearby event (a predator, a storm) interrupts you. The engine that makes days
   of labour playable without either tedium or a free instant craft.
-- **Sleep as an honest time-skip:** sleeping runs the clock fast rather than teleporting to dawn —
-  hunger/thirst drain, fires burn down, and a scent or storm event wakes you "a second later, but
-  hours later in game time." Same accelerated-tick engine as work sessions.
+- **Sleep as a gradual time-skip:** sleeping runs the clock *fast* rather than teleporting to dawn, so
+  the night can be **interrupted** — a scent or storm event wakes you "a second later, but hours later in
+  game time." *(The metabolism half has shipped — you now wake having burned the night's food and water;
+  see [Sleep & Rest](./features/sleep-and-rest.md#sleep-isnt-free--you-wake-hungry-and-dry).)*
 
 ## Skills & progression
 
