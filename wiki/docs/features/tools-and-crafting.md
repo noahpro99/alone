@@ -22,7 +22,7 @@ Before any metal, flint is knapped into primitive tools:
 
 ### The flint spear — reach
 
-The **flint spear** (flint shard + plant fiber + 2 sticks) is the early game's best weapon, for one real reason: **reach**. Its **thrusting range is far longer** than a knife or axe, so you can **strike game or an attacker before it reaches you** — exactly why the spear was humanity's first great weapon. It carries the full spear feel — a **charged thrust** and **piercing** — and being a blade, a **spear kill still salvages the hide**. It's flint-tier, so it's low on durability; treat it as the reach you can afford before metal.
+The **flint spear** (flint shard + plant fiber + 2 sticks) is the early game's best weapon, for one real reason: **reach**. Its **thrusting range is far longer** than a knife or axe, so you can **strike game or an attacker before it reaches you** — exactly why the spear was humanity's first great weapon. It carries the full spear feel — a **charged thrust** and **piercing** — and being a blade, a **spear kill still salvages the hide**. It's flint-tier, so it's low on durability; treat it as the reach you can afford before metal. (The vanilla wooden and stone spears aren't craftable — the spear line follows the pack's tiers: **flint → copper → iron → steel**, no free wood/stone and no diamond.)
 
 Flint and loose rocks come from **digging gravel** (rocks are also foraged off the ground).
 
