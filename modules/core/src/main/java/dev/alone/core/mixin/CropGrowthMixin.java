@@ -29,6 +29,11 @@ public class CropGrowthMixin {
     private static final float WINTER_DEATH = 0.02f;    // frost — an unattended winter field mostly dies
     private static final float PER_WEED_DEATH = 0.006f; // each adjacent weed chokes the crop a little more
     private static final float WEED_SPREAD = 0.02f;     // chance a crop lets a weed sprout on nearby soil
+    // A crop is a season's investment, not a couple of days. Vanilla wheat matures in ~1-3 in-game days;
+    // the pack's year is only 28 days (4 x 7-day seasons), so a real growing season maps to ~a week of
+    // in-game days. Letting only a fraction of growth ticks advance the plant stretches it to about that.
+    // You pass the wait by living your days (and resting fast-forwards them). Tune to hit ~one season.
+    private static final float GROWTH_TICK_CHANCE = 0.2f; // ~1 in 5 would-be growth ticks actually advances
 
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
     private void alone$cropHazards(BlockState state, ServerLevel level, BlockPos pos,
@@ -45,6 +50,13 @@ public class CropGrowthMixin {
 
         if (random.nextFloat() < WEED_SPREAD) {
             alone$trySpreadWeed(level, pos, random);
+        }
+
+        // Slow it to a season: most random ticks are NOT a growth tick, so the crop just waits. (Winter
+        // stops growth entirely below; this only paces the growing months.)
+        if (!winter && random.nextFloat() > GROWTH_TICK_CHANCE) {
+            ci.cancel();
+            return;
         }
 
         if (winter) {

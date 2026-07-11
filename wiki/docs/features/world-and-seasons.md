@@ -19,6 +19,7 @@ Season affects body temperature — see [Body Temperature](./body-temperature.md
 
 Crop growth and survival depend on the season:
 
+- **A crop is a season's patience, not a couple of days.** Growth is slowed to roughly a real **growing season** (about a week of in-game days, versus vanilla's day or two) — a field is a genuine investment you plant and live around, not a fast turnaround. You pass the wait by living your days, and [resting fast-forwards them](./sleep-and-rest.md#sleeping-fast-forwards-the-night--it-doesnt-skip-it). *(Bonemeal still forces growth for when you can't wait.)*
 - **Crops stop growing in winter.** Nothing advances until spring, though **bonemeal still forces growth**.
 - **Crops can die on their own.** Each has a small per-tick chance to wither, and that chance is **higher in winter** and **higher next to weeds**.
 - **Fields sow weeds.** Over time, crops scatter **weeds (short grass)** onto nearby soil, and accumulated weeds raise the death chance.
