@@ -125,6 +125,13 @@ public class TravoisEntity extends Entity implements Container {
         return false;
     }
 
+    // The "red border showing through walls" is the glowing-outline pass, gated by isCurrentlyGlowing().
+    // A travois is never a highlighted object — report not-glowing so it's never drawn into that pass.
+    @Override
+    public boolean isCurrentlyGlowing() {
+        return false;
+    }
+
     // It can slide up a single-block step (a kerb, a slab-high rise) so it follows over gentle ground, but
     // a two-block ledge stops it dead — you clear a ramp/path for it. That's what makes routes matter (§6).
     @Override
