@@ -18,6 +18,8 @@ Eating raw meat can cause a foodborne illness. Cooking makes food **safe**.
 
 Sickness is a lingering illness that leaves you weak and hungry — a real condition, not a brief potion tick. A cooked meal carries none of this risk.
 
+**Food that's turning is risky too.** Even a cooked, normally-safe food becomes a gamble once it's **going off** — in the last third of its freshness (the "beginning to turn / going off" the [tooltip](./preservation.md#how-to-tell-how-fresh-it-is) warns of). The sickness chance **rises the closer it is to rotting** (up to a hefty +40% at the brink), and it **stacks** with the raw-food and dirty-hands odds. So eat perishables **before they turn**, or preserve them — don't gamble on the last bite of a going-off meal.
+
 ## Eating takes time
 
 Food cannot be eaten mid-scramble:
