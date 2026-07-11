@@ -180,6 +180,12 @@ public final class AloneItems {
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",
         key -> new Item(new Item.Properties().sword(FLINT, 2.0F, -2.0F).setId(key)));
+    /** A flint-tipped spear (§8.6) — king of the early game: a real thrusting reach so you can hit before
+     *  the animal (or attacker) reaches you, plus the vanilla spear's charged thrust and piercing. A
+     *  flint point lashed to a shaft, at the flint tier; uses the stone-spear tuning and look. */
+    public static final Item FLINT_SPEAR = register("flint_spear",
+        key -> new Item(new Item.Properties()
+            .spear(FLINT, 0.75F, 0.82F, 0.7F, 4.5F, 13.0F, 9.0F, 5.1F, 13.75F, 4.6F).setId(key)));
     /** A bow drill (proposal §3.1) — a spindle spun by a corded bow: the proper primitive fire tool.
      *  Far faster and less exhausting than palming a bare stick. The cordage frays and the spindle burns
      *  down, so it wears out (durability) and eventually needs re-stringing. */
