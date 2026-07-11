@@ -71,6 +71,7 @@ public final class Conditions {
     public static final int FLAG_DIRTY_HANDS = 8;
     public static final int FLAG_INFECTED = 16;
     public static final int FLAG_DYSENTERY = 32;
+    public static final int FLAG_SCURVY = 64;
 
     public static int flags(Player player) {
         int f = 0;
@@ -91,6 +92,9 @@ public final class Conditions {
         }
         if (player.getAttachedOrElse(DYSENTERY, 0) > 0) {
             f |= FLAG_DYSENTERY;
+        }
+        if (Nutrition.hasScurvy(player)) {
+            f |= FLAG_SCURVY; // a deficiency, tracked in Nutrition — surfaced here so the HUD can show it
         }
         return f;
     }

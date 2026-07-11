@@ -53,6 +53,12 @@ public final class Nutrition {
     public static void init() {
     }
 
+    /** True once a player has gone long enough without fresh food to have scurvy (§1.1) — for the HUD. */
+    public static boolean hasScurvy(Player player) {
+        Long last = player.getAttached(LAST_VITAMIN);
+        return last != null && player.level().getGameTime() - last >= SCURVY_ONSET;
+    }
+
     /** Call when a player finishes eating a food. Server-side. */
     public static void onEat(Player player, ItemStack food) {
         if (food.is(FRUIT) || food.is(VEGETABLE)) {

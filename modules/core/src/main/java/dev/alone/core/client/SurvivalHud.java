@@ -113,8 +113,10 @@ public final class SurvivalHud {
         boolean dirty = (conditions & Conditions.FLAG_DIRTY_HANDS) != 0;
         boolean infected = (conditions & Conditions.FLAG_INFECTED) != 0;
         boolean dysentery = (conditions & Conditions.FLAG_DYSENTERY) != 0;
+        boolean scurvy = (conditions & Conditions.FLAG_SCURVY) != 0;
 
         int body = sick ? 0xFF7BA05B : 0xFFCBB89A; // sickly green, else skin tone
+        int head = scurvy ? 0xFF9AA36E : body;      // gaunt, sallow — scurvy (gums bleed, wounds reopen)
         int hands = dirty ? 0xFF6B4A2B : body;      // brown when dirty
         // Bleeding (acute) wins the torso; a bilious yellow marks the gut illness of dysentery otherwise.
         int torso = bleeding ? 0xFFB53030 : (dysentery ? 0xFFB0A83A : body);
@@ -122,7 +124,7 @@ public final class SurvivalHud {
         int arms = infected ? 0xFF7A4FA3 : body;    // purple when a wound's infected
 
         g.fill(x - 1, y - 1, x + 11, y + 19, 0xAA000000); // backdrop
-        g.fill(x + 3, y, x + 8, y + 5, body);             // head
+        g.fill(x + 3, y, x + 8, y + 5, head);             // head
         g.fill(x + 3, y + 5, x + 8, y + 12, torso);       // torso
         g.fill(x + 1, y + 5, x + 3, y + 11, arms);        // left arm
         g.fill(x + 8, y + 5, x + 10, y + 11, arms);       // right arm
