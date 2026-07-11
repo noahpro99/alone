@@ -49,6 +49,11 @@ public class TravoisRenderer extends EntityRenderer<TravoisEntity, TravoisRender
     @Override
     public void submit(TravoisRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
                        CameraRenderState cameraState) {
+        // TEMP DIAGNOSTIC: render NOTHING (no blocks, no super) to isolate the red border. If a red box
+        // still floats around the (now invisible) travois, it's MC's engine debug overlay, not our render.
+        if (true) {
+            return;
+        }
         MovingBlockRenderState mb = state.movingBlockRenderState;
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(-state.yRot)); // face the sled's heading
