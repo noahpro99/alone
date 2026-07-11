@@ -3,7 +3,7 @@ sidebar_position: 8
 title: "Weight, Carrying & Blocks"
 ---
 
-Everything you carry has a real weight and a real size, and breaking or moving blocks is honest, tiring work — no more pocketing a mountain and mining it in a blink.
+Everything you carry has a weight and a volume, and breaking or moving blocks costs time and stamina.
 
 ## Weight and volume
 
@@ -25,7 +25,7 @@ To carry more, see [Storage & Transport](./storage-and-transport.md) — a backp
 Weight never stops you cold; it just wears you down.
 
 - The **heavier your load, the slower you move**. One heavy block makes you trudge.
-- **Overloading disables sprint, jump, and swim** — but you can always **crawl home**. A heavy haul is slow and miserable, never a dead end.
+- **Overloading disables sprint, jump, and swim.** Walking and crawling remain available at any load.
 
 ### The volume bar
 
@@ -46,38 +46,36 @@ Storage containers hold a real volume, not a fixed slot count:
 | Barrel | 1 m³ |
 
 - **Functional blocks** like furnaces, blast furnaces, and crafting stations are **uncapped** — their inventories work normally.
-- **Partial placement:** dropping a big stack into a near-full chest deposits **what fits** and leaves the rest in your hand, rather than refusing the whole stack. (If you get an odd split, put a partial stack in by hand.)
+- **Partial placement:** dropping a big stack into a near-full chest deposits **what fits** and leaves the rest in your hand, rather than refusing the whole stack.
 
 ## You can't throw blocks away
 
 Block items are meant to be built with or stored, not littered:
 
-- **Dropping a block item is refused** — whether you press the drop key or drag it out of the inventory window, it's **handed straight back** to you. Place it or store it in a chest.
+- **Dropping a block item is refused** — whether you press the drop key or drag it out of the inventory window, it's **handed straight back** to you.
 - **Heavy items barely toss.** The heavier a thing is, the weaker the throw; by around **20 kg** an item just plops at your feet with no horizontal travel.
 
 (Death drops are untouched — dying still scatters your things normally.)
 
 ## Weight in the water
 
-Water punishes a heavy load:
+A heavy load affects swimming:
 
 - Carry more than about **22 kg** (one full block weighs roughly **30 kg**) and you **sink slowly** — a steady, unstoppable descent, not a plummet.
 - The more you haul, the **faster your stamina drains** while you swim.
-- Being **submerged also chills you** — extra cold on top of the effort. Falling into a winter river while loaded is an emergency. See [Body Temperature](./body-temperature.md).
+- Being **submerged also chills you** — extra cold on top of the effort. See [Body Temperature](./body-temperature.md).
 
-Drop or store weight before a long swim.
+## Break times
 
-## Honest break times
-
-Mining is real labour, and every block you break also **costs stamina**:
+Every block you break **costs stamina** and takes real time:
 
 - **Stone** with an iron pick takes about **20 seconds**; **deepslate and ore** run up to **~60 seconds**.
 - Even **dirt, sand, and gravel** take a few seconds — digging a cubic metre of earth is work. A **shovel is faster than bare hands**.
-- **Progress is saved if you stop partway.** Quit a dig and come back and the crack resumes where you left off, so you can chip at a tough block in shifts. A barely-scratched dig (under ~10% done) **heals back** to a pristine block instead of leaving a permanent chip.
+- **Progress is saved if you stop partway.** Leave a dig and return, and the crack resumes where you left off. A barely-scratched dig (under ~10% done) **heals back** to a pristine block instead of leaving a permanent chip.
 
 ## Realistic reach
 
-You can only break or place blocks within about **2.75 blocks** (down from vanilla's ~4.5). You have to be close to your work. (Creative keeps the long vanilla reach for building.)
+You can only break or place blocks within about **2.75 blocks** (down from vanilla's ~4.5). (Creative keeps the long vanilla reach.)
 
 ## Trees and leaves
 
@@ -87,6 +85,6 @@ You can only break or place blocks within about **2.75 blocks** (down from vanil
 
 - Breaking leaves **by hand** yields snapped **sticks and leaf litter** — not a tidy leaf block (hand is roughly **12× slower** than normal).
 - An **axe or hoe shears the whole leaf block free** (roughly **3× slower** than normal).
-- Either way, vanilla **saplings and apples still drop**, so tree farming survives.
+- Either way, vanilla **saplings and apples still drop**.
 
-Leaf litter, by the way, makes good fire tinder — nothing is wasted.
+Leaf litter is a fire tinder.

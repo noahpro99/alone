@@ -21,8 +21,8 @@ daily loop of water, food, warmth, and shelter.
 
 | If you want to… | Go to |
 |---|---|
-| Install and play the pack | **[Download & How to Play](./download.md)** |
-| Learn how every mechanic actually works | **[Features](./features/survival-meters.md)** |
+| Install the pack | **[Download & Install](./download.md)** |
+| Learn how every mechanic works | **[Features](./features/survival-meters.md)** |
 | See what's planned but not yet built | **[Roadmap](./roadmap.md)** |
 | Build, run, or contribute to the pack | **[Development](./getting-started/dev-quickstart.md)** |
 | Understand how the code is structured | **[Engineering](./engineering/architecture.md)** |

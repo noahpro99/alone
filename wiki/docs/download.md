@@ -1,9 +1,9 @@
 ---
 sidebar_position: 2
-title: "Download & How to Play"
+title: "Download & Install"
 ---
 
-# Download & How to Play
+# Download & Install
 
 Alone is distributed as a **Modrinth modpack** (an `.mrpack` file) for **Minecraft 26.2** on the
 **Fabric** loader.
@@ -15,9 +15,9 @@ Download the latest `Alone-<version>.mrpack` from the
 
 ## Install & play
 
-An `.mrpack` is installed by a launcher that understands the format. Two good, free options:
+An `.mrpack` is installed by a launcher that understands the format. Any of these work:
 
-### Prism Launcher (recommended)
+### Prism Launcher
 
 1. Install [**Prism Launcher**](https://prismlauncher.org/).
 2. **Add Instance → Import from file** (or drag the `.mrpack` onto the window).
@@ -30,14 +30,14 @@ An `.mrpack` is installed by a launcher that understands the format. Two good, f
 2. Open the `.mrpack` with it (or **Add content → From file**) to create the instance.
 3. Launch.
 
-Both launchers automatically fetch the correct Minecraft version, Fabric, Fabric API, and a
-compatible Java runtime — you don't need to install Java yourself.
+### Lunar Client
 
-### A note on Lunar Client
+1. Install [**Lunar Client**](https://www.lunarclient.com/).
+2. Import the downloaded `Alone-<version>.mrpack` as a modpack.
+3. Launch.
 
-Lunar Client is popular, but it's a PvP-oriented client and **doesn't load Fabric modpacks** like
-Alone — the pack won't run there. Use **Prism** or the **Modrinth App** to play. (If a lightweight,
-vanilla-adjacent Alone build is ever released, Lunar would become an option for that.)
+Every one of these fetches the correct Minecraft version, Fabric, Fabric API, and a compatible Java
+runtime automatically — you don't need to install Java yourself.
 
 ## Requirements
 
@@ -45,20 +45,5 @@ vanilla-adjacent Alone build is ever released, Lunar would become an option for 
 - The pack bundles curated performance/quality-of-life mods (Sodium, Iris, JEI, sounds, animations)
   alongside the Alone mods.
 
-## How to play — surviving your first day
-
-Alone is a game about **maintenance**, not accumulation. A short survival primer:
-
-- You **can't punch trees.** Gather loose sticks and stones off the ground and knap a **flint
-  hatchet** before you can fell a log. → [Tools & Crafting](./features/tools-and-crafting.md)
-- Read your **corner HUD** — stamina, thirst, temperature, and how much weight you're carrying. →
-  [Survival Meters & HUD](./features/survival-meters.md)
-- **Drink** early, but untreated water can make you sick — **boil it** once you have a fire and a
-  vessel. → [Water, Thirst & Vessels](./features/water-and-drinking.md)
-- **Make fire** by hand (you'll need dry tinder) and keep it fed — it's warmth, cooking, and clean
-  water. → [Fire](./features/fire.md)
-- **Cook your food.** Raw meat risks foodborne illness. → [Food & Eating](./features/food-and-eating.md)
-- Get a **roof and a bed** before nightfall — cold and poor sleep are real threats. →
-  [Body Temperature](./features/body-temperature.md) · [Sleep & Rest](./features/sleep-and-rest.md)
-
-Browse the full **[Features](./features/survival-meters.md)** section for everything the pack changes.
+Once it's installed, the **[Features](./features/survival-meters.md)** section documents how every
+mechanic works.
