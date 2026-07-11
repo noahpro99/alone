@@ -83,7 +83,25 @@ public final class Carry {
             int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
             baseWeight += charges * 1.0f; // water is 1 kg/L, and a charge is ~1 L (matches unitVolume) — it's HEAVY
         }
+        // Dried (jerked) food has lost most of its water — much lighter to carry (§4.2). The component lives
+        // in the food module; look it up by id so core needn't depend on it.
+        var dried = alone$driedComponent();
+        if (dried != null && Boolean.TRUE.equals(stack.get(dried))) {
+            baseWeight *= 0.4f;
+        }
         return baseWeight;
+    }
+
+    private static net.minecraft.core.component.DataComponentType<Boolean> alone$dried;
+
+    @SuppressWarnings("unchecked")
+    private static net.minecraft.core.component.DataComponentType<Boolean> alone$driedComponent() {
+        if (alone$dried == null) {
+            alone$dried = (net.minecraft.core.component.DataComponentType<Boolean>)
+                BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(
+                    net.minecraft.resources.Identifier.fromNamespaceAndPath("alone", "dried"));
+        }
+        return alone$dried;
     }
 
     private static float perItemVolume(Item item) {
