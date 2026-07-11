@@ -1,9 +1,0 @@
-{
-  "label": "Design Proposal",
-  "position": 3,
-  "link": {
-    "type": "generated-index",
-    "title": "Design Proposal (v1.3)",
-    "description": "The full design vision for Alone — what the game should feel like, system by system. Each page corresponds to a numbered section (§N) of the proposal; the codebase cross-references these throughout."
-  }
-}

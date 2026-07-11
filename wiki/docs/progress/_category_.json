@@ -1,8 +1,0 @@
-{
-  "label": "Progress & Backlog",
-  "position": 5,
-  "link": {
-    "type": "generated-index",
-    "description": "The running record of what has been built and what remains. Every item is compile-checked; feel is playtested separately."
-  }
-}

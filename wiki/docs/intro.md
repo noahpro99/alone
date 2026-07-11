@@ -21,24 +21,11 @@ daily loop of water, food, warmth, and shelter.
 
 | If you want to… | Go to |
 |---|---|
-| Understand the design vision, system by system | **[Design Proposal](./proposal/philosophy.md)** |
-| Build and run the pack, or cut a release | **[Getting Started](./getting-started/dev-quickstart.md)** |
-| See how the code is structured and sequenced | **[Engineering](./engineering/architecture.md)** |
-| See what's already built and what's next | **[Progress & Backlog](./progress/backlog.md)** |
-
-## This wiki
-
-This is the single source of truth for the project. It replaces the loose collection of
-markdown files that used to live at the repo root:
-
-- The **[Design Proposal](./proposal/philosophy.md)** — the full v1.3 design vision, one page per
-  section (the `§N` cross-references used throughout the codebase map to these pages).
-- The **[Engineering](./engineering/architecture.md)** plan — toolchain, module architecture, and
-  the phased rollout.
-- The **[Progress & Backlog](./progress/backlog.md)** — the running record of what's been built
-  and what remains.
-- **[Getting Started](./getting-started/dev-quickstart.md)** — the dev quickstart, building the
-  distributable `.mrpack`, and the repo layout.
+| Install and play the pack | **[Download & How to Play](./download.md)** |
+| Learn how every mechanic actually works | **[Features](./features/survival-meters.md)** |
+| See what's planned but not yet built | **[Roadmap](./roadmap.md)** |
+| Build, run, or contribute to the pack | **[Development](./getting-started/dev-quickstart.md)** |
+| Understand how the code is structured | **[Engineering](./engineering/architecture.md)** |
 
 ## Toolchain at a glance
 
