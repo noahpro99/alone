@@ -103,6 +103,7 @@ Steel replaces diamond as the best gear:
 
 - **Blasting an iron ingot** (in a blast furnace) makes a **steel ingot**.
 - **Steel tools** mine at diamond level with high durability, and **steel armor** sits above iron.
+- The set includes a **steel spear** (1 steel ingot + 2 sticks) — the top-tier reach weapon, so the spear runs the full ladder alongside the sword and axe.
 
 ## Diamond gear is abolished
 
