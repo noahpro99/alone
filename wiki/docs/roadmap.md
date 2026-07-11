@@ -18,8 +18,10 @@ about maintenance,* with a long-horizon goal (the Dragon) that takes seasons to 
 The campfire, the clay kiln (fires pottery), and the bellows-fed bloomery (smelts iron ore to a bloom)
 exist; the rest of the heat-tech tree does not yet.
 
-- **Higher furnace tiers:** a **charcoal clamp** (bulk charcoal from a covered wood pile) and a **glass
-  furnace**, above the kiln and bloomery already in the pack.
+- **A charcoal clamp** (bulk charcoal from a covered wood pile) — a batch-efficiency step up from what
+  works today: smelting logs one at a time in a **furnace** already yields charcoal (as does a
+  burnt-out campfire), so this is an optimisation, not a missing source.
+- **A glass furnace** and glass gating (below), above the kiln and bloomery already in the pack.
 - **The ash economy:** hardwood ash → lye → potash, feeding soap and glass flux.
 - **Glass that gates itself** behind forge heat + flux + lime, arriving late as the trophy it
   historically was.
