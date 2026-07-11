@@ -43,9 +43,11 @@ import net.minecraft.world.phys.Vec3;
  */
 public class TravoisEntity extends Entity implements Container {
     public static final int SIZE = 27; // must match ChestMenu.threeRows, or opening it indexes out of bounds
-    /** Drawn as a low plank platform with two trailing log poles (see the renderer) until it gets real art. */
-    public static final BlockState PLATFORM_BLOCK = Blocks.OAK_PLANKS.defaultBlockState();
-    public static final BlockState POLE_BLOCK = Blocks.STRIPPED_SPRUCE_LOG.defaultBlockState();
+    /** Drawn as a low platform with two trailing poles (see the renderer) until it gets real art.
+     *  TEMP BUILD-FRESHNESS PROBE: gold blocks. If your travois isn't obviously GOLD after a relaunch,
+     *  your client is running stale classes — which is also why the "red glow" fix hasn't taken. */
+    public static final BlockState PLATFORM_BLOCK = Blocks.GOLD_BLOCK.defaultBlockState();
+    public static final BlockState POLE_BLOCK = Blocks.GOLD_BLOCK.defaultBlockState();
 
     private static final Identifier DRAG_MODIFIER = Identifier.fromNamespaceAndPath("alone", "travois_drag");
     private static final double GRAB_RANGE_SQR = 400.0; // let go if the hauler gets more than 20 blocks off
