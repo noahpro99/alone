@@ -2,6 +2,7 @@ package dev.alone.core.mixin;
 
 import dev.alone.core.Campfires;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,6 +27,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(CampfireBlockEntity.class)
 public class CampfireCookTickMixin {
+    /** cookTick runs every tick, so gate ignition low — a touching wall catches within a handful of seconds. */
+    private static final int SPREAD_INTERVAL = 160;
+
+    /** A flammable block directly touching the fire (sides or straight above) can catch. The block the
+     *  campfire rests ON is spared, so a fire on a wooden floor doesn't instantly burn its own support. */
+    private static void alone$trySpreadFire(ServerLevel level, BlockPos pos) {
+        for (Direction d : Direction.values()) {
+            if (d == Direction.DOWN) {
+                continue;
+            }
+            BlockPos neighbor = pos.relative(d);
+            if (level.getBlockState(neighbor).ignitedByLava() && alone$ignite(level, neighbor)) {
+                return; // one catch per attempt
+            }
+        }
+    }
+
+    /** Set an air cell touching the flammable block alight — real fire needs air to live in, and vanilla
+     *  fire then burns/spreads per the world's own rules (and can be put out). */
+    private static boolean alone$ignite(ServerLevel level, BlockPos flammable) {
+        for (Direction d : Direction.values()) {
+            BlockPos p = flammable.relative(d);
+            if (level.getBlockState(p).isAir()) {
+                level.setBlockAndUpdate(p, Blocks.FIRE.defaultBlockState());
+                level.playSound(null, p, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.9f, 1.0f);
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Inject(method = "cookTick", at = @At("HEAD"))
     @SuppressWarnings("rawtypes")
@@ -57,6 +89,13 @@ public class CampfireCookTickMixin {
             return;
         }
         Campfires.setFuel(entity, fuel - 1);
+
+        // An open fire is a real hazard (proposal §5.3): a flammable block touching it — a log wall, a
+        // plank ceiling, dry thatch — can catch alight. Keep your fire clear of wood (one block is enough)
+        // or ring it with stone. We just set an adjacent fire; the world's own fire rules take it from there.
+        if (!level.isRainingAt(pos.above()) && level.getRandom().nextInt(SPREAD_INTERVAL) == 0) {
+            alone$trySpreadFire(level, pos);
+        }
 
         // A pot standing in the fire comes to a boil over time (only while lit); steam wisps up as it works.
         int boilLeft = entity.getAttachedOrElse(Campfires.BOIL_LEFT, -1);
