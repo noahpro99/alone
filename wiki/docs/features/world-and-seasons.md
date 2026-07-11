@@ -23,6 +23,11 @@ Crop growth and survival depend on the season:
 - **Crops must be watered — or they dry out.** A crop whose farmland has **no water reaching it** (it's gone fully dry) **wilts and dies**, and **twice as fast in summer heat**. So a field has to be **irrigated** — kept within reach of water (a channel, a pond, a placed source) — exactly as a real one does. Neglect the water in a hot spell and you'll lose the crop.
 - **Crops stop growing in winter, and frost kills them.** Nothing advances until spring, and an exposed crop dies within days of winter setting in (**bonemeal still forces growth**).
 - **Weeds and blight.** Weeds encroaching from neglected soil choke a crop (and it sows more onto bare soil if you don't clear them), and there's always a small chance of **blight** — so even a watered, weeded field is never a guarantee. A well-tended one mostly succeeds.
+- **Soil wears out — rotate or rest it.** Every harvest **draws fertility out** of the ground, and taking the **same crop off the same plot over and over** exhausts it fastest (**monoculture**). Worn-out soil grows crops **slowly** and eventually **starves them outright**. You restore it the way farmers did for millennia, with no bagged fertilizer:
+  - **Rotate your crops** — following one crop with a *different* one is far gentler on the soil than repeating it.
+  - **Let a plot lie fallow** — tilled ground with nothing growing on it slowly heals (fully-worn soil takes about a season of rest to recover).
+  
+  So a real farm is several plots you cycle through, not one you flog forever.
 - **Fields sow weeds.** Over time, crops scatter **weeds (short grass)** onto nearby soil, and accumulated weeds raise the death chance.
 
 More on food is on [Food & Eating](./food-and-eating.md).

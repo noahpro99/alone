@@ -1,6 +1,7 @@
 package dev.alone.core.mixin;
 
 import dev.alone.core.Seasons;
+import dev.alone.core.SoilFertility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -39,6 +40,7 @@ public class CropGrowthMixin {
     private static final float PER_WEED_DEATH = 0.0009f;      // each adjacent weed chokes the crop (~1.5%/day)
     private static final float DROUGHT_DEATH = 0.0025f;       // farmland gone dry — the crop wilts (~4%/day)
     private static final float DROUGHT_DEATH_SUMMER = 0.005f; // summer heat dries it out twice as fast
+    private static final float EXHAUSTION_DEATH = 0.004f;     // fully worn-out soil starves the crop (~7%/day)
     private static final float WEED_SPREAD = 0.02f;           // chance a crop lets a weed sprout on nearby soil
     // Growth is paced to ~a season: only a fraction of would-be growth ticks advance the plant, so a crop is
     // a plant-in-spring, harvest-by-summer investment — not a couple of days. You pass the wait by living
@@ -54,7 +56,11 @@ public class CropGrowthMixin {
         BlockState soil = level.getBlockState(pos.below());
         boolean parched = soil.is(Blocks.FARMLAND) && soil.getValue(FarmlandBlock.MOISTURE) == 0;
         float drought = parched ? (Seasons.index(level) == 1 ? DROUGHT_DEATH_SUMMER : DROUGHT_DEATH) : 0f;
-        float death = BASE_DEATH + (winter ? WINTER_DEATH : 0f) + weeds * PER_WEED_DEATH + drought;
+        // Exhausted soil (over-farmed, un-rotated) starves the crop — worse under monoculture.
+        float exhaust = SoilFertility.exhaustion(level, pos.below());
+        float exhaustion = exhaust * EXHAUSTION_DEATH
+            * (exhaust > 0f && SoilFertility.isMonoculture(level, pos.below(), state.getBlock()) ? 1.5f : 1f);
+        float death = BASE_DEATH + (winter ? WINTER_DEATH : 0f) + weeds * PER_WEED_DEATH + drought + exhaustion;
 
         if (random.nextFloat() < death) {
             level.removeBlock(pos, false); // the crop fails and dies — no harvest
@@ -67,8 +73,9 @@ public class CropGrowthMixin {
         }
 
         // Slow it to a season: most random ticks are NOT a growth tick, so the crop just waits. (Winter
-        // stops growth entirely below; this only paces the growing months.)
-        if (!winter && random.nextFloat() > GROWTH_TICK_CHANCE) {
+        // stops growth entirely below; this only paces the growing months.) Worn-out soil grows it slower
+        // still — up to ~70% slower on fully-exhausted ground.
+        if (!winter && random.nextFloat() > GROWTH_TICK_CHANCE * (1f - exhaust * 0.7f)) {
             ci.cancel();
             return;
         }

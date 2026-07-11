@@ -82,9 +82,11 @@ The four ages below map to the real arc:
 5. **Tend the field — a whole season's work.** A crop takes **~one season** to mature (28-day seasons now),
    and it can fail four ways: **drought** (keep it **watered/irrigated**, or it wilts — fast in summer heat),
    **weeds** (they sprout around the plot and choke it, and a neglected field sows its own), **winter frost**
-   (which kills an exposed crop in days), and background **blight**. So a farm is real upkeep — water it,
-   weed it, and harvest before winter — not a one-time build. You pass the growing weeks by living your days
-   (resting fast-forwards them). A well-tended, watered field mostly succeeds.
+   (which kills an exposed crop in days), and background **blight**. And the **soil itself wears out**: every
+   harvest drains fertility, and farming the same crop on the same plot (**monoculture**) exhausts it fastest
+   — so you **rotate crops** and **let plots lie fallow** to let the ground recover, as real farmers did. So
+   a farm is several plots you cycle through and tend — water, weed, rotate, harvest before winter — not a
+   one-time build. You pass the growing weeks by living your days (resting fast-forwards them).
 6. ⏳ **Livestock as wealth** — barter for animals (priced in grain), earned over many harvests, never found
    wild; and **purpose-built stores** (sealed barrels, hung caches, smokehouses) that beat the scent.
 
