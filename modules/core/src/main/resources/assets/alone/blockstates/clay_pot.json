@@ -1,1 +1,13 @@
-{ "variants": { "": { "model": "alone:block/clay_pot" } } }
+{
+  "multipart": [
+    { "apply": { "model": "alone:block/clay_pot" } },
+    { "when": { "water": "1" }, "apply": { "model": "alone:block/clay_pot_water_1" } },
+    { "when": { "water": "2" }, "apply": { "model": "alone:block/clay_pot_water_2" } },
+    { "when": { "water": "3" }, "apply": { "model": "alone:block/clay_pot_water_3" } },
+    { "when": { "water": "4" }, "apply": { "model": "alone:block/clay_pot_water_4" } },
+    { "when": { "water": "5" }, "apply": { "model": "alone:block/clay_pot_water_5" } },
+    { "when": { "water": "6" }, "apply": { "model": "alone:block/clay_pot_water_6" } },
+    { "when": { "water": "7" }, "apply": { "model": "alone:block/clay_pot_water_7" } },
+    { "when": { "water": "8" }, "apply": { "model": "alone:block/clay_pot_water_8" } }
+  ]
+}

@@ -14,6 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -30,13 +33,26 @@ public class ClayPotBlock extends BaseEntityBlock {
     public static final MapCodec<ClayPotBlock> CODEC = simpleCodec(ClayPotBlock::new);
     private static final VoxelShape SHAPE = Shapes.box(0.1875, 0.0, 0.1875, 0.8125, 0.625, 0.8125);
 
+    /**
+     * How much water is standing in the pot, 0..{@link ClayPotBlockEntity#CAPACITY} — mirrored into the
+     * blockstate (not just the block entity) so the client can see it and draw the water surface. The
+     * blockstate's {@code multipart} overlays a water plane at the matching height per level.
+     */
+    public static final IntegerProperty WATER = IntegerProperty.create("water", 0, ClayPotBlockEntity.CAPACITY);
+
     public ClayPotBlock(Properties properties) {
         super(properties);
+        registerDefaultState(defaultBlockState().setValue(WATER, 0));
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(WATER);
     }
 
     @Override
