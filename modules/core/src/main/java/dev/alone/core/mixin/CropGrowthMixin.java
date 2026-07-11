@@ -25,7 +25,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(CropBlock.class)
 public class CropGrowthMixin {
-    private static final float BASE_DEATH = 0.002f;     // ~3%/day — the field is never guaranteed
+    // Random blight per random-tick. Lowered when growth was stretched to ~a season: a crop now lives ~5x
+    // longer, so the OLD rate (0.002) would compound to ~a third of tended fields failing to pure chance.
+    // At this rate a well-tended field mostly succeeds (~1-in-8 base loss over its season); weeds and winter
+    // are the real killers, and those SHOULD scale with the longer exposure.
+    private static final float BASE_DEATH = 0.0008f;    // ~1.4%/day blight — the field is never guaranteed
     private static final float WINTER_DEATH = 0.02f;    // frost — an unattended winter field mostly dies
     private static final float PER_WEED_DEATH = 0.006f; // each adjacent weed chokes the crop a little more
     private static final float WEED_SPREAD = 0.02f;     // chance a crop lets a weed sprout on nearby soil
