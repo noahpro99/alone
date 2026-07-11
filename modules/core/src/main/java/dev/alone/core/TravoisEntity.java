@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
  * (it drops the travois and its load). Rendered as a low wooden platform.
  */
 public class TravoisEntity extends Entity implements Container {
-    public static final int SIZE = 18; // a couple of rows of heavy cargo
+    public static final int SIZE = 27; // must match ChestMenu.threeRows, or opening it indexes out of bounds
     /** The block model the travois is drawn as (a low platform) until it gets real art. */
     public static final BlockState SHOWN_BLOCK = Blocks.SPRUCE_SLAB.defaultBlockState();
 
