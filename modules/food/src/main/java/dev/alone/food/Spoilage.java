@@ -1,42 +1,57 @@
 package dev.alone.food;
 
 import com.mojang.serialization.Codec;
+import dev.alone.core.SurvivalMeters;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
- * Food spoilage (proposal §4.2). Perishable foods (a bundled datapack tag) rot over time — once
- * spoiled they turn to rotten flesh (which is itself high-risk to eat). Bread, golden apples, and
- * other keepers are left out of the tag. Preservation (smoking/salting/drying) that slows this is a
- * later refinement; for now it's a fixed shelf life.
+ * Food spoilage (proposal §4.2), driven by <b>temperature</b> — because where and when you keep food is
+ * the whole game before refrigeration. Each perishable carries a freshness budget that drains faster in
+ * the heat and slower in the cold: a warm summer hut rots meat in a day, but a <b>root cellar</b> (dug in,
+ * lined against the caving earth, and cool from the ground) — or a cold biome, or winter — keeps it for
+ * weeks. Preserving (salting/drying) just buys a much bigger budget, not immortality. The budget only
+ * drains while the food is being watched (in a pocket, or a chest near you), so leaving your base pauses
+ * it; when it runs out the food turns to rotten flesh.
  */
 public final class Spoilage {
     private Spoilage() {
     }
 
-    public static final long SPOIL_TICKS = 24000L;            // fresh perishable: ~1 in-game day; tunable
-    public static final long PRESERVED_SHELF_TICKS = 720000L; // salted/dried: ~30 in-game days (~a month) —
-                                                              // long, but not forever: even jerky goes rancid
-    private static final int SCAN_INTERVAL = 40;   // check each player's food every ~2s
+    public static final long SPOIL_TICKS = 24000L;            // fresh perishable: ~1 in-game day at comfortable temp
+    public static final long PRESERVED_SHELF_TICKS = 720000L; // salted/dried: ~30 in-game days — long, not forever
+    private static final int SCAN_INTERVAL = 40;              // check food every ~2s
+    private static final long MAX_STEP = 200L;                // cap per-scan drain so away-time stays paused
 
-    /** Game time at which this food spoils. */
-    public static final DataComponentType<Long> SPOILS_AT = Registry.register(
+    /** Remaining freshness, in comfortable-temperature ticks; when it hits 0 the food spoils. */
+    public static final DataComponentType<Long> FRESHNESS = Registry.register(
         BuiltInRegistries.DATA_COMPONENT_TYPE,
-        Identifier.fromNamespaceAndPath("alone", "spoils_at"),
+        Identifier.fromNamespaceAndPath("alone", "freshness"),
         DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
 
-    /** Salted/dried food keeps far longer (a long finite shelf life, not forever) — see PRESERVED_SHELF (§4.2). */
+    /** World time the freshness was last drained (so drain tracks elapsed, not raw tick count). */
+    public static final DataComponentType<Long> FRESHNESS_SEEN = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        Identifier.fromNamespaceAndPath("alone", "freshness_seen"),
+        DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
+
+    /** Salted/dried food starts with the long shelf life (§4.2). */
     public static final DataComponentType<Boolean> PRESERVED = Registry.register(
         BuiltInRegistries.DATA_COMPONENT_TYPE,
         Identifier.fromNamespaceAndPath("alone", "preserved"),
@@ -53,31 +68,85 @@ public final class Spoilage {
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            long now = server.overworld().getGameTime();
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player.tickCount % SCAN_INTERVAL != 0) {
                     continue;
                 }
+                if (!(player.level() instanceof ServerLevel level)) {
+                    continue;
+                }
+                long now = level.getGameTime();
+                // On your body: food spoils at the temperature around YOU.
+                float bodyTemp = SurvivalMeters.environmentTempAt(level, player.blockPosition());
                 Inventory inventory = player.getInventory();
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
-                    tickStack(inventory, i, now);
+                    tickStack(inventory, i, now, bodyTemp);
                 }
+                // In chests/barrels near you: food spoils at that container's temperature (cellar = cold).
+                scanContainers(level, player.blockPosition(), now);
             }
         });
     }
 
-    private static void tickStack(Inventory inventory, int slot, long now) {
-        ItemStack stack = inventory.getItem(slot);
+    /** Sweep the loaded containers in the 3x3 chunks around the player — a base cellar keeps its food cool. */
+    private static void scanContainers(ServerLevel level, BlockPos center, long now) {
+        int cx = center.getX() >> 4;
+        int cz = center.getZ() >> 4;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                LevelChunk chunk = level.getChunkSource().getChunkNow(cx + dx, cz + dz);
+                if (chunk == null) {
+                    continue;
+                }
+                for (var entry : chunk.getBlockEntities().entrySet()) {
+                    if (entry.getValue() instanceof Container container) {
+                        float temp = storageTemp(level, entry.getKey());
+                        for (int i = 0; i < container.getContainerSize(); i++) {
+                            tickStack(container, i, now, temp);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void tickStack(Container container, int slot, long now, float temp) {
+        ItemStack stack = container.getItem(slot);
         if (stack.isEmpty() || !stack.is(PERISHABLE)) {
             return;
         }
-        Long spoilsAt = stack.get(SPOILS_AT);
-        if (spoilsAt == null) {
-            // Preserved (salted/dried) food gets a long shelf, fresh food a short one — but both DO expire.
-            long shelf = stack.getOrDefault(PRESERVED, false) ? PRESERVED_SHELF_TICKS : SPOIL_TICKS;
-            stack.set(SPOILS_AT, now + shelf);
-        } else if (now >= spoilsAt) {
-            inventory.setItem(slot, new ItemStack(Items.ROTTEN_FLESH, stack.getCount())); // spoiled
+        Long freshness = stack.get(FRESHNESS);
+        if (freshness == null) {
+            stack.set(FRESHNESS, stack.getOrDefault(PRESERVED, false) ? PRESERVED_SHELF_TICKS : SPOIL_TICKS);
+            stack.set(FRESHNESS_SEEN, now);
+            return;
         }
+        long elapsed = Math.max(0L, Math.min(MAX_STEP, now - stack.getOrDefault(FRESHNESS_SEEN, now)));
+        stack.set(FRESHNESS_SEEN, now);
+        if (elapsed <= 0) {
+            return;
+        }
+        long left = freshness - Math.round(elapsed * spoilRate(temp));
+        if (left <= 0) {
+            container.setItem(slot, new ItemStack(Items.ROTTEN_FLESH, stack.getCount())); // spoiled
+        } else {
+            stack.set(FRESHNESS, left);
+        }
+    }
+
+    /** How fast freshness drains at a body-equivalent temperature: doubles per +25, halves per -25. */
+    private static float spoilRate(float temp) {
+        float rate = (float) Math.pow(2.0, temp / 25.0);
+        return Math.max(0.1f, Math.min(4.0f, rate));
+    }
+
+    /** Storage temperature: a covered spot below sea level is an earth-cooled root cellar (colder the
+     *  deeper), otherwise it's just the ambient temperature there. */
+    private static float storageTemp(Level level, BlockPos pos) {
+        if (!level.canSeeSky(pos) && pos.getY() < level.getSeaLevel()) {
+            int depth = level.getSeaLevel() - pos.getY();
+            return -20f - Math.min(30f, depth * 0.5f); // ~-20 just under, down to ~-50 deep
+        }
+        return SurvivalMeters.environmentTempAt(level, pos);
     }
 }

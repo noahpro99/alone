@@ -27,7 +27,8 @@ public final class Preserving {
                 && salt.is(AloneItems.SALT)) {
                 if (!level.isClientSide()) {
                     food.set(Spoilage.PRESERVED, true);
-                    food.remove(Spoilage.SPOILS_AT); // cancel any running shelf-life timer
+                    food.remove(Spoilage.FRESHNESS);      // reset so it re-stamps the long preserved shelf
+                    food.remove(Spoilage.FRESHNESS_SEEN);
                     if (!player.isCreative()) {
                         salt.shrink(1);
                     }

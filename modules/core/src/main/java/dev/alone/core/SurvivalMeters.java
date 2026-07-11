@@ -282,8 +282,17 @@ public final class SurvivalMeters {
      * Season will feed in here once §10 (Alone: World) exists — see the TODO.
      */
     public static float ambientTemperature(Player player) {
-        Level level = player.level();
-        BlockPos pos = player.blockPosition();
+        return ambientTemperatureAt(player.level(), player.blockPosition());
+    }
+
+    /** Environmental body-equivalent temperature (-100 cold .. 0 comfortable .. +100 hot) at a position —
+     *  used by systems that care about a spot's warmth, e.g. how fast food spoils there (§4.2). */
+    public static float environmentTempAt(Level level, BlockPos pos) {
+        return (ambientTemperatureAt(level, pos) - NEUTRAL_AMBIENT) * TEMP_SCALE;
+    }
+
+    /** Ambient temperature (biome scale) at an arbitrary position — the position-based core of the above. */
+    public static float ambientTemperatureAt(Level level, BlockPos pos) {
         boolean roofed = !level.canSeeSky(pos); // a block/roof/canopy overhead — you're under cover
         // Underground (below sea level, under cover): caves are a stable, mild refuge — insulated
         // from sun, weather, and season. A welcome escape from winter and summer alike.

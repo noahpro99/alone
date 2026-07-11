@@ -159,11 +159,15 @@ public class DryingRackBlockEntity extends BlockEntity {
 
     /** Mark the food as dried jerky: a long finite shelf life ({@code preserved}) and lighter ({@code dried}). */
     private static void preserve(ItemStack food) {
-        DataComponentType<Long> spoilsAt = componentType("spoils_at");
+        DataComponentType<Long> freshness = componentType("freshness");
+        DataComponentType<Long> freshnessSeen = componentType("freshness_seen");
         DataComponentType<Boolean> preserved = componentType("preserved");
         DataComponentType<Boolean> dried = componentType("dried");
-        if (spoilsAt != null) {
-            food.remove(spoilsAt); // drop the fresh-meat timer so the long preserved shelf is restamped
+        if (freshness != null) {
+            food.remove(freshness); // reset the budget so the long preserved shelf is restamped when carried
+        }
+        if (freshnessSeen != null) {
+            food.remove(freshnessSeen);
         }
         if (preserved != null) {
             food.set(preserved, true);
