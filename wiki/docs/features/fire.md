@@ -25,6 +25,19 @@ Once lit, it runs on fuel and needs feeding:
 - It gives off **warmth that dwindles as the fuel runs low** — a dying fire warms less.
 - It **cooks food** and **boils water** (set a fire-safe vessel over it — see [Water](./water-and-drinking.md)).
 
+## Fire is a hazard — keep it clear of wood
+
+An open campfire is dangerous, the way a real one is. A **flammable block touching a lit campfire** —
+a log wall, a plank ceiling, dry thatch — **can catch alight** (within a few seconds), and from there the
+fire **spreads and burns like any fire** until it's put out or runs out of fuel.
+
+- **One block of clearance is safe.** Keep the fire a block away from wood, or **ring it with stone/dirt**.
+- The block the campfire **rests on is spared**, so a fire on a wooden floor won't torch its own support —
+  but the walls and ceiling around it are fair game.
+- **Torches don't spread fire** — only open campfires do. A torch in a bracket is a contained flame, so you
+  can still light your home safely.
+- A fire in the **rain** doesn't spread (it's busy going out).
+
 ## Carrying an ember
 
 Fire can be carried between camps instead of drilling a fresh one:

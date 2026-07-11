@@ -64,9 +64,12 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 - **The shelter ladder:** light stick-frame blocks (that weather and can be broken by a bear),
   through log and stone tiers.
 - **Shelter Quality** ratings governing sleep recovery and temperature protection.
-- **Fire spread** through built structures. *(Structural gravity has shipped — loose soil falls and
-  must be shored with timber; see [Weight, Carrying & Blocks](./features/building-and-blocks.md#soil-has-no-cohesion--dig-with-care).)*
 - A **re-root / tamp tool** to commit loose-placed blocks back into secure structure.
+
+*(Structural gravity — loose soil falls and must be shored with timber — and fire spread — an open
+campfire catches wood it touches — have both shipped. See [Weight, Carrying &
+Blocks](./features/building-and-blocks.md#soil-has-no-cohesion--dig-with-care) and
+[Fire](./features/fire.md#fire-is-a-hazard--keep-it-clear-of-wood).)*
 - **Felling real trees:** cut through the base and the tree **falls as an entity** (and can crush
   you), with **sapling → young → mature → old-growth** age states that scale a tree's height, chop
   time, and yield (an old-growth giant worth several times a young one).
