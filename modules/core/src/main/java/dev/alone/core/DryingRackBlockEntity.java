@@ -51,8 +51,11 @@ public class DryingRackBlockEntity extends BlockEntity {
     private static final TagKey<Item> PERISHABLE = TagKey.create(Registries.ITEM,
         Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
 
-    public static final AttachmentType<ItemStack> DRYING = AttachmentRegistry.createPersistent(
-        Identifier.fromNamespaceAndPath("alone", "drying_rack_food"), ItemStack.CODEC);
+    // Persisted AND synced to the client, so the rack can render the piece hanging on it (visual only).
+    public static final AttachmentType<ItemStack> DRYING = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath("alone", "drying_rack_food"),
+        builder -> builder.persistent(ItemStack.CODEC)
+            .syncWith(ItemStack.OPTIONAL_STREAM_CODEC, net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate.all()));
     public static final AttachmentType<Integer> PROGRESS = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "drying_rack_progress"), com.mojang.serialization.Codec.INT);
     public static final AttachmentType<Integer> SPOIL = AttachmentRegistry.createPersistent(
