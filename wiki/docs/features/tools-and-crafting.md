@@ -34,7 +34,7 @@ and then a long plateau toward mastery. It shows up only as the occasional note 
 tier: **Novice → Apprentice → Skilled → Expert → Master**. Your skills **stay with you through death** —
 you don't forget a trade because you drowned.
 
-Four crafts respond to skill so far:
+Five crafts respond to skill so far:
 
 - **Flintworking** — knapping succeeds ~**55%** of the time as a raw novice, climbing to ~**92%** at
   mastery (it was a flat ~65%). You learn from every strike, whether it flakes or shatters.
@@ -44,8 +44,9 @@ Four crafts respond to skill so far:
   mastery. Learned by breaking stone and ore.
 - **Smithing** — a practised smith **draws better steel**: the random quality of a forged piece is nudged
   toward masterwork the more skilled you are. Learned each piece you forge.
+- **Tracking** — a practised tracker **runs game down faster**: [persistence hunting](./hunting.md#persistence-hunting--run-it-down) chase-fatigue builds up to ~1.6× as fast at mastery, so quarry tires in fewer seconds. Learned by taking wild game.
 
-*(More crafts — pottery, tracking — are planned to respond to skill on the same framework.)*
+*(Pottery is the last craft still to respond to skill on the same framework.)*
 
 ## Plant fiber and string
 

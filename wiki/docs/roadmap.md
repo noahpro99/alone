@@ -128,9 +128,9 @@ The backpack exists; the rest of the logistics tree is planned.
 
 ## Skills & progression
 
-- **More crafts responding to skill:** the skill-by-doing framework drives **flintworking, firecraft,
-  mining, and smithing** so far; **pottery and tracking** are still to be wired onto it. *(See
-  [Tools & Crafting](./features/tools-and-crafting.md#skill-by-doing).)*
+- **Pottery responding to skill:** the skill-by-doing framework drives **flintworking, firecraft,
+  mining, smithing, and tracking**; **pottery** is the last craft still to be wired onto it (it needs a
+  firing success/quality to scale). *(See [Tools & Crafting](./features/tools-and-crafting.md#skill-by-doing).)*
 
 ## Livestock & economy
 
