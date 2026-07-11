@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Alone">
+  <!-- A lone survivor's campfire under a mountain horizon. -->
+  <path d="M2 46 L22 22 L34 36 L44 24 L62 46 Z" fill="#3f5a45"/>
+  <path d="M22 22 L28 30 L20 30 Z" fill="#e9eef0"/>
+  <path d="M44 24 L49 30 L39 30 Z" fill="#e9eef0"/>
+  <g>
+    <path d="M32 40 C26 44 30 50 32 54 C34 50 38 44 32 40 Z" fill="#e0a86a"/>
+    <path d="M32 45 C29 47 31 51 32 54 C33 51 35 47 32 45 Z" fill="#f1d7b6"/>
+  </g>
+  <rect x="22" y="55" width="20" height="3" rx="1.5" fill="#7a5c34"/>
+</svg>

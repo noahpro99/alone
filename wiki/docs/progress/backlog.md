@@ -1,4 +1,7 @@
-# Alone — Feature Backlog & Progress
+---
+sidebar_position: 1
+title: "Feature Backlog & Progress"
+---
 
 Autonomous build session (2026-07-08 night). Every item below compile-checked (`./gradlew build`)
 and the whole pack headless boot-checked (`:dev:runServer` → both mods load, no mixin failures).

@@ -1,0 +1,41 @@
+/**
+ * Alone wiki theme.
+ * An earthy, campfire-lit palette to match the survival-realism subject.
+ */
+
+:root {
+  --ifm-color-primary: #7a5c34;
+  --ifm-color-primary-dark: #6e532f;
+  --ifm-color-primary-darker: #684f2c;
+  --ifm-color-primary-darkest: #554124;
+  --ifm-color-primary-light: #866539;
+  --ifm-color-primary-lighter: #8c6a3c;
+  --ifm-color-primary-lightest: #a07c4b;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* Warm, firelit accent for dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #e0a86a;
+  --ifm-color-primary-dark: #d99751;
+  --ifm-color-primary-darker: #d68e44;
+  --ifm-color-primary-darkest: #c67a2c;
+  --ifm-color-primary-light: #e7b983;
+  --ifm-color-primary-lighter: #eac290;
+  --ifm-color-primary-lightest: #f1d7b6;
+  --ifm-background-color: #1a1712;
+  --ifm-background-surface-color: #221e18;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.06);
+}
+
+/* Tables (the proposal uses several) read better with a little breathing room. */
+.markdown table {
+  display: table;
+  width: 100%;
+}
+
+.markdown table th {
+  text-align: left;
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Engineering",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "How the proposal becomes a Fabric modpack: the pinned toolchain, the module architecture, the phased rollout, and the dev/test workflow."
+  }
+}

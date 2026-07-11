@@ -1,4 +1,7 @@
-# Alone — Plan for the Remaining Content
+---
+sidebar_position: 2
+title: "Remaining Content Plan"
+---
 
 26.2 registration: `ResourceKey<Item>` -> `new Item(new Item.Properties().setId(key))` ->
 `Registry.register(BuiltInRegistries.ITEM, key, item)`. Custom items live in core (`AloneItems`).
