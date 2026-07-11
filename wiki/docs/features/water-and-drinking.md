@@ -66,6 +66,25 @@ Boiling is the way to make untreated water safe.
 - Boiling also **sterilises the vessel itself**, so a dirty vessel comes out clean.
 - Boiling **does not remove salt** — salt water can't be boiled clean. Only fresh raw or tainted water boils safe.
 
+## Hot-rock boiling — for the waterskin
+
+The **waterskin can't go over a flame**, so you boil it the way people actually did with a hide or bark
+container: **heat stones in the fire and drop them in.**
+
+1. **Heat a stone.** Hold a **rock** and **sneak + right-click a lit campfire** — it comes out a glowing
+   **Hot Rock** (this costs the fire a little fuel). A hot rock **cools as you carry it** (its bar is the
+   heat left) and turns back into a plain rock after about **2 minutes**.
+2. **Drop it in.** Hold the **waterskin in your off hand** and the **hot rock in your main hand**, then
+   **sneak + right-click**. The stone hisses into the water, brings it to a boil, and the whole skin turns
+   **clean** (and the skin is sterilised). The stone gives up its heat and cools to a plain rock.
+
+The stone must still hold most of its heat to work — a **nearly-cold one won't boil** and asks to be
+reheated. Like fire-boiling, it **does not desalinate** seawater. (A metal or clay pot ignores all this —
+it just goes straight over the fire.)
+
+> One good stone boils a skinful in a go; real hot-rock boiling cycles several cooling stones, which this
+> smooths over.
+
 ## Rain catch — clean water without fire
 
 A **water cauldron** fills from rain (as it does in vanilla) and is a **fuel-free source of clean water**:

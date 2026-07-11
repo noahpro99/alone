@@ -30,8 +30,10 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 ## Water
 
 - **Finite, flowing water** with real currents (you can't swim up a waterfall; boats get swept).
-- **Hot-rock boiling** for vessels that can't sit in a fire (bark cups, hide skins).
 - **Glass bottles** and **seawater distillation**.
+
+*(Hot-rock boiling — heat stones in the fire and drop them into a hide/bark vessel that can't go over the
+flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#hot-rock-boiling--for-the-waterskin).)*
 
 ## Food, farming & preservation
 
