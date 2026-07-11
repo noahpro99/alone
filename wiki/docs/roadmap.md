@@ -102,8 +102,9 @@ The backpack exists; the rest of the logistics tree is planned.
 
 ## The body & combat
 
-- **Digestion & hygiene:** a latrine/contamination system where fouling your camp or water sickens
-  you, with dysentery as an acute dehydration emergency.
+- **Digestion & sanitation:** a latrine/contamination system where fouling your own camp or water
+  source sickens you. *(Dysentery — the acute dehydration emergency from drinking foul water — has
+  shipped; see [Injuries & Conditions](./features/injuries-and-conditions.md#dysentery).)*
 - **Combat depth:** the spear as king of the early game; shields drained and defeated outright by
   large creatures.
 

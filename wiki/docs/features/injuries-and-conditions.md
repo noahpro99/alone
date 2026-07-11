@@ -24,6 +24,7 @@ When you take damage, it can leave a lasting condition rather than just a number
 | **Sprain / fracture** | Falls, heavy blows (≥8 damage) | Craft a **splint** (2 sticks + string), then sneak + right-click to bind it |
 | **Infection** | Zombie-type bites can fester | Dress with **cloth** (sneak + right-click) to stop bleeding and clean it down |
 | **Sickness (foodborne illness)** | Untreated/dirty water, raw or spoiled food, or eating with dirty hands | Drink an **herbal remedy** (2 flowers + plant fiber) |
+| **Dysentery** | Drinking **foul water** raw — worst from warm stagnant swamp/jungle or murky water | **Keep drinking clean water** to out-pace the dehydration; an **herbal remedy** shortens it |
 
 ### Bleeding
 
@@ -42,6 +43,10 @@ Bites from **zombie-type mobs** have about a **30% chance** to fester into an in
 ### Sickness (foodborne illness)
 
 Several things can make you **sick** — a lingering illness that keeps you weak and hungry and persists even through a relog: drinking untreated or tainted water, eating raw or spoiled food, or eating with dirty hands. See [Food & Eating](./food-and-eating.md) for the per-food sickness odds and [Water, Thirst & Vessels](./water-and-drinking.md) for water quality. **Drink an herbal remedy** (crafted from 2 flowers + plant fiber) to knock time off the sickness, ease an infection, and clear acute nausea and poison. Otherwise it runs its multi-minute course on its own.
+
+### Dysentery
+
+Foul water can give you something far worse than a stomach upset: **dysentery**, an acute **dehydration emergency**. It's the likely outcome of drinking **warm, stagnant swamp or jungle water** raw (and of murky/tainted water from a vessel) — see [Water, Thirst & Vessels](./water-and-drinking.md#water-quality). While you have it (about **4 minutes**), your **thirst drains fast** (on top of weakness and nausea), so you must **keep drinking clean water** to out-pace it — run dry and the dehydration will **kill you**. The real cure is **rehydration**; an **herbal remedy** shortens the illness, and it passes on its own in time. The lesson is the old one: **don't drink stagnant water raw — boil it first** (a pot, or [hot-rock boiling](./water-and-drinking.md#hot-rock-boiling--for-the-waterskin) for a hide skin).
 
 ## Armor protects your body, not just your health
 
