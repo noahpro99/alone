@@ -1,6 +1,11 @@
 // @ts-check
 // Docusaurus config for the Alone wiki. See https://docusaurus.io/docs/api/docusaurus-config
 import {themes as prismThemes} from 'prism-react-renderer';
+import {createRequire} from 'node:module';
+
+// This config is an ES module, so `require` isn't defined by default. The local
+// search theme wants an absolute path via require.resolve — shim one in.
+const require = createRequire(import.meta.url);
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -28,6 +33,23 @@ const config = {
     // tokens and other JSX-hostile characters renders without breaking the build.
     format: 'detect',
   },
+
+  themes: [
+    [
+      // Offline/local search — builds the index at compile time, runs entirely
+      // client-side. No external service, API keys, or crawler required.
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      /** @type {import('@easyops-cn/docusaurus-search-local').PluginOptions} */
+      ({
+        hashed: true, // cache-bust the index across builds
+        indexBlog: false, // no blog on this site
+        docsRouteBasePath: '/', // docs are served at the site root
+        highlightSearchTermsOnTargetPage: true,
+        searchResultLimits: 8,
+        searchBarShortcutHint: true,
+      }),
+    ],
+  ],
 
   presets: [
     [
