@@ -30,9 +30,6 @@ public class TravoisRenderer extends EntityRenderer<TravoisEntity, TravoisRender
     @Override
     public void extractRenderState(TravoisEntity entity, TravoisRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
-        // Never draw a glowing outline (something was flagging it, showing a red border through walls). A
-        // travois isn't a highlighted object — force the outline off.
-        state.outlineColor = net.minecraft.client.renderer.entity.state.EntityRenderState.NO_OUTLINE;
         state.yRot = entity.getYRot();
         BlockPos pos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
         MovingBlockRenderState mb = state.movingBlockRenderState;
@@ -49,31 +46,28 @@ public class TravoisRenderer extends EntityRenderer<TravoisEntity, TravoisRender
     @Override
     public void submit(TravoisRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
                        CameraRenderState cameraState) {
-        // TEMP DIAGNOSTIC: render NOTHING (no blocks, no super) to isolate the red border. If a red box
-        // still floats around the (now invisible) travois, it's MC's engine debug overlay, not our render.
-        if (true) {
-            return;
-        }
         MovingBlockRenderState mb = state.movingBlockRenderState;
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(-state.yRot)); // face the sled's heading
 
         // The bed: a flat, wide plank platform, low to the ground.
         mb.blockState = TravoisEntity.PLATFORM_BLOCK;
-        piece(poseStack, collector, mb, state.lightCoords, 0.0f, 0.0f, -0.15f, 0.9f, 0.12f, 0.7f, 0f);
+        piece(poseStack, collector, mb, state.outlineColor, 0.0f, 0.0f, -0.15f, 0.9f, 0.12f, 0.7f, 0f);
 
         // Two poles, splaying out in a shallow V and trailing forward past the bed.
         mb.blockState = TravoisEntity.POLE_BLOCK;
-        piece(poseStack, collector, mb, state.lightCoords, -0.30f, 0.06f, 0.35f, 0.10f, 0.10f, 1.6f, 6f);
-        piece(poseStack, collector, mb, state.lightCoords, 0.30f, 0.06f, 0.35f, 0.10f, 0.10f, 1.6f, -6f);
+        piece(poseStack, collector, mb, state.outlineColor, -0.30f, 0.06f, 0.35f, 0.10f, 0.10f, 1.6f, 6f);
+        piece(poseStack, collector, mb, state.outlineColor, 0.30f, 0.06f, 0.35f, 0.10f, 0.10f, 1.6f, -6f);
 
         poseStack.popPose();
         super.submit(state, poseStack, collector, cameraState);
     }
 
-    /** Submit one block model as a box of size (sx,sy,sz) centred on x/z at (cx,cy,cz), optionally yawed. */
+    /** Submit one block model as a box of size (sx,sy,sz) centred on x/z at (cx,cy,cz), optionally yawed.
+     *  The trailing int is the <b>outline colour</b> (NO_OUTLINE normally) — NOT packed light; the block's
+     *  lighting comes from the MovingBlockRenderState's light engine. Passing light here drew a red border. */
     private static void piece(PoseStack pose, SubmitNodeCollector collector, MovingBlockRenderState mb,
-                              int light, float cx, float cy, float cz, float sx, float sy, float sz, float rotY) {
+                              int outlineColor, float cx, float cy, float cz, float sx, float sy, float sz, float rotY) {
         pose.pushPose();
         pose.translate(cx, cy, cz);
         if (rotY != 0f) {
@@ -81,7 +75,7 @@ public class TravoisRenderer extends EntityRenderer<TravoisEntity, TravoisRender
         }
         pose.scale(sx, sy, sz);
         pose.translate(-0.5f, 0.0f, -0.5f); // centre the unit cube on x/z, base at y=0
-        collector.submitMovingBlock(pose, mb, light);
+        collector.submitMovingBlock(pose, mb, outlineColor);
         pose.popPose();
     }
 }
