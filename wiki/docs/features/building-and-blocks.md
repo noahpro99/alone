@@ -105,3 +105,18 @@ So a proper dugout is buildable:
 This is what makes a dug **[root cellar](./preservation.md#cold-storage-the-root-cellar)** an earned build rather than a free hole: you shore the roof, and the cool covered space it creates keeps your food for weeks.
 
 > One current limitation: pulling out a support doesn't *instantly* drop the roof it was holding — collapse near a removed beam is checked the next time that spot is disturbed, so it can lag rather than cave the moment the timber is gone.
+
+### Rammed earth — shore with dirt, not timber
+
+If you have no timber to spare, there's an older way: **ram the earth firm.** Hold a **rock** or a
+**smithing hammer** and **sneak + right-click a block of soil** to tamp it. It's **hard, tiring work**
+(each tamp costs stamina), but packed **rammed earth**:
+
+- **won't cave** on its own, and
+- **bears load like a post** — a tamped column shores the soil around it within the same ~4-block span a
+  timber would.
+
+So you can keep a dugout open by ramming a few **earth pillars** instead of felling trees — paid for in
+**sweat instead of timber**. A tamped block is also **committed to structure**: no longer a loose
+set-down block, so it breaks slow again (you can't quick-pull it back up). Only the dirt-family soil that
+actually caves can be tamped.
