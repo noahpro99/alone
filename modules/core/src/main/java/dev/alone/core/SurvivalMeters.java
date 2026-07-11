@@ -66,6 +66,8 @@ public final class SurvivalMeters {
     private static final float THIRST_LOW = 15f;
     // Thermoregulation feedback (§1.3) — a hot body sweats (dehydrates), a cold body burns food and shivers.
     private static final float COLD_SHIVER = -30f;      // below this, stiff muscles recover stamina poorly
+    private static final int CHILL_INTERVAL = 600;      // roll a chill about every 30s of cold-and-wet
+    private static final float CHILL_CHANCE = 0.2f;      // odds per roll — a few minutes of exposure and it takes
     private static final float COLD_EXHAUSTION = 0.03f; // extra food burned per tick keeping warm (scaled by cold)
 
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
@@ -617,6 +619,16 @@ public final class SurvivalMeters {
             if (bodyTemp >= SEVERE_HOT && player.tickCount % TEMP_DAMAGE_INTERVAL == 0) {
                 player.hurtServer(level, level.damageSources().onFire(), 1.0f);
             }
+        }
+
+        // Exposure: sustained cold AND wet settles into a chill (§1.3/§1.5). It's the wet-cold combination —
+        // soaked clothing insulates nothing — not deep freeze, that makes you ill, and the chill lingers
+        // after you've warmed up. Dry off or get to a fire before it takes hold.
+        if (bodyTemp <= COLD_SHIVER && player.getAttachedOrElse(WETNESS, 0) > 0
+            && player.tickCount % CHILL_INTERVAL == 0 && player.getRandom().nextFloat() < CHILL_CHANCE) {
+            Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 2);
+            player.sendSystemMessage(Component.literal(
+                "The wet cold has settled into your chest — you've caught a chill."));
         }
     }
 
