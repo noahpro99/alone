@@ -32,7 +32,8 @@ public final class Knapping {
     }
 
     private static final int STRIKES_TO_FLAKE = 10;     // ~2.5 s of steady striking (client sends ~every 5t)
-    private static final float SUCCESS_CHANCE = 0.65f;  // the rest of the time the flint shatters
+    private static final float BASE_SUCCESS = 0.55f;    // a raw novice's odds; skill lifts it toward ~0.92
+    private static final float SKILL_SUCCESS = 0.37f;   // the practised hand's bonus (§8.4)
     private static final float ROCK_WEAR_CHANCE = 0.15f; // the hammerstone chips and eventually breaks
     private static final float STAMINA_PER_STRIKE = 0.8f;
 
@@ -96,7 +97,9 @@ public final class Knapping {
         ItemStack flint = main.is(Items.FLINT) ? main : off;
         ItemStack hammerstone = main.is(AloneItems.ROCK) ? main : off;
         flint.shrink(1);
-        boolean success = rng.nextFloat() < SUCCESS_CHANCE;
+        // Skill by doing: a novice knapper shatters a lot of flint; a practised hand rarely wastes one.
+        boolean success = rng.nextFloat() < BASE_SUCCESS + SKILL_SUCCESS * Skills.proficiency(player, Skills.FLINTWORKING);
+        Skills.gain(player, Skills.FLINTWORKING, 1); // every strike teaches the hand — flake or shatter
         if (success && !player.getInventory().add(new ItemStack(AloneItems.FLINT_SHARD))) {
             player.drop(new ItemStack(AloneItems.FLINT_SHARD), false);
         }

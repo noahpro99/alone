@@ -87,6 +87,7 @@ public class AloneCore implements ModInitializer {
             });
 
         // The core survival systems everything else hooks into (proposal §1).
+        Skills.init();          // §8.4 — skill by doing: practice improves a craft (register attachment early)
         Conditions.init();      // §1.5 — conditions/injuries (persistent, debilitating)
         SurvivalMeters.init();  // §1 — stamina, thirst, temperature, realistic reach
         Drinking.init();        // §1.2 — drink from water sources

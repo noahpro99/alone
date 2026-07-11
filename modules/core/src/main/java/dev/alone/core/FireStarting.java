@@ -82,7 +82,9 @@ public final class FireStarting {
             return;
         }
         int minStrokes = bow ? BOW_MIN_STROKES : HAND_MIN_STROKES;
-        float catchChance = bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE;
+        // Skill by doing (§8.4): a practised firemaker reads the spindle and catches sooner.
+        float catchChance = (bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE)
+            * (0.8f + 0.5f * Skills.proficiency(player, Skills.FIRECRAFT));
         float staminaPerStroke = bow ? BOW_STAMINA : HAND_STAMINA;
         BlockPos fire = findUnlitCampfire(player, level);
         if (fire == null) {
@@ -117,6 +119,7 @@ public final class FireStarting {
                 level.getBlockState(fire).setValue(BlockStateProperties.LIT, Boolean.TRUE));
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.3, fire.getZ() + 0.5,
                 6, 0.15, 0.05, 0.15, 0.01);
+            Skills.gain(player, Skills.FIRECRAFT, 3); // every fire you coax alive teaches your hands
             if (bow) {
                 // The spindle burns down and the cordage frays a little with every fire it makes.
                 player.getMainHandItem().hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
