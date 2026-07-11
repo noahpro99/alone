@@ -7,10 +7,11 @@ The world runs on a turning year, confines natural hostile spawns to areas near 
 
 ## Seasons
 
-The year cycles **spring → summer → winter**, with each season lasting about **7 in-game days**.
+The year cycles **spring → summer → autumn → winter**, with each season lasting about **7 in-game days** — a **28-day year**.
 
 - **Winter** shifts the ambient temperature **colder**.
 - **Summer** shifts it **hotter**.
+- **Spring and autumn** are the mild shoulder seasons, with no temperature shift.
 
 Season affects body temperature — see [Body Temperature](./body-temperature.md).
 
