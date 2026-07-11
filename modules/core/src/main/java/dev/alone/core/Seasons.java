@@ -11,7 +11,10 @@ public final class Seasons {
     private Seasons() {
     }
 
-    public static final int SEASON_LENGTH_DAYS = 7; // a 28-day year; tunable
+    // One season is a "month" of 28 in-game days; four of them make a 112-day year — spring, summer,
+    // autumn, winter. That's a real stretch per season (~a month, not a week), so winter is a month-long
+    // survival test you stockpile for, and a crop has a whole season to grow. (Was 7 — over-compressed.)
+    public static final int SEASON_LENGTH_DAYS = 28;
 
     /** 0 = spring, 1 = summer, 2 = autumn, 3 = winter. */
     public static int index(Level level) {

@@ -7,7 +7,7 @@ The world runs on a turning year, confines natural hostile spawns to areas near 
 
 ## Seasons
 
-The year cycles **spring → summer → autumn → winter**, with each season lasting about **7 in-game days** — a **28-day year**.
+The year cycles **spring → summer → autumn → winter**, with each season lasting **28 in-game days** (a "month") — a **112-day year**, one month per season. A season is a real stretch: **winter is a month-long survival test** you must stockpile food and fuel for, and a crop has a whole season to grow.
 
 - **Winter** shifts the ambient temperature **colder**.
 - **Summer** shifts it **hotter**.
@@ -19,9 +19,10 @@ Season affects body temperature — see [Body Temperature](./body-temperature.md
 
 Crop growth and survival depend on the season:
 
-- **A crop is a season's patience, not a couple of days.** Growth is slowed to roughly a real **growing season** (about a week of in-game days, versus vanilla's day or two) — a field is a genuine investment you plant and live around, not a fast turnaround. You pass the wait by living your days, and [resting fast-forwards them](./sleep-and-rest.md#sleeping-fast-forwards-the-night--it-doesnt-skip-it). *(Bonemeal still forces growth for when you can't wait.)*
-- **Crops stop growing in winter.** Nothing advances until spring, though **bonemeal still forces growth**.
-- **Crops can die on their own.** Each has a small per-tick chance to wither, and that chance is **higher in winter** and **higher next to weeds**.
+- **A crop is a season's patience.** Growth is paced to roughly **one growing season** (a plant-in-spring, harvest-by-summer investment, versus vanilla's day or two) — a field is something you tend and live around, not a fast turnaround. You pass the wait by living your days, and [resting fast-forwards them](./sleep-and-rest.md#sleeping-fast-forwards-the-night--it-doesnt-skip-it). *(Bonemeal still forces growth when you can't wait.)*
+- **Crops must be watered — or they dry out.** A crop whose farmland has **no water reaching it** (it's gone fully dry) **wilts and dies**, and **twice as fast in summer heat**. So a field has to be **irrigated** — kept within reach of water (a channel, a pond, a placed source) — exactly as a real one does. Neglect the water in a hot spell and you'll lose the crop.
+- **Crops stop growing in winter, and frost kills them.** Nothing advances until spring, and an exposed crop dies within days of winter setting in (**bonemeal still forces growth**).
+- **Weeds and blight.** Weeds encroaching from neglected soil choke a crop (and it sows more onto bare soil if you don't clear them), and there's always a small chance of **blight** — so even a watered, weeded field is never a guarantee. A well-tended one mostly succeeds.
 - **Fields sow weeds.** Over time, crops scatter **weeds (short grass)** onto nearby soil, and accumulated weeds raise the death chance.
 
 More on food is on [Food & Eating](./food-and-eating.md).

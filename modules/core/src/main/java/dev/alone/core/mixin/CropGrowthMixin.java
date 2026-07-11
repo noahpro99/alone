@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,38 +14,47 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Seasonal + realistic farming (proposal §4.1). A field is never a sure thing:
+ * Seasonal + realistic farming (proposal §4.1). A field is a whole season's investment, and never a sure
+ * thing — it can fail four ways, so farming is real husbandry:
  * <ul>
- *   <li><b>Baseline failure</b> — a small per-tick chance any crop just dies (blight, pests, rot).</li>
- *   <li><b>Winter frost</b> — a much higher death chance while it's winter, and no growth at all.</li>
+ *   <li><b>Blight</b> — a small chance any crop just dies (pests, rot). Low, but a field is never guaranteed.</li>
+ *   <li><b>Winter frost</b> — crops die within days once winter sets in, and don't grow at all.</li>
  *   <li><b>Weeds</b> — grass encroaching from neglected soil chokes crops; each nearby weed raises the
- *       death chance. Crops also sow weeds onto adjacent bare soil over time, so an untended plot rots
- *       itself. Weed by breaking the grass.</li>
+ *       death chance, and crops sow more weeds onto bare soil over time, so an untended plot rots itself.
+ *       Weed by breaking the grass.</li>
+ *   <li><b>Drought</b> — a crop whose farmland has no water reaching it (moisture 0) <b>dries out and
+ *       dies</b>, twice as fast in summer heat. So a field must be irrigated — kept within reach of water.</li>
  * </ul>
- * All numbers are per random-tick (~17/day per crop) and tunable. Bonemeal (a deliberate act) bypasses.
+ * All numbers are a chance per random-tick (~17/day per crop) and tunable. Bonemeal (a deliberate act)
+ * still forces growth past all of this.
  */
 @Mixin(CropBlock.class)
 public class CropGrowthMixin {
-    // Random blight per random-tick. Lowered when growth was stretched to ~a season: a crop now lives ~5x
-    // longer, so the OLD rate (0.002) would compound to ~a third of tended fields failing to pure chance.
-    // At this rate a well-tended field mostly succeeds (~1-in-8 base loss over its season); weeds and winter
-    // are the real killers, and those SHOULD scale with the longer exposure.
-    private static final float BASE_DEATH = 0.0008f;    // ~1.4%/day blight — the field is never guaranteed
-    private static final float WINTER_DEATH = 0.02f;    // frost — an unattended winter field mostly dies
-    private static final float PER_WEED_DEATH = 0.006f; // each adjacent weed chokes the crop a little more
-    private static final float WEED_SPREAD = 0.02f;     // chance a crop lets a weed sprout on nearby soil
-    // A crop is a season's investment, not a couple of days. Vanilla wheat matures in ~1-3 in-game days;
-    // the pack's year is only 28 days (4 x 7-day seasons), so a real growing season maps to ~a week of
-    // in-game days. Letting only a fraction of growth ticks advance the plant stretches it to about that.
-    // You pass the wait by living your days (and resting fast-forwards them). Tune to hit ~one season.
-    private static final float GROWTH_TICK_CHANCE = 0.2f; // ~1 in 5 would-be growth ticks actually advances
+    // All hazards are a chance PER RANDOM-TICK (~17/day). With crops now taking ~a season, the rates are set
+    // low so a well-tended, watered field MOSTLY succeeds — weeds, drought, and winter are the real killers,
+    // and those rightly compound over the long season. (Tune against playtest — the vanilla growth baseline
+    // these are set against is only estimated.)
+    private static final float BASE_DEATH = 0.0003f;          // ~0.5%/day blight — the field is never a sure thing
+    private static final float WINTER_DEATH = 0.01f;          // frost — an exposed winter crop dies within days
+    private static final float PER_WEED_DEATH = 0.0009f;      // each adjacent weed chokes the crop (~1.5%/day)
+    private static final float DROUGHT_DEATH = 0.0025f;       // farmland gone dry — the crop wilts (~4%/day)
+    private static final float DROUGHT_DEATH_SUMMER = 0.005f; // summer heat dries it out twice as fast
+    private static final float WEED_SPREAD = 0.02f;           // chance a crop lets a weed sprout on nearby soil
+    // Growth is paced to ~a season: only a fraction of would-be growth ticks advance the plant, so a crop is
+    // a plant-in-spring, harvest-by-summer investment — not a couple of days. You pass the wait by living
+    // your days (resting fast-forwards them). Tune to mature in ~one 28-day season.
+    private static final float GROWTH_TICK_CHANCE = 0.07f;    // ~1 in 14 growth ticks advances (~a season to mature)
 
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
     private void alone$cropHazards(BlockState state, ServerLevel level, BlockPos pos,
                                    RandomSource random, CallbackInfo ci) {
         boolean winter = Seasons.isWinter(level);
         int weeds = alone$countWeeds(level, pos);
-        float death = BASE_DEATH + (winter ? WINTER_DEATH : 0f) + weeds * PER_WEED_DEATH;
+        // Drought: farmland with no water reaching it (moisture 0) dries the crop out — worse in summer heat.
+        BlockState soil = level.getBlockState(pos.below());
+        boolean parched = soil.is(Blocks.FARMLAND) && soil.getValue(FarmlandBlock.MOISTURE) == 0;
+        float drought = parched ? (Seasons.index(level) == 1 ? DROUGHT_DEATH_SUMMER : DROUGHT_DEATH) : 0f;
+        float death = BASE_DEATH + (winter ? WINTER_DEATH : 0f) + weeds * PER_WEED_DEATH + drought;
 
         if (random.nextFloat() < death) {
             level.removeBlock(pos, false); // the crop fails and dies — no harvest
