@@ -187,7 +187,8 @@ public final class Carry {
         if (path.contains("sword") || path.contains("axe") || path.contains("hatchet")
             || path.contains("pick") || path.contains("shovel") || path.contains("hoe")
             || path.contains("shield") || path.contains("bow") || path.contains("crossbow")
-            || path.contains("hammer") || path.contains("scythe")) {
+            || path.contains("hammer") || path.contains("scythe")
+            || path.contains("spear") || path.contains("trident")) { // a spear is a long haft — never pocketed
             return 0.35f;
         }
         if (path.contains("knife") || path.contains("shears")) {
@@ -326,6 +327,7 @@ public final class Carry {
         if (item == AloneItems.BACKPACK) return 1.50f;
         if (item == AloneItems.WOVEN_BASKET) return 0.50f; // woven plant fibre — light but bulky
         if (item == AloneItems.SALT) return 0.05f;
+        if (item == AloneItems.ROCK || item == AloneItems.HOT_ROCK) return 0.40f; // a fist-sized stone
         if (item == AloneItems.PLANT_FIBER) return 0.01f;
         if (item == AloneItems.SPLINT) return 0.40f;
         if (item == AloneItems.SMITHING_HAMMER) return 2.50f;
@@ -365,6 +367,8 @@ public final class Carry {
         if (path.contains("shield")) return 5.00f;
         if (path.contains("bow")) return 1.00f;
         if (path.contains("crossbow")) return 3.00f;
+        if (path.contains("spear")) return 1.50f;   // a hafted spear — a long shaft and a point
+        if (path.contains("trident")) return 2.50f;
         if (path.contains("arrow")) return 0.05f;
 
         // Armor pieces
