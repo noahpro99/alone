@@ -55,7 +55,9 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 - **Tracking and persistence hunting:** footprints, blood trails, wind direction, snow tracking, and
   running game to exhaustion.
 - **Butchering** carcasses for meat, hide, bone, fat, and sinew.
-- **Insect pressure** near still water — smudge fires and netting to counter it.
+- **Netting** as a second counter to insect pressure, and insect-borne disease. *(Insect pressure near
+  standing water, countered by a smudge fire, has shipped — see
+  [World & Seasons](./features/world-and-seasons.md#biting-insects).)*
 
 ## Building & shelter
 

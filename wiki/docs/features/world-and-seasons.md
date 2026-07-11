@@ -33,6 +33,22 @@ More on food is on [Food & Eating](./food-and-eating.md).
 - Natural hostile spawns concentrate within the 40-block radius of a structure.
 - This only touches **natural** spawns. **Spawners, animal breeding, and passive wildlife are unaffected** — a dungeon spawner still works, farms still breed, and animals roam normally.
 
+## Biting insects
+
+Camp by standing water in the warmth and the bugs will find you — just as they do in real bush country.
+
+- **Where:** within about **5 blocks of a real body of standing water** (a pond or swamp, not a lone
+  puddle). Away from water you're fine.
+- **When:** active in **humid wetlands and jungles at any hour**, and in other **warm** country on **warm
+  nights**. They **die back in winter** and leave you be while you're **in the water**.
+- **The bite:** a nuisance, not a wound. The constant swatting **drains your stamina**, and a heavy swarm
+  briefly leaves you **weak and clumsy**.
+- **The counter — a smudge fire:** stand near a **lit campfire** (within ~5 blocks) and the smoke keeps
+  them off. Since you'd usually have a fire going at night anyway, the real bite is being caught at a
+  waterside camp **without** one.
+
+*(Netting is planned as a second counter; insect-borne disease isn't modelled yet.)*
+
 ## Torches burn out
 
 Torches are a **fuel item**, not an infinite light:
