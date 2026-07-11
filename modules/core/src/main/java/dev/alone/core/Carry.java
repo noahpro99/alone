@@ -131,10 +131,13 @@ public final class Carry {
         String path = BuiltInRegistries.ITEM.getKey(item).getPath();
 
         // Specific custom Alone items
-        if (item == AloneItems.WATERSKIN) return 0.005f; // 5 liters
-        if (item == AloneItems.IRON_POT) return 0.015f;  // 15 liters
-        if (item == AloneItems.CLAY_POT) return 0.012f;  // 12 liters
-        if (item == AloneItems.UNFIRED_CLAY_POT) return 0.010f;
+        // A rigid pot's CARRY bulk (awkward, can't be squashed) is far bigger than its hollow footprint —
+        // above the pocket threshold, so it's hand-carried, not pocketed (you can't slip pots in a pocket).
+        // A floppy hide waterskin, by contrast, packs/belts fine and stays pocketable.
+        if (item == AloneItems.WATERSKIN) return 0.005f; // floppy skin — pockets fine
+        if (item == AloneItems.IRON_POT) return 0.20f;   // bulky rigid vessel — hand-carried
+        if (item == AloneItems.CLAY_POT) return 0.16f;
+        if (item == AloneItems.UNFIRED_CLAY_POT) return 0.15f;
         if (item == AloneItems.BACKPACK) return 0.080f;
         if (item == AloneItems.SALT) return 0.001f;
         if (item == AloneItems.PLANT_FIBER) return 0.001f;
