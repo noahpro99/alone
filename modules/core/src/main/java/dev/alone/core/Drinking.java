@@ -65,6 +65,34 @@ public final class Drinking {
         return false;
     }
 
+    /**
+     * Warm, stagnant water — swamp, mangrove, jungle pools. Still and warm, it's a broth for pathogens, so
+     * it's the worst thing to drink untreated and it fills a vessel <b>murky</b> (see {@link WaterskinItem}).
+     */
+    public static boolean isStagnantWater(Level level, BlockPos pos) {
+        var biome = level.getBiome(pos);
+        return biome.is(BiomeTags.IS_JUNGLE) || biome.is(Biomes.SWAMP) || biome.is(Biomes.MANGROVE_SWAMP);
+    }
+
+    /**
+     * How risky a raw mouthful is, by where it's drawn (§1.2 / §2). The real rule: <b>cold, clear, moving
+     * water is far safer than warm, still water</b> — but none of it is truly safe (giardia doesn't care how
+     * pretty the stream is), so there's always a floor. Boiling remains the only sure cure.
+     */
+    public static float rawSicknessChance(Level level, BlockPos pos) {
+        if (isStagnantWater(level, pos)) {
+            return 0.45f; // warm swamp/jungle water — drinking it raw is asking for dysentery
+        }
+        float temp = level.getBiome(pos).value().getBaseTemperature();
+        if (temp < 0.2f) {
+            return 0.06f; // cold mountain/tundra water — clear and cold, much safer (never zero)
+        }
+        if (temp > 0.9f) {
+            return 0.25f; // warm, dry country — the water sits warm and breeds bugs
+        }
+        return SICKNESS_CHANCE; // temperate — the ~15% baseline
+    }
+
     public static void init() {
         // Fabric invokes play payload receivers on the server thread, so we can apply directly.
         ServerPlayNetworking.registerGlobalReceiver(DrinkRequestPayload.TYPE,
@@ -120,7 +148,7 @@ public final class Drinking {
         }
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
             SurvivalMeters.drink(player, DRINK_AMOUNT);
-            if (player.getRandom().nextFloat() < SICKNESS_CHANCE) {
+            if (player.getRandom().nextFloat() < rawSicknessChance(player.level(), water)) {
                 Conditions.addSickness(player, Conditions.FOODBORNE_ILLNESS_TICKS / 4);
             }
         }

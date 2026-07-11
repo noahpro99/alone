@@ -104,8 +104,17 @@ public class WaterskinItem extends Item {
         if (water != null) {
             if (!level.isClientSide()) {
                 stack.set(AloneItems.WATER_CHARGES, this.maxCharges);
-                int quality = Drinking.isSaltWater(level, water) ? SALT
-                    : (stack.getOrDefault(AloneItems.VESSEL_DIRTY, false) ? TAINTED : RAW);
+                // Salt water fills briny; a dirty vessel OR warm stagnant swamp/jungle water fills murky
+                // (tainted — higher sickness until boiled); clear fresh water fills merely raw.
+                int quality;
+                if (Drinking.isSaltWater(level, water)) {
+                    quality = SALT;
+                } else if (stack.getOrDefault(AloneItems.VESSEL_DIRTY, false)
+                    || Drinking.isStagnantWater(level, water)) {
+                    quality = TAINTED;
+                } else {
+                    quality = RAW;
+                }
                 stack.set(AloneItems.WATER_QUALITY, quality);
             }
             player.swing(hand);
