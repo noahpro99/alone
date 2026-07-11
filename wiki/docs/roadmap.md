@@ -53,8 +53,9 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 
 - **Scent-driven predator AI** — bears above all — that raid unsecured food.
 - **Deer and rabbit populations** with seasonal breeding and local overhunting.
-- **Tracking and persistence hunting:** footprints, blood trails, wind direction, snow tracking, and
-  running game to exhaustion.
+- **Tracking sign:** footprints, blood trails from wounded game, wind direction, and snow tracking, to
+  follow quarry you can't see. *(Persistence hunting — running game to exhaustion — has shipped; see
+  [Hunting & Wildlife](./features/hunting.md#persistence-hunting--run-it-down).)*
 - **Butchering** carcasses for meat, hide, bone, fat, and sinew.
 - **Netting** as a second counter to insect pressure, and insect-borne disease. *(Insect pressure near
   standing water, countered by a smudge fire, has shipped — see
