@@ -97,6 +97,13 @@ public class TravoisEntity extends Entity implements Container {
         return false;
     }
 
+    // It can slide up a single-block step (a kerb, a slab-high rise) so it follows over gentle ground, but
+    // a two-block ledge stops it dead — you clear a ramp/path for it. That's what makes routes matter (§6).
+    @Override
+    public float maxUpStep() {
+        return 1.0f;
+    }
+
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (isRemoved() || !(source.getEntity() instanceof Player)) {
@@ -171,28 +178,44 @@ public class TravoisEntity extends Entity implements Container {
             setYRot((float) (Math.toDegrees(Math.atan2(-toTarget.x, toTarget.z))));
         }
 
-        float factor = haulFactor();
+        float loadT = Math.min(1.0f, cargoWeight() / FULL_LOAD_KG);
+        float factor = BASE_HAUL_FACTOR - (BASE_HAUL_FACTOR - MIN_HAUL_FACTOR) * loadT;
         if (dragger.getY() > getY() + 0.5) {
             factor *= 0.8f; // hauling uphill is worse
         }
+        // Slow the walk via the movement attribute...
         AttributeInstance speed = dragger.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
             speed.addOrUpdateTransientModifier(new AttributeModifier(
                 DRAG_MODIFIER, factor - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         }
+        // ...but the attribute only governs walking — a sprint-jump keeps its own momentum and skips it.
+        // So no sprinting while hauling, and a hard horizontal-speed ceiling that a jump can't cheat past.
+        dragger.setSprinting(false);
+        Vec3 dv = dragger.getDeltaMovement();
+        double horiz = Math.sqrt(dv.x * dv.x + dv.z * dv.z);
+        double cap = 0.12 * factor;
+        if (horiz > cap) {
+            double s = cap / horiz;
+            dragger.setDeltaMovement(dv.x * s, dv.y, dv.z * s);
+            dragger.hurtMarked = true; // force the corrected velocity to the client
+        }
+        // Dragging a loaded sled is real work — it costs stamina while you're actually moving it.
+        if (horiz > 0.02) {
+            SurvivalMeters.exert(dragger, 0.05f + 0.20f * loadT);
+        }
     }
 
-    /** How much a loaded sled slows you: base drag, worse the heavier the cargo. */
-    private float haulFactor() {
-        float load = 0f;
+    /** Total mass of the cargo, in kg — drives both the slowdown and the stamina cost. */
+    private float cargoWeight() {
         ensureLoaded();
+        float load = 0f;
         for (ItemStack stack : items) {
             if (!stack.isEmpty()) {
                 load += Carry.itemWeight(stack);
             }
         }
-        float t = Math.min(1.0f, load / FULL_LOAD_KG);
-        return BASE_HAUL_FACTOR - (BASE_HAUL_FACTOR - MIN_HAUL_FACTOR) * t;
+        return load;
     }
 
     private void releaseDragger() {

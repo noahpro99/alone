@@ -30,6 +30,9 @@ public class TravoisRenderer extends EntityRenderer<TravoisEntity, TravoisRender
     @Override
     public void extractRenderState(TravoisEntity entity, TravoisRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
+        // Never draw a glowing outline (something was flagging it, showing a red border through walls). A
+        // travois isn't a highlighted object — force the outline off.
+        state.outlineColor = net.minecraft.client.renderer.entity.state.EntityRenderState.NO_OUTLINE;
         state.yRot = entity.getYRot();
         BlockPos pos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
         MovingBlockRenderState mb = state.movingBlockRenderState;
