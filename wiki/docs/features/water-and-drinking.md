@@ -41,7 +41,7 @@ Pointing at a water source and **right-clicking bare-handed** drinks straight fr
 
 ## Salt water
 
-Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable.
+Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable. But it isn't useless: boiled to dryness, **seawater leaves a crust of salt** (see [Getting salt](./preservation.md#getting-salt--boil-down-seawater)) — the way to stock salt for preserving food.
 
 ## Vessels
 
@@ -72,7 +72,7 @@ Boiling is the way to make untreated water safe.
 - A **fire-safe vessel** (the clay pot or iron pot), filled with raw or tainted water, is set on a **lit campfire** by right-clicking the fire with it; right-click empty-handed to lift it back off.
 - It takes about **15 seconds** on the fire to come to a boil, and then its whole load turns **clean** — raw or tainted water becomes safe to drink.
 - Boiling also **sterilises the vessel itself**, so a dirty vessel comes out clean.
-- Boiling **does not remove salt** — salt water can't be boiled clean. Only fresh raw or tainted water boils safe.
+- Boiling **does not remove salt** — salt water can't be boiled *clean*. But boiling a pot of seawater **all the way to dryness** leaves **salt** behind (~2–3 per pot) — see [Getting salt](./preservation.md#getting-salt--boil-down-seawater). Only fresh raw or tainted water boils safe to drink.
 
 ## Hot-rock boiling — for the waterskin
 

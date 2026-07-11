@@ -92,10 +92,17 @@ Salting marks a food as **preserved** (the ~30-day shelf life):
 
 This consumes **one salt** and cancels the food's running spoil timer.
 
-> **Salt currently has no obtainable source.** Boiling seawater does **not** produce salt (and does
-> not desalinate it), and there is no salt recipe or drop in the current build. Until a salt source
-> is added, salting can't be used in practice — the **drying rack** below is the working
-> preservation method.
+### Getting salt — boil down seawater
+
+Salt comes from the sea, the old way. **Fill a fire-safe pot (clay or iron) from the ocean** — it fills
+as **salt water** — then **stand it in a lit campfire** (right-click the fire with the pot). Fresh water
+boils *clean*, but **seawater boils down to dryness and leaves a crust of salt**: right-click the fire
+empty-handed to take the pot back and you get about **2–3 salt** (roughly half the pot's capacity), the
+water gone as steam and the pot empty again.
+
+That's **evaporation, not distillation** — you get the salt, not drinkable water back (reclaiming the
+fresh water with a condenser is a separate, later thing). But it makes **salting a working preservation
+method**: a trip to the coast, a pot, and a fire is all it takes to lay in salt for the winter.
 
 ## The drying rack
 

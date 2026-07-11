@@ -30,7 +30,9 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 ## Water
 
 - **Finite, flowing water** with real currents (you can't swim up a waterfall; boats get swept).
-- **Glass bottles** and **seawater distillation**.
+- **Glass bottles** and **seawater distillation** to reclaim *fresh* water from the sea (a condenser, not
+  just evaporation). *(Boiling seawater to dryness for **salt** has shipped — see
+  [Food Preservation](./features/preservation.md#getting-salt--boil-down-seawater).)*
 
 *(Hot-rock boiling — heat stones in the fire and drop them into a hide/bark vessel that can't go over the
 flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#hot-rock-boiling--for-the-waterskin).)*
