@@ -126,12 +126,6 @@ The backpack exists; the rest of the logistics tree is planned.
   game time." *(The metabolism half has shipped — you now wake having burned the night's food and water;
   see [Sleep & Rest](./features/sleep-and-rest.md#sleep-isnt-free--you-wake-hungry-and-dry).)*
 
-## Skills & progression
-
-- **Pottery responding to skill:** the skill-by-doing framework drives **flintworking, firecraft,
-  mining, smithing, and tracking**; **pottery** is the last craft still to be wired onto it (it needs a
-  firing success/quality to scale). *(See [Tools & Crafting](./features/tools-and-crafting.md#skill-by-doing).)*
-
 ## Livestock & economy
 
 - **Domesticated animals as bartered wealth**, priced in grain — earned through many harvests, never
@@ -139,10 +133,10 @@ The backpack exists; the rest of the logistics tree is planned.
 
 ## Death, respawn & run modes
 
-- **Carried home, not corpse-run:** death costs *time*, not a sprint back to your gear — you wake days
-  later, wounded, with the world moved on and your gear left in the field (scenting, drawing animals).
 - **Hardcore-Alone run modes:** self-set victory conditions (survive the winter, survive a year, slay
-  the Dragon) with a tap-out stat screen — the framing that turns the sandbox into a run.
+  the Dragon) with a tap-out stat screen — the framing that turns the sandbox into a run. *(The
+  carried-home death model has shipped — you wake days later, wounded, hungry and weak, with your gear
+  left where you fell and its meat drawing scavengers, not a corpse-run.)*
 
 ## The endgame
 
