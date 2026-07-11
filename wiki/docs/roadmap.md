@@ -22,6 +22,10 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 - **The ash economy:** hardwood ash → lye → potash, feeding soap and glass flux.
 - **Glass that gates itself** behind forge heat + flux + lime, arriving late as the trophy it
   historically was.
+- **A flint-and-pyrite fire tier** — a faster, rain-tolerant strike fire (flint + found pyrite)
+  between friction fire (shipped) and forge-era flint-and-steel.
+- **Candles & lanterns:** cheap, short-lived tallow candles and permanent iron+oil lanterns above the
+  burn-out torch, so deep caving becomes a light-supply problem.
 
 ## Water
 
@@ -37,6 +41,10 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 - **Food security:** fresh food emits **scent** that draws bears and predators, countered by sealed
   barrels, hung caches, and smokehouses. Carry food and attract predators, or cache it and pay
   travel time.
+- **Weeds & field tending:** weeds spawn on farmland, slow and choke crops, and spread to neighbours
+  unless cleared by hand/hoe; untended fields fail, trampled crops die, farmland erodes back to dirt.
+- **Mushroom toxicity & identification:** some foraged mushrooms are poisonous, learned by trial or
+  study and then permanently marked in a foraging journal.
 
 ## Wildlife & hunting
 
@@ -55,6 +63,9 @@ The campfire exists; the rest of the heat-tech tree does not yet.
 - **Fire spread** through built structures. *(Structural gravity has shipped — loose soil falls and
   must be shored with timber; see [Weight, Carrying & Blocks](./features/building-and-blocks.md#soil-has-no-cohesion--dig-with-care).)*
 - A **re-root / tamp tool** to commit loose-placed blocks back into secure structure.
+- **Felling real trees:** cut through the base and the tree **falls as an entity** (and can crush
+  you), with **sapling → young → mature → old-growth** age states that scale a tree's height, chop
+  time, and yield (an old-growth giant worth several times a young one).
 
 ## Transport
 
@@ -78,6 +89,8 @@ The backpack exists; the rest of the logistics tree is planned.
 - **Rationalized mob drops** (the good gear is in the chests, not the corpses).
 - **Redstone gated** behind found engineering plans.
 - **Villager barter and reputation**, and **hired villagers** you pay in food.
+- **Diamonds repurposed:** not armour (that's abolished) but **diamond-tipped picks and saws** that
+  cut faster and cleaner, and an elite trade good in their own right.
 
 ## The body & combat
 
@@ -86,10 +99,33 @@ The backpack exists; the rest of the logistics tree is planned.
 - **Combat depth:** the spear as king of the early game; shields drained and defeated outright by
   large creatures.
 
+## Crafting & labour
+
+- **Work sessions — the honest speedup:** big items (a dugout canoe, a timber frame) are multi-day
+  projects you *actively engage* to enter a time-compressed "spent the afternoon on it" mode — meters
+  keep draining, and a nearby event (a predator, a storm) interrupts you. The engine that makes days
+  of labour playable without either tedium or a free instant craft.
+- **Sleep as an honest time-skip:** sleeping runs the clock fast rather than teleporting to dawn —
+  hunger/thirst drain, fires burn down, and a scent or storm event wakes you "a second later, but
+  hours later in game time." Same accelerated-tick engine as work sessions.
+
+## Skills & progression
+
+- **Skill by doing (replaces XP):** repetition improves speed and lowers failure within a craft
+  family — knapping, pottery, mining, fire-starting, tracking, smithing — so competence is earned by
+  practice, not spent from an experience pool.
+
 ## Livestock & economy
 
 - **Domesticated animals as bartered wealth**, priced in grain — earned through many harvests, never
   spawned or found wild.
+
+## Death, respawn & run modes
+
+- **Carried home, not corpse-run:** death costs *time*, not a sprint back to your gear — you wake days
+  later, wounded, with the world moved on and your gear left in the field (scenting, drawing animals).
+- **Hardcore-Alone run modes:** self-set victory conditions (survive the winter, survive a year, slay
+  the Dragon) with a tap-out stat screen — the framing that turns the sandbox into a run.
 
 ## The endgame
 
