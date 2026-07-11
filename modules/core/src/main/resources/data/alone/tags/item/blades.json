@@ -3,7 +3,8 @@
   "values": [
     "#minecraft:swords",
     "#minecraft:axes",
-    "#minecraft:spears",
+    "minecraft:copper_spear",
+    "minecraft:iron_spear",
     "alone:flint_knife",
     "alone:flint_hatchet",
     "alone:flint_spear",
