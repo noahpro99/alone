@@ -2,11 +2,13 @@ package dev.alone.core.client.mixin;
 
 import dev.alone.core.AloneItems;
 import dev.alone.core.Drinking;
+import dev.alone.core.Fibers;
 import dev.alone.core.FireStarting;
 import dev.alone.core.net.DrinkRequestPayload;
 import dev.alone.core.net.FireDrillPayload;
 import dev.alone.core.net.KnapStrikePayload;
 import dev.alone.core.net.RiveStrokePayload;
+import dev.alone.core.net.StripFiberPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.ItemTags;
@@ -35,6 +37,21 @@ public class MinecraftUseItemMixin {
             return;
         }
         ItemStack main = mc.player.getMainHandItem();
+
+        // Hold right-click on a fibrous plant (bare-handed or with a cutting blade) → strip plant fibre
+        // over a couple of seconds (server accumulates the tugs). Takes priority over the bare-hand water
+        // check below, but they never collide — one targets a plant, the other water.
+        boolean stripTool = main.isEmpty() || main.is(ItemTags.SWORDS) || main.is(ItemTags.AXES)
+            || main.is(ItemTags.HOES) || main.is(AloneItems.FLINT_KNIFE);
+        if (stripTool && Fibers.findFibrousPlant(mc.player, mc.level) != null) {
+            if (mc.player.tickCount - alone$lastSendTick >= 5) {
+                ClientPlayNetworking.send(StripFiberPayload.INSTANCE);
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                alone$lastSendTick = mc.player.tickCount;
+            }
+            ci.cancel();
+            return;
+        }
 
         // Bare-hand right-click on water → drink.
         if (main.isEmpty()) {
