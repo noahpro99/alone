@@ -85,3 +85,5 @@ same "leave me and my cubs alone" temperament) but roams **forests and taiga** i
 **bold predator**: it doesn't flee from you, it holds its ground, it tracks the meat you carry, and it
 **can't be run down** by [persistence hunting](#persistence-hunting--run-it-down) the way skittish game can.
 Kill one with a blade and it yields a **hide** like any hide-bearing animal.
+
+**A shield won't save you from it.** You can turn a person's blade with a raised shield, but bracing one against a bear (or a ravager, an iron golem, or the warden) is folly — the mass and power **bash your guard aside**, knocking the shield down for a few seconds so the next blow lands on flesh. You can brace a single hit; you can't turtle behind a shield against a charging bear.
