@@ -30,15 +30,18 @@ and then a long plateau toward mastery. It shows up only as the occasional note 
 tier: **Novice → Apprentice → Skilled → Expert → Master**. Your skills **stay with you through death** —
 you don't forget a trade because you drowned.
 
-Two crafts respond to skill so far:
+Four crafts respond to skill so far:
 
 - **Flintworking** — knapping succeeds ~**55%** of the time as a raw novice, climbing to ~**92%** at
   mastery (it was a flat ~65%). You learn from every strike, whether it flakes or shatters.
 - **Firecraft** — a practised firemaker coaxes a friction fire alight **sooner** (the catch chance scales
   up to ~**1.3×** at mastery, and a novice is a touch slower). Learned each fire you light.
+- **Mining** — a practised miner **quarries faster**: dig speed on stone and ore rises up to ~**1.5×** at
+  mastery. Learned by breaking stone and ore.
+- **Smithing** — a practised smith **draws better steel**: the random quality of a forged piece is nudged
+  toward masterwork the more skilled you are. Learned each piece you forge.
 
-*(More crafts — pottery, mining, tracking, smithing — are planned to respond to skill on the same
-framework.)*
+*(More crafts — pottery, tracking — are planned to respond to skill on the same framework.)*
 
 ## Plant fiber and string
 
