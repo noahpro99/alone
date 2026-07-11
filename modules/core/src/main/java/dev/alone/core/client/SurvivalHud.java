@@ -25,7 +25,8 @@ public final class SurvivalHud {
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.GOLDEN_PICKAXE);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
-    private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);
+    private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);   // hands (bulky carry)
+    private static final ItemStack ICON_POCKET = new ItemStack(Items.LEATHER);  // pockets (small items)
     private static final ItemStack ICON_WEIGHT = new ItemStack(Items.ANVIL);
 
     public static void render(GuiGraphicsExtractor g) {
@@ -40,8 +41,6 @@ public final class SurvivalHud {
         int yStamina = y0;
         int yFatigue = y0 + rowH;
         int yThirst = y0 + rowH * 2;
-        int yVolume = y0 + rowH * 3;
-        int yWeight = y0 + rowH * 4;
 
         // NO single "health"/vitality bar (§1.5). The body is a set of separate systems: you bleed out,
         // freeze, dehydrate, starve, or die of trauma — each shows through its own meter, the body
@@ -58,15 +57,8 @@ public final class SurvivalHud {
         drawItemIcon(g, ICON_THIRST, left, yThirst - 3);
         drawBar(g, barX, yThirst, ClientSurvivalState.thirst / SurvivalMeters.MAX_THIRST, 0xFF4A90D9);
 
-        drawItemIcon(g, ICON_VOLUME, left, yVolume - 3);
-        float volumePct = Carry.volumeFullnessPct(mc.player); // fuller of hands vs. pockets (§5.1)
-        drawBar(g, barX, yVolume, volumePct, volumeColor(volumePct));
-
-        // Load (§5.1) — bundle is space, anvil is heft. Full bar = the crawling weight; the fill goes
-        // grey (no penalty) → amber (slowing) → red (near a crawl) as the load drags on your movement.
-        drawItemIcon(g, ICON_WEIGHT, left, yWeight - 3);
-        float weight = Carry.totalWeight(mc.player);
-        drawBar(g, barX, yWeight, weight / Carry.MAX_WEIGHT, weightColor(weight));
+        // Carry (volume + weight) isn't on the always-on HUD — it's a pack-management concern, so it's
+        // drawn only while your inventory is open (see {@link #renderCarry}).
 
         // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot).
         int tx = barX + BAR_W + 6;
@@ -76,6 +68,32 @@ public final class SurvivalHud {
 
         // A little figure — a paper-doll of your body: bleeding torso, sprained legs, dirty hands, illness.
         drawPerson(g, tx + 24, yStamina, ClientSurvivalState.conditions);
+    }
+
+    /** Carry detail — drawn only while the inventory is open (see the container-screen mixin). Shows the
+     *  two separate volume budgets (hands, then pockets) and the weight bar. Kept off the play HUD because
+     *  managing your load is a pack-time concern, not something you watch while walking. (§5.1) */
+    public static void renderCarry(GuiGraphicsExtractor g) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        int left = 6;
+        int barX = left + 13;
+        int rowH = BAR_H + 8;
+        int y0 = 6;
+
+        float handsPct = Carry.handVolume(mc.player) / Math.max(0.0001f, Carry.handLimit(mc.player));
+        drawItemIcon(g, ICON_VOLUME, left, y0 - 3);
+        drawBar(g, barX, y0, handsPct, volumeColor(handsPct));
+
+        float pocketPct = Carry.pocketVolume(mc.player) / Math.max(0.0001f, Carry.pocketLimit(mc.player));
+        drawItemIcon(g, ICON_POCKET, left, y0 + rowH - 3);
+        drawBar(g, barX, y0 + rowH, pocketPct, volumeColor(pocketPct));
+
+        float weight = Carry.totalWeight(mc.player);
+        drawItemIcon(g, ICON_WEIGHT, left, y0 + rowH * 2 - 3);
+        drawBar(g, barX, y0 + rowH * 2, weight / Carry.MAX_WEIGHT, weightColor(weight));
     }
 
     /** Draw a game item as a ~10px icon (item icons are 16px, so scale them down). */
