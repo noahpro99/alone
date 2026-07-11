@@ -15,9 +15,10 @@ import net.minecraft.world.level.Level;
 
 /**
  * The bottom rung of the shelter ladder (proposal §1.4/§5.2): right-click bare ground with an empty
- * hand to catch a quick, fitful rest — the <b>worst</b> sleep, only <b>at night</b> with <b>no rain on
- * you</b>. It sheds some fatigue and restores some stamina on a cooldown, but does <b>not</b> lay you
- * down or skip time. The bedroll (a real bed block) and a bed do that far better.
+ * hand to catch a fitful rest — the <b>worst</b> sleep, only <b>at night</b> with <b>no rain on you</b>.
+ * It sheds some fatigue and restores some stamina, then <b>lays you down</b> on the spot the way a bed
+ * does; {@link GradualSleep} runs the clock fast to dawn from there, just at the worst comfort. The
+ * bedroll (a real bed block) does it warmer, and sets your spawn.
  */
 public final class Sleeping {
     private Sleeping() {
@@ -85,6 +86,13 @@ public final class Sleeping {
                 player.setAttached(LAST_REST, now);
                 SurvivalMeters.rest(player, fatigueShed, staminaRestore);
                 player.sendSystemMessage(Component.literal(message));
+                // Lie down like a bed does — bed down on the spot. With the ground-rest happening at
+                // night, GradualSleep then runs the clock fast to dawn (and wakes you), just at the
+                // worst comfort. (If the engine won't hold a bedless sleeper down, the recovery above
+                // still stands, so resting never breaks.)
+                if (!player.isSleeping()) {
+                    player.startSleeping(player.blockPosition());
+                }
             } else {
                 player.sendSystemMessage(Component.literal(
                     "You've only just rested — give it " + ((COOLDOWN - since) / 20L) + "s."));
