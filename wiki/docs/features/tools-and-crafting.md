@@ -44,7 +44,7 @@ Five crafts respond to skill so far:
   mastery. Learned by breaking stone and ore.
 - **Smithing** — a practised smith **draws better steel**: the random quality of a forged piece is nudged
   toward masterwork the more skilled you are. Learned each piece you forge.
-- **Tracking** — a practised tracker **runs game down faster**: [persistence hunting](./hunting.md#persistence-hunting--run-it-down) chase-fatigue builds up to ~1.6× as fast at mastery, so quarry tires in fewer seconds. Learned by taking wild game.
+- **Tracking** — a practised tracker hunts better both ways: [persistence hunting](./hunting.md#persistence-hunting--run-it-down) chase-fatigue builds up to ~1.6× as fast (quarry tires in fewer seconds), and wounded game leaves a **longer, more followable [blood trail](./hunting.md#blood-trails--track-a-wounded-animal)** (up to ~1.5× at mastery). Learned by taking wild game.
 
 *(Pottery is the last craft still to respond to skill on the same framework.)*
 
