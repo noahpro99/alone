@@ -17,6 +17,7 @@ import java.util.Map;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BedItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -174,9 +175,13 @@ public final class AloneItems {
         key -> new TorchBlockItem(Blocks.TORCH, Blocks.WALL_TORCH, Direction.DOWN,
             new Item.Properties().durability(TORCH_FUEL).setId(key)));
 
-    // Primitive knapped tools (§8.1) — a flint tier between wood and stone: low durability, workable.
+    // Primitive knapped tools (§8.1) — a flint tier between wood and stone: low durability, workable, and
+    // unlike a stone/copper pick it CAN'T work iron ore (see the incorrect_for_flint_tool tag). That gates
+    // the flint -> copper -> iron ladder: you must forge a copper pick before you can mine iron.
+    private static final TagKey<Block> INCORRECT_FOR_FLINT = TagKey.create(Registries.BLOCK,
+        Identifier.fromNamespaceAndPath("alone", "incorrect_for_flint_tool"));
     private static final ToolMaterial FLINT =
-        new ToolMaterial(BlockTags.INCORRECT_FOR_STONE_TOOL, 48, 2.5F, 1.0F, 3, ItemTags.STONE_TOOL_MATERIALS);
+        new ToolMaterial(INCORRECT_FOR_FLINT, 48, 2.5F, 1.0F, 3, ItemTags.STONE_TOOL_MATERIALS);
 
     public static final Item FLINT_HATCHET = register("flint_hatchet",
         key -> new AxeItem(FLINT, 6.0F, -3.2F, new Item.Properties().setId(key)));

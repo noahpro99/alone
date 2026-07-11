@@ -18,7 +18,7 @@ Bare hands don't fell timber:
 Before any metal, flint is knapped into primitive tools:
 
 - **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but a **raw novice shatters** nearly half their flint. That improves with practice (see [Skill by doing](#skill-by-doing) below): a **skilled** knapper wastes far less.
-- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone), a **flint knife** (a crude cutting blade that also strips plant fiber, below), or a **flint spear** (below).
+- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone, coal, and **copper ore** — but **not iron ore**, which shatters flint; that needs a copper pick, gating the flint → copper → iron ladder), a **flint knife** (a crude cutting blade that also strips plant fiber, below), or a **flint spear** (below).
 
 ### The spear — reach, from the first day
 

@@ -97,10 +97,12 @@ The four ages below map to the real arc:
    open campfire.
 2. **Make charcoal.** You need it hotter than wood-fire for metal: char wood down to **charcoal** (a
    burnt-out campfire leaves some; a furnace makes more). ⏳ A **charcoal clamp** will make it in bulk.
-3. **Work copper — the first metal.** Mine **copper ore**, smelt it, and cast **copper tools** — the
-   softest, most forgiving metal, worked without a full forge. This is your bridge off stone: copper sits
-   a full tier above flint on the [tool ladder](./features/tools-and-crafting.md) (**flint → copper → iron →
-   steel**).
+3. **Work copper — the first metal.** Mine **copper ore** (a flint pick handles it), smelt it, and cast
+   **copper tools** — the softest, most forgiving metal, worked without a full forge. Copper is your bridge
+   off stone on the [tool ladder](./features/tools-and-crafting.md) (**flint → copper → iron → steel**), and
+   it's a **real gate, not a shortcut you can skip**: a flint pick **can't work iron ore**, so you *must*
+   forge a copper pick before you can mine iron. (Copper here stands in for the whole Bronze Age — there's
+   no separate bronze/tin tier by design.)
 4. ⏳ **The ash economy** — hardwood ash → lye → potash, feeding soap and the **glass** flux.
 5. ⏳ **Glass** that gates itself behind forge heat, flux, and lime — arriving late as the trophy it
    historically was — plus **glass bottles** and **seawater distillation** for fresh water.
@@ -116,9 +118,10 @@ sharper, and permanent.*
 
 *The top of the ladder: smelt iron, forge steel, and build works that outlast you.*
 
-1. **Smelt iron.** Charge a **[bloomery](./features/fire.md)** with iron ore and **charcoal** and let it run
-   a long, hot, fuel-hungry burn into a **bloom**, then hammer the bloom into an ingot. Iron needs more heat
-   and more fuel than copper ever did — that's why it comes later.
+1. **Mine and smelt iron.** Iron ore needs a **copper pick** to work (a flint pick just shatters on it) —
+   so Age 3 gates this. Then charge a **[bloomery](./features/fire.md)** with the ore and **charcoal** and
+   let it run a long, hot, fuel-hungry burn into a **bloom**, and hammer the bloom into an ingot. Iron needs
+   more heat and more fuel than copper ever did — that's why it comes later.
 2. **Forge and temper.** A grid-crafted iron or steel piece comes out a **brittle unforged blank**. Heat it
    at a forge and **hammer it on an anvil** — [many blows across several heats](./features/tools-and-crafting.md#forge--temper--metal-gear)
    — and it rolls a **quality** from crude to masterwork. Re-tempering rerolls it (and repairs it), but
@@ -143,14 +146,17 @@ sharper, and permanent.*
 The path is deliberately the real one, but a few rungs are simplified or still missing. These are the
 things to keep honest as the pack fills in:
 
-- **No bronze (yet).** Real Mesopotamia ran on **bronze** (copper + tin), not plain copper. Alone currently
-  jumps **copper → iron**, skipping the tin/bronze alloy step. A true bronze tier (prospect tin, alloy it)
-  would make Age 3 more honest — a candidate addition.
+- **Copper stands in for the whole Bronze Age — by design.** Real Mesopotamia ran on **bronze** (copper +
+  tin), but Alone deliberately folds that into a single **copper** tier rather than modelling tin,
+  prospecting, and alloying. Copper *represents* both, so the metal ladder is simply **flint → copper →
+  iron → steel**. (This is a chosen simplification, not a missing rung.)
 - **Steel is a slight anachronism.** Mass steel is really post-Roman; here it stands in as the game's top
   metal in place of diamond. Acceptable as a game-tier, but worth naming.
-- **The bridges between ages need real gates.** Each age should *require* the last: farming needs Age 1's
-  fire and water; metal needs Age 2's kiln heat and a food surplus to afford the days at the forge. Where a
-  later tier is reachable without the earlier work, that's a hole to close.
+- **The bridges between ages need real gates** — and they're being enforced. Iron ore now requires a
+  **copper pick** (a flint pick can't work it), so you can't skip the copper age. Each age should *require*
+  the last: farming needs Age 1's fire and water; metal needs Age 2's kiln heat and a food surplus to
+  afford the days at the forge. Where a later tier is still reachable without the earlier work, that's a
+  hole to close.
 - **Time and effort are the real tech tree.** Every rung must cost what it did in life — the danger is a
   shortcut sneaking in (a fast craft, a free resource, a mob that drops good gear). When auditing, the
   question is always: *could you really do this, this fast, with what you have?*
