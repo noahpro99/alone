@@ -73,6 +73,15 @@ Every part has a use:
 
 ## Carrying meat draws predators
 
-Fresh meat you carry **reeks**, drawing wolves and polar bears — which will **snatch it and bolt** if they
-reach you. Preserving or caching your meat is the counter. See
+Fresh meat you carry **reeks**, drawing wolves, **brown bears**, and polar bears — which will **snatch it
+and bolt** if they reach you. Preserving or caching your meat is the counter. See
 [Food Preservation](./preservation.md#fresh-meat-draws-predators).
+
+## The brown bear
+
+The **brown bear** is the forest's big predator — the one that actually belongs in the temperate and boreal
+woods this game is set in, where a polar bear never would. It's built like its polar cousin (same bulk,
+same "leave me and my cubs alone" temperament) but roams **forests and taiga** instead of the snow. It's a
+**bold predator**: it doesn't flee from you, it holds its ground, it tracks the meat you carry, and it
+**can't be run down** by [persistence hunting](#persistence-hunting--run-it-down) the way skittish game can.
+Kill one with a blade and it yields a **hide** like any hide-bearing animal.

@@ -50,7 +50,8 @@ public final class Scent {
     }
 
     /** Bold predators that will track a meat-carrier by smell (and, in {@link Wildlife}, aren't skittish game). */
-    public static final Set<EntityType<?>> PREDATORS = Set.of(EntityTypes.WOLF, EntityTypes.POLAR_BEAR);
+    public static final Set<EntityType<?>> PREDATORS =
+        Set.of(EntityTypes.WOLF, EntityTypes.POLAR_BEAR, AloneEntities.BROWN_BEAR);
 
     private static final int SCAN = 40;              // sniff the air ~every 2s
     private static final double BASE_RADIUS = 14.0;  // a little carried meat carries this far

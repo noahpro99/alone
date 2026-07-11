@@ -69,6 +69,10 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.TRAVOIS, TravoisRenderer::new);
 
+        // The brown bear (§7.2) reuses the polar bear model with a brown coat — a recolour, nothing more.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.BROWN_BEAR, BrownBearRenderer::new);
+
         // Show the piece of food curing on a drying rack (§4.2) — read from the rack's synced attachment.
         net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
             dev.alone.core.AloneBlocks.DRYING_RACK_BLOCK_ENTITY, DryingRackRenderer::new);
