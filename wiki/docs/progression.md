@@ -77,7 +77,10 @@ The four ages below map to the real arc:
    **smoke** it over a fire, or keep it cold in a **root cellar or ice house**.
 4. **Guard the stores.** Fresh meat [reeks and draws predators](./features/hunting.md#carrying-meat-draws-predators)
    — preserve or cache it so a wolf or bear doesn't take it (and stay downwind of them).
-5. ⏳ **Weeds & field tending** — untended fields choke and fail, so a farm is upkeep, not a one-time build.
+5. **Tend the field.** A crop is never a sure thing: **blight** and **winter frost** can wither it, and
+   **weeds** sprout on the soil around your plot and choke it — and a neglected field **sows its own weeds**.
+   So a farm is **upkeep**, not a one-time build: weed it by hand and mind the season, or it fails. (Don't
+   jump on your crops — trampling is vanilla.)
 6. ⏳ **Livestock as wealth** — barter for animals (priced in grain), earned over many harvests, never found
    wild; and **purpose-built stores** (sealed barrels, hung caches, smokehouses) that beat the scent.
 

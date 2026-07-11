@@ -49,10 +49,13 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
   better than a plain chest. *(The scent system has shipped — carried fresh meat draws wolves and polar
   bears, which will **snatch it and bolt** if they reach you, countered by preserving or caching it; see
   [Food Preservation](./features/preservation.md#fresh-meat-draws-predators).)*
-- **Weeds & field tending:** weeds spawn on farmland, slow and choke crops, and spread to neighbours
-  unless cleared by hand/hoe; untended fields fail, trampled crops die, farmland erodes back to dirt.
 - **Mushroom toxicity & identification:** some foraged mushrooms are poisonous, learned by trial or
   study and then permanently marked in a foraging journal.
+
+*(**Weeds & field tending** has shipped — crops die to blight and winter frost, **weeds sprout on the soil
+around a plot and choke the crop** (and crops sow more weeds if you neglect them), so a field is upkeep you
+weed by hand, not a one-time build; trampling and farmland erosion are vanilla. See
+[Farming with the seasons](./features/world-and-seasons.md#farming-with-the-seasons).)*
 
 ## Wildlife & hunting
 
