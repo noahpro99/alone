@@ -29,7 +29,7 @@ The spear was humanity's first great weapon — and the **very first spears were
 
 Both carry the full spear feel — a **charged thrust** and **piercing** — the reach being why you can hit game or an attacker before it closes. Above flint the metal tiers run **copper → iron → steel**, each sharper and tougher. (The **stone, gold, and diamond** spears aren't craftable — they're off the pack's tiers.)
 
-Flint and loose rocks come from **digging gravel** (rocks are also foraged off the ground).
+Flint comes from **digging gravel** — you don't get it in a lump when the block finally breaks, you **sift it loose bit by bit as you work through** the gravel: nodules shake out at intervals across the (slow) dig, so even a half-finished dig keeps what you've already turned up. A finished cubic metre yields **a couple on average**, sometimes none, sometimes a few. The break itself just turns up the odd **loose rock** (rocks are also foraged off the ground).
 
 ## Skill by doing
 

@@ -1,9 +1,7 @@
 package dev.alone.core.mixin;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -54,17 +52,18 @@ public abstract class ServerPlayerGameModeMixin {
         return this.alone$savedTicks;
     }
 
-    // You don't excavate a whole cubic metre of gravel to get flint — you disturb it and the flint
-    // nodules shake loose part-way through. So flint pops out at ~a third of the dig (see below), once
-    // per block, tracked here by packed position so you can't re-scrape the same block for more (§1.3).
-    @Unique private static final float FLINT_THRESHOLD = 0.30f; // how far into the dig flint shakes loose
-    @Unique private static final float FLINT_CHANCE = 0.60f;    // odds a disturbance yields a usable nodule
-    @Unique private Set<Long> alone$sifted;
+    // You don't excavate a whole cubic metre of gravel to get flint — you sift it, and nodules shake loose
+    // BIT BY BIT as you work through it. So flint turns up at a series of stages into the dig, not all at
+    // once and not only when the block finally breaks. Tracked per block (packed position → how many stages
+    // already checked) so partial digs still pay out, but you can't re-scrape one block forever (§1.3).
+    @Unique private static final float[] FLINT_STAGES = {0.20f, 0.40f, 0.60f, 0.80f};
+    @Unique private static final float FLINT_CHANCE = 0.40f; // odds each stage of sifting turns up a nodule
+    @Unique private Map<Long, Integer> alone$sifted;
 
     @Unique
-    private Set<Long> alone$sifted() {
+    private Map<Long, Integer> alone$sifted() {
         if (this.alone$sifted == null) {
-            this.alone$sifted = new HashSet<>();
+            this.alone$sifted = new HashMap<>();
         }
         return this.alone$sifted;
     }
@@ -104,20 +103,30 @@ public abstract class ServerPlayerGameModeMixin {
     }
 
     /**
-     * Flint foraging (proposal §1.3). {@code incrementDestroyProgress} returns how far into the current
-     * dig the block is, every tick. On gravel, once you're a third of the way in, a flint nodule shakes
-     * loose (a chance, not a certainty) — you don't have to clear the whole cubic metre. It fires once
-     * per block (the {@code sifted} set), so you can't re-scrape one gravel block for endless flint.
+     * Flint foraging (proposal §1.3). {@code incrementDestroyProgress} returns how far into the current dig
+     * the block is, every tick. On gravel, flint shakes loose bit by bit as you work through it: at each
+     * newly-crossed {@link #FLINT_STAGES stage} a nodule may turn up (a chance, not a certainty). Tracked
+     * per block by how many stages have already been checked, so a partial dig keeps what it already sifted
+     * out but one gravel block can't be re-scraped for endless flint.
      */
     @Inject(method = "incrementDestroyProgress", at = @At("RETURN"))
     private void alone$siftFlint(BlockState state, BlockPos pos, int startTick,
                                  CallbackInfoReturnable<Float> cir) {
-        if (!state.is(Blocks.GRAVEL) || cir.getReturnValueF() < FLINT_THRESHOLD) {
+        if (!state.is(Blocks.GRAVEL)) {
             return;
         }
+        float progress = cir.getReturnValueF();
         long key = pos.asLong();
-        if (this.alone$sifted().add(key) && this.player.getRandom().nextFloat() < FLINT_CHANCE) {
-            Block.popResource(this.level, pos, new ItemStack(Items.FLINT));
+        int checked = this.alone$sifted().getOrDefault(key, 0);
+        int before = checked;
+        while (checked < FLINT_STAGES.length && progress >= FLINT_STAGES[checked]) {
+            if (this.player.getRandom().nextFloat() < FLINT_CHANCE) {
+                Block.popResource(this.level, pos, new ItemStack(Items.FLINT)); // another nodule shakes loose
+            }
+            checked++;
+        }
+        if (checked != before) {
+            this.alone$sifted().put(key, checked);
         }
     }
 

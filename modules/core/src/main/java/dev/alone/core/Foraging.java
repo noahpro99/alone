@@ -25,9 +25,8 @@ public final class Foraging {
             }
             RandomSource rng = player.getRandom();
             if (state.is(Blocks.GRAVEL)) {
-                if (rng.nextFloat() < 0.75f) {
-                    Block.popResource(serverLevel, pos, new ItemStack(Items.FLINT));
-                }
+                // Flint isn't a lump you get when the block finally pops — it shakes loose bit by bit AS you
+                // sift the gravel (see ServerPlayerGameModeMixin). The break itself just turns up a loose rock.
                 if (rng.nextFloat() < 0.5f) {
                     Block.popResource(serverLevel, pos, new ItemStack(AloneItems.ROCK));
                 }
