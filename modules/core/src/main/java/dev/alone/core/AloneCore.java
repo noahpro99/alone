@@ -125,6 +125,11 @@ public class AloneCore implements ModInitializer {
             if (player.isCreative()) {
                 return true;
             }
+            // A block you set down yourself is just resting there — pick it back up freely, no tool needed
+            // (a placed log/stone isn't rooted, so the axe/pickaxe requirement below shouldn't apply). (§5.1)
+            if (PlacedBlocks.isPlaced(world, pos)) {
+                return true;
+            }
             var held = player.getMainHandItem();
             // You fell a tree with an axe (or barely, a crude blade) — never a bare fist.
             if (state.is(BlockTags.LOGS) && classifyForLog(held) == LogTool.NONE) {

@@ -22,7 +22,9 @@ public class BlockBehaviourLooseBreakMixin {
     private void alone$looseBreak(BlockState state, Player player, BlockGetter level, BlockPos pos,
                                   CallbackInfoReturnable<Float> cir) {
         float original = cir.getReturnValueF();
-        if (original > 0f && PlacedBlocks.isPlaced(level, pos)) {
+        if (PlacedBlocks.isPlaced(level, pos)) {
+            // Your own set-down block comes up fast, no tool needed — even for logs/stone whose rooted
+            // rules zero out the by-hand speed. It's just resting there; you're picking it up, not uprooting.
             cir.setReturnValue(Math.max(original, 0.34f)); // loose — comes up in ~3 ticks
         }
     }
