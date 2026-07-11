@@ -112,6 +112,7 @@ public class AloneCore implements ModInitializer {
         Insects.init();         // §7.2 — biting insects near standing water; a smudge fire drives them off
         Scent.init();           // §4.3 — fresh meat you carry reeks and draws predators; preserve/cache it
         Tracking.init();        // §7.3 — persistence hunting: sustained chase tires wild game so you run it down
+        BloodTrail.init();       // §7.3 — a wounded animal bleeds a fading trail you can track
         Hunting.init();         // §7.3 — a blade kill salvages the hide (leather) from a hide-bearing animal
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         PlacedBlocks.init();    // §5.1 — remember player-placed blocks so they break loose, not rooted

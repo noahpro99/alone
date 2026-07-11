@@ -1,0 +1,78 @@
+package dev.alone.core;
+
+import java.util.List;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+
+/**
+ * Blood trails (roadmap: Wildlife &amp; hunting — tracking sign). Wound an animal and it <b>bleeds</b>: as
+ * it flees it drips a trail of blood you can follow — the tracker's craft, and the companion to running
+ * game down (see {@link Tracking}). The bleeding is heavier the harder you hit it and <b>clots over time</b>
+ * (the wound closes), so the trail is only good while it's fresh — <b>track it promptly or lose it</b>.
+ *
+ * <p>The drops fade within a second or two of hitting the ground (as real blood sign goes cold), so what
+ * you see is a short, fresh dotted line trailing the animal — enough to follow it through brush and over a
+ * rise. Purely a tracking aid for now; a wounded beast bleeding out is left for later.
+ */
+public final class BloodTrail {
+    private BloodTrail() {
+    }
+
+    private static final int DRIP_INTERVAL = 5;             // lay a drop every quarter-second
+    private static final int BLEED_TICKS_PER_DAMAGE = 40;    // each half-heart of damage → ~2s of bleeding
+    private static final int MAX_BLEED = 600;               // a bad wound bleeds up to ~30s
+    private static final double TRACK_RADIUS = 26.0;         // drops render for players within this range
+
+    /** Remaining bleed time in ticks on a wounded animal. Transient — a session state, not saved. */
+    public static final AttachmentType<Integer> BLEED = AttachmentRegistry.createDefaulted(
+        Identifier.fromNamespaceAndPath("alone", "bleeding"), () -> 0);
+
+    public static void init() {
+        // A hit from a player opens a wound that bleeds (the bigger the hit, the more).
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, takenDamage, blocked) -> {
+            if (blocked || takenDamage <= 0f || !(entity instanceof Animal animal) || !animal.isAlive()) {
+                return;
+            }
+            if (source.getEntity() instanceof Player) {
+                int added = Math.round(takenDamage * BLEED_TICKS_PER_DAMAGE);
+                int bleed = Math.min(MAX_BLEED, animal.getAttachedOrElse(BLEED, 0) + added);
+                animal.setAttached(BLEED, bleed);
+            }
+        });
+
+        // Bleeding animals drip a fading trail; the wound clots as the bleed timer runs down.
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTickCount() % DRIP_INTERVAL != 0) {
+                return;
+            }
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (player.level() instanceof ServerLevel level) {
+                    dripNearby(level, player);
+                }
+            }
+        });
+    }
+
+    private static void dripNearby(ServerLevel level, ServerPlayer player) {
+        AABB box = player.getBoundingBox().inflate(TRACK_RADIUS);
+        List<Animal> wounded = level.getEntitiesOfClass(Animal.class, box,
+            a -> a.getAttachedOrElse(BLEED, 0) > 0);
+        for (Animal animal : wounded) {
+            int bleed = animal.getAttachedOrElse(BLEED, 0);
+            // A drop or two at its feet — where it stands now, so a moving animal lays a dotted trail.
+            level.sendParticles(DustParticleOptions.REDSTONE,
+                animal.getX(), animal.getY() + 0.1, animal.getZ(),
+                2, 0.12, 0.02, 0.12, 0.0);
+            animal.setAttached(BLEED, Math.max(0, bleed - DRIP_INTERVAL));
+        }
+    }
+}
