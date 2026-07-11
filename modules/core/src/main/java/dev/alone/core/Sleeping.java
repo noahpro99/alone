@@ -32,7 +32,19 @@ public final class Sleeping {
     public static final AttachmentType<Long> LAST_REST =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "last_rest"), Codec.LONG);
 
+    /** Set while you're bedded down on bare ground (no bed block). {@code LivingEntitySleepMixin} reads it so
+     *  the engine doesn't wake you for want of a bed. Transient — a fresh login isn't mid-rest. */
+    public static final AttachmentType<Boolean> GROUND_RESTING = AttachmentRegistry.createDefaulted(
+        Identifier.fromNamespaceAndPath("alone", "ground_resting"), () -> false);
+
     public static void init() {
+        // Once you're up (at dawn, or woken), you're no longer ground-resting — so a later real-bed sleep
+        // isn't wrongly treated as bedless.
+        net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents.STOP_SLEEPING.register((entity, pos) -> {
+            if (entity instanceof Player p) {
+                p.setAttached(GROUND_RESTING, false);
+            }
+        });
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
             // Bare-handed right-click on the top of bare ground (grass/dirt/sand). No sneak needed —
             // but we only react when the hand is empty and you're aiming at the top face, so normal
@@ -92,6 +104,7 @@ public final class Sleeping {
                 // still stands, so resting never breaks.)
                 if (!player.isSleeping()) {
                     player.startSleeping(player.blockPosition());
+                    player.setAttached(GROUND_RESTING, true); // no bed here — LivingEntitySleepMixin keeps you down
                 }
             } else {
                 player.sendSystemMessage(Component.literal(
