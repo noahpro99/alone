@@ -110,7 +110,14 @@ public final class SurvivalMeters {
     private static final float TEMP_SCALE = 100f;
     private static final float WET_COLD_SHIFT = 35f;   // wetness chills you / blunts heat
     private static final float WATER_TARGET = -30f;    // being IN water pulls you to at least "slightly cold"
-    private static final float CAVE_TEMPERATURE = 0.7f; // underground: a stable, mild refuge (biome scale)
+    // Caves are NOT the mild refuge they seem (proposal §1.3, cave hypothermia). Below the surface, air
+    // goes stagnant and near-saturated, and the rock locks to a cold that only deepens with depth. All on
+    // the biome scale (NEUTRAL_AMBIENT ≈ comfortable): CAVE_COLD ≈ 0.45 → a shivering -35 body-equivalent,
+    // survivable dry but a hypothermia risk once wet or still; the deep floor ≈ 0.2 → -60, cold even dry.
+    private static final float CAVE_COLD = 0.45f;      // the constant-cold zone (~15m down): a damp, shivering chill
+    private static final float CAVE_DEEP_FLOOR = 0.2f; // the deep abyss near bedrock: hypothermic even when dry
+    private static final int CAVE_VARIABLE_DEPTH = 15; // m over which the surface's influence fades underground
+    private static final int CAVE_DEEP_DEPTH = 110;    // m below the cold zone at which the chill bottoms out (~bedrock)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
     private static final float ROOF_INSULATION = 0.4f;  // a bare roof (open lean-to) blunts ~40% of cold/heat (§5.5)
     private static final float MAX_INSULATION = 0.78f;   // a snug, fully-walled shelter — holds heat far better
@@ -347,13 +354,26 @@ public final class SurvivalMeters {
     /** Ambient temperature (biome scale) at an arbitrary position — the position-based core of the above. */
     public static float ambientTemperatureAt(Level level, BlockPos pos) {
         boolean roofed = !level.canSeeSky(pos); // a block/roof/canopy overhead — you're under cover
-        // Underground (below sea level, under cover): caves are a stable, mild refuge — insulated
-        // from sun, weather, and season. A welcome escape from winter and summer alike.
-        if (roofed && pos.getY() < level.getSeaLevel()) {
-            return CAVE_TEMPERATURE;
-        }
         float temp = level.getBiome(pos).value().getBaseTemperature(); // biome
         temp += Seasons.temperatureOffset(level);                      // §10 — winter cold, summer hot
+        // Underground (roofed, below sea level): NOT a warm refuge. Real caves settle into a constant,
+        // near-saturated cold that deepens with depth (§1.3 cave hypothermia). It's survivable while dry
+        // and moving, but the wet-chill and shiver code below turns wet-or-still into a real hypothermia
+        // risk — and what you're WEARING decides it, since clothing insulation offsets the cold target.
+        if (roofed && pos.getY() < level.getSeaLevel()) {
+            int depth = level.getSeaLevel() - pos.getY(); // ~metres below sea level
+            // The Variable Zone (0–15m): shallow caves still track the surface, just heavily moderated by
+            // the surrounding stone — a partial refuge from summer heat and winter cold, easing colder as
+            // you descend toward the constant zone.
+            float moderated = temp + (NEUTRAL_AMBIENT - temp) * MAX_INSULATION;
+            if (depth <= CAVE_VARIABLE_DEPTH) {
+                return moderated + (CAVE_COLD - moderated) * (depth / (float) CAVE_VARIABLE_DEPTH);
+            }
+            // The Constant Cold Zone (15m+) and the deep abyss below it: a damp ~4–12°C chill, locked
+            // independent of the season above, growing colder toward bedrock.
+            float d = Math.min(1f, (depth - CAVE_VARIABLE_DEPTH) / (float) CAVE_DEEP_DEPTH);
+            return CAVE_COLD + (CAVE_DEEP_FLOOR - CAVE_COLD) * d;
+        }
         if (roofed) {
             // Under a roof (§5.5): shielded from rain and the cold night sky, and insulated toward comfort.
             // But a bare roof is only a lean-to — the more WALLED you are, the better it holds heat, so a
