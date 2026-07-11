@@ -113,6 +113,7 @@ public class AloneCore implements ModInitializer {
         WorldGen.init();        // §8.1 — scatter loose rocks across the surface like grass, to pick up
         Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
+        IceHouse.init();        // §4.2 — cut lake ice with a pick/axe; pack it around a store for cold (ice house)
         Riving.init();          // §8.1 — rive a log into rough boards by hand (slow, exhausting; no saw)
         AdminCommand.init();    // debug — /alone reset refills meters, clears conditions, tops off vitals
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it

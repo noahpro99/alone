@@ -148,12 +148,22 @@ public final class Spoilage {
     }
 
     /** Storage temperature: a covered spot below sea level is an earth-cooled root cellar (colder the
-     *  deeper), otherwise it's just the ambient temperature there. */
+     *  deeper); ice/snow packed around the store (an ice house) chills it too, even above ground; otherwise
+     *  it's just the ambient temperature there. The coldest applicable source wins. */
     private static float storageTemp(Level level, BlockPos pos) {
+        float base;
         if (!level.canSeeSky(pos) && pos.getY() < level.getSeaLevel()) {
             int depth = level.getSeaLevel() - pos.getY();
-            return -20f - Math.min(30f, depth * 0.5f); // ~-20 just under, down to ~-50 deep
+            base = -20f - Math.min(30f, depth * 0.5f); // ~-20 just under, down to ~-50 deep
+        } else {
+            base = SurvivalMeters.environmentTempAt(level, pos);
         }
-        return SurvivalMeters.environmentTempAt(level, pos);
+        // Ice house: ice/snow packed against the container keeps it cold anywhere — a block against it is
+        // ~-12°, packed in on every side approaches ~-40°. Haul lake ice into a dark store to hold a harvest.
+        int ice = dev.alone.core.IceHouse.coldPacking(level, pos);
+        if (ice > 0) {
+            return Math.min(base, -8f - Math.min(32f, ice * 4f));
+        }
+        return base;
     }
 }
