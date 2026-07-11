@@ -103,9 +103,10 @@ const config = {
             title: 'Wiki',
             items: [
               {label: 'Overview', to: '/'},
-              {label: 'Design Proposal', to: '/proposal/philosophy'},
+              {label: 'Download & Play', to: '/download'},
+              {label: 'Features', to: '/features/survival-meters'},
+              {label: 'Roadmap', to: '/roadmap'},
               {label: 'Engineering', to: '/engineering/toolchain'},
-              {label: 'Progress', to: '/progress/backlog'},
             ],
           },
           {

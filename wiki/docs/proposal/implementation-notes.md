@@ -1,8 +1,0 @@
----
-sidebar_position: 15
-title: "14. Implementation Notes"
----
-
-- **Architecture:** Fabric modpack around one custom core mod (condition/injury system, weight, scent AI, timed crafting + work sessions, spawn-rule override, vessel states, seasons hooks), leaning on proven mods and datapacks where they fit (Serene Seasons / Tough As Nails lineage for temperature-thirst-seasons, Realistic Torches, falling-tree mods, finite-fluid mods). Loot tables, food-poison odds, and break-time multipliers are datapack territory. Genuinely custom work: scent-driven wildlife AI, persistence-hunting stamina for animals, the stick-block family with degradation, tree age states, weight-tiered movement, structure-scoped spawning, multi-stage projects with accelerated ticks, the condition panel, vessel contamination, hand-drawn maps, and the horse cart.
-- **Prior art:** *TerraFirmaCraft* (knapping, weight, pit kilns — but abandons vanilla identity), *Vintage Story* (mandatory research — essentially this design as a standalone game), *Tough As Nails*, *Primitive Survival*, *First Aid* (injury zones). The differentiator remains principle 3: it must still *be Minecraft*.
-- **Rollout tiers, playtested each:** Tier 1 — raw-food risk, no punching trees, injuries-lite (bleeding/bandage only), water currents, timed crafting: the game feels grounded immediately. Tier 2 — temperature, seasons, fire tech, torches, tree felling, stick shelters, structure-only spawning, vessels: the daily loop appears. Tier 3 — weight, scent/bears, spoilage conditions, full condition panel, work sessions, navigation, carts and roads: the full *Alone* experience, where the config sliders earn their keep.
