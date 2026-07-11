@@ -40,7 +40,7 @@ A serious fall can also **kill outright**. Falls under about **3.5 blocks** are 
 
 ### Infection
 
-Bites from **zombie-type mobs** have about a **30% chance** to fester into an infection. It starts as a **fever** (weakness and nausea), and if it deepens it turns **septic** and drains your health — an untreated deep infection can kill you. Your paper-doll arms turn **purple** when infected. **Dress the wound with cloth** (sneak + right-click) to stop the bleeding and clean the infection back down. A very deep infection may also need an herbal remedy to ease it.
+Infection comes two ways: a **zombie-type bite** (about a **30% chance** to fester), or **an open wound handled with dirty hands** — if you're **bleeding** while your **hands are dirty** (from butchering), the wound can turn septic (about 20% per 10 seconds) unless you clean up or bind it. It starts as a **fever** (weakness and nausea), and if it deepens it turns **septic** and drains your health — an untreated deep infection can kill you. Your paper-doll arms turn **purple** when infected. **Dress the wound with cloth** (sneak + right-click) to stop the bleeding and clean the infection back down, and **wash your hands** (drink from water) before touching a wound; a very deep infection may also need an herbal remedy to ease it.
 
 ### Sickness (foodborne illness)
 
