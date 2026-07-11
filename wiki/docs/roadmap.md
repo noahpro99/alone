@@ -119,9 +119,9 @@ The backpack exists; the rest of the logistics tree is planned.
 
 ## Skills & progression
 
-- **Skill by doing (replaces XP):** repetition improves speed and lowers failure within a craft
-  family — knapping, pottery, mining, fire-starting, tracking, smithing — so competence is earned by
-  practice, not spent from an experience pool.
+- **More crafts responding to skill:** the skill-by-doing framework has shipped and drives
+  **flintworking** and **firecraft** so far; **pottery, mining, tracking, and smithing** are still to
+  be wired onto it. *(See [Tools & Crafting](./features/tools-and-crafting.md#skill-by-doing).)*
 
 ## Livestock & economy
 

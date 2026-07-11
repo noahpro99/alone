@@ -17,10 +17,28 @@ Bare hands don't fell timber:
 
 Before any metal, flint is knapped into primitive tools:
 
-- **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but roughly a third of the time the flint just **shatters** and is lost.
+- **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but a **raw novice shatters** nearly half their flint. That improves with practice (see [Skill by doing](#skill-by-doing) below): a **skilled** knapper wastes far less.
 - Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone), or a **flint knife** (a crude cutting blade that also strips plant fiber, below).
 
 Flint and loose rocks come from **digging gravel** (rocks are also foraged off the ground).
+
+## Skill by doing
+
+You get better at a craft by **doing it**, not by spending experience — there's no XP bar and nothing to
+level up on a menu. Every attempt teaches your hands a little, on a **learning curve** that's fast at first
+and then a long plateau toward mastery. It shows up only as the occasional note that you've stepped up a
+tier: **Novice → Apprentice → Skilled → Expert → Master**. Your skills **stay with you through death** —
+you don't forget a trade because you drowned.
+
+Two crafts respond to skill so far:
+
+- **Flintworking** — knapping succeeds ~**55%** of the time as a raw novice, climbing to ~**92%** at
+  mastery (it was a flat ~65%). You learn from every strike, whether it flakes or shatters.
+- **Firecraft** — a practised firemaker coaxes a friction fire alight **sooner** (the catch chance scales
+  up to ~**1.3×** at mastery, and a novice is a touch slower). Learned each fire you light.
+
+*(More crafts — pottery, mining, tracking, smithing — are planned to respond to skill on the same
+framework.)*
 
 ## Plant fiber and string
 
