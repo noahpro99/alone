@@ -94,6 +94,7 @@ public class AloneCore implements ModInitializer {
         FireStarting.init();    // §3.1 — friction fire (drill with a stick)
         Campfires.init();       // §3 — campfire fuel (feed sticks/logs; burns down)
         Sleeping.init();        // §1.4/§5.2 — rest on the ground (worst sleep; night + dry only)
+        GradualSleep.init();    // §5.2 — sleeping fast-forwards the night instead of blinking to dawn
         Eating.init();          // §1.1 — no eating while sprinting
         Hygiene.init();         // §5.6 — dirty hands from butchering contaminate food
         Torches.init();         // §5.6 — lit torches burn their fuel down to a spent torch

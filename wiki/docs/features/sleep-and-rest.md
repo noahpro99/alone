@@ -31,6 +31,16 @@ The **bedroll** is a craftable bed block (from wool and leather) and a big upgra
 - It **sets your spawn point**, so you respawn where you slept.
 - It gives **far better rest** than the bare ground.
 
+## Sleeping fast-forwards the night — it doesn't skip it
+
+Lying down in a bed **doesn't blink you to dawn**. Instead the whole world **runs fast** until morning, then drops back to normal speed:
+
+- The night **genuinely happens**, just compressed — mobs still roam, weather still moves, and your body still **burns the night's food and water** (you wake hungry and dry, below).
+- Because real time is passing rather than teleporting, sleep can be **interrupted**: if something wakes you partway through, you're back to normal speed at once — *a second later for you, but hours later in game time*.
+- A full night fast-forwards in roughly **half a minute** of real time.
+
+This is the honest version of sleep: you didn't cheat the night away, you slept through it.
+
 ## Sleep quality scales with warmth
 
 How much you recover depends on how **comfortable** you were while you slept — this is where fire, shelter, and a hot meal pay off (see [Body Temperature](./body-temperature.md)):
