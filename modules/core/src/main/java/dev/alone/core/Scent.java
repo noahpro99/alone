@@ -1,7 +1,10 @@
 package dev.alone.core;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,6 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Food security by scent (roadmap: Food, farming &amp; preservation). <b>Fresh meat you carry reeks</b>,
@@ -28,8 +32,9 @@ import net.minecraft.world.phys.AABB;
  * your person isn't on you to smell — so the trade is real: <b>haul raw meat and attract danger, or
  * preserve/cache it and travel clean.</b> (Foxes stay skittish and keep their distance; they don't hunt you.)
  *
- * <p>Scoped for v1: the smell <b>draws predators in to investigate</b>; it doesn't yet make them attack
- * outright for the food (that escalation — a hungry raid — is future). Their approach is the warning.
+ * <p>And it escalates: a predator that reaches your side doesn't just watch — it <b>snatches a piece of raw
+ * meat and bolts with it</b>, a hungry raid that costs you food (not blood). Preserve it, cache it, or lose
+ * it to the wild.
  */
 public final class Scent {
     private Scent() {
@@ -42,9 +47,15 @@ public final class Scent {
     private static final double BASE_RADIUS = 14.0;  // a little carried meat carries this far
     private static final double MAX_RADIUS = 30.0;   // a heavy load, this far
     private static final double APPROACH_SPEED = 1.15;
+    private static final double GRAB_RANGE = 2.6;        // this close, a predator can snatch a piece
+    private static final long RAID_COOLDOWN_TICKS = 160L; // ~8s between snatches so a pack can't strip you at once
+    private static final double FLEE_SPEED = 1.45;       // it runs off with its prize
 
     private static final TagKey<Item> PERISHABLE =
         TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
+
+    /** Per-player "next raid allowed" world-time — transient (a session cooldown), keyed by player id. */
+    private static final Map<UUID, Long> RAID_COOLDOWN = new HashMap<>();
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -70,18 +81,66 @@ public final class Scent {
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
             m -> PREDATORS.contains(m.getType()) && m.isAlive() && m.distanceToSqr(player) <= radiusSq);
 
+        PathfinderMob raider = null;
         boolean drewOne = false;
         for (Mob mob : nearby) {
-            // Only nudge one that isn't already busy with a target of its own — let the smell lead it in.
-            if (mob instanceof PathfinderMob predator && predator.getTarget() == null) {
-                predator.getNavigation().moveTo(player, APPROACH_SPEED);
+            if (!(mob instanceof PathfinderMob predator)) {
+                continue;
+            }
+            if (predator.distanceToSqr(player) <= GRAB_RANGE * GRAB_RANGE) {
+                raider = predator; // right on top of you — close enough to snatch
+            } else if (predator.getTarget() == null) {
+                predator.getNavigation().moveTo(player, APPROACH_SPEED); // drawn in by the smell
                 drewOne = true;
+            }
+        }
+
+        // A hungry raid: a predator at your side grabs a piece of raw meat and bolts with it.
+        long now = level.getGameTime();
+        if (raider != null && now >= RAID_COOLDOWN.getOrDefault(player.getUUID(), 0L)) {
+            ItemStack stolen = takeOneFreshMeat(player);
+            if (!stolen.isEmpty()) {
+                RAID_COOLDOWN.put(player.getUUID(), now + RAID_COOLDOWN_TICKS);
+                fleeWithPrize(raider, player);
+                player.sendSystemMessage(Component.literal(
+                    "A predator snatches raw meat from your pack and bolts with it!"));
+                return;
             }
         }
         if (drewOne && player.tickCount % (SCAN * 8) == 0) {
             player.sendSystemMessage(
                 Component.literal("The raw meat you're carrying has caught something's nose…"), true);
         }
+    }
+
+    /** Pull one piece of fresh (unpreserved) perishable food off the player — what the raider makes off with. */
+    private static ItemStack takeOneFreshMeat(ServerPlayer player) {
+        DataComponentType<Boolean> preserved = booleanComponent("preserved");
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.isEmpty() || !stack.is(PERISHABLE)) {
+                continue;
+            }
+            if (preserved != null && stack.getOrDefault(preserved, false)) {
+                continue; // sealed — no smell, and the raider can't find it
+            }
+            ItemStack one = stack.copyWithCount(1);
+            stack.shrink(1);
+            return one;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /** Send the raider sprinting away from the player, prize in its jaws. */
+    private static void fleeWithPrize(PathfinderMob raider, ServerPlayer player) {
+        raider.setTarget(null);
+        Vec3 away = raider.position().subtract(player.position());
+        if (away.lengthSqr() < 1.0e-4) {
+            away = new Vec3(1.0, 0.0, 0.0);
+        }
+        Vec3 dest = raider.position().add(away.normalize().scale(14.0));
+        raider.getNavigation().moveTo(dest.x, dest.y, dest.z, FLEE_SPEED);
     }
 
     /** Fresh (unpreserved) perishable food carried loose on your body — a full stack reeks more than one piece. */
