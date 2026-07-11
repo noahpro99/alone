@@ -21,9 +21,24 @@ refrigeration, *where and when you keep food is the whole game*.
 - **Preserved** food (salted or dried) carries a much bigger budget — **~30 in-game days** — long,
   but not infinite; even jerky eventually goes rancid and turns to rotten flesh.
 
-Spoilage only advances while the food is being **watched** — carried on you, or sitting in a
-container in the chunks around you. **Leaving your base pauses** the food you left behind, so it
-won't silently rot away while you're off exploring.
+**Food keeps rotting while you're away.** The budget drains by the **in-game time that actually
+elapses** — measured against the world clock, not real seconds — so leaving your base does **not**
+pause it. Leave meat in a warm hut and go exploring, and you come home to spoilage; leave it in a
+cold cellar and it barely ticks. (Behind the scenes a stack is only re-checked when it's near you
+again — carried, or in a loaded container nearby — but the drain then covers the **whole** stretch of
+world-time since it was last seen, so nothing is forgiven by walking away.)
+
+### How to tell how fresh it is
+
+Hover any perishable and its **tooltip shows the state**:
+
+- **Freshness: Fresh / Beginning to turn / Going off — eat it soon**, coloured green → yellow → red
+  as the budget drains.
+- Preserved food also shows a **"Dried jerky"** or **"Salted — keeps for weeks"** line.
+
+Preservation is stored as **hidden data on the food itself** (a freshness budget plus
+preserved/dried flags) — a dried piece is the **same item**, just marked, so it stacks and cooks like
+any other. There is no separate "jerky" item; the tooltip is how you read its state.
 
 Non-perishable items (bread, golden apples, and similar keepers) are not on the list and do not
 spoil. See [Food & Eating](./food-and-eating.md) for the risks of eating spoiled or raw food.
@@ -72,10 +87,11 @@ S S S
 S . S
 ```
 
-Place it, then **right-click it with a perishable food** to hang one piece. **Right-click the rack
-empty-handed** to take the food back (whether it's finished or still drying); breaking the rack also
-drops whatever is hung on it. The rack **keeps drying while you are away** — progress tracks elapsed
-world time even while the area is unloaded.
+Place it, then **right-click it with a perishable food** to hang one piece — **the piece is shown
+sitting on the rack** so you can see what's curing. **Right-click an occupied rack** (empty-handed or
+not) to take the food back, whether it's finished or still drying; breaking the rack also drops
+whatever is hung on it. The rack **keeps drying while you are away** — progress tracks elapsed world
+time even while the area is unloaded.
 
 Finished food becomes **jerky**: it is marked **preserved** (~30-day shelf life) and **dried**,
 which also makes it **lighter to carry** (the water is gone).
