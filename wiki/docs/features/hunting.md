@@ -33,6 +33,20 @@ did before the bow: **keep the pressure on and chase it to exhaustion.**
 > All game currently tires at the same rate; a rabbit realistically winds faster than a horse, which a
 > per-animal endurance could capture later.
 
+## Blood trails — track a wounded animal
+
+Wound an animal and it **bleeds**, and while it flees it **drips a trail of blood** you can follow — the
+other half of tracking.
+
+- The wound bleeds **heavier the harder you hit** it, and **clots over time** as the bleeding runs down.
+- The drops **fade within a second or two** of hitting the ground, so what you see is a short, fresh
+  dotted line trailing the animal — enough to follow it through brush and over a rise, but only while it's
+  **fresh**. Track it **promptly** or the trail goes cold.
+- Pairs with persistence hunting: **wound it, then stay on it** — the blood shows you where it went, and
+  the chase wears it down.
+
+> Blood trails are a tracking aid for now; an animal actually **bleeding out** from its wounds is planned.
+
 ## A blade kill saves the hide
 
 Killing a hide-bearing animal with a **blade** (knife, sword, or axe) salvages its **leather** on top of
