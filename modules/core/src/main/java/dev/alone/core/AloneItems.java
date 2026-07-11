@@ -62,6 +62,9 @@ public final class AloneItems {
      *  smaller than the leather backpack, which is a proper openable pack. */
     public static final Item WOVEN_BASKET = register("woven_basket",
         key -> new Item(new Item.Properties().stacksTo(1).setId(key)));
+    /** A travois (proposal §6) — a dragged cargo sled. Right-click ground to set it down. */
+    public static final Item TRAVOIS = register("travois",
+        key -> new TravoisItem(new Item.Properties().stacksTo(1).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));

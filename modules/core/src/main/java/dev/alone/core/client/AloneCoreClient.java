@@ -65,6 +65,10 @@ public class AloneCoreClient implements ClientModInitializer {
             }
         });
 
+        // The travois (§6) renders as a low wooden block model (placeholder), like a falling block.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.TRAVOIS, TravoisRenderer::new);
+
         // The Condition Panel (§1.5): no hearts bar — the body is a vitality bar + the injury readout,
         // both drawn by our HUD. Hide the vanilla hearts.
         HudElementRegistry.removeElement(VanillaHudElements.HEALTH_BAR);
