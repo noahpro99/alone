@@ -109,8 +109,19 @@ public final class AloneBlocks {
 
     /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
+    /** A drying rack (§4.2) — hang perishable food to dry into non-spoiling jerky (smoked faster by fire). */
+    public static final Block DRYING_RACK = register("drying_rack",
+        key -> new DryingRackBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOD)
+            .strength(0.6F)
+            .noOcclusion()
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
+    /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<DryingRackBlockEntity> DRYING_RACK_BLOCK_ENTITY;
     /** The kiln's firing state (loaded ware, fuel, progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
     /** The bloomery's smelting state (loaded ore, fuel, progress). Assigned in {@link #init()}. */
@@ -134,6 +145,10 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "clay_pot"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 ClayPotBlockEntity::new, java.util.Set.of(CLAY_POT)));
+        DRYING_RACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "drying_rack"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                DryingRackBlockEntity::new, java.util.Set.of(DRYING_RACK)));
 
         // Rope is dry plant fibre — it catches readily and burns up fast, so fire runs up a hung line.
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);

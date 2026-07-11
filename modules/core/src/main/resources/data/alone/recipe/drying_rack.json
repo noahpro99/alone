@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SSS", "S S"],
+  "key": { "S": "minecraft:stick" },
+  "result": { "id": "alone:drying_rack", "count": 1 }
+}

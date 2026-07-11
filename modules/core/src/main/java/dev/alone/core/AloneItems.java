@@ -102,6 +102,9 @@ public final class AloneItems {
     /** The bloomery as a placeable item (§3.2/§8.2) — the primitive iron furnace. */
     public static final Item BLOOMERY = register("bloomery",
         key -> new net.minecraft.world.item.BlockItem(AloneBlocks.BLOOMERY, new Item.Properties().setId(key)));
+    /** A drying rack (§4.2) — hang perishable food to dry into non-spoiling jerky. */
+    public static final Item DRYING_RACK = register("drying_rack",
+        key -> new net.minecraft.world.item.BlockItem(AloneBlocks.DRYING_RACK, new Item.Properties().setId(key)));
 
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",

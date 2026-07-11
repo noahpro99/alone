@@ -1,0 +1,30 @@
+{
+  "parent": "block/block",
+  "textures": { "wood": "minecraft:block/stripped_oak_log", "particle": "minecraft:block/stripped_oak_log" },
+  "elements": [
+    { "from": [1, 0, 1], "to": [3, 14, 3], "faces": {
+      "north": {"uv":[0,0,2,14],"texture":"#wood"}, "south": {"uv":[0,0,2,14],"texture":"#wood"},
+      "east": {"uv":[0,0,2,14],"texture":"#wood"}, "west": {"uv":[0,0,2,14],"texture":"#wood"},
+      "up": {"uv":[0,0,2,2],"texture":"#wood"}, "down": {"uv":[0,0,2,2],"texture":"#wood"} } },
+    { "from": [13, 0, 1], "to": [15, 14, 3], "faces": {
+      "north": {"uv":[0,0,2,14],"texture":"#wood"}, "south": {"uv":[0,0,2,14],"texture":"#wood"},
+      "east": {"uv":[0,0,2,14],"texture":"#wood"}, "west": {"uv":[0,0,2,14],"texture":"#wood"},
+      "up": {"uv":[0,0,2,2],"texture":"#wood"}, "down": {"uv":[0,0,2,2],"texture":"#wood"} } },
+    { "from": [13, 0, 13], "to": [15, 14, 15], "faces": {
+      "north": {"uv":[0,0,2,14],"texture":"#wood"}, "south": {"uv":[0,0,2,14],"texture":"#wood"},
+      "east": {"uv":[0,0,2,14],"texture":"#wood"}, "west": {"uv":[0,0,2,14],"texture":"#wood"},
+      "up": {"uv":[0,0,2,2],"texture":"#wood"}, "down": {"uv":[0,0,2,2],"texture":"#wood"} } },
+    { "from": [1, 0, 13], "to": [3, 14, 15], "faces": {
+      "north": {"uv":[0,0,2,14],"texture":"#wood"}, "south": {"uv":[0,0,2,14],"texture":"#wood"},
+      "east": {"uv":[0,0,2,14],"texture":"#wood"}, "west": {"uv":[0,0,2,14],"texture":"#wood"},
+      "up": {"uv":[0,0,2,2],"texture":"#wood"}, "down": {"uv":[0,0,2,2],"texture":"#wood"} } },
+    { "from": [0, 12, 1], "to": [16, 14, 3], "faces": {
+      "north": {"uv":[0,0,16,2],"texture":"#wood"}, "south": {"uv":[0,0,16,2],"texture":"#wood"},
+      "up": {"uv":[0,0,16,2],"texture":"#wood"}, "down": {"uv":[0,0,16,2],"texture":"#wood"} } },
+    { "from": [0, 12, 13], "to": [16, 14, 15], "faces": {
+      "north": {"uv":[0,0,16,2],"texture":"#wood"}, "south": {"uv":[0,0,16,2],"texture":"#wood"},
+      "up": {"uv":[0,0,16,2],"texture":"#wood"}, "down": {"uv":[0,0,16,2],"texture":"#wood"} } },
+    { "from": [2, 13, 4], "to": [14, 13, 12], "faces": {
+      "up": {"uv":[2,4,14,12],"texture":"#wood"}, "down": {"uv":[2,4,14,12],"texture":"#wood"} } }
+  ]
+}
