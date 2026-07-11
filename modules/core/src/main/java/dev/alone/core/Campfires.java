@@ -114,11 +114,6 @@ public final class Campfires {
                 "A hide waterskin can't go over the flame — boil in a pot, or fill from clean rain."), true);
             return;
         }
-        if (quality == WaterskinItem.SALT) {
-            player.sendSystemMessage(Component.literal(
-                "Boiling won't take the salt out — you'd need to distil it. Find fresh water."), true);
-            return;
-        }
         ItemStack pot = held.copy();
         pot.setCount(1);
         be.setAttached(BOIL_ITEM, pot);
@@ -126,7 +121,10 @@ public final class Campfires {
         be.setChanged();
         held.shrink(1); // it's standing in the fire now
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.6f, 1.2f);
-        player.sendSystemMessage(Component.literal("You stand the pot in the fire to boil."), true);
+        // Seawater won't drink boiled — but boiled to dryness it leaves salt (§2). Fresh water just purifies.
+        player.sendSystemMessage(Component.literal(quality == WaterskinItem.SALT
+            ? "You set the seawater to boil down for salt."
+            : "You stand the pot in the fire to boil."), true);
     }
 
     private static void retrievePot(ServerPlayer player, Level level, BlockPos pos, BlockEntity be) {
@@ -139,10 +137,25 @@ public final class Campfires {
             return;
         }
         if (left <= 0) {
-            pot.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
-            pot.set(AloneItems.VESSEL_DIRTY, false);
-            level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.7f, 1.3f);
-            player.sendSystemMessage(Component.literal("The water has boiled clean and safe."), true);
+            if (pot.getOrDefault(AloneItems.WATER_QUALITY, WaterskinItem.RAW) == WaterskinItem.SALT) {
+                // Seawater boiled to dryness — the water's gone as steam, a crust of salt left behind.
+                int charges = pot.getOrDefault(AloneItems.WATER_CHARGES, 0);
+                int salt = Math.max(1, charges / 2); // a potful of seawater yields a modest handful
+                pot.set(AloneItems.WATER_CHARGES, 0);
+                pot.remove(AloneItems.WATER_QUALITY); // emptied — scrape the salt out and it's reusable
+                ItemStack saltStack = new ItemStack(AloneItems.SALT, salt);
+                if (!player.getInventory().add(saltStack)) {
+                    player.drop(saltStack, false);
+                }
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.6f);
+                player.sendSystemMessage(Component.literal(
+                    "The seawater boils away to a crust of salt (" + salt + ")."), true);
+            } else {
+                pot.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
+                pot.set(AloneItems.VESSEL_DIRTY, false);
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.7f, 1.3f);
+                player.sendSystemMessage(Component.literal("The water has boiled clean and safe."), true);
+            }
         } else {
             player.sendSystemMessage(Component.literal("It hasn't come to a boil yet — leave it longer."), true);
         }
