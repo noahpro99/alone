@@ -1,6 +1,1 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "alone:item/drying_rack"
-  }
-}
+{ "parent": "alone:block/drying_rack" }
