@@ -54,11 +54,15 @@ the bleeding finishes the work.
 > A bleed-out death isn't a blade kill, so it still **forfeits the hide** (same as an arrow kill) — finish
 > it with a blade if you want the leather.
 
-## A blade kill saves the hide
+## A blade kill butchers the carcass — hide and bone
 
-Killing a hide-bearing animal with a **blade** (knife, sword, or axe) salvages its **leather** on top of
-the meat; kill it with a blunt tool or bare hands and the hide is wasted. See
-[Tools & Crafting](./tools-and-crafting.md).
+Killing a hide-bearing animal with a **blade** (knife, sword, axe, or **spear**) lets you work the whole
+carcass: it salvages **leather (hide)** *and* **bone**, on top of the meat. Kill it with a blunt tool or
+bare hands and you waste **both** — no clean butchering. See [Tools & Crafting](./tools-and-crafting.md).
+
+The **bone** isn't just a by-product: crafted into **bonemeal** it feeds your crops, so a good hunt with a
+blade helps grow the produce that keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet)
+at bay. (Fat and sinew — the rest of full-animal use — are still to come.)
 
 ## Carrying meat draws predators
 
