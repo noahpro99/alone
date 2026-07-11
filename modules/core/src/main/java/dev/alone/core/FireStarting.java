@@ -82,10 +82,11 @@ public final class FireStarting {
             return;
         }
         int minStrokes = bow ? BOW_MIN_STROKES : HAND_MIN_STROKES;
-        // Skill by doing (§8.4): a practised firemaker reads the spindle and catches sooner.
-        float catchChance = (bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE)
-            * (0.8f + 0.5f * Skills.proficiency(player, Skills.FIRECRAFT));
-        float staminaPerStroke = bow ? BOW_STAMINA : HAND_STAMINA;
+        // Skill by doing (§8.4): a practised firemaker reads the spindle and catches sooner — and works
+        // it more efficiently, spending less on each stroke.
+        float firecraft = Skills.proficiency(player, Skills.FIRECRAFT);
+        float catchChance = (bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE) * (0.8f + 0.5f * firecraft);
+        float staminaPerStroke = (bow ? BOW_STAMINA : HAND_STAMINA) * (1f - 0.4f * firecraft);
         BlockPos fire = findUnlitCampfire(player, level);
         if (fire == null) {
             ACTIVE.remove(player.getUUID());
