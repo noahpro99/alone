@@ -3,7 +3,7 @@ sidebar_position: 11
 title: "Storage & Transport"
 ---
 
-The carry limit on your person is a strict 1 m³. The backpack is the first container that raises it.
+Your body carry is split into two budgets — about **1 m³** of bulky items in your hands and **0.30 m³** of small items in your pockets (see [Weight, Carrying & Blocks](./building-and-blocks.md)). A **woven basket** raises the hands budget, and a **backpack** carries its own separate store.
 
 ## The backpack
 
@@ -13,13 +13,17 @@ The carry limit on your person is a strict 1 m³. The backpack is the first cont
 - A **quick-open keybind** (default **B**) opens the **first pack in your inventory**.
 - **Set it down as a block.** Sneak + right-click a surface to place the pack, then right-click it to open like a chest. **Break it to get the pack back with all its contents** intact.
 
-### Backpacks and your carry cap
+### The backpack's own storage budget
 
-A backpack **raises your carry volume cap by about 1.5 m³**, with one condition:
+A backpack holds up to about **1.5 m³** of its own — a **separate** budget that does **not** touch your body's hands or pockets budgets.
 
-- **Its contents count toward that cap.** The added room is consumed as the pack fills, so a pack full of items does not carry more total volume than the raised cap allows.
+- Only its **weight** lands on you. A full pack is heavy to haul, but it never uses up your personal carrying space, so you can still pick up a block while wearing a loaded pack.
 
-See [Weight, Carrying & Blocks](./building-and-blocks.md) for how the volume cap works.
+### The woven basket
+
+A **woven basket** — plant-fibre gear you carry, no leather or animals needed — raises your **hands budget by about 0.5 m³** while it's in your inventory. One is enough; extras don't stack the bonus.
+
+See [Weight, Carrying & Blocks](./building-and-blocks.md) for how the carry budgets work.
 
 ## Armor doesn't cost you volume
 

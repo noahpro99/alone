@@ -7,33 +7,32 @@ Everything you carry has a weight and a volume, and breaking or moving blocks co
 
 ## Weight and volume
 
-Every item in the game has two properties: a **weight** (how heavy it is) and a **volume** (how much space it takes up). A full solid block is **1 cubic metre (1 m³)**; small items like seeds, bones, or torches are tiny.
+Every item in the game has two properties: a **weight** (how heavy it is) and a **volume** (how much space it takes up). A full solid building block is bulky — one nearly fills your hands on its own; small items like seeds, bones, or torches are tiny.
 
 These two properties do very different things.
 
 ### Volume is a hard cap
 
-You can carry a hard limit of about **1 m³ on your person**. That's the whole rule: one full block *or* a big pile of small things — never both at once.
+Your body carry is split into **two separate budgets**:
 
-- When you're at the cap, **extra items simply aren't picked up**. They stay on the ground in the world, exactly like a full vanilla inventory — nothing is thrown away or destroyed.
-- A single full block fills your entire personal volume, so hauling raw blocks is a one-at-a-time affair.
+- A **hands budget of about 1 m³** for **bulky items** — anything bigger than pocket size: a block, tools, boards. A full building block nearly fills it on its own, so you can manage roughly one at a time.
+- A **pockets budget of about 0.30 m³** for **small items** — each one **0.05 m³ or smaller** (seeds, flint, nuggets, food, a coil of rope). The two are additive: filling your pockets never eats into your ability to carry a bulky thing, and vice versa.
 
-To carry more, see [Storage & Transport](./storage-and-transport.md) — a backpack raises this cap.
+When a budget is full, **extra items of that kind simply aren't picked up**. They stay on the ground in the world, exactly like a full vanilla inventory — nothing is thrown away or destroyed.
+
+To carry more, see [Storage & Transport](./storage-and-transport.md) — a woven basket raises your hands budget, and a backpack adds separate storage.
 
 ### Weight is a soft penalty
 
 Weight never stops you cold; it just wears you down.
 
-- The **heavier your load, the slower you move**. One heavy block makes you trudge.
-- **Overloading disables sprint, jump, and swim.** Walking and crawling remain available at any load.
+- The **heavier your load, the slower you move**. There's no penalty up to about **8 kg**; from there the slowdown scales down to the **slowest crawl — roughly 35% of normal speed — at about 45 kg**.
+- **Jumping under a load costs extra stamina** — the heavier you are, the more each hop up a hill or a step drains.
+- A heavy load also makes swimming harder — see [Weight in the water](#weight-in-the-water) below.
 
-### The volume bar
+### The carry bars
 
-A third HUD bar (below stamina and thirst) shows how full you are:
-
-- **Grey** — plenty of room.
-- **Amber** — getting full.
-- **Red** — at the cap; extra items won't be picked up.
+Three bars — **hands**, **pockets**, and **weight** — appear **only while your inventory is open**, not on the always-on HUD. Each fills as its budget is used and turns amber, then red, as it approaches the limit.
 
 ## Chests are volume-capped too
 
@@ -52,7 +51,7 @@ Storage containers hold a real volume, not a fixed slot count:
 
 Block items are meant to be built with or stored, not littered:
 
-- **Dropping a block item is refused** — whether you press the drop key or drag it out of the inventory window, it's **handed straight back** to you.
+- **Dropping a solid building block is refused** — whether you press the drop key or drag it out of the inventory window, it's **handed straight back** to you. (Small placeable things like seeds, saplings, and torches drop normally.)
 - **Heavy items barely toss.** The heavier a thing is, the weaker the throw; by around **20 kg** an item just plops at your feet with no horizontal travel.
 
 (Death drops are untouched — dying still scatters your things normally.)
@@ -70,12 +69,12 @@ A heavy load affects swimming:
 Every block you break **costs stamina** and takes real time:
 
 - **Stone** with an iron pick takes about **20 seconds**; **deepslate and ore** run up to **~60 seconds**.
-- Even **dirt, sand, and gravel** take a few seconds — digging a cubic metre of earth is work. A **shovel is faster than bare hands**.
+- **Packed earth** is slow, heavy work: **dirt** takes around **three in-game minutes with a shovel** and is near-hopeless by hand, and **dense clay** is slower still. **Loose sand and gravel** scoop faster — roughly a minute a block. A **shovel is far faster than bare hands** (bare hands are fixed-speed, so no other tool beats them at digging).
 - **Progress is saved if you stop partway.** Leave a dig and return, and the crack resumes where you left off. A barely-scratched dig (under ~10% done) **heals back** to a pristine block instead of leaving a permanent chip.
 
 ## Realistic reach
 
-You can only break or place blocks within about **2.75 blocks** (down from vanilla's ~4.5). (Creative keeps the long vanilla reach.)
+You can only break or place blocks within about **3 blocks** (down from vanilla's ~4.5); reaching entities is shorter still, about **2.5 blocks**. (Creative keeps the long vanilla reach.)
 
 ## Trees and leaves
 

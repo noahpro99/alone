@@ -11,10 +11,10 @@ Eating raw meat can cause a foodborne illness. Cooking makes food **safe**.
 
 | Raw food | Sickness chance |
 | --- | --- |
-| Chicken (and other poultry/pork) | ~80% |
-| Red meat (beef, mutton) | ~45% |
-| Fish | ~20% |
-| Rotten flesh | Near-guaranteed |
+| Chicken | ~80% |
+| Beef, pork, mutton, rabbit | ~45% |
+| Fish (cod, salmon, tropical) | ~20% |
+| Rotten flesh | ~80% |
 
 Sickness is a lingering illness that leaves you weak and hungry — a real condition, not a brief potion tick. A cooked meal carries none of this risk.
 
@@ -37,13 +37,9 @@ Handling raw meat leaves a mess:
 
 Perishable foods **rot to rotten flesh after about one in-game day**. Fresh meat and produce won't keep.
 
-## Preserving food with salt
+## Preserving food
 
-Salt keeps perishable food from spoiling:
-
-- Holding a perishable food, keeping **salt in the off hand**, and **sneak + right-click** salts it.
-- The food is then preserved and **won't spoil** — it keeps indefinitely.
-- Each salting **costs 1 salt**. Salt comes from **boiling salt water** (see [Water](./water-and-drinking.md)).
+Perishable food can be **preserved** to keep for about **30 in-game days** instead of one — by salting it or drying it on a drying rack. See [Food Preservation](./preservation.md) for the full system.
 
 ## Nutrition variety and food fatigue
 
@@ -69,6 +65,6 @@ Hunger gates recovery: **below 6 hunger, stamina recovers poorly.** Running hung
 
 ## Related pages
 
-- [Water, Thirst & Vessels](./water-and-drinking.md) — boiling for salt, drinking to wash your hands, foods that affect thirst.
+- [Water, Thirst & Vessels](./water-and-drinking.md) — drinking to wash your hands, foods that affect thirst.
 - [Fire](./fire.md) — cooking raw food safe and making hot meals.
 - [Body Temperature](./body-temperature.md) — how hot meals help you fight the cold.

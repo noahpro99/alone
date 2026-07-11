@@ -15,10 +15,10 @@ There are two ways to rest, and they are not equal.
 
 In a pinch, you can bed down on the ground with no gear:
 
-- **Crouch and right-click** bare ground (grass, dirt, sand) to lie down.
+- **Right-click** bare ground (grass, dirt, sand) with an **empty hand** — no crouch needed. It doesn't lay you down or skip time; it just catches a quick, fitful rest.
 - It only works at **night**.
 - The spot must be **dry** — no rain falling on you.
-- It's on a **cooldown**, so you can't spam it.
+- It's on a **cooldown** (about **60 seconds**), so you can't spam it.
 - It gives the **worst-quality rest** — enough to take the edge off, not a real night's sleep.
 
 If it fails, the game reports why (wrong time, rain, or still on cooldown).

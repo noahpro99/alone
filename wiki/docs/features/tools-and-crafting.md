@@ -10,24 +10,23 @@ Crafting is real work: trees can't be punched, crafting takes time and roots you
 Bare hands don't fell timber:
 
 - **Bare hands, a chicken, or a block of dirt** do nothing to a log.
-- A **sword or pickaxe** chops a log **very slowly** (~30 seconds).
-- An **axe** fells a log slowly but functionally (~10–15 seconds).
+- A **sword, pickaxe, or flint knife** (a crude chopper) hacks a log apart **very slowly** (~75 seconds).
+- An **axe** fells a log slowly but functionally (~30 seconds).
 
 ## Flint tools
 
-Before any metal, flint is knapped into primitive tools. They are crafted from **flint + a stick**:
+Before any metal, flint is knapped into primitive tools:
 
-- **Flint hatchet** — fells trees.
-- **Flint pick** — mines stone.
-- **Flint knife** — a crude cutting blade (also strips plant fiber, below).
+- **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but roughly a third of the time the flint just **shatters** and is lost.
+- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone), or a **flint knife** (a crude cutting blade that also strips plant fiber, below).
 
-Flint comes from gravel.
+Flint and loose rocks come from **digging gravel** (rocks are also foraged off the ground).
 
 ## Plant fiber and string
 
 String does not require spiders:
 
-- **Stripping plant fiber** tears up grass, ferns, vines, and dead bushes. Bare hands have about a 50% chance for one strand; a **cutting blade** (sword, axe, hoe, or flint knife) strips **1–2 clean lengths** at once.
+- **Stripping plant fiber** is a timed pull (hold right-click on grass, ferns, vines, or dead bushes for a couple of seconds). Bare hands yield **1–2 strands** (a second on about half the strips); a **cutting blade** (sword, axe, hoe, or flint knife) strips **2–3 clean lengths** at once.
 - **Twisting 3 fiber makes 1 string.**
 
 String feeds rope, bandages, bows, and more.
@@ -41,7 +40,8 @@ A craft is not instant. Once a valid recipe sits in the grid, it must be **worke
 
 | Craft type | Time |
 | --- | --- |
-| Simple items (planks, torch) | ~2s |
+| Simple items (sticks, torch) | ~2s |
+| Planks & string (riven / twisted by hand) | ~12s |
 | Food | ~5s |
 | Tools & weapons | ~15s |
 | Stations (chest, furnace) | ~60s |
@@ -65,7 +65,7 @@ The forge state and quality grade show in the item's tooltip; heat and blows sho
 
 A whetstone hones tools:
 
-- A **whetstone** is crafted from smooth stone + a stick.
+- A **whetstone** is crafted from two smooth stone and a stick.
 - Holding a worn tool or weapon, keeping the **whetstone in the off hand**, and **sneak + right-click** re-hones the edge.
 - Each pass **restores ~25% durability**, wears the whetstone a little, and has a short cooldown.
 - Armor has no edge and can't be honed — only a forge **re-temper** repairs armor.

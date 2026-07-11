@@ -20,7 +20,7 @@ Every drink and every vessel has a quality. It decides how likely a sip is to ca
 | Quality | Where it comes from | Sickness chance |
 | --- | --- | --- |
 | **Raw / murky** | Straight from a river, lake, or pond | ~15% |
-| **Tainted / dirty** | Filled into a dirty vessel, or drunk after handling raw meat | ~45% |
+| **Tainted / dirty** | Filled into a dirty vessel | ~45% |
 | **Clean** | Boiled, or caught as rainwater | Safe (0%) |
 | **Salt** | Ocean, beach, or shore water | Dehydrates instead of quenching |
 
@@ -33,14 +33,15 @@ Pointing at a water source and **right-clicking bare-handed** drinks straight fr
 
 ## Salt water
 
-Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. Boiling desalinates it (see below).
+Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable.
 
 ## Vessels
 
-A vessel carries water for drinking away from a source. There are two:
+A vessel carries water for drinking away from a source. There are three:
 
-- **Waterskin** — crafted from leather and string. Holds **3 sips**.
-- **Iron pot** — crafted from iron. Holds **6 sips**.
+- **Waterskin** — crafted from leather and string. Holds **3 sips**. Not fire-safe: it can't go over a flame to boil.
+- **Clay pot** — fired from clay. Holds **4 sips**, and is **fire-safe** (can be boiled over a fire).
+- **Iron pot** — crafted from iron. Holds **6 sips**, and is **fire-safe**.
 
 Both work the same way:
 
@@ -60,10 +61,10 @@ Vessels track whether they are dirty, and dirt spreads:
 
 Boiling is the way to make untreated water safe.
 
-- A **fire-safe vessel** (the iron pot) is set over a **lit campfire**.
-- After a few seconds it comes to a boil and turns its whole load **clean** — raw or tainted water becomes safe to drink.
+- A **fire-safe vessel** (the clay pot or iron pot), filled with raw or tainted water, is set on a **lit campfire** by right-clicking the fire with it; right-click empty-handed to lift it back off.
+- It takes about **15 seconds** on the fire to come to a boil, and then its whole load turns **clean** — raw or tainted water becomes safe to drink.
 - Boiling also **sterilises the vessel itself**, so a dirty vessel comes out clean.
-- Boiling **salt water desalinates it** to clean and yields a **salt** item (used to preserve food — see [Food & Eating](./food-and-eating.md)).
+- Boiling **does not remove salt** — salt water can't be boiled clean. Only fresh raw or tainted water boils safe.
 
 ## Rain catch — clean water without fire
 
