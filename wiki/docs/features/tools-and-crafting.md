@@ -46,6 +46,8 @@ Five crafts respond to skill so far:
   toward masterwork the more skilled you are. Learned each piece you forge.
 - **Tracking** — a practised tracker hunts better both ways: [persistence hunting](./hunting.md#persistence-hunting--run-it-down) chase-fatigue builds up to ~1.6× as fast (quarry tires in fewer seconds), and wounded game leaves a **longer, more followable [blood trail](./hunting.md#blood-trails--track-a-wounded-animal)** (up to ~1.5× at mastery). Learned by taking wild game.
 
+Skills otherwise stay quiet — you only hear about them when you step up a tier — so to check your progress, run **`/skills`**: it lists all five with their tier and how far along you are.
+
 *(Pottery is the last craft still to respond to skill on the same framework.)*
 
 ## Plant fiber and string
