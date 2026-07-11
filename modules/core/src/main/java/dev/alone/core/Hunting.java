@@ -13,12 +13,12 @@ import net.minecraft.world.item.Items;
 
 /**
  * Butchering (proposal §7.3). A clean kill with a <b>blade</b> lets you work the carcass properly —
- * killing a hide-bearing animal with a knife, sword, axe or spear salvages its <b>leather (hide)</b> and
- * its <b>bone</b> on top of the usual meat, so the whole animal is used and the flint knife and forged
- * blades pay off in the hunt. Beat one to death with your fists (or a pickaxe) and you waste the hide and
- * bone both. Which animals are butcherable, and what counts as a blade, are datapack tags
- * ({@code alone:hide_bearing} / {@code alone:blades}). Bone feeds bonemeal — and so the farming that keeps
- * scurvy at bay.
+ * killing a hide-bearing animal with a knife, sword, axe or spear salvages its <b>leather (hide)</b>, its
+ * <b>bone</b>, and often a strand of <b>sinew</b> (cordage — string) on top of the usual meat, so the whole
+ * animal is used and the flint knife and forged blades pay off in the hunt. Beat one to death with your
+ * fists (or a pickaxe) and you waste it all. Which animals are butcherable, and what counts as a blade, are
+ * datapack tags ({@code alone:hide_bearing} / {@code alone:blades}). Bone feeds bonemeal — and so the
+ * farming that keeps scurvy at bay; sinew is animal cordage alongside plant fibre.
  */
 public final class Hunting {
     private Hunting() {
@@ -44,6 +44,10 @@ public final class Hunting {
             entity.spawnAtLocation(level, new ItemStack(Items.LEATHER, hide));
             int bone = 1 + player.getRandom().nextInt(2); // 1–2 bone worked out of the carcass
             entity.spawnAtLocation(level, new ItemStack(Items.BONE, bone));
+            if (player.getRandom().nextFloat() < 0.6f) {
+                // Sinew from the tendons — a bit of animal cordage (string), when the carcass yields it.
+                entity.spawnAtLocation(level, new ItemStack(Items.STRING, 1));
+            }
         });
     }
 }
