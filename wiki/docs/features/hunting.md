@@ -58,8 +58,9 @@ the bleeding finishes the work.
 
 Killing a hide-bearing animal with a **blade** (knife, sword, axe, or **spear**) lets you work the whole
 carcass: it salvages **leather (hide)**, **bone**, and often a strand of **sinew** (cordage), on top of the
-meat. Kill it with a blunt tool or bare hands and you waste it all — no clean butchering. See
-[Tools & Crafting](./tools-and-crafting.md).
+meat. Kill it with a blunt tool or bare hands and you waste it all — **no clean butchering means no
+hide, bone, or sinew, only the meat.** (Animals no longer drop leather in their base loot — **all** of it
+comes from a blade kill, so a clubbed cow gives just beef.) See [Tools & Crafting](./tools-and-crafting.md).
 
 Every part has a use:
 
