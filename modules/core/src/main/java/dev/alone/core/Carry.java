@@ -174,6 +174,10 @@ public final class Carry {
         if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.002f;
         if (item == AloneItems.ROPE) return 0.005f;
         if (item == AloneItems.BEDROLL) return 0.150f; // a bulky roll — hand-carried, not pocketed
+        // A travois is a frame of long poles (2–3 m) lashed with crossbars. Even undeployed it's a big,
+        // awkward bundle you sling over a shoulder — never a pocket item, and it dominates your hands
+        // (most of the 1 m³ carry budget). This is why you deploy and DRAG it rather than pocket it.
+        if (item == AloneItems.TRAVOIS) return 0.70f;
 
         // Vanilla item paths
         if (path.contains("ingot") || path.contains("brick") || path.contains("raw_")) {
@@ -337,6 +341,7 @@ public final class Carry {
         if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.25f;
         if (item == AloneItems.ROPE) return 0.30f;
         if (item == AloneItems.BEDROLL) return 2.00f;
+        if (item == AloneItems.TRAVOIS) return 8.00f; // two wooden poles, crossbars and lashing — a real load to lug
 
         // 2. Specific vanilla items matching real life
         if (path.contains("ingot") || path.contains("brick")) {

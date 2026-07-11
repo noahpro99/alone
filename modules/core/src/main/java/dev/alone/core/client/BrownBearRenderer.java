@@ -13,6 +13,8 @@ import net.minecraft.resources.Identifier;
 public class BrownBearRenderer extends PolarBearRenderer {
     private static final Identifier TEXTURE =
         Identifier.fromNamespaceAndPath("alone", "textures/entity/brown_bear.png");
+    private static final Identifier BABY_TEXTURE =
+        Identifier.fromNamespaceAndPath("alone", "textures/entity/brown_bear_baby.png");
 
     public BrownBearRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -20,6 +22,6 @@ public class BrownBearRenderer extends PolarBearRenderer {
 
     @Override
     public Identifier getTextureLocation(PolarBearRenderState state) {
-        return TEXTURE;
+        return state.isBaby ? BABY_TEXTURE : TEXTURE;
     }
 }
