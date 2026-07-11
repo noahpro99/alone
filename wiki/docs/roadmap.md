@@ -65,7 +65,9 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 
 - **The shelter ladder:** light stick-frame blocks (that weather and can be broken by a bear),
   through log and stone tiers.
-- **Shelter Quality** ratings governing sleep recovery and temperature protection.
+- **A shown Shelter Quality rating** — a readout of how good your shelter is. *(The mechanic behind it
+  has shipped: how enclosed you are grades your temperature protection, which in turn feeds sleep
+  recovery; see [Body Temperature](./features/body-temperature.md#what-warms-and-cools-you).)*
 - **Felling real trees:** cut through the base and the tree **falls as an entity** (and can crush
   you), with **sapling → young → mature → old-growth** age states that scale a tree's height, chop
   time, and yield (an old-growth giant worth several times a young one).

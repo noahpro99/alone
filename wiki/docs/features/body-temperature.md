@@ -39,7 +39,7 @@ Overheat and you take **burning damage** as if you were on fire. Standing in lav
 - **Wetness multiplies cold.** **Wet clothing insulates nothing** until it dries.
 - **A fire dries you** about five times faster than air alone, and warms you at the same time.
 - **Heat sources warm you:** stand near a **lit campfire**, open **fire**, **torches**, or **lava** and the square climbs back toward green. Lava is strong enough to overheat you.
-- **Shelter insulates.** Being under cover (no open sky above you) shields you from rain and the cold night sky and pulls the surrounding temperature about **40% toward comfortable**. Deep underground stays a stable, mild cave temperature.
+- **Shelter insulates — and walls matter.** Being under cover (no open sky above you) shields you from rain and the cold night sky. A **bare roof** (an open lean-to) pulls the temperature about **40% toward comfortable**, but the more **walled in** you are the better it holds heat: a **fully enclosed shelter** (a solid wall within about 4 blocks on all four sides) reaches roughly **78%**. So building real walls, not just a roof, is what makes a cabin beat winter. Deep underground stays a stable, mild cave temperature.
 - **Hot meals warm you.** Eating a cooked meal or stew bumps your body temperature toward comfort (it won't overheat you), then drifts back over about **40 seconds**.
 
 ## Clothing
