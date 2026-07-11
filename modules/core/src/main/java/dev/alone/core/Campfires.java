@@ -87,9 +87,15 @@ public final class Campfires {
                     return InteractionResult.PASS; // let vanilla handle food/pottery cooking, etc.
                 }
                 if (!level.isClientSide()) {
-                    setFuel(be, Math.min(MAX_FUEL, getFuel(be) + add));
+                    int fuel = Math.min(MAX_FUEL, getFuel(be) + add);
+                    setFuel(be, fuel);
                     if (!player.isCreative()) {
                         held.shrink(1);
+                    }
+                    // No furnace menu — you read a fire by eye. But a quick word on how it's burning tells
+                    // you roughly how long it'll last, the way a glance at the flames and coals would.
+                    if (player instanceof ServerPlayer sp) {
+                        sp.sendSystemMessage(Component.literal(fireStateMessage(fuel)), true);
                     }
                 }
                 player.swing(hand);
@@ -166,6 +172,15 @@ public final class Campfires {
 
     public static final int FUEL_PER_FIBER = 150; // dry tinder flares fast — a few seconds
     public static final int FUEL_PER_LEAF = 100;
+
+    /** A word on how a fire's burning, read from its remaining fuel — roaring down to guttering, with a
+     *  rough time. The kind of judgement you'd make glancing at the flames and coals, not a furnace gauge. */
+    private static String fireStateMessage(int fuel) {
+        int minutes = Math.max(1, Math.round(fuel / 1200f)); // 1200 ticks = 1 minute
+        String state = fuel > 12000 ? "roaring" : fuel > 4800 ? "burning steadily"
+            : fuel > 1200 ? "burning low" : "guttering";
+        return "The fire is " + state + " — about " + minutes + " min of fuel left.";
+    }
 
     public static int fuelValue(ItemStack stack) {
         if (stack.is(Items.STICK)) {
