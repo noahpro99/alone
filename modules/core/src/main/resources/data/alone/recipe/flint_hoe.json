@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FF",
+    "PS",
+    " S"
+  ],
+  "key": {
+    "F": "alone:flint_shard",
+    "S": "minecraft:stick",
+    "P": "alone:plant_fiber"
+  },
+  "result": { "id": "alone:flint_hoe", "count": 1 }
+}

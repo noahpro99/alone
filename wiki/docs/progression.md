@@ -67,7 +67,9 @@ The four ages below map to the real arc:
 1. **Work clay.** Dig **clay** by water, shape an **unfired clay pot**, and you have a start on
    [pottery](./features/water-and-drinking.md#vessels) — a real water and cooking vessel once fired (Age 3's
    kiln). Woven **baskets** from plant fibre carry the light, bulky things.
-2. **Plant a crop.** Till, sow, and harvest. The point isn't calories-per-click, it's **variety**: a
+2. **Plant a crop.** Till the ground with a **flint hoe** (a knapped blade lashed to a handle — the way
+   the Neolithic farmed, long before any metal), then sow and harvest. The point isn't calories-per-click,
+   it's **variety**: a
    monotonous diet shrinks your usable hunger, and going without fruit or vegetables long enough brings on
    [scurvy](./features/injuries-and-conditions.md). Farming is the first thing that pays you *back* for
    settling down.

@@ -189,6 +189,11 @@ public final class AloneItems {
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",
         key -> new Item(new Item.Properties().sword(FLINT, 2.0F, -2.0F).setId(key)));
+    /** A flint hoe (§4.1) — a knapped blade lashed to a handle, the way the Neolithic tilled the ground
+     *  long before any metal. It's what lets you farm in the stone age, so farming can precede metalwork
+     *  as it did in life — not wait behind a copper hoe. */
+    public static final Item FLINT_HOE = register("flint_hoe",
+        key -> new Item(new Item.Properties().hoe(FLINT, -2.0F, -1.0F).setId(key)));
     /** A flint-tipped spear (§8.6) — king of the early game: a real thrusting reach so you can hit before
      *  the animal (or attacker) reaches you, plus the vanilla spear's charged thrust and piercing. A
      *  flint point lashed to a shaft, at the flint tier; uses the stone-spear tuning and look. */
