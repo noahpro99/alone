@@ -64,7 +64,13 @@ public class DryingRackBlock extends BaseEntityBlock {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack) {
-            return rack.place(level, player, stack, hand);
+            // Occupied: any click takes the food back (empty hand or not). Empty: hang what's held.
+            if (!rack.heldFood().isEmpty()) {
+                return rack.retrieve(level, player);
+            }
+            InteractionResult placed = rack.place(level, player, stack, hand);
+            // Nothing hung — defer to the empty-hand path rather than dead-ending on PASS (26.2 dispatch).
+            return placed.consumesAction() ? placed : InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         return InteractionResult.PASS;
     }

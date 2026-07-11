@@ -84,7 +84,9 @@ public class KilnBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        // Held item does nothing here — defer to the empty-hand take so a click still pulls the ware
+        // (26.2 dispatch: a bare PASS would never reach useWithoutItem).
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override

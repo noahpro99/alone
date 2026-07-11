@@ -84,7 +84,9 @@ public class ClayPotBlock extends BaseEntityBlock {
             && stack.getItem() instanceof WaterskinItem vessel) {
             return pot.fillVessel(level, player, stack, vessel);
         }
-        return InteractionResult.PASS;
+        // Not a vessel (incl. an empty hand) — defer to the empty-hand drink path (26.2 dispatch: a
+        // bare PASS here would never reach useWithoutItem).
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
