@@ -222,6 +222,14 @@ public final class SurvivalMeters {
                     player.sendSystemMessage(Component.literal(
                         "You wake rested — but the night has left you hungry and dry."));
                 }
+                // A night's rest also mends illness (§1.5): sickness, a festering wound, and dysentery all
+                // ebb as you sleep — the more comfortable the rest, the more (a shivering night mends little).
+                int mend = Math.round(slept * 0.5f * quality);
+                if (mend > 0) {
+                    Conditions.relieveSickness(player, mend);
+                    Conditions.relieveInfection(player, mend);
+                    Conditions.relieveDysentery(player, mend);
+                }
                 player.removeAttached(SLEEP_START);
             }
         });
