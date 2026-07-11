@@ -43,9 +43,12 @@ public final class Wildlife {
         });
     }
 
-    /** Wild enough to be skittish — not domestic livestock, tamed pets, babies, or led animals. */
+    /** Wild enough to be skittish — not domestic livestock, tamed pets, babies, led animals, or bold
+     *  predators. Wolves and polar bears aren't skittish game that bolts from you; they hold their ground
+     *  (and are drawn to carried meat — see {@link Scent}), so they're left out of the flee behaviour. */
     private static boolean shouldBeWary(Animal animal) {
-        if (animal.isBaby() || animal.isLeashed() || animal.getType().builtInRegistryHolder().is(DOMESTIC)) {
+        if (animal.isBaby() || animal.isLeashed() || animal.getType().builtInRegistryHolder().is(DOMESTIC)
+            || Scent.PREDATORS.contains(animal.getType())) {
             return false;
         }
         return !(animal instanceof TamableAnimal tame && tame.isTame());
