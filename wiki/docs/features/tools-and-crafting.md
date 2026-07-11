@@ -18,7 +18,11 @@ Bare hands don't fell timber:
 Before any metal, flint is knapped into primitive tools:
 
 - **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but a **raw novice shatters** nearly half their flint. That improves with practice (see [Skill by doing](#skill-by-doing) below): a **skilled** knapper wastes far less.
-- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone), or a **flint knife** (a crude cutting blade that also strips plant fiber, below).
+- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone), a **flint knife** (a crude cutting blade that also strips plant fiber, below), or a **flint spear** (below).
+
+### The flint spear — reach
+
+The **flint spear** (flint shard + plant fiber + 2 sticks) is the early game's best weapon, for one real reason: **reach**. Its **thrusting range is far longer** than a knife or axe, so you can **strike game or an attacker before it reaches you** — exactly why the spear was humanity's first great weapon. It carries the full spear feel — a **charged thrust** and **piercing** — and being a blade, a **spear kill still salvages the hide**. It's flint-tier, so it's low on durability; treat it as the reach you can afford before metal.
 
 Flint and loose rocks come from **digging gravel** (rocks are also foraged off the ground).
 

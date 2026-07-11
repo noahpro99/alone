@@ -107,8 +107,9 @@ The backpack exists; the rest of the logistics tree is planned.
 - **Digestion & sanitation:** a latrine/contamination system where fouling your own camp or water
   source sickens you. *(Dysentery — the acute dehydration emergency from drinking foul water — has
   shipped; see [Injuries & Conditions](./features/injuries-and-conditions.md#dysentery).)*
-- **Combat depth:** the spear as king of the early game; shields drained and defeated outright by
-  large creatures.
+- **Combat depth:** shields drained and defeated outright by large creatures. *(The spear as king of
+  the early game has shipped — a flint spear with real thrusting reach; see
+  [Tools & Crafting](./features/tools-and-crafting.md#the-flint-spear--reach).)*
 
 ## Crafting & labour
 
