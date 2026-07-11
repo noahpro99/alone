@@ -151,6 +151,9 @@ nose for it.
   **caching your meat** is the other way to travel unnoticed.
 - **Foxes stay skittish** and keep their distance; only bold predators track you. Wolves and polar
   bears no longer flee you, either — they hold their ground.
+- The same nose finds **carrion**: fresh meat **dropped on the ground** — a kill left behind, or the
+  pile where you **died** — draws predators that **eat it where it lies** (a piece at a time). Don't
+  dawdle recovering a meat-laden death pile, and don't expect dropped raw meat to wait for you.
 
 So the trade is real: **haul raw meat and attract danger, or preserve/cache it and travel clean.**
 
