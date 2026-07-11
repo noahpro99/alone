@@ -10,7 +10,7 @@ There is no hearts bar in Alone — the body is a set of separate systems shown 
 The vanilla hearts are hidden. There is **no single vitality or health bar** in their place — instead the body is tracked as separate systems, and you die from one of them failing (bleeding out, freezing, dehydration, starvation, trauma), not from an abstract HP pool. Your condition is read through:
 
 - **The corner meters** — stamina, endurance, and thirst — and the **temperature square** (see [Survival Meters & HUD](./survival-meters.md) and [Body Temperature](./body-temperature.md)).
-- **A paper-doll injury figure** — a small body that colors where you're hurt: red torso when bleeding, orange legs when sprained, brown hands when dirty, **purple arms when infected**, green body when sick.
+- **A paper-doll injury figure** — a small body that colors where you're hurt: red torso when bleeding, orange legs when sprained, brown hands when dirty, **purple arms when infected**, a **bilious-yellow torso when you have dysentery**, green body when sick.
 
 Because health no longer snaps back, damage persists as wounds that must be treated rather than out-healed.
 
