@@ -79,6 +79,11 @@ public class KilnBlock extends BaseEntityBlock {
             if (!level.isClientSide()) {
                 kiln.setAttached(KilnBlockEntity.LOADED, stack.copy());
                 kiln.setAttached(KilnBlockEntity.PROGRESS, 0);
+                // Skill by doing (§8.4): a practised potter reads the heat and fires ware faster — the
+                // skill at load bakes in this batch's fire time (down to ~35% quicker at mastery).
+                Skills.gain(player, Skills.POTTERY, 1);
+                kiln.setAttached(KilnBlockEntity.FIRE_TARGET, Math.round(
+                    KilnBlockEntity.FIRE_TIME * (1f - 0.35f * Skills.proficiency(player, Skills.POTTERY))));
                 kiln.setChanged();
                 stack.setCount(0); // the whole stack goes in
             }

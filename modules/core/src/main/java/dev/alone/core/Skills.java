@@ -30,6 +30,7 @@ public final class Skills {
     public static final String MINING = "mining";
     public static final String SMITHING = "smithing";
     public static final String TRACKING = "tracking";
+    public static final String POTTERY = "pottery";
 
     /** Practice count at which you're halfway to mastery — sets the pace of the learning curve. */
     private static final int HALF_MASTERY = 30;
@@ -40,7 +41,7 @@ public final class Skills {
     /** All practised skills, in display order, with a readable label — for the /skills readout. */
     private static final String[][] LISTING = {
         {FLINTWORKING, "Flintworking"}, {FIRECRAFT, "Firecraft"}, {MINING, "Mining"},
-        {SMITHING, "Smithing"}, {TRACKING, "Tracking"},
+        {SMITHING, "Smithing"}, {TRACKING, "Tracking"}, {POTTERY, "Pottery"},
     };
 
     /** A readable summary of a player's skills (tier + %), for the player-facing readout. */

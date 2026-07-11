@@ -30,6 +30,9 @@ public class KilnBlockEntity extends BlockEntity {
         Identifier.fromNamespaceAndPath("alone", "kiln_fuel"), Codec.INT);
     public static final AttachmentType<Integer> PROGRESS = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "kiln_progress"), Codec.INT);
+    /** Effective fire time for the current load — baked in at load from the potter's skill (§8.4). */
+    public static final AttachmentType<Integer> FIRE_TARGET = AttachmentRegistry.createPersistent(
+        Identifier.fromNamespaceAndPath("alone", "kiln_fire_target"), Codec.INT);
 
     public KilnBlockEntity(BlockPos pos, BlockState state) {
         super(AloneBlocks.KILN_BLOCK_ENTITY, pos, state);
@@ -43,7 +46,7 @@ public class KilnBlockEntity extends BlockEntity {
         }
         kiln.setAttached(FUEL, fuel - 1); // the fire eats its fuel whether or not the ware is done
         int progress = kiln.getAttachedOrElse(PROGRESS, 0) + 1;
-        if (progress >= FIRE_TIME) {
+        if (progress >= kiln.getAttachedOrElse(FIRE_TARGET, FIRE_TIME)) { // skill fires faster (baked at load)
             ItemStack fired = firedResult(loaded.getItem());
             fired.setCount(loaded.getCount()); // the whole batch hardens together
             kiln.setAttached(LOADED, fired);
