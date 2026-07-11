@@ -39,6 +39,10 @@ Pointing at a water source and **right-clicking bare-handed** drinks straight fr
 - A **vessel filled from swamp/jungle water fills murky** (tainted, the ~45% tier), so you must boil it before it's safe — via a fire-safe pot, or **[hot-rock boiling](#hot-rock-boiling--for-the-waterskin)** for a hide waterskin.
 - Sickness is a lingering foodborne illness.
 
+## Eating snow
+
+In snow country you can **bare-hand right-click a snow layer or snow block** to eat a handful. Snow is frozen precipitation, so it's **clean — no sickness** — but it's a poor way to drink: a handful melts to **only a little water**, and your body spends heat melting it, so **it chills you** (badly if you're already cold — which, in snow country, you usually are). It's an emergency sip, not a water supply. The real answer is to **melt snow over a fire** rather than eat it cold — exactly the survival rule.
+
 ## Salt water
 
 Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable. But it isn't useless: boiled to dryness, **seawater leaves a crust of salt** (see [Getting salt](./preservation.md#getting-salt--boil-down-seawater)) — the way to stock salt for preserving food.

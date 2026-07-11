@@ -38,6 +38,8 @@ public final class Drinking {
     private static final float DRINK_AMOUNT = 25f;
     private static final float SICKNESS_CHANCE = 0.15f;
     private static final float SALT_DEHYDRATE = 15f; // seawater pulls water OUT of you (§1.2)
+    private static final float SNOW_THIRST = 6f;     // a handful of snow melts to only a little water
+    private static final float SNOW_CHILL = 10f;     // ...and chills your core as your body melts it
 
     // Ring of horizontal samples (~32 and ~64 blocks out, 8 compass points) to detect nearby open ocean.
     private static final int[][] COAST_SAMPLES = {
@@ -114,6 +116,31 @@ public final class Drinking {
                     SurvivalMeters.drink(player, DRINK_AMOUNT); // rain water is clean — no sickness roll
                 }
                 LayeredCauldronBlock.lowerFillLevel(level.getBlockState(pos), level, pos);
+            }
+            return InteractionResult.SUCCESS;
+        });
+
+        // Eating snow (§1.2/§1.3): bare-hand right-click a snow layer or block to eat a handful. Frozen
+        // precipitation is clean, so it slakes a little thirst with no sickness — but your body spends heat
+        // melting it, so it CHILLS you, badly if you're already cold. The real lesson: melt snow over a
+        // fire, don't eat it. Snow's abundant, so a handful doesn't consume the block; the chill self-limits.
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            if (hand != InteractionHand.MAIN_HAND || !player.getMainHandItem().isEmpty()) {
+                return InteractionResult.PASS;
+            }
+            var block = level.getBlockState(hit.getBlockPos());
+            if (!block.is(Blocks.SNOW) && !block.is(Blocks.SNOW_BLOCK)) {
+                return InteractionResult.PASS;
+            }
+            if (!level.isClientSide()) {
+                if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
+                    SurvivalMeters.drink(player, SNOW_THIRST);
+                }
+                SurvivalMeters.chill(player, SNOW_CHILL);
+                if (player instanceof net.minecraft.server.level.ServerPlayer served) {
+                    served.sendSystemMessage(Component.literal(
+                        "You eat a handful of snow — a little water, but it chills you through. Better melted."), true);
+                }
             }
             return InteractionResult.SUCCESS;
         });

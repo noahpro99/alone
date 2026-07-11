@@ -310,6 +310,12 @@ public final class SurvivalMeters {
         player.setAttached(BODY_TEMP, Math.max(0f, current - amount));
     }
 
+    /** Ingesting cold — a mouthful of snow, ice-cold water — pulls your core DOWN, and unlike {@link #cool}
+     *  it can chill a comfortable body below neutral into the cold (§1.3). It's why you melt snow, not eat it. */
+    public static void chill(Player player, float amount) {
+        player.setAttached(BODY_TEMP, Math.max(-100f, getBodyTemp(player) - amount));
+    }
+
     /** Restore stamina directly (energy from food). */
     public static void restoreStamina(Player player, float amount) {
         player.setAttached(STAMINA, Math.max(0f, Math.min(MAX_STAMINA, getStamina(player) + amount)));
