@@ -40,9 +40,11 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 - **Deeper farming:** fishing as a primary food source with finite, slow-recovering stocks. *(Salting,
   drying racks, smoking, root cellars, and ice houses have shipped — see
   [Food Preservation](./features/preservation.md).)*
-- **Food security:** fresh food emits **scent** that draws bears and predators, countered by sealed
-  barrels, hung caches, and smokehouses. Carry food and attract predators, or cache it and pay
-  travel time.
+- **Food security, deeper:** predators **escalating from investigating to a hungry raid** on your
+  food, plus **dedicated sealed barrels, hung caches, and smokehouses** as purpose-built counters.
+  *(The core of it has shipped — carried fresh meat emits scent that draws wolves and polar bears,
+  countered by preserving or caching it; see
+  [Food Preservation](./features/preservation.md#fresh-meat-draws-predators).)*
 - **Weeds & field tending:** weeds spawn on farmland, slow and choke crops, and spread to neighbours
   unless cleared by hand/hoe; untended fields fail, trampled crops die, farmland erodes back to dirt.
 - **Mushroom toxicity & identification:** some foraged mushrooms are poisonous, learned by trial or

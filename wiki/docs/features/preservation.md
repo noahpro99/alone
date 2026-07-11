@@ -134,3 +134,22 @@ weather, and biome change that rate, and warm wet conditions **spoil the meat in
 Smoking requires a **lit campfire two blocks directly below the rack, with an air gap between them**
 so cool smoke rises to the meat. A fire, lava, or lit campfire placed **directly beneath** the rack
 instead sets the wooden rack alight — the rack and the food on it are destroyed.
+
+## Fresh meat draws predators
+
+Preserving food isn't only about shelf life — **raw meat you carry reeks**, and the wilderness has a
+nose for it.
+
+- Carrying **loose, unpreserved perishable food** (raw or cooked meat, fish) draws a nearby **wolf or
+  polar bear** toward you — from about **14 blocks**, and **further the more you carry** (up to ~30).
+- **Salted or dried food doesn't reek** — preservation seals the smell, so a pack of jerky travels
+  clean where a pack of raw meat would trail predators.
+- Food **stashed in a chest or backpack** — rather than loose on your body — isn't on you to smell, so
+  **caching your meat** is the other way to travel unnoticed.
+- **Foxes stay skittish** and keep their distance; only bold predators track you. Wolves and polar
+  bears no longer flee you, either — they hold their ground.
+
+So the trade is real: **haul raw meat and attract danger, or preserve/cache it and travel clean.**
+
+*(For now the smell draws predators in to investigate — their approach is the warning. Escalation to a
+hungry raid, and dedicated sealed caches/smokehouses, are planned.)*
