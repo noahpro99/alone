@@ -18,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +36,10 @@ import net.minecraft.world.phys.Vec3;
  * <p>And it escalates: a predator that reaches your side doesn't just watch — it <b>snatches a piece of raw
  * meat and bolts with it</b>, a hungry raid that costs you food (not blood). Preserve it, cache it, or lose
  * it to the wild.
+ *
+ * <p>The same nose finds <b>carrion</b>: fresh meat <b>dropped on the ground</b> — a kill left behind, or
+ * the pile where you died — draws predators that <b>eat it where it lies</b>, so don't dawdle recovering a
+ * meat-laden death pile. (See {@link #scavenge}.)
  */
 public final class Scent {
     private Scent() {
@@ -65,6 +70,7 @@ public final class Scent {
                 }
                 if (player.level() instanceof ServerLevel level) {
                     tick(level, player);
+                    scavenge(level, player);
                 }
             }
         });
@@ -150,15 +156,65 @@ public final class Scent {
         int count = 0;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.isEmpty() || !stack.is(PERISHABLE)) {
-                continue;
+            if (isFreshMeat(stack, preserved)) {
+                count += stack.getCount();
             }
-            if (preserved != null && stack.getOrDefault(preserved, false)) {
-                continue; // salted/dried — sealed against the smell
-            }
-            count += stack.getCount();
         }
         return count;
+    }
+
+    /** Raw, unpreserved meat/fish — the stuff that reeks (salted/dried is sealed). */
+    private static boolean isFreshMeat(ItemStack stack, DataComponentType<Boolean> preserved) {
+        if (stack.isEmpty() || !stack.is(PERISHABLE)) {
+            return false;
+        }
+        return preserved == null || !stack.getOrDefault(preserved, false);
+    }
+
+    /**
+     * The wilderness cleans up carrion. Fresh meat <b>dropped on the ground</b> (a kill left behind, or the
+     * pile where you died) reeks the same as meat in hand — nearby predators are drawn to it and <b>eat it
+     * where it lies</b>, a piece at a time. So a carcass or a death-pile of raw meat won't sit forever; the
+     * scavengers find it, which is the counter to items never despawning. Preserved food doesn't draw them.
+     */
+    private static void scavenge(ServerLevel level, ServerPlayer player) {
+        DataComponentType<Boolean> preserved = booleanComponent("preserved");
+        AABB box = player.getBoundingBox().inflate(BASE_RADIUS);
+        List<ItemEntity> piles = level.getEntitiesOfClass(ItemEntity.class, box,
+            e -> e.isAlive() && isFreshMeat(e.getItem(), preserved));
+        if (piles.isEmpty()) {
+            return;
+        }
+        List<Mob> predators = level.getEntitiesOfClass(Mob.class, box,
+            m -> PREDATORS.contains(m.getType()) && m.isAlive());
+        for (Mob mob : predators) {
+            if (!(mob instanceof PathfinderMob predator) || predator.getTarget() != null) {
+                continue;
+            }
+            ItemEntity nearest = null;
+            double best = Double.MAX_VALUE;
+            for (ItemEntity pile : piles) {
+                double d = predator.distanceToSqr(pile);
+                if (d < best) {
+                    best = d;
+                    nearest = pile;
+                }
+            }
+            if (nearest == null) {
+                continue;
+            }
+            if (best <= GRAB_RANGE * GRAB_RANGE) {
+                ItemStack stack = nearest.getItem();
+                stack.shrink(1); // gulps a piece each pass
+                if (stack.isEmpty()) {
+                    nearest.discard();
+                } else {
+                    nearest.setItem(stack);
+                }
+            } else {
+                predator.getNavigation().moveTo(nearest, APPROACH_SPEED); // drawn to the carcass
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
