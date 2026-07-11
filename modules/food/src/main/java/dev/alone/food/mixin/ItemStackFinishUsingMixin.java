@@ -79,6 +79,18 @@ public class ItemStackFinishUsingMixin {
         if (Hygiene.handsDirty(player)) {
             chance += 0.25f;
         }
+        // Food that's "going off" is a gamble even cooked (§4.2): once a perishable is into the last third
+        // of its freshness — the "beginning to turn / going off" the tooltip warns of — eating it carries a
+        // rising sickness chance, climbing toward the brink of rotting. Ties the freshness system to the bite.
+        Long freshness = self.get(dev.alone.food.Spoilage.FRESHNESS);
+        if (freshness != null && freshness > 0L) {
+            long budget = self.getOrDefault(dev.alone.food.Spoilage.PRESERVED, false)
+                ? dev.alone.food.Spoilage.PRESERVED_SHELF_TICKS : dev.alone.food.Spoilage.SPOIL_TICKS;
+            float fraction = (float) freshness / budget;
+            if (fraction < 0.33f) {
+                chance = Math.min(0.95f, chance + (0.33f - fraction) / 0.33f * 0.4f); // up to +0.4 near rotting
+            }
+        }
         // On a bad roll you don't just get a few seconds of potion — you contract a lingering
         // foodborne illness (§1.5) that keeps you weak for minutes and persists through relog.
         if (chance > 0f && player.getRandom().nextFloat() < chance) {
