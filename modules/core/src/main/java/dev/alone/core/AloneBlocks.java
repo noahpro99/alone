@@ -234,6 +234,17 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A tanning rack (§7.3) — a load-and-leave frame that works a green {@link AloneItems#RAW_HIDE} (with a
+     *  lump of {@link AloneItems#ANIMAL_BRAINS}) into leather over the long, patient days tanning really takes
+     *  (see {@link TanningRackBlock}). Reuses the drying rack's frame model as placeholder art. */
+    public static final Block TANNING_RACK = register("tanning_rack",
+        key -> new TanningRackBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOD)
+            .strength(0.6F)
+            .noOcclusion()
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */
@@ -242,6 +253,8 @@ public final class AloneBlocks {
     public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
     /** The bloomery's smelting state (loaded ore, fuel, progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BloomeryBlockEntity> BLOOMERY_BLOCK_ENTITY;
+    /** The tanning rack's worked hide + tan progress. Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<TanningRackBlockEntity> TANNING_RACK_BLOCK_ENTITY;
 
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
@@ -265,6 +278,10 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "drying_rack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 DryingRackBlockEntity::new, java.util.Set.of(DRYING_RACK)));
+        TANNING_RACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "tanning_rack"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                TanningRackBlockEntity::new, java.util.Set.of(TANNING_RACK)));
 
         // Rope is dry plant fibre — it catches readily and burns up fast, so fire runs up a hung line.
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);

@@ -99,6 +99,10 @@ public class AloneCoreClient implements ClientModInitializer {
         net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
             dev.alone.core.AloneBlocks.DRYING_RACK_BLOCK_ENTITY, DryingRackRenderer::new);
 
+        // Show the hide (or finished leather) stretched on a tanning rack (§7.3) — from its synced attachment.
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+            dev.alone.core.AloneBlocks.TANNING_RACK_BLOCK_ENTITY, TanningRackRenderer::new);
+
         // Hauling must slow the LOCAL player through jumps and sprints too — and player movement is
         // client-authoritative, so a server-side cap can't hold it. If the local player is dragging a
         // travois, cancel sprint here (kills the sprint-jump momentum burst) and cap horizontal speed to
