@@ -75,6 +75,20 @@ recovers, and animals won't breed in the dead of winter. See
   **rabbit** and **chicken** and a new **squirrel** already behave as skittish wild game — bolt, tire fast,
   count toward overhunting, give a scrap of meat — and the squirrel **climbs trees** when you close on it;
   see [Hunting & Wildlife](./features/hunting.md#small-game--the-staple-you-actually-live-on).)*
+- **A wilderness that's actually wild** *(big direction, staged)*. The wild should hold only wild animals —
+  **skittish prey** you stalk (deer, rabbit, squirrel — done) and **dangerous predators/game**, never docile
+  livestock you stroll past. The plan:
+  - **Domestic animals out of the wild.** Veto natural spawns of the `alone:domestic` tag (cow, pig, sheep,
+    chicken, horse…) in open country, the same way hostiles are already confined near structures — so a cow
+    or a sheep is something you find **only at a village**, not roaming a meadow. (Ties into the village-raid
+    idea below and hardens the early food/materials economy: no free beef, wool, or leather from a punched cow.)
+  - **Dangerous wild grazers.** Add a large wild bovine — a **bison / aurochs** — to fill the big-grazer niche
+    in plains/savanna, but as **dangerous game**: a neutral mob that **charges and gores** when threatened,
+    with real HP, that yields a lot of meat and a large hide. So big-game meat and hide are *huntable in the
+    wild*, but hunting one is a genuine risk — not walking up to a placid cow. (A **wild boar** for forests is
+    the mid-size version — roots around, charges when cornered.)
+  - **Biome-correct fauna.** Place each animal where it belongs — bison on the plains, boar in forests, more
+    birds (grouse/ptarmigan) in the cold — so the country you're in decides what you can hunt.
 - **More tracking sign:** footprints and snow tracking, to follow quarry you can't see. *(Persistence
   hunting, blood trails, and bleed-out have shipped, and now a **prevailing wind** — a steady direction
   each day that carries your scent, so a predator downwind finds you from far off and one upwind barely
@@ -142,6 +156,12 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 
 ## The body & combat
 
+- **A real calorie model.** Today hunger is vanilla food + saturation, with fatigue/stamina and a
+  cold-food-burn bolted alongside. A truer model would track **calories in vs out**: food carries an energy
+  value, and you *spend* energy on a **basal rate** plus **activity** (walking < sprinting < mining/chopping <
+  swimming) and **thermoregulation** (already gestured at — a cold body burns more). Then starving, freezing,
+  and overworking all draw on the same honest ledger, and a hard day's labour genuinely needs feeding. Big,
+  and it wants care so it deepens the survival loop without turning into spreadsheet micromanagement.
 - **Digestion & sanitation:** a latrine/contamination system where fouling your own camp or water
   source sickens you. *(Dysentery — the acute dehydration emergency from drinking foul water — has
   shipped; see [Injuries & Conditions](./features/injuries-and-conditions.md#dysentery).)*
@@ -162,6 +182,17 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 
 - **Domesticated animals as bartered wealth**, priced in grain — earned through many harvests, never
   spawned or found wild.
+- **Village livestock.** With domestic animals gone from the open wild (see *Wildlife & hunting*), the place
+  you meet a cow, sheep, or chicken is a **village** — the settlement's own herd. So beef, wool, and cow-hide
+  leather are things you **trade for, tend, or raid**, not free wilderness drops. Pairs with the planned
+  **armed village guards** (steal or strike anything and the village turns on you), making a livestock raid a
+  real, dangerous option rather than a free lunch.
+- **Tanning — leather is made, not dropped.** Right now butchering a hide-bearing animal drops `leather`
+  directly, which isn't true to life: you get a **raw hide**, and turning it into usable **leather** is a
+  process — scrape it, treat it (brains/bark/smoke), and dry it over days. Proposal: butchering yields a
+  **raw hide** item; **tanning** is a timed job (a tanning rack or a soak-and-dry) that converts hide →
+  leather over in-game days — so a leather coat is a real investment, in keeping with the pack's "everything
+  is real effort" rule.
 
 ## The start — extending the loadout
 
