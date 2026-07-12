@@ -1,1 +1,1 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "minecraft:block/hay_block_side" } }
+{ "parent": "minecraft:block/cube_all", "textures": { "all": "alone:block/thatch" } }

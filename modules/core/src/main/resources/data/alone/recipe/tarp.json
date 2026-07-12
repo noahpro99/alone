@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:leather", "minecraft:leather", "minecraft:leather", "minecraft:string", "minecraft:string"],
+  "result": {"id": "alone:tarp", "count": 3}
+}

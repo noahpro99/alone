@@ -88,6 +88,10 @@ public final class AloneItems {
      *  (see {@link AloneBlocks#THATCH}). */
     public static final Item THATCH = register("thatch",
         key -> new BlockItem(AloneBlocks.THATCH, new Item.Properties().setId(key)));
+    /** Tarp — a waterproof, fireproof, reusable hide sheet: the premium roof above thatch
+     *  (see {@link AloneBlocks#TARP}). Hard to make (leather + cordage) or brought. */
+    public static final Item TARP = register("tarp",
+        key -> new BlockItem(AloneBlocks.TARP, new Item.Properties().setId(key)));
     public static final Item WATERSKIN = register("waterskin",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3, false));
     /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */
