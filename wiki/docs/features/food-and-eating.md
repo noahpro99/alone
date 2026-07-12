@@ -84,8 +84,9 @@ Hunger gates recovery: **below 6 hunger, stamina recovers poorly.** Running hung
 
 Fishing works as it does in vanilla — but **a spot can be fished out.** Every water area holds a **finite stock of fish**, and pulling fish out of the same place fast enough **empties it**: the catches dry up (you'll reel in junk or nothing) until the stock **recovers over the following days**, or you move to fresh water.
 
-- **A small pond empties fast** — it's only a spot or two of water. **A lake or the sea is many spots**, so it lasts far longer and you can work along it.
-- **Fished-out water recovers on its own** — leave a spot alone and the fish return over a couple of in-game days, so a well-managed shoreline keeps feeding you.
+- **How much water surrounds the spot sets how rich it is.** A shallow puddle holds few fish and has no larger body to restock it, so it **thins out in a handful of casts and barely recovers**. **Open, deep water** — a wide lake or the sea — is plentiful and **restocks fast**, so you can work it hard. A modest pond sits in between.
+- **A small pond also empties fast because it's only a spot or two of water** — a lake or the sea is *many* rich spots, so it lasts far longer and you can work along it.
+- **Fished-out water recovers on its own** — leave a spot alone and the fish return over the following in-game days (a rich spot faster, a poor one slowly), so a well-managed shoreline keeps feeding you.
 - Only **actual fish** count against the stock; junk and treasure catches don't.
 
 So fishing is a real, renewable food source you have to **manage, not strip** — exactly the pressure a survivor living off the water faces.
