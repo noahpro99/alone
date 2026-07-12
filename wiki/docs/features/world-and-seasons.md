@@ -15,6 +15,8 @@ The year cycles **spring → summer → autumn → winter**, with each season la
 
 - **Nothing breeds in winter.** Animals **won't breed** while it's winter — the dead season stops new life just as it stops crops. So you grow a herd (and let hunted game repopulate) in **spring**, not the cold; breeding resumes when it breaks.
 
+- **The sky warns of a storm.** A storm doesn't hit out of nowhere — while you're **out under the open sky**, you get a **lead warning** that rain (or, in winter, a [blizzard](./body-temperature.md#what-warms-and-cools-you)) is building, so you can get **under cover, your fire covered, and your drying meat in** before it arrives. You can't read it from underground or under a solid roof — you have to be out where you can see the weather turn.
+
 Season affects body temperature — see [Body Temperature](./body-temperature.md).
 
 ## Farming with the seasons
