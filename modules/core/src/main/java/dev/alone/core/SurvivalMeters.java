@@ -193,8 +193,6 @@ public final class SurvivalMeters {
             newPlayer.setAttached(STAMINA, 20f);
             newPlayer.setAttached(FATIGUE, 80f);
             Conditions.addSprain(newPlayer, 600); // you didn't walk home unscathed
-            newPlayer.sendSystemMessage(Component.literal(
-                "You wake at your homestead, days later — battered, hungry, and weak."));
         });
 
         // Exhaustion makes your hits feeble (Weakness at 0 stamina). When a spent player swings at a

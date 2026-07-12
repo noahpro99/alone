@@ -123,13 +123,14 @@ public final class Fibers {
         player.sendSystemMessage(Component.literal("You strip " + fiber + " plant fibre."), true);
     }
 
-    /** Grasses, ferns, vines, and other fibrous ground plants you can strip cordage from. */
+    /** Grasses (incl. the dry badlands grasses), ferns, vines, bushes — any fibrous ground plant you can
+     *  strip cordage from. Datapack-defined ({@code data/alone/tags/block/fibrous_plants.json}) so the list
+     *  is easy to extend without touching code. */
+    private static final net.minecraft.tags.TagKey<Block> FIBROUS_PLANTS =
+        net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+            net.minecraft.resources.Identifier.fromNamespaceAndPath("alone", "fibrous_plants"));
+
     private static boolean isFibrousPlant(BlockState state) {
-        return state.is(Blocks.SHORT_GRASS) || state.is(Blocks.TALL_GRASS)
-            || state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)
-            || state.is(Blocks.VINE) || state.is(Blocks.DEAD_BUSH)
-            || state.is(Blocks.HANGING_ROOTS) || state.is(Blocks.CAVE_VINES)
-            || state.is(Blocks.CAVE_VINES_PLANT) || state.is(Blocks.WEEPING_VINES)
-            || state.is(Blocks.TWISTING_VINES);
+        return state.is(FIBROUS_PLANTS);
     }
 }

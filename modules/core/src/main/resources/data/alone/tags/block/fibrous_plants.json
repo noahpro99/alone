@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:short_grass",
+    "minecraft:tall_grass",
+    "minecraft:fern",
+    "minecraft:large_fern",
+    "minecraft:vine",
+    "minecraft:dead_bush",
+    "minecraft:hanging_roots",
+    "minecraft:cave_vines",
+    "minecraft:cave_vines_plant",
+    "minecraft:weeping_vines",
+    "minecraft:weeping_vines_plant",
+    "minecraft:twisting_vines",
+    "minecraft:twisting_vines_plant",
+    { "id": "minecraft:short_dry_grass", "required": false },
+    { "id": "minecraft:tall_dry_grass", "required": false },
+    { "id": "minecraft:bush", "required": false },
+    { "id": "minecraft:firefly_bush", "required": false },
+    { "id": "minecraft:leaf_litter", "required": false }
+  ]
+}
