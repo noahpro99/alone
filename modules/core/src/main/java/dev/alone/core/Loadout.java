@@ -123,21 +123,16 @@ public final class Loadout {
                             .executes(ctx -> pick(ctx.getSource(), StringArgumentType.getString(ctx, "item"))))))));
     }
 
-    /** The welcome on first join: your biome, what it will do to you, and that you may bring two things. */
+    /** The welcome on first join: pack your kit, and a link to the guide. */
     private static void promptOnJoin(ServerPlayer player, int remaining) {
-        player.sendSystemMessage(Component.literal(
-            "You wake in " + biomeName(player) + " with nothing but the clothes you're in."));
-        player.sendSystemMessage(Component.literal(biomeAdvice(player)));
-        player.sendSystemMessage(Component.literal(
-            "Bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home:  ")
+        player.sendSystemMessage(Component.literal("Bring " + remaining + " from home:  ")
             .append(Component.literal("[Choose your kit]").withStyle(s -> s
                 .withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent.RunCommand("/alone loadout")))));
-        player.sendSystemMessage(Component.literal("New to living out here? Read the ")
+                .withClickEvent(new ClickEvent.RunCommand("/alone loadout"))))
+            .append(Component.literal("   "))
             .append(Component.literal("[Survival Guide]").withStyle(s -> s
                 .withColor(ChatFormatting.GOLD).withUnderlined(true)
-                .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create("https://noahpro99.github.io/")))))
-            .append(Component.literal(" — how everything here works.")));
+                .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create("https://noahpro99.github.io/"))))));
     }
 
     /** {@code /alone loadout} — show the biome, how many picks are left, and the whole approved list. */
@@ -145,14 +140,11 @@ public final class Loadout {
         ServerPlayer player = source.getPlayerOrException();
         int remaining = Math.max(0, initialised(player));
         if (remaining <= 0) {
-            source.sendSuccess(() -> Component.literal("Your kit is already set — this was a one-time choice."), false);
+            source.sendSuccess(() -> Component.literal("Kit's set — one-time choice."), false);
             return Command.SINGLE_SUCCESS;
         }
         final int left = remaining;
-        source.sendSuccess(() -> Component.literal(
-            biomeName(player) + " — " + biomeAdvice(player)), false);
-        source.sendSuccess(() -> Component.literal(
-            left + " pick" + (left == 1 ? "" : "s") + " left — click to pack (or /alone loadout pick <name>):"), false);
+        source.sendSuccess(() -> Component.literal(left + " to pack — click one:"), false);
         for (Choice c : CHOICES) {
             Component line = Component.literal("  ▶ " + c.label()).withStyle(s -> s
                 .withColor(ChatFormatting.GREEN).withUnderlined(true)
@@ -167,7 +159,7 @@ public final class Loadout {
         ServerPlayer player = source.getPlayerOrException();
         int remaining = initialised(player);
         if (remaining <= 0) {
-            source.sendFailure(Component.literal("Your kit is already set — nothing left to pack."));
+            source.sendFailure(Component.literal("Kit's set — nothing to pack."));
             return 0;
         }
         Choice choice = null;
@@ -178,13 +170,13 @@ public final class Loadout {
             }
         }
         if (choice == null) {
-            source.sendFailure(Component.literal("No such item '" + key + "'. Run /alone loadout to see the list."));
+            source.sendFailure(Component.literal("No item '" + key + "'."));
             return 0;
         }
         // Bring two DIFFERENT things — you wouldn't pack two identical tools.
         String taken = player.getAttachedOrElse(TAKEN, "");
         if (!taken.isEmpty() && (("," + taken + ",").contains("," + key + ","))) {
-            source.sendFailure(Component.literal("You've already packed that — bring something different."));
+            source.sendFailure(Component.literal("Already packed — pick something else."));
             return 0;
         }
         for (ItemStack stack : choice.kit().get()) {
@@ -202,7 +194,7 @@ public final class Loadout {
             + (left > 0 ? " " + left + " left." : "")), false);
         if (left == 0) {
             source.sendSuccess(() -> Component.literal(
-                "Kit set: " + prettyKit(newTaken) + ". That's all you get — good luck."), false);
+                "Kit set: " + prettyKit(newTaken) + ". Good luck."), false);
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -220,23 +212,6 @@ public final class Loadout {
         return sb.toString();
     }
 
-    /** The strategic read of the land: what this biome will do to you, so the pick actually means something. */
-    private static String biomeAdvice(ServerPlayer player) {
-        var biome = player.level().getBiome(player.blockPosition()).value();
-        float temp = biome.getBaseTemperature();
-        boolean rains = biome.hasPrecipitation();
-        if (temp <= 0.2f) {
-            return "Cold country — the nights are the enemy; warmth and reliable fire keep you alive.";
-        }
-        if (temp >= 1.5f && !rains) {
-            return "Hot and dry — water kills here, not cold; a way to boil it, and food, matter most.";
-        }
-        if (temp >= 1.0f) {
-            return "Warm country — cold's no threat, so fight for food: game and fish.";
-        }
-        return "Temperate woodland — mild; press your edge, with game, timber and fire all near.";
-    }
-
     /** Read the picks left, initialising a brand-new player to the full allowance. */
     private static int initialised(ServerPlayer player) {
         int remaining = player.getAttachedOrElse(PICKS, -1);
@@ -247,9 +222,4 @@ public final class Loadout {
         return remaining;
     }
 
-    /** A readable name for the biome the player is standing in — the strategic read of the start. */
-    private static String biomeName(ServerPlayer player) {
-        return player.level().getBiome(player.blockPosition())
-            .unwrapKey().map(k -> k.identifier().getPath().replace('_', ' ')).orElse("the wild");
-    }
 }
