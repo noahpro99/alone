@@ -632,8 +632,12 @@ public final class SurvivalMeters {
         }
         bodyTemp = approach(bodyTemp, envTarget, envRate);
 
-        //  2) Radiant heat — nearby fire/lava warms you FAST (seconds) and never cools you.
-        if (heat > bodyTemp) {
+        //  2) Radiant heat — nearby fire/lava warms you FAST (seconds) and never cools you. Only a REAL
+        //  source counts: nearbyHeat is 0 when there's no fire, and without the `heat > 0` guard that 0
+        //  reads as "a 0°-warm source", which warms any below-zero (cold) body back toward neutral each
+        //  tick — faster than the environment chills it. That silently pinned body temp near 0 on land and
+        //  neutered the entire cold/hypothermia system whenever you weren't standing in a fire.
+        if (heat > 0f && heat > bodyTemp) {
             bodyTemp = approach(bodyTemp, clampTemp(heat), HEAT_RATE);
         }
 
