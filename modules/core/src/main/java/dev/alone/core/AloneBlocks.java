@@ -131,6 +131,19 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A deadfall (§7.2) — a baited stone propped over a trigger that drops on small game. Second rung of
+     *  the trapping ladder above the {@link #SNARE}: costs bait, one-shot, but better odds. Random-ticks. */
+    public static final Block DEADFALL = register("deadfall",
+        key -> new DeadfallBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.STONE)
+            .sound(SoundType.STONE)
+            .strength(0.5F)
+            .noCollision()
+            .noOcclusion()
+            .randomTicks()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */

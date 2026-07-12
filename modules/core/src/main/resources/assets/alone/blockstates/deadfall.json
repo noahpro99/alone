@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "stage=set":    { "model": "alone:block/deadfall_set" },
+    "stage=baited": { "model": "alone:block/deadfall_baited" },
+    "stage=sprung": { "model": "alone:block/deadfall_sprung" }
+  }
+}

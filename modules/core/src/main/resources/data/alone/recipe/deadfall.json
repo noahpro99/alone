@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "alone:rock",
+    "alone:rock",
+    "minecraft:stick",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "alone:deadfall",
+    "count": 1
+  }
+}

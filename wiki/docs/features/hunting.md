@@ -111,9 +111,28 @@ really live on the show *Alone*, and the first rung is the **snare** — a corda
 - A snare near camp keeps working through the days you [fast-forward by resting](./sleep-and-rest.md) — you
   wake, walk the line, and see what the night brought.
 
-More traps are coming as a ladder above the snare — a baited **deadfall** and a passive **fish trap**.
-
 *(The snare currently uses placeholder string/cord art until a proper model is made.)*
+
+### The deadfall — bait for better odds
+
+The **deadfall** is the next rung: a heavy stone propped over a trigger, the Paiute trap. Where the snare is
+free but slow, the deadfall is the other trade — it **costs bait** and is **one-shot**, but a baited stone
+pulls game in far better:
+
+- **Craft** it from two **rocks** and two **sticks** (a heavy flat stone and its trigger).
+- **Set** it on the ground, then **right-click it with any food** to **bait and arm** it — you can see a
+  baited trap from an unset one. The bait is spent when you arm it.
+- Baited, it catches **better than a snare** (the bait draws game in) and gives a **larger haul** — one to
+  two meat, more often a hide. When it springs, the stone **drops**.
+- **Right-click** the sprung trap to take the catch; it **collapses and must be re-baited** to use again.
+
+So the two early traps are a real choice: run a line of **free, passive snares**, or spend food to **bait
+deadfalls** for better returns where game is worth it. Both draw on the local
+[game population](#game-runs-out-if-you-overhunt), so neither works a stripped-out patch.
+
+A passive **fish trap / weir** is still to come above these.
+
+*(Both traps use placeholder stone/cord art until proper models are made.)*
 
 ## Game runs out if you overhunt
 
