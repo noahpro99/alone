@@ -38,6 +38,16 @@ public class MobSpawnMixin {
             }
             return;
         }
+        // Domestic livestock are FARMED, not wild — real cows/pigs/sheep/chickens don't roam the
+        // wilderness, humans keep them. So their natural spawns are only allowed at/around a village:
+        // the settlement is the economy source you visit to acquire livestock, then breed and farm at
+        // home (breeding, spawners and structure placement are untouched, so a herd you took home works).
+        if (dev.alone.core.Domestic.isDomestic(self)) {
+            if (!Spawns.nearVillage(level, self.blockPosition())) {
+                cir.setReturnValue(false); // out in the wilds, far from any village — no barnyard animals
+            }
+            return;
+        }
         // Wild game thins out where it's been hunted hard — overhunt a patch and it stops spawning there
         // until the population recovers (see GameStock), so you work a range instead of stripping one valley.
         if (dev.alone.core.GameStock.isGame(self)

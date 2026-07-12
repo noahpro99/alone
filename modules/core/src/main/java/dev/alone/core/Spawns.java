@@ -2,6 +2,7 @@ package dev.alone.core;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.StructureTags;
 import net.minecraft.world.level.StructureManager;
 
 /**
@@ -25,6 +26,21 @@ public final class Spawns {
         StructureManager structures = level.structureManager();
         for (int[] offset : SAMPLES) {
             if (structures.hasAnyStructureAt(pos.offset(offset[0], 0, offset[1]))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True if this position is on or near a <b>village</b> specifically — livestock are farmed animals
+     * that belong to settlements, so their natural spawns are only allowed here (see {@code Domestic}).
+     * Samples centre + the same ring as {@link #nearStructure} so a village nearby still fields its herd.
+     */
+    public static boolean nearVillage(ServerLevel level, BlockPos pos) {
+        StructureManager structures = level.structureManager();
+        for (int[] offset : SAMPLES) {
+            if (structures.getStructureWithPieceAt(pos.offset(offset[0], 0, offset[1]), StructureTags.VILLAGE).isValid()) {
                 return true;
             }
         }
