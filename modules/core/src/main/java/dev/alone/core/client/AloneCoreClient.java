@@ -86,6 +86,14 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.SQUIRREL, SquirrelRenderer::new);
 
+        // The wild boar reuses the vanilla pig model with a dark, bristly coat — a recolour placeholder.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.WILD_BOAR, WildBoarRenderer::new);
+
+        // The bison reuses the vanilla cow model, scaled up and re-skinned shaggy — big wild bovine.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.BISON, BisonRenderer::new);
+
 
         // Show the piece of food curing on a drying rack (§4.2) — read from the rack's synced attachment.
         net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
