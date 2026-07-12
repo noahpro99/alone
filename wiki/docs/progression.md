@@ -51,11 +51,15 @@ The four ages below map to the real arc:
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the
    meat over your fire. You can also **fish** for an easier, renewable catch — but a spot can be
-   **[fished out](./features/food-and-eating.md#fishing)**, so work a lake or shore, not a puddle.
+   **[fished out](./features/food-and-eating.md#fishing)**, so work a lake or shore, not a puddle. The same
+   holds for game: hunt one patch of country too hard and it [thins out](./features/hunting.md#game-runs-out-if-you-overhunt),
+   so **range widely** rather than stripping one valley bare.
 7. **Get out of the weather.** [Bed down on the ground](./features/sleep-and-rest.md) at first, then build
    a **roof and real walls** — [shelter and dryness](./features/body-temperature.md) are what keep the cold
    (and a [blizzard](./features/body-temperature.md#what-warms-and-cools-you)) off. Wear **leather from your
-   hides** for insulation — but keep it **dry**, since wet clothing barely warms you.
+   hides** for insulation — but keep it **dry**, since wet clothing barely warms you. And **watch the sky**:
+   while you're out in the open you get a [warning before a storm](./features/world-and-seasons.md#seasons)
+   rolls in — time enough to get under cover, your fire covered, and your drying meat in.
 
 *You've survived. But you're still spending every day just staying alive — nothing accumulates.*
 
