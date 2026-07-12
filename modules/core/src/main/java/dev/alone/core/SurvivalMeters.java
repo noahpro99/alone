@@ -364,6 +364,15 @@ public final class SurvivalMeters {
         return (ambientTemperatureAt(level, pos) - NEUTRAL_AMBIENT) * TEMP_SCALE;
     }
 
+    /** The temperature of the water body itself (§1.3) — from the biome and season, deliberately WITHOUT
+     *  the roof/cave-air moderation {@link #ambientTemperatureAt} applies, because a cover (or a cap of ice)
+     *  warms the air, not the water you're immersed in. So ice-biome water stays deadly whether it's open
+     *  or frozen over. Body scale (−100 cold .. 0 .. +100 hot). */
+    public static float waterTemperature(Level level, BlockPos pos) {
+        float t = level.getBiome(pos).value().getBaseTemperature() + Seasons.temperatureOffset(level);
+        return (t - NEUTRAL_AMBIENT) * TEMP_SCALE;
+    }
+
     /** Ambient temperature (biome scale) at an arbitrary position — the position-based core of the above. */
     public static float ambientTemperatureAt(Level level, BlockPos pos) {
         boolean roofed = !level.canSeeSky(pos); // a block/roof/canopy overhead — you're under cover
@@ -580,17 +589,24 @@ public final class SurvivalMeters {
 
         //  1) Environmental drift — biome + weather + wetness. Slow (minutes) unless you're wet.
         boolean submerged = player.isInWater();
-        float envTarget = (temperature - NEUTRAL_AMBIENT) * TEMP_SCALE;
-        if (wet) {
-            envTarget -= WET_COLD_SHIFT;
-        }
+        float envTarget;
         if (submerged) {
-            // water always pulls you down to at least "slightly cold", fast; a cold biome/winter
-            // still drives it lower (icy water stays deadly).
-            envTarget = Math.min(envTarget, WATER_TARGET);
+            // In the water you're chilled by the WATER's own temperature — set by the biome, NOT the air.
+            // A roof, or a cap of ice, warms the AIR above; it never warms the water you're immersed in. So
+            // we take the water target from the RAW biome (bypassing the roof/cave-air moderation that
+            // `temperature` folds in) — otherwise swimming under ice would read as a mild, "sheltered" cave
+            // instead of the near-freezing water that makes falling through ice deadly. Immersion is maximal
+            // wet, so the wet chill applies in full; clothing can't insulate you underwater. Even temperate
+            // water still pulls you to at least "slightly cold".
+            float water = waterTemperature(player.level(), player.blockPosition()) - WET_COLD_SHIFT;
+            envTarget = Math.min(water, WATER_TARGET);
         } else {
-            // What you're wearing shifts how the environment reaches you (§1.3/§5.5). Submerged, clothing is
-            // moot (handled above); in air it insulates — but soaked layers keep only a fraction of it.
+            envTarget = (temperature - NEUTRAL_AMBIENT) * TEMP_SCALE;
+            if (wet) {
+                envTarget -= WET_COLD_SHIFT; // soaked (rain, or just out of the water) — you chill
+            }
+            // What you're wearing shifts how the environment reaches you (§1.3/§5.5) — but soaked layers
+            // keep only a fraction of it.
             envTarget = clothingShift(player, envTarget, wet);
         }
         // A warmth-rated sleeping bag is the last insulating layer while you sleep (§5.5), over your clothes,
