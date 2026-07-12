@@ -57,6 +57,10 @@
   "item.alone.deer_spawn_egg": "Deer Spawn Egg",
   "entity.alone.squirrel": "Squirrel",
   "item.alone.squirrel_spawn_egg": "Squirrel Spawn Egg",
+  "entity.alone.wild_boar": "Wild Boar",
+  "item.alone.wild_boar_spawn_egg": "Wild Boar Spawn Egg",
+  "entity.alone.bison": "Bison",
+  "item.alone.bison_spawn_egg": "Bison Spawn Egg",
   "item.alone.steel_ingot": "Steel Ingot",
   "item.alone.steel_sword": "Steel Sword",
   "item.alone.steel_pickaxe": "Steel Pickaxe",
@@ -83,5 +87,9 @@
   "block.alone.bloomery": "Bloomery",
   "subtitles.entity.deer.ambient": "Deer snorts",
   "subtitles.entity.deer.hurt": "Deer groans",
-  "subtitles.entity.deer.death": "Deer dies"
+  "subtitles.entity.deer.death": "Deer dies",
+  "item.alone.raw_hide": "Raw Hide",
+  "item.alone.animal_brains": "Animal Brains",
+  "item.alone.tanning_rack": "Tanning Rack",
+  "block.alone.tanning_rack": "Tanning Rack"
 }

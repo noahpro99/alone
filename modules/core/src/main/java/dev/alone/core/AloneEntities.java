@@ -3,6 +3,7 @@ package dev.alone.core;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.animal.polarbear.PolarBear;
 import net.minecraft.world.entity.animal.rabbit.Rabbit;
 
@@ -57,6 +59,22 @@ public final class AloneEntities {
         .sized(0.4f, 0.5f) // small game — rabbit-sized (placeholder rabbit model for now)
         .build(SQUIRREL_KEY);
 
+    public static final ResourceKey<EntityType<?>> WILD_BOAR_KEY =
+        ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "wild_boar"));
+
+    public static final EntityType<WildBoar> WILD_BOAR = EntityType.Builder
+        .of(WildBoar::new, MobCategory.CREATURE)
+        .sized(0.9f, 0.9f) // a shade bigger and squarer than a pig (0.9×0.9 vs the pig's 0.9×0.9 build)
+        .build(WILD_BOAR_KEY);
+
+    public static final ResourceKey<EntityType<?>> BISON_KEY =
+        ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "bison"));
+
+    public static final EntityType<Bison> BISON = EntityType.Builder
+        .of(Bison::new, MobCategory.CREATURE)
+        .sized(1.4f, 1.9f) // a ton of wild bovine — much bigger than the cow's 0.9×1.4 (model scaled to match)
+        .build(BISON_KEY);
+
     /** Touching this class registers the entity types above. Called from {@link AloneCore}. */
     public static void init() {
         Registry.register(BuiltInRegistries.ENTITY_TYPE, TRAVOIS_KEY, TRAVOIS);
@@ -94,5 +112,38 @@ public final class AloneEntities {
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA)),
             MobCategory.CREATURE, SQUIRREL, 10, 1, 3);
+
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, WILD_BOAR_KEY, WILD_BOAR);
+        // A pig under the bristles, but a wild one: tougher and genuinely dangerous. Real boar (60–90 kg)
+        // outweigh the barnyard pig-in-the-woods and carry tusks — so more health (~16 vs the pig's 10), a
+        // real gore (ATTACK_DAMAGE 4, which a bare pig has none of) and a touch more pace to press a charge.
+        // STEP_HEIGHT 1.0 lets it rush over the forest floor's ledges instead of stalling on every root.
+        FabricDefaultAttributeRegistry.register(WILD_BOAR, Pig.createAttributes()
+            .add(Attributes.MAX_HEALTH, 16.0)
+            .add(Attributes.ATTACK_DAMAGE, 4.0)
+            .add(Attributes.MOVEMENT_SPEED, 0.28)
+            .add(Attributes.STEP_HEIGHT, 1.0));
+        // Home is thick cover: forest, taiga, and the swamp. Rooting about in ones and twos, not herds.
+        BiomeModifications.addSpawn(
+            BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))
+                .or(BiomeSelectors.tag(ConventionalBiomeTags.IS_SWAMP)),
+            MobCategory.CREATURE, WILD_BOAR, 8, 1, 2);
+
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, BISON_KEY, BISON);
+        // A cow under the shag, but wild megafauna: a bull bison tops a tonne. So a big health pool (~40,
+        // four times a cow's 10, the sort of animal you don't drop in one blow), a heavy gore
+        // (ATTACK_DAMAGE 6) with real KNOCKBACK to bowl a hunter over, and enough pace to run a charge home.
+        // STEP_HEIGHT 1.1 keeps a stampede flowing over broken ground instead of bogging on 1-block rises.
+        FabricDefaultAttributeRegistry.register(BISON, Cow.createAttributes()
+            .add(Attributes.MAX_HEALTH, 40.0)
+            .add(Attributes.ATTACK_DAMAGE, 6.0)
+            .add(Attributes.ATTACK_KNOCKBACK, 1.5)
+            .add(Attributes.MOVEMENT_SPEED, 0.28)
+            .add(Attributes.STEP_HEIGHT, 1.1));
+        // The open grazing country — plains/grassland and savanna — where great herds of wild bovine ranged.
+        // Spawns in herds (2–4): a bison is a herd animal, and a herd that all turns on you is the danger.
+        BiomeModifications.addSpawn(
+            BiomeSelectors.tag(ConventionalBiomeTags.IS_PLAINS).or(BiomeSelectors.tag(BiomeTags.IS_SAVANNA)),
+            MobCategory.CREATURE, BISON, 10, 2, 4);
     }
 }

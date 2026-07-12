@@ -86,10 +86,22 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.SQUIRREL, SquirrelRenderer::new);
 
+        // The wild boar reuses the vanilla pig model with a dark, bristly coat — a recolour placeholder.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.WILD_BOAR, WildBoarRenderer::new);
+
+        // The bison reuses the vanilla cow model, scaled up and re-skinned shaggy — big wild bovine.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.BISON, BisonRenderer::new);
+
 
         // Show the piece of food curing on a drying rack (§4.2) — read from the rack's synced attachment.
         net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
             dev.alone.core.AloneBlocks.DRYING_RACK_BLOCK_ENTITY, DryingRackRenderer::new);
+
+        // Show the hide (or finished leather) stretched on a tanning rack (§7.3) — from its synced attachment.
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+            dev.alone.core.AloneBlocks.TANNING_RACK_BLOCK_ENTITY, TanningRackRenderer::new);
 
         // Hauling must slow the LOCAL player through jumps and sprints too — and player movement is
         // client-authoritative, so a server-side cap can't hold it. If the local player is dragging a
