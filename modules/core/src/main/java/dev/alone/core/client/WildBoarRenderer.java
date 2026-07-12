@@ -1,26 +1,25 @@
 package dev.alone.core.client;
 
 import dev.alone.core.WildBoar;
-import net.minecraft.client.model.animal.pig.PigModel;
-import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 
 /**
- * Draws the {@link dev.alone.core.WildBoar wild boar} with the vanilla pig model — only the coat changes, the
- * way the {@link BrownBearRenderer brown bear} reuses the polar bear. It points at the dark, bristly
- * "cold pig" texture as <b>placeholder art</b> (a far wilder, hairier look than the pink barnyard pig) until
- * a dedicated boar skin lands. Modelled on the vanilla pig, so it walks and animates like one.
+ * Draws the {@link dev.alone.core.WildBoar wild boar} using our custom {@link WildBoarModel}
+ * and a dedicated shaggy wild boar skin.
  */
-public class WildBoarRenderer extends MobRenderer<WildBoar, LivingEntityRenderState, PigModel> {
-    // Placeholder: the cold-climate pig skin is dark and shaggy — a passable wild boar until real art exists.
+public class WildBoarRenderer extends MobRenderer<WildBoar, LivingEntityRenderState, WildBoarModel> {
     private static final Identifier TEXTURE =
-        Identifier.fromNamespaceAndPath("minecraft", "textures/entity/pig/pig_cold.png");
+        Identifier.fromNamespaceAndPath("alone", "textures/entity/wild_boar.png");
+
+    public static final ModelLayerLocation WILD_BOAR_MODEL_LAYER =
+        new ModelLayerLocation(Identifier.fromNamespaceAndPath("alone", "wild_boar"), "main");
 
     public WildBoarRenderer(EntityRendererProvider.Context context) {
-        super(context, new PigModel(context.bakeLayer(ModelLayers.PIG)), 0.7F);
+        super(context, new WildBoarModel(context.bakeLayer(WILD_BOAR_MODEL_LAYER)), 0.7F);
     }
 
     @Override
@@ -33,3 +32,4 @@ public class WildBoarRenderer extends MobRenderer<WildBoar, LivingEntityRenderSt
         return new LivingEntityRenderState();
     }
 }
+
