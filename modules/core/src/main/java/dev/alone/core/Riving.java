@@ -90,8 +90,9 @@ public final class Riving {
         // The log finally splits into a couple of rough boards.
         ACTIVE.remove(player.getUUID());
         log.shrink(1);
-        if (!player.getInventory().add(new ItemStack(planks, yield))) {
-            player.drop(new ItemStack(planks, yield), false);
+        ItemStack boards = new ItemStack(planks, yield);
+        if (!player.getInventory().add(boards)) {
+            player.drop(boards, false); // add() reduces the stack to the remainder — drop THAT, not a fresh full stack
         }
         if (!player.isCreative()) {
             tool.setDamageValue(tool.getDamageValue() + 1); // riving is gentle on an edge; sawing wears the blade

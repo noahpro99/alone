@@ -100,8 +100,11 @@ public final class Knapping {
         // Skill by doing: a novice knapper shatters a lot of flint; a practised hand rarely wastes one.
         boolean success = rng.nextFloat() < BASE_SUCCESS + SKILL_SUCCESS * Skills.proficiency(player, Skills.FLINTWORKING);
         Skills.gain(player, Skills.FLINTWORKING, 1); // every strike teaches the hand — flake or shatter
-        if (success && !player.getInventory().add(new ItemStack(AloneItems.FLINT_SHARD))) {
-            player.drop(new ItemStack(AloneItems.FLINT_SHARD), false);
+        if (success) {
+            ItemStack shard = new ItemStack(AloneItems.FLINT_SHARD);
+            if (!player.getInventory().add(shard)) {
+                player.drop(shard, false); // drop the same (remainder) stack, not a fresh one
+            }
         }
         if (!player.isCreative() && rng.nextFloat() < ROCK_WEAR_CHANCE) {
             hammerstone.shrink(1); // the hammerstone chips away
