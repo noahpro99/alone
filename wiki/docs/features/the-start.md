@@ -22,7 +22,7 @@ The biome line is a **strategic read**, not decoration — it changes with the l
 
 ## Choosing your two items
 
-Click **[Choose your kit]** (or run `/loadout`) to see the list with your biome and picks remaining. Click any option — or type `/loadout pick <item>` — to pack it. You get **two picks, and they must be two *different* things**, so each choice counts. Once your second pick locks in, your kit is read back to you and **that's it — it's a one-time, per-world choice** that survives death (you don't re-pick when you respawn).
+Click **[Choose your kit]** (or run `/alone loadout`) to see the list with your biome and picks remaining. Click any option — or type `/alone loadout pick <item>` — to pack it. You get **two picks, and they must be two *different* things**, so each choice counts. Once your second pick locks in, your kit is read back to you and **that's it — it's a one-time, per-world choice** that survives death (you don't re-pick when you respawn).
 
 The approved list — each is real gear whose mechanic already exists, and each is something genuinely hard or slow to come by otherwise, so the pick actually changes your opening:
 

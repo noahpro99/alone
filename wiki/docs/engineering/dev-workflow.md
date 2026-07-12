@@ -23,6 +23,27 @@ gradle wrapper --gradle-version 9.5.1    # generate ./gradlew once
 
 See [the Dev Quickstart](../getting-started/dev-quickstart.md) for the quickstart.
 
+## Debug & admin commands
+
+Op-only helpers (require gamemaster/op) for setting up test scenarios without hunting for the exact
+circumstances — a freezing lake, being soaked, the right season. All live under `/alone`:
+
+| Command | Effect |
+|---|---|
+| `/alone reset` | Refill every meter, clear every condition, top off vanilla vitals. |
+| `/alone wet` | Soak you through (test the towel and wet-cold). |
+| `/alone cold` / `/alone hot` | Set body temp into the freeze-damage / heatstroke range. |
+| `/alone dirty` | Dirty your hands (then bleed to test wound sepsis). |
+| `/alone wind <from> <0..1>` | Force the prevailing wind, e.g. `/alone wind north 0.8` (from the north at 80%). `/alone wind clear` to release. |
+| `/alone season <spring\|summer\|autumn\|winter>` | Force the season. `/alone season clear` to release. |
+
+The wind/season overrides are volatile static values, so on a **single-player integrated server** they show
+up on both the server (scent, temperature) and the client HUD; on a **dedicated server** only the server side
+sees them (the client keeps computing the natural value).
+
+There's also one **player-facing** command, no op needed: **`/alone loadout`** — the pick-two start (see
+[The Start](../features/the-start.md)) — and `/skills` to check your skill levels.
+
 ## Open questions / decisions to revisit
 
 - **Third-party adoption:** re-check each release whether Serene Seasons / Tough As Nails / a
