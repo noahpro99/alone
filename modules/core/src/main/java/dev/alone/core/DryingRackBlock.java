@@ -64,9 +64,14 @@ public class DryingRackBlock extends BaseEntityBlock {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack) {
-            // Occupied: any click takes the food back (empty hand or not). Empty: hang what's held.
+            // Occupied: take it when it's DONE, or force it off early with a sneak-use (which restarts it).
+            // A plain use on a still-curing piece just reports progress, so you can't reset it by accident.
             if (!rack.heldFood().isEmpty()) {
-                return rack.retrieve(level, player);
+                if (player.isShiftKeyDown() || rack.isFinished()) {
+                    return rack.retrieve(level, player);
+                }
+                rack.tellProgress(player);
+                return InteractionResult.SUCCESS;
             }
             InteractionResult placed = rack.place(level, player, stack, hand);
             // Nothing hung — defer to the empty-hand path rather than dead-ending on PASS (26.2 dispatch).
@@ -78,8 +83,12 @@ public class DryingRackBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
-        if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack) {
-            return rack.retrieve(level, player);
+        if (level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack && !rack.heldFood().isEmpty()) {
+            if (player.isShiftKeyDown() || rack.isFinished()) {
+                return rack.retrieve(level, player);
+            }
+            rack.tellProgress(player);
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }

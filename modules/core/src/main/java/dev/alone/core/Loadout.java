@@ -59,29 +59,29 @@ public final class Loadout {
     // genuinely hard or slow to come by otherwise, so the pick actually changes your opening (see the
     // roadmap audit). Rations aside, these are the "brought advantage" a contestant would prize.
     private static final List<Choice> CHOICES = List.of(
-        new Choice("ferro_rod", "Ferro rod — lights a fire fast, even in the rain",
+        new Choice("ferro_rod", "Ferro rod — fire fast, even in the rain",
             () -> List.of(new ItemStack(AloneItems.FERRO_ROD))),
-        new Choice("bow", "Takedown bow + 16 arrows — ranged hunting from day one",
+        new Choice("bow", "Takedown bow + 16 arrows — hunt at range",
             () -> List.of(new ItemStack(Items.BOW), new ItemStack(Items.ARROW, 16))),
-        new Choice("pot", "Iron pot — boil water clean and cook, no clay needed",
+        new Choice("pot", "Iron pot — boil and cook, no clay needed",
             () -> List.of(new ItemStack(AloneItems.IRON_POT))),
-        new Choice("sleeping_bag", "Warmth-rated sleeping bag — full rest through a freezing night",
+        new Choice("sleeping_bag", "Sleeping bag — full rest through a freezing night",
             () -> List.of(new ItemStack(AloneItems.SLEEPING_BAG))),
-        new Choice("tarp", "3 tarps — waterproof, fireproof shelter you can pitch anywhere",
+        new Choice("tarp", "3 tarps — waterproof, fireproof shelter",
             () -> List.of(new ItemStack(AloneItems.TARP, 3))),
-        new Choice("snare_wire", "12 lengths of snare wire — skip the slow hand-twisting of cordage",
+        new Choice("snare_wire", "12 snare wires — skip twisting cordage",
             () -> List.of(new ItemStack(Items.STRING, 12))),
-        new Choice("axe", "Felling axe — fell trees and split wood without knapping one first",
+        new Choice("axe", "Felling axe — fell and split without knapping",
             () -> List.of(new ItemStack(Items.IRON_AXE))),
-        new Choice("knife", "Field knife — a proper blade for butchering and carving",
+        new Choice("knife", "Field knife — a real blade for butchering",
             () -> List.of(new ItemStack(AloneItems.FLINT_KNIFE))),
-        new Choice("fishing_rod", "Rod, line & hooks — fish the water without building a weir",
+        new Choice("fishing_rod", "Rod, line & hooks — fish without a weir",
             () -> List.of(new ItemStack(Items.FISHING_ROD))),
-        new Choice("sewing_kit", "Sewing kit — keep your hide clothing mended",
+        new Choice("sewing_kit", "Sewing kit — mend your hide clothing",
             () -> List.of(new ItemStack(AloneItems.SEWING_KIT))),
-        new Choice("rope", "2 coils of rope — a ready climb line down any cliff",
+        new Choice("rope", "2 rope coils — a climb line down cliffs",
             () -> List.of(new ItemStack(AloneItems.ROPE, 2))),
-        new Choice("rations", "8 cooked rations — a starting stock of food to buy you time",
+        new Choice("rations", "8 cooked rations — food to buy you time",
             () -> List.of(new ItemStack(Items.COOKED_BEEF, 8)))
     );
 
@@ -129,7 +129,7 @@ public final class Loadout {
             "You wake in " + biomeName(player) + " with nothing but the clothes you're in."));
         player.sendSystemMessage(Component.literal(biomeAdvice(player)));
         player.sendSystemMessage(Component.literal(
-            "You may bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home.  ")
+            "Bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home:  ")
             .append(Component.literal("[Choose your kit]").withStyle(s -> s
                 .withColor(ChatFormatting.AQUA).withUnderlined(true)
                 .withClickEvent(new ClickEvent.RunCommand("/alone loadout")))));
@@ -145,10 +145,9 @@ public final class Loadout {
         }
         final int left = remaining;
         source.sendSuccess(() -> Component.literal(
-            "You woke in " + biomeName(player) + ". " + biomeAdvice(player)), false);
+            biomeName(player) + " — " + biomeAdvice(player)), false);
         source.sendSuccess(() -> Component.literal(
-            "You may still pack " + left + " item" + (left == 1 ? "" : "s")
-                + " — click one to pack it (or type /alone loadout pick <name>):"), false);
+            left + " pick" + (left == 1 ? "" : "s") + " left — click to pack (or /alone loadout pick <name>):"), false);
         for (Choice c : CHOICES) {
             Component line = Component.literal("  ▶ " + c.label()).withStyle(s -> s
                 .withColor(ChatFormatting.GREEN).withUnderlined(true)
@@ -192,13 +191,13 @@ public final class Loadout {
         player.setAttached(TAKEN, newTaken);
         remaining--;
         player.setAttached(PICKS, remaining);
-        final Choice packed = choice;
         final int left = remaining;
-        source.sendSuccess(() -> Component.literal("Packed: " + packed.label() + "."
-            + (left > 0 ? " " + left + " pick left." : "")), false);
+        final String name = choice.label().split(" — ", 2)[0]; // just the item name, not its blurb
+        source.sendSuccess(() -> Component.literal("Packed " + name + "."
+            + (left > 0 ? " " + left + " left." : "")), false);
         if (left == 0) {
             source.sendSuccess(() -> Component.literal(
-                "Your kit is set: " + prettyKit(newTaken) + ". Good luck — you'll get no more."), false);
+                "Kit set: " + prettyKit(newTaken) + ". That's all you get — good luck."), false);
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -222,19 +221,15 @@ public final class Loadout {
         float temp = biome.getBaseTemperature();
         boolean rains = biome.hasPrecipitation();
         if (temp <= 0.2f) {
-            return "It's cold country — the nights are the enemy here: warmth and a fire that won't fail "
-                + "in the wet will decide whether you wake up.";
+            return "Cold country — the nights are the enemy; warmth and reliable fire keep you alive.";
         }
         if (temp >= 1.5f && !rains) {
-            return "Hot and dry — water, not cold, is what kills here: a way to boil what little you find, "
-                + "and food to cross the barrens, matter most.";
+            return "Hot and dry — water kills here, not cold; a way to boil it, and food, matter most.";
         }
         if (temp >= 1.0f) {
-            return "Warm country — cold won't trouble you, so fight for food instead: game and fish are "
-                + "there for whoever can reach them.";
+            return "Warm country — cold's no threat, so fight for food: game and fish.";
         }
-        return "Temperate woodland — mild enough to rough it, so press your edge: game, timber and fire "
-            + "are all within reach.";
+        return "Temperate woodland — mild; press your edge, with game, timber and fire all near.";
     }
 
     /** Read the picks left, initialising a brand-new player to the full allowance. */

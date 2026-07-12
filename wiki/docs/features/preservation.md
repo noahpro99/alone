@@ -136,10 +136,12 @@ S . S
 </div>
 
 Place it, then **right-click it with a perishable food** to hang one piece — **the piece is shown
-sitting on the rack** so you can see what's curing. **Right-click an occupied rack** (empty-handed or
-not) to take the food back, whether it's finished or still drying; breaking the rack also drops
-whatever is hung on it. The rack **keeps drying while you are away** — progress tracks elapsed world
-time even while the area is unloaded.
+hanging on the rack** so you can see what's curing. **Right-click the occupied rack to check it**: while
+it's still curing this just **reports progress** ("Drying… 60%") on the action bar, and once it's **done**
+the same click takes the finished jerky. It only comes off *before* it's done if you **sneak + right-click**
+to force it — and pulling a half-cured piece **restarts it from scratch**, so leave it be until it's ready.
+Breaking the rack also drops whatever is hung on it. The rack **keeps drying while you are away** — progress
+tracks elapsed world time even while the area is unloaded.
 
 Finished food becomes **jerky**: it is marked **preserved** (~30-day shelf life) and **dried**,
 which also makes it **lighter to carry** (the water is gone).

@@ -117,8 +117,9 @@ and tan a hide, and so do you. What the rack does depends on **what you load it 
   days** (about an hour of real time, and it keeps curing while the chunk is unloaded, so it runs through the
   days you [fast-forward by resting](./sleep-and-rest.md)). That's deliberately **about twice** as long as the
   same rack takes to cure meat: leather is the more involved craft.
-- **Take the leather** with a right-click when it's done. Pull an **unfinished** hide off early and you get
-  the raw hide back — but the **brains are wasted**, so impatience costs you.
+- **Check it with a right-click** — while it's still working this reports progress ("Tanning… 40%"), and
+  once it's done the same click takes the **leather**. It only comes off early if you **sneak + right-click**,
+  which gives the raw hide back but **wastes the brains** and **restarts the tanning** — so leave it to finish.
 
 *(One rack, two jobs — hang meat on it to dry into jerky, or a hide to tan into leather. See the
 [drying rack](./preservation.md) for the meat side and how weather and a smoky fire affect it.)*

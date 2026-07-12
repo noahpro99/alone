@@ -346,6 +346,33 @@ public class DryingRackBlockEntity extends BlockEntity {
         return getAttachedOrElse(DRYING, ItemStack.EMPTY);
     }
 
+    /** True once the piece is done — jerky cured through, or a hide tanned to leather (a rotted piece counts
+     *  too: there's nothing left to wait for). A green hide still tanning is NOT finished. */
+    public boolean isFinished() {
+        ItemStack it = heldFood();
+        if (it.isEmpty() || it.is(AloneItems.RAW_HIDE)) {
+            return false;
+        }
+        if (it.is(Items.LEATHER) || it.is(Items.ROTTEN_FLESH)) {
+            return true;
+        }
+        return getAttachedOrElse(PROGRESS, 0) >= DRY_TIME; // food cured to jerky
+    }
+
+    /** Show how far along the curing is on the action bar — so you can check it without pulling it off (which
+     *  would restart it). */
+    public void tellProgress(Player player) {
+        ItemStack it = heldFood();
+        if (it.isEmpty() || !(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        boolean tanning = it.is(AloneItems.RAW_HIDE);
+        int target = Math.max(1, tanning ? TAN_TIME : DRY_TIME);
+        int pct = Math.min(100, getAttachedOrElse(PROGRESS, 0) * 100 / target);
+        serverPlayer.sendSystemMessage(Component.literal(
+            (tanning ? "Tanning" : "Drying") + "… " + pct + "%  —  sneak-use to take it off early"), true);
+    }
+
     private static boolean hasBrains(Player player) {
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
