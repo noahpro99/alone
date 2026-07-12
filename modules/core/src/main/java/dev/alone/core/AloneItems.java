@@ -117,6 +117,9 @@ public final class AloneItems {
     public static final Item DRYING_RACK = register("drying_rack",
         key -> new net.minecraft.world.item.BlockItem(AloneBlocks.DRYING_RACK, new Item.Properties().setId(key)));
 
+    public static final Item SNARE = register("snare",
+        key -> new net.minecraft.world.item.BlockItem(AloneBlocks.SNARE, new Item.Properties().setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

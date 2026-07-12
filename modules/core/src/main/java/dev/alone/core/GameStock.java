@@ -77,4 +77,18 @@ public final class GameStock {
         chunk.setAttached(STOCK, Math.max(0, current(level, pos) - KILL_COST));
         chunk.setAttached(LAST_HUNTED, level.getGameTime());
     }
+
+    private static final int SNARE_COST = 5; // small game caught in a trap — a lighter draw than a big kill
+
+    /** How full this ground's game is, 0 (stripped) .. 1 (untouched). Used to gate passive trapping. */
+    public static float abundance(ServerLevel level, BlockPos pos) {
+        return current(level, pos) / (float) FULL;
+    }
+
+    /** A trap took a head of small game here — draws the local stock down like a hunt, but by less. */
+    public static void takeSmallGame(ServerLevel level, BlockPos pos) {
+        LevelChunk chunk = level.getChunkAt(pos);
+        chunk.setAttached(STOCK, Math.max(0, current(level, pos) - SNARE_COST));
+        chunk.setAttached(LAST_HUNTED, level.getGameTime());
+    }
 }

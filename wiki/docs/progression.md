@@ -50,7 +50,9 @@ The four ages below map to the real arc:
    — rabbit, squirrel, and bird, a scrap of meat each, taken in numbers — while a **[deer](./features/hunting.md#deer--the-forests-wild-game)**
    is the rarer prize (a skittish grazer you stalk or run down; small animals wind quickly, a big one takes
    real endurance to tire). The [spear's reach](./features/hunting.md#the-spear--reach-from-the-first-day) is
-   your best weapon; [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
+   your best weapon, but the surest early food is a **[trapline](./features/hunting.md#trapping--the-food-that-works-while-you-dont)**:
+   set **snares** (cordage nooses) near cover and let them catch small game while you work, then walk the
+   line and clear them. [Run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the
    meat over your fire. You can also **fish** for an easier, renewable catch — but a spot can be

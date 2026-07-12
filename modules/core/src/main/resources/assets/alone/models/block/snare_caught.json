@@ -1,0 +1,29 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "minecraft:block/tripwire",
+    "cord": "minecraft:block/tripwire",
+    "catch": "minecraft:block/dirt"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 0.5, 14],
+      "faces": {
+        "up":   { "uv": [2, 2, 14, 14], "texture": "#cord" },
+        "down": { "uv": [2, 2, 14, 14], "texture": "#cord" }
+      }
+    },
+    {
+      "from": [6, 0.5, 6],
+      "to": [10, 4, 10],
+      "faces": {
+        "up":    { "uv": [6, 6, 10, 10], "texture": "#catch" },
+        "north": { "uv": [6, 0, 10, 4], "texture": "#catch" },
+        "south": { "uv": [6, 0, 10, 4], "texture": "#catch" },
+        "east":  { "uv": [6, 0, 10, 4], "texture": "#catch" },
+        "west":  { "uv": [6, 0, 10, 4], "texture": "#catch" }
+      }
+    }
+  ]
+}

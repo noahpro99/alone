@@ -118,6 +118,19 @@ public final class AloneBlocks {
             .noOcclusion()
             .setId(key)));
 
+    /** A snare (§7.2) — a cordage noose set on the ground that passively catches small game over time,
+     *  drawing on the local {@link GameStock}. No collision (you step over it); random-ticks to catch. */
+    public static final Block SNARE = register("snare",
+        key -> new SnareBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.PLANT)
+            .sound(SoundType.GRASS)
+            .strength(0.2F)
+            .noCollision()
+            .noOcclusion()
+            .randomTicks()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */

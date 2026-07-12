@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "caught=false": [
+      { "model": "alone:block/snare" },
+      { "model": "alone:block/snare", "y": 90 },
+      { "model": "alone:block/snare", "y": 180 },
+      { "model": "alone:block/snare", "y": 270 }
+    ],
+    "caught=true": [
+      { "model": "alone:block/snare_caught" },
+      { "model": "alone:block/snare_caught", "y": 90 },
+      { "model": "alone:block/snare_caught", "y": 180 },
+      { "model": "alone:block/snare_caught", "y": 270 }
+    ]
+  }
+}

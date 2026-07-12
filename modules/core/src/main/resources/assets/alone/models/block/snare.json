@@ -1,0 +1,17 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "minecraft:block/tripwire",
+    "cord": "minecraft:block/tripwire"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 0.5, 14],
+      "faces": {
+        "up":   { "uv": [2, 2, 14, 14], "texture": "#cord" },
+        "down": { "uv": [2, 2, 14, 14], "texture": "#cord" }
+      }
+    }
+  ]
+}

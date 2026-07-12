@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:string",
+    "minecraft:string",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "alone:snare",
+    "count": 1
+  }
+}

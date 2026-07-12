@@ -94,6 +94,27 @@ food economy of the show *Alone*: rarely a deer, often a squirrel.
 
 *(Squirrels currently use placeholder rabbit art until a proper squirrel model is made.)*
 
+## Trapping — the food that works while you don't
+
+Active hunting costs time and daylight; a **trap** feeds you while you do everything else. It's how people
+really live on the show *Alone*, and the first rung is the **snare** — a cordage noose set on the ground.
+
+- **Craft** it from cordage: two **string** and a **stick**.
+- **Set** it on solid ground near cover and a game trail, then leave it. Over time, small game blunders in
+  and it **springs** — you can see a set snare from an empty one.
+- **Check** it with a right-click: take the catch — a **scrap of small-game meat**, sometimes a **hide** —
+  and the snare **resets itself** for the next one. Break it to pick the snare back up.
+- It catches **rarely, and only draws on the local [game population](#game-runs-out-if-you-overhunt)** — a
+  snare in stripped-out country catches almost nothing. So you set a **line** of snares and walk it, the way
+  a real trapper does, rather than trusting one. Trapping is patient, mostly-empty work that pays off across
+  days, not a food faucet.
+- A snare near camp keeps working through the days you [fast-forward by resting](./sleep-and-rest.md) — you
+  wake, walk the line, and see what the night brought.
+
+More traps are coming as a ladder above the snare — a baited **deadfall** and a passive **fish trap**.
+
+*(The snare currently uses placeholder string/cord art until a proper model is made.)*
+
 ## Game runs out if you overhunt
 
 Wild game isn't infinite. **Hunt one patch of country too hard and you thin it out** — the animals grow scarce there and **stop spawning**, until the population **breeds back over the following days**, or you move to fresh ground. It's the hunting twin of [finite fish stocks](./food-and-eating.md#fishing): a small valley empties fast, a broad range lasts. So a survivor **works a range** rather than camping one spot and stripping it bare. (Predators don't count as game — only the animals you hunt for food.)
