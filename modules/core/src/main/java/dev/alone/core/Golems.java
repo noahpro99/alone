@@ -7,12 +7,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -54,6 +57,11 @@ public final class Golems {
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof IronGolem golem) {
+                // It hunts a ranged attacker from far off — charge across the field, don't lose interest.
+                AttributeInstance follow = golem.getAttribute(Attributes.FOLLOW_RANGE);
+                if (follow != null) {
+                    follow.setBaseValue(Math.max(follow.getBaseValue(), 40.0));
+                }
                 golem.getGoalSelector().addGoal(1, new SeekCoverGoal(golem)); // break for cover under ranged fire first
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
@@ -248,6 +256,12 @@ public final class Golems {
                 return false; // throttle the (costly) cover scan
             }
             nextSearch = golem.tickCount + 10;
+            // If it can just walk to you, CHARGE — don't detour to cover. Cover is only for when the direct
+            // approach is blocked (a gap, or a wall it has to go around).
+            Path path = golem.getNavigation().createPath(p, 0);
+            if (path != null && path.canReach()) {
+                return false;
+            }
             BlockPos spot = findCover(p);
             if (spot == null) {
                 return false; // no cover within reach — it'll just advance in the open
@@ -290,11 +304,8 @@ public final class Golems {
                         if (!standable(level, spot)) {
                             continue;
                         }
-                        Vec3 spotEye = new Vec3(spot.getX() + 0.5, spot.getY() + 1.6, spot.getZ() + 0.5);
-                        BlockHitResult hit = level.clip(new ClipContext(spotEye, shooterEye,
-                            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.golem));
-                        if (hit.getType() != HitResult.Type.BLOCK) {
-                            continue; // still exposed to the shooter from here
+                        if (!hiddenFrom(level, spot, shooterEye)) {
+                            continue; // not fully screened — a 2.7 m golem needs feet, body AND head covered
                         }
                         double toShooter = spot.distSqr(p.blockPosition());
                         if (toShooter < bestToShooter) {
@@ -312,6 +323,21 @@ public final class Golems {
             return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)
                 && level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
                 && level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty();
+        }
+
+        /** A golem is ~2.7 m tall, so a spot only counts as cover if something screens its feet, middle AND
+         *  head from the archer — a one-block wall doesn't hide it. Head checked first (bails cheapest). */
+        private boolean hiddenFrom(Level level, BlockPos spot, Vec3 shooterEye) {
+            double[] heights = {2.6, 0.3, 1.4};
+            for (double h : heights) {
+                Vec3 from = new Vec3(spot.getX() + 0.5, spot.getY() + h, spot.getZ() + 0.5);
+                BlockHitResult hit = level.clip(new ClipContext(from, shooterEye,
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.golem));
+                if (hit.getType() != HitResult.Type.BLOCK) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

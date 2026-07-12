@@ -234,8 +234,14 @@ public final class Conditions {
             return true;
         }
 
-        // Survived — the injuries are the real cost. A twist/sprain always; a fracture the harder you land.
-        addSprain(player, SPRAIN_TICKS);
+        // Survived — the injuries are the real cost, and they get likelier the harder you land. A sprain is
+        // a CHANCE, not a certainty: a fit person walks off a 4 m drop most of the time (~10%), but by ~8 m a
+        // turned ankle is near-certain. A real fracture comes on harder landings still.
+        float sprainChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 3.5) / 5.0), 0f, 0.95f)
+            * damageMultiplier;
+        if (rng.nextFloat() < sprainChance) {
+            addSprain(player, SPRAIN_TICKS);
+        }
         float fractureChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 6.0) / 12.0), 0f, 0.9f)
             * damageMultiplier;
         if (rng.nextFloat() < fractureChance) {
