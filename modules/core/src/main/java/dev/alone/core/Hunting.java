@@ -13,12 +13,19 @@ import net.minecraft.world.item.Items;
 
 /**
  * Butchering (proposal §7.3). A clean kill with a <b>blade</b> lets you work the carcass properly —
- * killing a hide-bearing animal with a knife, sword, axe or spear salvages its <b>leather (hide)</b>, its
+ * killing a hide-bearing animal with a knife, sword, axe or spear salvages its <b>raw hide</b>, its
  * <b>bone</b>, and often a strand of <b>sinew</b> (cordage — string) on top of the usual meat, so the whole
  * animal is used and the flint knife and forged blades pay off in the hunt. Beat one to death with your
  * fists (or a pickaxe) and you waste it all. Which animals are butcherable, and what counts as a blade, are
  * datapack tags ({@code alone:hide_bearing} / {@code alone:blades}). Bone feeds bonemeal — and so the
  * farming that keeps scurvy at bay; sinew is animal cordage alongside plant fibre.
+ *
+ * <p>Crucially the hide comes off <b>green</b>: a fresh kill gives {@link AloneItems#RAW_HIDE}, not leather.
+ * A wet raw hide is not usable leather — it will only rot and stiffen. Turning it into leather is days of
+ * work on a {@link AloneBlocks#TANNING_RACK}. And the carcass yields its own tanning agent: a lump of
+ * {@link AloneItems#ANIMAL_BRAINS}, the authentic brain-tan, because "a beast has just enough brains to tan
+ * its own hide." So each kill can roughly tan its own skin — a real, patient 1:1 investment, and leather is
+ * no longer a drop but a product of that work.</p>
  */
 public final class Hunting {
     private Hunting() {
@@ -65,7 +72,12 @@ public final class Hunting {
                 sinewChance = 0.75f;
             }
             if (hide > 0) {
-                entity.spawnAtLocation(level, new ItemStack(Items.LEATHER, hide));
+                // A green, wet hide — worthless until it's tanned on a rack (see AloneItems#RAW_HIDE).
+                entity.spawnAtLocation(level, new ItemStack(AloneItems.RAW_HIDE, hide));
+                // ...and the brains to tan it: enough to work roughly its own hide (the classic brain-tan).
+                // Bigger beasts carry a bigger skull, so a large hide comes with a little more tanning agent.
+                int brains = Math.max(1, hide - 1);
+                entity.spawnAtLocation(level, new ItemStack(AloneItems.ANIMAL_BRAINS, brains));
             }
             if (bone > 0) {
                 entity.spawnAtLocation(level, new ItemStack(Items.BONE, bone));
