@@ -78,6 +78,29 @@ public class DryingRackBlockEntity extends BlockEntity {
         super(AloneBlocks.DRYING_RACK_BLOCK_ENTITY, pos, state);
     }
 
+    // The item on the rack must reach the CLIENT for the renderer to draw it. We drive that through the
+    // vanilla block-entity update packet (getUpdatePacket + getUpdateTag), exactly like a campfire syncs the
+    // food cooking on it — Fabric's attachment change-sync wasn't pushing the DRYING item to clients, so the
+    // rack looked empty even though the server knew what was on it. getUpdateTag carries the whole saved BE
+    // (the persisted DRYING attachment included), and syncItem() sends the packet whenever the item changes.
+    @Override
+    public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    /** Push a block-entity update so nearby clients re-render whatever is now on the rack. */
+    private void syncItem() {
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, DryingRackBlockEntity rack) {
         ItemStack loaded = rack.getAttachedOrElse(DRYING, ItemStack.EMPTY);
         if (loaded.isEmpty()) {
@@ -107,13 +130,9 @@ public class DryingRackBlockEntity extends BlockEntity {
             // Worked through: the hide is leather now. Keep the count (a 1:1 tan).
             rack.setAttached(DRYING, new ItemStack(Items.LEATHER, hide.getCount()));
             rack.setAttached(PROGRESS, TAN_TIME);
+            rack.syncItem(); // the rack now shows leather, not a green hide
         } else {
             rack.setAttached(PROGRESS, progress);
-            // Occasional feedback that the rack is working — a little rise off the curing skin.
-            if (level instanceof ServerLevel server && now % 40L == 0L) {
-                server.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    1, 0.16, 0.05, 0.16, 0.0);
-            }
         }
         rack.setChanged();
     }
@@ -187,6 +206,7 @@ public class DryingRackBlockEntity extends BlockEntity {
                 rack.setAttached(SPOIL, 0);
                 rack.setAttached(PROGRESS, 0);
                 rack.setChanged();
+                rack.syncItem(); // the rack now shows rotten flesh
                 return;
             }
             rack.setAttached(SPOIL, spoil);
@@ -266,6 +286,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             setAttached(SPOIL, 0);
             setAttached(LAST_TICK, level.getGameTime());
             setChanged();
+            syncItem(); // show it on the rack now
             if (!player.isCreative()) {
                 held.shrink(1);
             }
@@ -289,6 +310,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             setAttached(PROGRESS, 0);
             setAttached(LAST_TICK, level.getGameTime());
             setChanged();
+            syncItem(); // show the stretched hide on the rack now
             if (!player.isCreative()) {
                 held.shrink(1);
                 consumeBrains(player);
@@ -310,6 +332,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             removeAttached(SPOIL);
             removeAttached(LAST_TICK);
             setChanged();
+            syncItem(); // rack is empty now — stop drawing the item
             if (!player.getInventory().add(item)) {
                 player.drop(item, false);
             }
