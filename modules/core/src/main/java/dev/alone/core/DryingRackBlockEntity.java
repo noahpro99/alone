@@ -61,12 +61,11 @@ public class DryingRackBlockEntity extends BlockEntity {
     private static final TagKey<Item> PERISHABLE = TagKey.create(Registries.ITEM,
         Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
 
-    // Persisted AND synced to the client, so the rack can render whatever sits on it — meat, jerky, a stretched
-    // hide, or finished leather (visual only).
-    public static final AttachmentType<ItemStack> DRYING = AttachmentRegistry.create(
-        Identifier.fromNamespaceAndPath("alone", "drying_rack_food"),
-        builder -> builder.persistent(ItemStack.CODEC)
-            .syncWith(ItemStack.OPTIONAL_STREAM_CODEC, net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate.all()));
+    // The one piece on the rack — meat drying, jerky, a stretched hide, or leather. Kept as a plain FIELD
+    // (not a synced attachment), because we sync it ourselves via getUpdateTag/loadAdditional: a synced
+    // attachment that goes ABSENT (when you take the piece off) wasn't being cleared on the client, so a
+    // ghost item stayed on the rack. Writing/reading it explicitly means removal clears it too.
+    private ItemStack item = ItemStack.EMPTY;
     public static final AttachmentType<Integer> PROGRESS = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "drying_rack_progress"), com.mojang.serialization.Codec.INT);
     public static final AttachmentType<Integer> SPOIL = AttachmentRegistry.createPersistent(
@@ -78,11 +77,10 @@ public class DryingRackBlockEntity extends BlockEntity {
         super(AloneBlocks.DRYING_RACK_BLOCK_ENTITY, pos, state);
     }
 
-    // The item on the rack must reach the CLIENT for the renderer to draw it. We drive that through the
-    // vanilla block-entity update packet (getUpdatePacket + getUpdateTag), exactly like a campfire syncs the
-    // food cooking on it — Fabric's attachment change-sync wasn't pushing the DRYING item to clients, so the
-    // rack looked empty even though the server knew what was on it. getUpdateTag carries the whole saved BE
-    // (the persisted DRYING attachment included), and syncItem() sends the packet whenever the item changes.
+    // The piece on the rack must reach the CLIENT for the renderer to draw it (and vanish when taken off). We
+    // drive that through the vanilla block-entity update packet, exactly like a campfire syncs its cooking
+    // food: getUpdateTag writes the item (loadAdditional reads it, or EMPTY when absent — so removal clears
+    // it), and syncItem() sends the packet whenever the item changes.
     @Override
     public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
         return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
@@ -93,7 +91,21 @@ public class DryingRackBlockEntity extends BlockEntity {
         return saveWithoutMetadata(registries);
     }
 
-    /** Push a block-entity update so nearby clients re-render whatever is now on the rack. */
+    @Override
+    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+        super.saveAdditional(output); // Fabric writes the progress/spoil/last-tick attachments here
+        if (!item.isEmpty()) {
+            output.store("Item", ItemStack.CODEC, item);
+        }
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+        super.loadAdditional(input);
+        this.item = input.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+    }
+
+    /** Push a block-entity update so nearby clients re-render whatever is now on the rack (or clear it). */
     private void syncItem() {
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
@@ -102,7 +114,7 @@ public class DryingRackBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, DryingRackBlockEntity rack) {
-        ItemStack loaded = rack.getAttachedOrElse(DRYING, ItemStack.EMPTY);
+        ItemStack loaded = rack.item;
         if (loaded.isEmpty()) {
             return;
         }
@@ -128,7 +140,7 @@ public class DryingRackBlockEntity extends BlockEntity {
         progress += elapsed;
         if (progress >= TAN_TIME) {
             // Worked through: the hide is leather now. Keep the count (a 1:1 tan).
-            rack.setAttached(DRYING, new ItemStack(Items.LEATHER, hide.getCount()));
+            rack.item = new ItemStack(Items.LEATHER, hide.getCount());
             rack.setAttached(PROGRESS, TAN_TIME);
             rack.syncItem(); // the rack now shows leather, not a green hide
         } else {
@@ -202,7 +214,7 @@ public class DryingRackBlockEntity extends BlockEntity {
         if (spoilStep > 0) {
             int spoil = rack.getAttachedOrElse(SPOIL, 0) + spoilStep;
             if (spoil >= SPOIL_LIMIT) {
-                rack.setAttached(DRYING, new ItemStack(Items.ROTTEN_FLESH, food.getCount())); // it rotted
+                rack.item = new ItemStack(Items.ROTTEN_FLESH, food.getCount()); // it rotted
                 rack.setAttached(SPOIL, 0);
                 rack.setAttached(PROGRESS, 0);
                 rack.setChanged();
@@ -218,7 +230,7 @@ public class DryingRackBlockEntity extends BlockEntity {
                 preserve(food); // dried into jerky
             }
             rack.setAttached(PROGRESS, progress);
-            rack.setAttached(DRYING, food);
+            rack.item = food;
         }
         rack.setChanged();
     }
@@ -264,7 +276,7 @@ public class DryingRackBlockEntity extends BlockEntity {
      * the brain-tan agent). Anything else, or an already-occupied rack, is refused.
      */
     public InteractionResult place(Level level, Player player, ItemStack held, InteractionHand hand) {
-        if (!getAttachedOrElse(DRYING, ItemStack.EMPTY).isEmpty()) {
+        if (!item.isEmpty()) {
             return InteractionResult.PASS; // already occupied
         }
         if (held.is(AloneItems.RAW_HIDE)) {
@@ -281,7 +293,7 @@ public class DryingRackBlockEntity extends BlockEntity {
     /** Hang a perishable food on the rack (one piece) to dry. */
     private InteractionResult placeFood(Level level, Player player, ItemStack held, InteractionHand hand) {
         if (!level.isClientSide()) {
-            setAttached(DRYING, held.copyWithCount(1));
+            this.item = held.copyWithCount(1);
             setAttached(PROGRESS, 0);
             setAttached(SPOIL, 0);
             setAttached(LAST_TICK, level.getGameTime());
@@ -306,7 +318,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             return InteractionResult.SUCCESS; // consumed the click (with feedback), but nothing placed
         }
         if (!level.isClientSide()) {
-            setAttached(DRYING, held.copyWithCount(1));
+            this.item = held.copyWithCount(1);
             setAttached(PROGRESS, 0);
             setAttached(LAST_TICK, level.getGameTime());
             setChanged();
@@ -322,19 +334,19 @@ public class DryingRackBlockEntity extends BlockEntity {
 
     /** Take whatever is on the rack (dried jerky or a still-drying piece; finished leather or a still-green hide). */
     public InteractionResult retrieve(Level level, Player player) {
-        ItemStack item = getAttachedOrElse(DRYING, ItemStack.EMPTY);
         if (item.isEmpty()) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            removeAttached(DRYING);
+            ItemStack taken = item;
+            item = ItemStack.EMPTY;
             removeAttached(PROGRESS);
             removeAttached(SPOIL);
             removeAttached(LAST_TICK);
             setChanged();
-            syncItem(); // rack is empty now — stop drawing the item
-            if (!player.getInventory().add(item)) {
-                player.drop(item, false);
+            syncItem(); // rack is empty now — clears the item on the client too
+            if (!player.getInventory().add(taken)) {
+                player.drop(taken, false);
             }
         }
         player.swing(InteractionHand.MAIN_HAND);
@@ -343,7 +355,7 @@ public class DryingRackBlockEntity extends BlockEntity {
 
     /** For the block's drop-on-break: whatever is currently on the rack. */
     public ItemStack heldFood() {
-        return getAttachedOrElse(DRYING, ItemStack.EMPTY);
+        return item;
     }
 
     /** True once the piece is done — jerky cured through, or a hide tanned to leather (a rotted piece counts

@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Draws the piece of food currently on a drying rack, laid flat across the top so you can see what's
  * curing at a glance (purely cosmetic — the drying itself is driven server-side by
- * {@link DryingRackBlockEntity}). The item comes from the rack's client-synced {@code DRYING} attachment.
+ * {@link DryingRackBlockEntity}). The item comes from the rack's synced item field (see its getUpdateTag).
  */
 public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEntity, DryingRackRenderState> {
     private final ItemModelResolver itemModelResolver;
