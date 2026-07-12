@@ -68,9 +68,6 @@ public final class Scent {
 
     /** Per-player "next raid allowed" world-time — transient (a session cooldown), keyed by player id. */
     private static final Map<UUID, Long> RAID_COOLDOWN = new HashMap<>();
-    /** Per-player last in-game day we noted the wind, so the message fires only when the wind SHIFTS (once a
-     *  day at most, while carrying meat) instead of on a nagging timer. A HUD wind indicator will replace it. */
-    private static final Map<UUID, Long> WIND_NOTE_DAY = new HashMap<>();
     /** Per-predator world-time until which it won't be drawn to your scent again — set once it's raided
      *  successfully or been driven off (hurt). Stops the same animals pestering you in an endless stream. */
     private static final Map<UUID, Long> PREDATOR_GIVEUP = new HashMap<>();
@@ -104,15 +101,7 @@ public final class Scent {
         AABB box = player.getBoundingBox().inflate(radius * (1.0 + WIND_STRENGTH * windStrength)); // as far as downwind allows
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
             m -> PREDATORS.contains(m.getType()) && m.isAlive() && smellsAcross(player, m, radius, wind, windStrength));
-        // A hunter reads the wind — while you carry meat, you feel where it's blowing from and can keep
-        // predators upwind of you. Only spoken when the wind SHIFTS (once a day at most); a HUD indicator
-        // will show it at a glance, and then this note goes away.
-        long windDay = level.getGameTime() / 24000L;
-        if (freshMeat > 0 && WIND_NOTE_DAY.getOrDefault(player.getUUID(), -1L) != windDay) {
-            WIND_NOTE_DAY.put(player.getUUID(), windDay);
-            player.sendSystemMessage(Component.literal(
-                "The wind has shifted — it's out of the " + Wind.comingFrom(level) + " now. Keep predators upwind."), true);
-        }
+        // (The wind now reads off the HUD wind-vane — no chat note. See SurvivalHud.drawWind.)
 
         long now = level.getGameTime();
         PathfinderMob raider = null;

@@ -68,6 +68,34 @@ public final class SurvivalHud {
 
         // A little figure — a paper-doll of your body: bleeding torso, sprained legs, dirty hands, illness.
         drawPerson(g, tx + 24, yStamina, ClientSurvivalState.conditions);
+
+        // A weather-vane under the temperature (§7.3): a north-up needle pointing the way the wind blows,
+        // its length the wind's strength — a stub on a calm day, a long needle in a gale.
+        drawWind(g, tx + 4, yStamina + 21);
+    }
+
+    /** North-up wind vane. Needle points the way the wind blows (downwind — where your scent travels), and
+     *  grows with strength: near-nothing when it's calm. Read straight off the world clock, so no sync. */
+    private static void drawWind(GuiGraphicsExtractor g, int cx, int cy) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) {
+            return;
+        }
+        int r = 8;
+        g.fill(cx - r, cy - r, cx + r, cy + r, 0xAA000000);      // backdrop
+        g.fill(cx - 1, cy - r, cx + 1, cy - r + 2, 0xFFE0533A);  // N marker (red) — so you can orient the vane
+        net.minecraft.world.phys.Vec3 dir = dev.alone.core.Wind.direction(mc.level); // +x east, +z south = screen right/down
+        float strength = dev.alone.core.Wind.strength(mc.level);
+        double len = strength * (r - 1);                          // needle grows with wind speed
+        int steps = (int) Math.round(len);
+        for (int i = 1; i <= steps; i++) {
+            double f = Math.min((double) i, len);
+            int px = cx + (int) Math.round(dir.x * f);
+            int py = cy + (int) Math.round(dir.z * f);
+            boolean tip = i >= steps;
+            g.fill(px, py, px + (tip ? 2 : 1), py + (tip ? 2 : 1), tip ? 0xFFFFFFFF : 0xFFB9D8FF);
+        }
+        g.fill(cx - 1, cy - 1, cx + 1, cy + 1, 0xFFFFFFFF);      // hub, on top
     }
 
     /** Carry detail — drawn only while the inventory is open (see the container-screen mixin). Shows the
