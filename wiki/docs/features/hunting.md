@@ -182,6 +182,9 @@ Kill one with a blade and it yields a **hide** like any hide-bearing animal.
 
 ## The iron golem — you can't cheese a giant
 
-An iron golem is a multi-ton iron construct, and it drops its **iron** when killed — but taking that iron is meant to be a **real, dangerous fight**, not a safe farm. So a golem **smashes through weak cover to reach you**: hurt it from behind a one-block wall or poke it through a small hole, and it **pulverises the dirt, wood, or stone in the way** — opening a path straight to you. Only earth-, wood-, and stone-tier blocks give way; **metal, obsidian, and deepslate** are too tough for even a golem, so a genuinely fortified bunker still holds — a thrown-up dirt wall does not.
+An iron golem is a multi-ton iron construct, and it drops its **iron** when killed — but taking that iron is meant to be a **real, dangerous fight**, not a safe farm. So the two usual ways to cheese a big mob don't work on it:
+
+- **You can't wall it off.** Hurt it from behind a one-block wall or poke it through a small hole, and it **smashes through the cover** — pulverising the dirt, wood, or stone in the way to open a path straight to you. Only earth-, wood-, and stone-tier blocks give way; **metal, obsidian, and deepslate** are too tough for even a golem, so a genuinely fortified bunker still holds — a thrown-up dirt wall does not.
+- **You can't perch above it.** Climb a tall pillar or ledge just out of its reach and hit down, and it **reaches up and strikes you anyway** — a 3–4 block perch no longer keeps you safe.
 
 The lesson is the same as the bear's: against something this big and strong, there's no free poke from safety. Stand and fight it properly, or leave it be. *(Its iron is a risky, one-off prize — not a bypass for the [bloomery](./fire.md), which stays your steady source.)*

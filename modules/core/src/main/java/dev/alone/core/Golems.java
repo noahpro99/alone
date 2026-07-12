@@ -2,6 +2,7 @@ package dev.alone.core;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -35,10 +36,17 @@ public final class Golems {
     private static final double SMASH_RANGE_SQ = 9.0;  // only cover within ~3 blocks of the golem
     private static final int SMASH_INTERVAL = 15;      // pulverise ~one block every 0.75s (tune in playtest)
 
+    // Reaching a target perched above: vanilla melee already covers ~2 blocks up (the golem is wide, so its
+    // reach is generous), so we only need to cover the taller perch a survivor climbs to feel safe.
+    private static final double REACH_UP_MIN = 2.5;    // above the ~2 blocks vanilla melee already reaches
+    private static final double REACH_UP_MAX = 4.0;    // a 3–4 block pillar no longer keeps you out of reach
+    private static final int REACH_UP_INTERVAL = 20;   // an upward swing about once a second
+
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof IronGolem golem) {
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
+                golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
             }
         });
     }
@@ -98,6 +106,62 @@ public final class Golems {
             golem.swing(InteractionHand.MAIN_HAND);
             level.destroyBlock(pos, false, golem, 512); // pulverised — plays the break effect itself
             cooldown = SMASH_INTERVAL;
+        }
+    }
+
+    /** Lets the golem strike a target perched on a tall pillar or ledge above it — the other classic cheese
+     *  (stand just out of its reach and hit down). Only for perches beyond vanilla's already-generous melee
+     *  reach; runs its normal attack (damage, knockback, arm-raise) via {@code doHurtTarget}. Non-exclusive. */
+    private static class ReachUpGoal extends Goal {
+        private final IronGolem golem;
+        private int cooldown;
+
+        ReachUpGoal(IronGolem golem) {
+            this.golem = golem;
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = golem.getTarget();
+            if (target == null || !target.isAlive()) {
+                return false;
+            }
+            double dy = target.getY() - golem.getY();
+            if (dy < REACH_UP_MIN || dy > REACH_UP_MAX) {
+                return false; // at or below vanilla reach, or too high to plausibly reach
+            }
+            double dx = target.getX() - golem.getX();
+            double dz = target.getZ() - golem.getZ();
+            double horizReach = golem.getBbWidth() + 1.2; // roughly under it, allowing for a ledge overhang
+            return dx * dx + dz * dz <= horizReach * horizReach
+                && golem.getSensing().hasLineOfSight(target); // don't punch through a solid floor
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return canUse();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = golem.getTarget();
+            if (target == null) {
+                return;
+            }
+            golem.getLookControl().setLookAt(target);
+            if (cooldown > 0) {
+                cooldown--;
+                return;
+            }
+            if (golem.level() instanceof ServerLevel level) {
+                golem.doHurtTarget(level, target); // its real attack: damage, knockback, and the arm-raise
+            }
+            cooldown = REACH_UP_INTERVAL;
         }
     }
 }
