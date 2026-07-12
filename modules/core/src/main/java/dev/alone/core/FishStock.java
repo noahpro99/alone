@@ -55,21 +55,20 @@ public final class FishStock {
         return stack.is(ItemTags.FISHES);
     }
 
-    /** Draw a fish from the spot if the stock allows; otherwise deny. Recovers the stock lazily first. */
+    /** Draw a fish from the spot if the stock allows; otherwise deny. Fish return over calendar time, so a
+     *  fished-out spot recovers whether or not you keep casting — we only touch state on an actual catch,
+     *  and recovery accrues from the last CATCH (not every futile cast, which must not reset the clock). */
     private static boolean tryCatch(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = level.getChunkAt(pos);
         long now = level.getGameTime();
         long last = chunk.getAttachedOrElse(LAST_FISHED, now);
-        int stock = chunk.getAttachedOrElse(STOCK, FULL);
-        // Fish return while you're away: recover a point for every so many ticks since it was last fished.
-        long elapsed = Math.max(0L, now - last);
-        stock = Math.min(FULL, stock + (int) (elapsed / RECOVERY_TICKS_PER_POINT));
-        chunk.setAttached(LAST_FISHED, now);
+        int stock = Math.min(FULL, chunk.getAttachedOrElse(STOCK, FULL)
+            + (int) (Math.max(0L, now - last) / RECOVERY_TICKS_PER_POINT));
         if (stock < CATCH_COST) {
-            chunk.setAttached(STOCK, stock);
-            return false; // fished out
+            return false; // fished out — leave the clock alone so it keeps recovering while you cast in vain
         }
         chunk.setAttached(STOCK, stock - CATCH_COST);
+        chunk.setAttached(LAST_FISHED, now);
         return true;
     }
 }
