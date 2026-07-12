@@ -105,19 +105,23 @@ Every part has a use:
 
 A fresh hide is **green** — wet, and useless as it is. In real life leather is *made*, not pulled off the
 animal ready to wear: you scrape the hide, tan it, and let it cure over days. So leather here is a **worked
-product**, and the tool for it is the **tanning rack** — a load-and-leave frame, the same kind of "set it
-and walk away" station as the [drying rack](./preservation.md).
+product** — and the tool for it is the one you already build to dry meat: the **[drying rack](./preservation.md)**.
+A lashed frame of poles is a lashed frame of poles; a real camp uses the same rack to dry meat *and* to stretch
+and tan a hide, and so do you. What the rack does depends on **what you load it with**.
 
-- **Build the rack** from a stick frame laced with cordage (**5 sticks + 1 string**).
-- **Load it** by right-clicking with a **raw hide** while you're carrying a lump of **animal brains** — the
+- **Load a raw hide** by right-clicking the rack while you're carrying a lump of **animal brains** — the
   classic **brain-tan**, because *"a beast has just enough brains to tan its own hide."* Both are consumed to
-  start the work, and the hide stretches on the frame while it cures.
+  start the work, and the hide stretches on the frame while it cures. (Try it without brains and the rack tells
+  you it won't take.)
 - **Come back days later.** Tanning is the slow, patient job — the rack works for roughly **three in-game
   days** (about an hour of real time, and it keeps curing while the chunk is unloaded, so it runs through the
-  days you [fast-forward by resting](./sleep-and-rest.md)). That's deliberately **longer than the drying
-  rack's** meat-cure: leather is the more involved craft.
+  days you [fast-forward by resting](./sleep-and-rest.md)). That's deliberately **about twice** as long as the
+  same rack takes to cure meat: leather is the more involved craft.
 - **Take the leather** with a right-click when it's done. Pull an **unfinished** hide off early and you get
   the raw hide back — but the **brains are wasted**, so impatience costs you.
+
+*(One rack, two jobs — hang meat on it to dry into jerky, or a hide to tan into leather. See the
+[drying rack](./preservation.md) for the meat side and how weather and a smoky fire affect it.)*
 
 Because each kill drops **one lump of brains per hide** (big animals run slightly brain-short — one skull, a
 large skin), you can roughly tan what you hunt, but not for free. Leather is now something you **earn**: a

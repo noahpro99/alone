@@ -144,6 +144,14 @@ time even while the area is unloaded.
 Finished food becomes **jerky**: it is marked **preserved** (~30-day shelf life) and **dried**,
 which also makes it **lighter to carry** (the water is gone).
 
+:::tip The same rack tans hides
+A drying rack isn't just for meat — a lashed frame of poles is exactly what you stretch a **hide** on to
+**tan it into leather**, so the drying rack does that job too. Right-click it with a **raw hide** (while
+carrying a lump of **animal brains**) and it brain-tans into leather over a longer cure — roughly **three
+in-game days**. One rack, both jobs; see
+[From raw hide to leather](./hunting.md#from-raw-hide-to-leather--tanning).
+:::
+
 **You dry meat *raw* — you don't cook it first.** Jerky *is* dried raw meat, and cold-smoking over the
 campfire is the same: the drying (and the smoke) are what make it keep, and what make it **safe to eat**.
 So hang raw beef straight on the rack, and eating the finished jerky carries **no raw-meat sickness** — the

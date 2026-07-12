@@ -314,22 +314,18 @@ public final class AloneItems {
 
     /** A raw hide (§7.3) — the wet, green skin taken off a fresh kill when you butcher it with a blade.
      *  It is <b>not leather</b>: untanned, it will only rot and stiffen, so it has no use of its own except
-     *  to be <b>tanned</b>. Lay it on a {@link AloneBlocks#TANNING_RACK} with a lump of {@link #ANIMAL_BRAINS}
-     *  and leave it for days, and it becomes real leather. This is the whole point — leather is worked, not
-     *  a drop. Placeholder art. */
+     *  to be <b>tanned</b>. Stretch it on a {@link AloneBlocks#DRYING_RACK drying rack} with a lump of
+     *  {@link #ANIMAL_BRAINS} and leave it for days, and it becomes real leather. This is the whole point —
+     *  leather is worked, not a drop. Placeholder art. */
     public static final Item RAW_HIDE = register("raw_hide",
         key -> new Item(new Item.Properties().setId(key)));
     /** Animal brains (§7.3) — the emulsified fatty tissue every mammal carries in its skull, and the classic
      *  brain-tanning agent: the old saw that "a beast has just enough brains to tan its own hide" is literally
      *  true, so butchering a kill yields both its {@link #RAW_HIDE} and the brains to tan it. Its only use is
-     *  to be worked into a hide on the {@link AloneBlocks#TANNING_RACK}; consumed by the tanning. Placeholder art. */
+     *  to be worked into a hide on the {@link AloneBlocks#DRYING_RACK drying rack}; consumed by the tanning.
+     *  Placeholder art. */
     public static final Item ANIMAL_BRAINS = register("animal_brains",
         key -> new Item(new Item.Properties().setId(key)));
-    /** A tanning rack (§7.3) — a load-and-leave frame where a {@link #RAW_HIDE} and a lump of
-     *  {@link #ANIMAL_BRAINS} are worked into {@code minecraft:leather} over the long, patient days that
-     *  tanning really takes (see {@link AloneBlocks#TANNING_RACK}). */
-    public static final Item TANNING_RACK = register("tanning_rack",
-        key -> new net.minecraft.world.item.BlockItem(AloneBlocks.TANNING_RACK, new Item.Properties().setId(key)));
 
     /** Touching this class registers the items above; {@link #init()} then adds the creative tab. */
     public static void init() {

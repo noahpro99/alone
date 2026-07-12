@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "pattern": ["SSS", "SCS"],
-  "key": {
-    "S": "minecraft:stick",
-    "C": "minecraft:string"
-  },
-  "result": { "id": "alone:tanning_rack", "count": 1 }
-}

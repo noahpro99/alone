@@ -8,12 +8,15 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,22 +29,29 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
- * A drying rack (proposal §4.2) — the salt-free way to keep meat, done as honestly as the rest of the pack:
+ * A drying rack (proposal §4.2, §7.3) — a lashed frame of poles that does the camp's air-curing, and does
+ * <b>both</b> jobs a real one does, deciding which by <b>what you load it with</b>:
  * <ul>
- *   <li><b>Air-drying depends on the weather</b>: fast in warm dry air (a desert or a breezy autumn day),
- *       slow-but-safe in the cold (winter freeze-drying), and it <b>rots the meat instead</b> in warm wet
- *       conditions — rain on it, or a humid jungle/swamp — where you can't out-dry the bacteria.</li>
- *   <li><b>Smoking beats the weather</b>, but the fire must be <b>set below with a gap</b> so cool smoke
- *       rises to the rack; a fire <b>directly beneath</b> puts the wooden rack in the flames and burns it.</li>
- *   <li>It <b>keeps drying while you're away</b> — progress advances by elapsed world-time, not just ticks.</li>
+ *   <li><b>Drying meat into jerky.</b> Hang a perishable food and it air-dries over time — fast in warm dry
+ *       air (a desert or a breezy autumn day), slow-but-safe in the cold (winter freeze-drying), and it
+ *       <b>rots the meat instead</b> in warm wet conditions (rain, or a humid jungle/swamp). <b>Smoking beats
+ *       the weather</b>, but the fire must sit below with an air gap, or a fire directly beneath burns the
+ *       rack down.</li>
+ *   <li><b>Tanning a hide into leather.</b> Stretch a green {@link AloneItems#RAW_HIDE} on it — spending a lump
+ *       of {@link AloneItems#ANIMAL_BRAINS} (the classic brain-tan, "a beast has just enough brains to tan its
+ *       own hide") — and it works into {@code minecraft:leather} over {@link #TAN_TIME}, deliberately far
+ *       longer than a meat-cure because tanning really is days of patient labour.</li>
  * </ul>
- * Finished jerky is marked on the food module's {@code alone:preserved} + {@code alone:dried} components
- * (looked up from the registry, so core needn't depend on food): a long — but not infinite — shelf life,
- * and lighter to carry (the water's gone).
+ * Either way it <b>keeps working while you're away</b> (progress advances by elapsed world-time, capped so a
+ * reload doesn't resolve it in one frame). Finished jerky is marked on the food module's {@code alone:preserved}
+ * + {@code alone:dried} components (looked up from the registry, so core needn't depend on food).
  */
 public class DryingRackBlockEntity extends BlockEntity {
     /** Effective work to dry a piece (at the "normal temperate" rate of 1.0). ~1.5 in-game days that way. */
     public static final int DRY_TIME = 36000;
+    /** How long tanning a hide into leather takes. 72000t ≈ 60 real min ≈ 3 in-game days at this pack's 72×
+     *  day — deliberately double the meat-cure, because tanning is the slower, more patient job. */
+    public static final int TAN_TIME = 72000;
     private static final float SMOKE_RATE = 4.0f;  // smoked over a fire — fast, and weather can't stop it
     private static final float HOT_DRY_RATE = 2.0f; // warm, dry, breezy — quickest natural drying
     private static final float COLD_RATE = 0.4f;    // cold and dry — slow, but safe (freeze-drying)
@@ -51,7 +61,8 @@ public class DryingRackBlockEntity extends BlockEntity {
     private static final TagKey<Item> PERISHABLE = TagKey.create(Registries.ITEM,
         Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
 
-    // Persisted AND synced to the client, so the rack can render the piece hanging on it (visual only).
+    // Persisted AND synced to the client, so the rack can render whatever sits on it — meat, jerky, a stretched
+    // hide, or finished leather (visual only).
     public static final AttachmentType<ItemStack> DRYING = AttachmentRegistry.create(
         Identifier.fromNamespaceAndPath("alone", "drying_rack_food"),
         builder -> builder.persistent(ItemStack.CODEC)
@@ -68,10 +79,47 @@ public class DryingRackBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, DryingRackBlockEntity rack) {
-        ItemStack food = rack.getAttachedOrElse(DRYING, ItemStack.EMPTY);
-        if (food.isEmpty()) {
+        ItemStack loaded = rack.getAttachedOrElse(DRYING, ItemStack.EMPTY);
+        if (loaded.isEmpty()) {
             return;
         }
+        // A green hide on the frame is being tanned; anything else hung on it is meat being dried. (Once tanning
+        // finishes the hide has become leather, so it no longer matches here and just waits to be taken.)
+        if (loaded.is(AloneItems.RAW_HIDE)) {
+            tanTick(level, pos, rack, loaded);
+        } else {
+            dryTick(level, pos, rack, loaded);
+        }
+    }
+
+    /** Tanning path: a stretched raw hide works into leather purely on elapsed time — slow, hands-off. */
+    private static void tanTick(Level level, BlockPos pos, DryingRackBlockEntity rack, ItemStack hide) {
+        int progress = rack.getAttachedOrElse(PROGRESS, 0);
+        long now = level.getGameTime();
+        long last = rack.getAttachedOrElse(LAST_TICK, now);
+        int elapsed = (int) Math.max(0L, Math.min(MAX_STEP, now - last));
+        rack.setAttached(LAST_TICK, last + elapsed);
+        if (elapsed <= 0) {
+            return;
+        }
+        progress += elapsed;
+        if (progress >= TAN_TIME) {
+            // Worked through: the hide is leather now. Keep the count (a 1:1 tan).
+            rack.setAttached(DRYING, new ItemStack(Items.LEATHER, hide.getCount()));
+            rack.setAttached(PROGRESS, TAN_TIME);
+        } else {
+            rack.setAttached(PROGRESS, progress);
+            // Occasional feedback that the rack is working — a little rise off the curing skin.
+            if (level instanceof ServerLevel server && now % 40L == 0L) {
+                server.sendParticles(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    1, 0.16, 0.05, 0.16, 0.0);
+            }
+        }
+        rack.setChanged();
+    }
+
+    /** Drying path: meat air-dries into jerky at a weather-dependent rate (or rots in warm wet). */
+    private static void dryTick(Level level, BlockPos pos, DryingRackBlockEntity rack, ItemStack food) {
         int progress = rack.getAttachedOrElse(PROGRESS, 0);
         if (progress >= DRY_TIME) {
             return; // already dried — waiting to be taken
@@ -190,11 +238,26 @@ public class DryingRackBlockEntity extends BlockEntity {
             Identifier.fromNamespaceAndPath("alone", path));
     }
 
-    /** Hang a perishable food on the rack (one piece). */
+    /**
+     * Load the rack. A <b>perishable food</b> hangs up to dry into jerky; a <b>raw hide</b> stretches on to
+     * tan into leather (which spends a lump of {@link AloneItems#ANIMAL_BRAINS} from the player's inventory —
+     * the brain-tan agent). Anything else, or an already-occupied rack, is refused.
+     */
     public InteractionResult place(Level level, Player player, ItemStack held, InteractionHand hand) {
-        if (!getAttachedOrElse(DRYING, ItemStack.EMPTY).isEmpty() || !held.is(PERISHABLE)) {
-            return InteractionResult.PASS;
+        if (!getAttachedOrElse(DRYING, ItemStack.EMPTY).isEmpty()) {
+            return InteractionResult.PASS; // already occupied
         }
+        if (held.is(AloneItems.RAW_HIDE)) {
+            return placeHide(level, player, held, hand);
+        }
+        if (held.is(PERISHABLE)) {
+            return placeFood(level, player, held, hand);
+        }
+        return InteractionResult.PASS;
+    }
+
+    /** Hang a perishable food on the rack (one piece) to dry. */
+    private InteractionResult placeFood(Level level, Player player, ItemStack held, InteractionHand hand) {
         if (!level.isClientSide()) {
             setAttached(DRYING, held.copyWithCount(1));
             setAttached(PROGRESS, 0);
@@ -209,27 +272,73 @@ public class DryingRackBlockEntity extends BlockEntity {
         return InteractionResult.SUCCESS;
     }
 
-    /** Take whatever is on the rack (dried jerky, or a still-drying piece). */
+    /** Stretch a raw hide on the rack to tan — but only with a lump of brains on hand to work it. */
+    private InteractionResult placeHide(Level level, Player player, ItemStack held, InteractionHand hand) {
+        if (!player.isCreative() && !hasBrains(player)) {
+            // No tanning agent — tell the player why the hide won't take, rather than silently doing nothing.
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.sendSystemMessage(Component.literal(
+                    "You need animal brains to tan this hide."), true);
+            }
+            return InteractionResult.SUCCESS; // consumed the click (with feedback), but nothing placed
+        }
+        if (!level.isClientSide()) {
+            setAttached(DRYING, held.copyWithCount(1));
+            setAttached(PROGRESS, 0);
+            setAttached(LAST_TICK, level.getGameTime());
+            setChanged();
+            if (!player.isCreative()) {
+                held.shrink(1);
+                consumeBrains(player);
+            }
+        }
+        player.swing(hand);
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Take whatever is on the rack (dried jerky or a still-drying piece; finished leather or a still-green hide). */
     public InteractionResult retrieve(Level level, Player player) {
-        ItemStack food = getAttachedOrElse(DRYING, ItemStack.EMPTY);
-        if (food.isEmpty()) {
+        ItemStack item = getAttachedOrElse(DRYING, ItemStack.EMPTY);
+        if (item.isEmpty()) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
             removeAttached(DRYING);
             removeAttached(PROGRESS);
             removeAttached(SPOIL);
+            removeAttached(LAST_TICK);
             setChanged();
-            if (!player.getInventory().add(food)) {
-                player.drop(food, false);
+            if (!player.getInventory().add(item)) {
+                player.drop(item, false);
             }
         }
         player.swing(InteractionHand.MAIN_HAND);
         return InteractionResult.SUCCESS;
     }
 
-    /** For the block's drop-on-break: whatever is currently hung up. */
+    /** For the block's drop-on-break: whatever is currently on the rack. */
     public ItemStack heldFood() {
         return getAttachedOrElse(DRYING, ItemStack.EMPTY);
+    }
+
+    private static boolean hasBrains(Player player) {
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            if (inventory.getItem(i).is(AloneItems.ANIMAL_BRAINS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void consumeBrains(Player player) {
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(AloneItems.ANIMAL_BRAINS)) {
+                stack.shrink(1);
+                return;
+            }
+        }
     }
 }

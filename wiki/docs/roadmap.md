@@ -193,10 +193,10 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
   **armed village guards** (steal or strike anything and the village turns on you), making a livestock raid a
   real, dangerous option rather than a free lunch.
 - **Tanning — leather is made, not dropped** *(shipped).* Butchering a hide-bearing animal now yields a
-  **green raw hide** (plus a lump of **brains**), not finished leather. Leather is worked on a **tanning
-  rack** — a load-and-leave frame where a raw hide + brains **brain-tan** into leather over ~three in-game
-  days, exactly the way the **drying rack** cures jerky (not a hold-right-click hand chore). So a leather coat
-  is a real investment, in keeping with the pack's "everything is real effort" rule. See
+  **green raw hide** (plus a lump of **brains**), not finished leather. Leather is worked on the **drying
+  rack** — the very same lashed frame that cures jerky, doing double duty: load a raw hide + brains and it
+  **brain-tans** into leather over ~three in-game days (about twice its meat-cure), not a hold-right-click hand
+  chore. So a leather coat is a real investment, in keeping with the pack's "everything is real effort" rule. See
   [Hunting & Wildlife](./features/hunting.md#from-raw-hide-to-leather--tanning). *Possible refinements:*
   alternative tannins (bark liquor), a scraping/dehairing sub-step, and smoking to finish — deeper realism if
   it earns its keep.

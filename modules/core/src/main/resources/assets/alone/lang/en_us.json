@@ -89,7 +89,5 @@
   "subtitles.entity.deer.hurt": "Deer groans",
   "subtitles.entity.deer.death": "Deer dies",
   "item.alone.raw_hide": "Raw Hide",
-  "item.alone.animal_brains": "Animal Brains",
-  "item.alone.tanning_rack": "Tanning Rack",
-  "block.alone.tanning_rack": "Tanning Rack"
+  "item.alone.animal_brains": "Animal Brains"
 }

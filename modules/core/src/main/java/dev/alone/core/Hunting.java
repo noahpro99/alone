@@ -22,7 +22,7 @@ import net.minecraft.world.item.Items;
  *
  * <p>Crucially the hide comes off <b>green</b>: a fresh kill gives {@link AloneItems#RAW_HIDE}, not leather.
  * A wet raw hide is not usable leather — it will only rot and stiffen. Turning it into leather is days of
- * work on a {@link AloneBlocks#TANNING_RACK}. And the carcass yields its own tanning agent: a lump of
+ * work on a {@link AloneBlocks#DRYING_RACK drying rack}. And the carcass yields its own tanning agent: a lump of
  * {@link AloneItems#ANIMAL_BRAINS}, the authentic brain-tan, because "a beast has just enough brains to tan
  * its own hide." So each kill can roughly tan its own skin — a real, patient 1:1 investment, and leather is
  * no longer a drop but a product of that work.</p>
