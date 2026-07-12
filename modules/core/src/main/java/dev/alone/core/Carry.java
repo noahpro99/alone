@@ -350,6 +350,7 @@ public final class Carry {
         if (item == AloneItems.ROPE) return 0.30f;
         if (item == AloneItems.BEDROLL) return 2.00f;
         if (item == AloneItems.SLEEPING_BAG) return 2.60f; // wool loft + a leather shell — heavier than a bedroll
+        if (item == AloneItems.TARP) return 2.50f; // an oiled hide sheet — light for its size, folds flat
         if (item == AloneItems.TRAVOIS) return 8.00f; // two wooden poles, crossbars and lashing — a real load to lug
 
         // 2. Specific vanilla items matching real life

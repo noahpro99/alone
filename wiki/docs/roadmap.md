@@ -18,6 +18,15 @@ about maintenance,* with a long-horizon goal (the Dragon) that takes seasons to 
 The campfire, the clay kiln (fires pottery), and the bellows-fed bloomery (smelts iron ore to a bloom)
 exist; the rest of the heat-tech tree does not yet.
 
+- **A campfire menu.** The campfire should open its **own screen** on right-click — a hearth interface with
+  slots to lay food on to cook, tend the fuel, and set a pot to boil — rather than today's stack-items-on-top
+  + hold-right-click interactions. Makes the fire a proper station you manage.
+- **A pit / bowl furnace** — the *crudest* smelting, below the built bloomery. IRL, before proper furnaces,
+  metal was won in a **clay-lined pit or bowl** dug in the ground: layered with charcoal and (crushed) ore,
+  covered, and force-fed air with bellows or a blowpipe until it burned hot enough to reduce the ore to a
+  spongy **bloom** you then hammer. It's basically a hole-in-the-ground bloomery — smoky, inefficient, and
+  the true start of metallurgy. Could slot in as a **pre-bloomery copper tier** (a dug pit you smelt in
+  before you can build the clay {@code bloomery} already in the pack).
 - **A charcoal clamp** (bulk charcoal from a covered wood pile) — a batch-efficiency step up from what
   works today: smelting logs one at a time in a **furnace** already yields charcoal (as does a
   burnt-out campfire), so this is an optimisation, not a missing source.
@@ -188,11 +197,13 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
   **armed village guards** (steal or strike anything and the village turns on you), making a livestock raid a
   real, dangerous option rather than a free lunch.
 - **Tanning — leather is made, not dropped.** Right now butchering a hide-bearing animal drops `leather`
-  directly, which isn't true to life: you get a **raw hide**, and turning it into usable **leather** is a
-  process — scrape it, treat it (brains/bark/smoke), and dry it over days. Proposal: butchering yields a
-  **raw hide** item; **tanning** is a timed job (a tanning rack or a soak-and-dry) that converts hide →
-  leather over in-game days — so a leather coat is a real investment, in keeping with the pack's "everything
-  is real effort" rule.
+  directly, which isn't true to life. Real tanning is **mostly passive**: you scrape the flesh off a **raw
+  hide**, then it **soaks/cures for days** (bark-tannin liquor, or brain-tan, then smoke) and dries. So it
+  maps cleanly to a **load-and-leave block** — a **tanning rack or vat** you put a raw hide in and come back
+  to days later for leather, exactly like the **drying rack** already works for jerky (not a hold-right-click
+  hand chore). Proposal: butchering yields a **raw hide**; the tanning block converts hide → leather over
+  in-game days. So a leather coat is a real investment, in keeping with the pack's "everything is real effort"
+  rule.
 
 ## The start — extending the loadout
 
