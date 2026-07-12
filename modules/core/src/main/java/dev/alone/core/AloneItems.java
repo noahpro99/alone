@@ -232,6 +232,12 @@ public final class AloneItems {
     /** A towel — right-click to rub yourself dry at once (see {@link TowelItem}); goes damp after a use. */
     public static final Item TOWEL = register("towel",
         key -> new TowelItem(new Item.Properties().stacksTo(1).setId(key)));
+    /** Flour — wheat ground down, the first step of the bread path (grind → dough → bake). Placeholder sugar art. */
+    public static final Item FLOUR = register("flour",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** Dough — flour worked with water; bake it on a fire (or in a furnace) into bread. Placeholder clay art. */
+    public static final Item DOUGH = register("dough",
+        key -> new Item(new Item.Properties().setId(key)));
     public static final Item FLINT_PICK = register("flint_pick",
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",

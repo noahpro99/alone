@@ -51,6 +51,16 @@ Foods belong to groups — **protein, vegetable, grain, fruit**. Eating the same
 - High fatigue **shrinks the usable maximum hunger** (down to roughly 12), so a monotonous diet cannot fill you up as much.
 - **Eating a variety** lets the fatigue recover and restores the full hunger cap.
 
+## Bread — grind, dough, bake
+
+There's no crafting a loaf out of three raw wheat. Bread is **made**, the way it always was — grow the grain, then work it through three steps:
+
+1. **Grind wheat into flour** — **2 wheat → 1 flour** at the crafting bench, and it's a **timed grind** (a hand quern is slow, tedious work), not an instant craft.
+2. **Work the flour into dough** — **flour + a bucket of water → dough** (you get the empty **bucket back**).
+3. **Bake the dough into bread** — set the dough to cook on a **campfire**, or bake it in a **furnace**. Only then do you have bread.
+
+So a loaf is a real little production line — grain in the field, a grind, a mix, and a bake — which makes **grain** a food group you *build toward* rather than one you get for free. (This is why raw wheat no longer crafts straight into bread.)
+
 ## Scurvy — keep fresh food in your diet
 
 Variety isn't the only diet rule: you also need **fresh food** — **fruit and vegetables**, your vitamin C.

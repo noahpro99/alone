@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [ "minecraft:wheat", "minecraft:wheat" ],
+  "result": { "id": "alone:flour", "count": 1 }
+}

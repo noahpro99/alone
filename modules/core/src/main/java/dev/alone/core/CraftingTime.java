@@ -52,6 +52,7 @@ public final class CraftingTime {
     private static final int THATCH = 300;      // ~18 real min weaving/lashing a rough grass panel — bulk grass is the material cost, the weave is the timed work
     private static final int SEWN_SHEET = 1200; // ~72 real min hand-stitching tanned hides into an oiled tarp — slow, patient sewing
     private static final int SEWN_BAG = 1800;   // ~108 real min sewing a lofted, shelled sleeping bag — a real half-day project
+    private static final int GRIND = 200;       // ~12 real min grinding grain to flour on a hand quern
 
     // Per player, the accumulated ticks worked on each result item (by item id) — kept so a craft you
     // stepped away from resumes. Side-separated so the integrated server and client don't collide.
@@ -146,6 +147,9 @@ public final class CraftingTime {
         }
         if (result.is(AloneItems.SLEEPING_BAG)) {
             return SEWN_BAG; // a warm bag is a real sewing project — loft and a shell, all by hand (§5.5)
+        }
+        if (result.is(AloneItems.FLOUR)) {
+            return GRIND; // grinding grain to flour by hand (a quern) is slow, tedious work
         }
         if (result.is(ItemTags.PLANKS)) {
             return PLANK; // riving a log into boards by hand is hard, laborious work (§5.4)

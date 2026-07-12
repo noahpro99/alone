@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [ "alone:flour", "minecraft:water_bucket" ],
+  "result": { "id": "alone:dough", "count": 1 }
+}

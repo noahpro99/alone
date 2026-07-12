@@ -172,12 +172,13 @@ is ways to extend it:
 - **Graphical selection screen** — a proper picker window over the existing command/clickable-chat loadout
   (same underlying picks, biome read, and one-time gate).
 - **More list options to build:** a **slingshot** (low-power ranged small game below the bow), and —
-  deepening existing systems — a **frying pan** (better cook surface), a **bar of soap** (better/faster
-  washing), and a **grain/bread path** for the ration slot. *(The **gill net** (open-water fishing; see
+  deepening existing systems — a **frying pan** (better cook surface) and a **bar of soap** (better/faster
+  washing). *(Shipped: the **gill net** (open-water fishing; see
   [Hunting](./features/hunting.md#the-gill-net--the-open-water-alternative)), the **hand saw** (fast
   log→plank; see [Tools & Crafting](./features/tools-and-crafting.md#boards--riving-by-hand-or-a-hand-saw)),
-  and the **towel** (instant dry-off; see
-  [Body Temperature](./features/body-temperature.md#what-drives-your-temperature)) have shipped.)*
+  the **towel** (instant dry-off; see
+  [Body Temperature](./features/body-temperature.md#what-drives-your-temperature)), and the **grain→bread
+  path** (grind → dough → bake; see [Food & Eating](./features/food-and-eating.md#bread--grind-dough-bake)).)*
 - **Decided against:** a **personal photograph / morale system** — Alone's realism here is physical, and a
   happiness meter would be a HUD abstraction rather than a felt mechanic, so it's deliberately not built.
 
