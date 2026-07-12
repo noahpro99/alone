@@ -166,9 +166,12 @@ While you're carrying fresh meat you **feel the wind** — the game tells you wh
 
 ## Carrying meat draws predators
 
-Fresh meat you carry **reeks**, drawing wolves, **brown bears**, and polar bears — which will **snatch it
-and bolt** if they reach you. Preserving or caching your meat is the counter. See
-[Food Preservation](./preservation.md#fresh-meat-draws-predators).
+Fresh meat you carry **reeks**, drawing wolves, **brown bears**, and polar bears. A drawn predator **comes
+for you** — it turns hostile and closes in, not a passive walk-up you can club for free, so it's a real
+threat you have to **fend off or flee**; if it reaches you it may **snatch a piece and bolt** with it. But
+it isn't relentless: once it's **grabbed a piece** or you've **driven it off** (hurt it), it **gives up on
+you for a few hours** rather than pestering you in an endless stream. Preserving or caching your meat — so
+it doesn't reek — is the real counter. See [Food Preservation](./preservation.md#fresh-meat-draws-predators).
 
 ## The brown bear
 

@@ -71,6 +71,10 @@ public final class Scent {
     /** Per-player last in-game day we noted the wind, so the message fires only when the wind SHIFTS (once a
      *  day at most, while carrying meat) instead of on a nagging timer. A HUD wind indicator will replace it. */
     private static final Map<UUID, Long> WIND_NOTE_DAY = new HashMap<>();
+    /** Per-predator world-time until which it won't be drawn to your scent again — set once it's raided
+     *  successfully or been driven off (hurt). Stops the same animals pestering you in an endless stream. */
+    private static final Map<UUID, Long> PREDATOR_GIVEUP = new HashMap<>();
+    private static final long GIVEUP_TICKS = 3000L; // ~3 in-game hours of leaving you alone after a raid/rebuff
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -109,26 +113,38 @@ public final class Scent {
                 "The wind has shifted — it's out of the " + Wind.comingFrom(level) + " now. Keep predators upwind."), true);
         }
 
+        long now = level.getGameTime();
         PathfinderMob raider = null;
         boolean drewOne = false;
         for (Mob mob : nearby) {
             if (!(mob instanceof PathfinderMob predator)) {
                 continue;
             }
+            // Hurting a raider drives it off (a hungry animal isn't suicidal); a completed raid satisfies it
+            // (below). Either way it then gives up on you for a good while, instead of an endless stream.
+            if (predator.getLastHurtByMob() == player) {
+                PREDATOR_GIVEUP.put(predator.getUUID(), now + GIVEUP_TICKS);
+            }
+            if (now < PREDATOR_GIVEUP.getOrDefault(predator.getUUID(), 0L)) {
+                continue; // had enough of you for now — left to its own devices
+            }
             if (predator.distanceToSqr(player) <= GRAB_RANGE * GRAB_RANGE) {
                 raider = predator; // right on top of you — close enough to snatch
-            } else if (predator.getTarget() == null) {
-                predator.getNavigation().moveTo(player, APPROACH_SPEED); // drawn in by the smell
+            } else {
+                // Drawn in by the smell — and it comes for YOU. A hungry predator is a real threat you have
+                // to fend off or flee, not a passive walk-up you can club for free.
+                predator.setTarget(player);
                 drewOne = true;
             }
         }
 
-        // A hungry raid: a predator at your side grabs a piece of raw meat and bolts with it.
-        long now = level.getGameTime();
+        // A hungry raid: a predator at your side grabs a piece of raw meat and bolts with it, then leaves
+        // you be for a while (it got what it came for).
         if (raider != null && now >= RAID_COOLDOWN.getOrDefault(player.getUUID(), 0L)) {
             ItemStack stolen = takeOneFreshMeat(player);
             if (!stolen.isEmpty()) {
                 RAID_COOLDOWN.put(player.getUUID(), now + RAID_COOLDOWN_TICKS);
+                PREDATOR_GIVEUP.put(raider.getUUID(), now + GIVEUP_TICKS);
                 fleeWithPrize(raider, player);
                 player.sendSystemMessage(Component.literal(
                     "A predator snatches raw meat from your pack and bolts with it!"));
