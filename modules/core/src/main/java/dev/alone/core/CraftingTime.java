@@ -50,6 +50,10 @@ public final class CraftingTime {
     private static final int BLOOM_WORK = 600; // ~30s: hammering a spongy bloom to consolidate iron and drive out slag
     // Shelter craft, set by real duration × the 72x day (1 real hour = 1000 ticks), not by feel (§5.5):
     private static final int THATCH = 300;      // ~18 real min weaving/lashing a rough grass panel — bulk grass is the material cost, the weave is the timed work
+    // Weaving a pack basket is hours of patient coiling IRL (~half a day by hand). The bone awl in its
+    // recipe is what makes it quicker — so this is the awl-assisted time (~1.4 in-world hours), compressed
+    // for playability but still a real, rooted weave. (§6)
+    private static final int WEAVE = 1400;
     private static final int SEWN_SHEET = 1200; // ~72 real min hand-stitching tanned hides into an oiled tarp — slow, patient sewing
     private static final int SEWN_BAG = 1800;   // ~108 real min sewing a lofted, shelled sleeping bag — a real half-day project
     private static final int GRIND = 200;       // ~12 real min grinding grain to flour on a hand quern
@@ -141,6 +145,9 @@ public final class CraftingTime {
         }
         if (result.is(AloneItems.THATCH)) {
             return THATCH; // bulk grass is the material cost; weaving and lashing the panel is the timed work (§5.5)
+        }
+        if (result.is(AloneItems.WOVEN_BASKET)) {
+            return WEAVE; // a pack basket is real weaving — coiled and stitched with a bone awl (§6)
         }
         if (result.is(AloneItems.TARP)) {
             return SEWN_SHEET; // tanned hides hand-sewn into an oiled sheet — slow, patient stitching (§5.5)

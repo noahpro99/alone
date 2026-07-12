@@ -35,6 +35,11 @@ public final class SurvivalHud {
         if (mc.player == null) {
             return;
         }
+        // A container/inventory is open: hide the always-on vitals so they don't stack under the carry bars
+        // (hands/pockets/weight), which take this same top-left corner while the inventory is open. (§5.1)
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen) {
+            return;
+        }
         int left = 6;                 // top-left corner (proposal: small, corner-mounted)
         int barX = left + 13;         // leave room for a ~10px icon left of each bar
         int rowH = BAR_H + 8;         // taller rows so an icon fits per meter
