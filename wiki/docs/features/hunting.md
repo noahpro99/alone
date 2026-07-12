@@ -18,21 +18,29 @@ Domestic livestock (cows, pigs, sheep, chickens) stay calm, so farming and herdi
 
 ## Persistence hunting — run it down
 
-Wild game is faster than you in a sprint, but it **can't sprint forever** — so you can hunt the way people
-did before the bow: **keep the pressure on and chase it to exhaustion.**
+Wild game **outruns you** — you can't run it down in a sprint. But it **can't run forever**, and you can:
+that's **persistence hunting**, humanity's oldest method and our species' real advantage — endurance. You
+**pace it** at a jog and keep it moving until it overheats and collapses, the way people ran down deer and
+antelope before the bow. It's a **long grind, not a dash** — a proper hunt, not a grab.
 
-- Keep an animal **running from you** and it builds **chase fatigue** — after roughly **9 seconds** of
-  hard running it starts to flag, and it **slows more and more** (progressively) as it nears collapse.
-- An exhausted animal is **slow enough to run down and finish by hand** — no bow required.
-- Fatigue only builds while it's **actually fleeing you**, and it **bleeds back off once the animal gets
-  to rest** (a little slower than it builds). So a half-hearted chase lets it recover — you have to **stay
-  on it**, cutting off its rests, until it's spent.
+- **Pace it, don't chase it flat-out.** Once you've spooked an animal it stays on the run, and it keeps
+  fleeing as long as you stay within range — so you don't have to sprint-glue to it (you couldn't anyway).
+  **Jog to keep it in sight**, and sprint only in bursts to close the gap; sprinting burns
+  [stamina](./survival-meters.md) fast, so a hunt is paced, like the real thing.
+- **It tires slowly.** Keep it running and it builds **chase fatigue** over **minutes** — a mid-size deer
+  takes **~2–3 minutes** of sustained pressure to exhaust. It starts to **visibly flag** partway through
+  and **slows more and more** as it nears collapse, until it's slow enough to **run down and finish by
+  hand** — no bow required.
+- **Don't let it rest.** Fatigue only builds while it's **actually fleeing**, and a worked animal stays hot
+  — it **cools off only slowly** if you fall back, and much slower than it tires. So keep the pressure on;
+  lose it for long and you'll have to start the wear-down over.
 - This is for **wild game that runs** — not calm livestock, tamed pets, or bold predators (wolves and
   polar bears don't tire this way).
 
-- **Little animals wind faster than big ones.** A quarry's endurance scales with its body size, so a
-  light animal (a rabbit) flags after only a few seconds of hard running, while a big-bodied one (a horse)
-  has real staying power and takes far longer to run down. A mid-size grazer like a deer sits in between.
+- **Little animals wind faster than big ones.** A quarry's endurance scales with its body size: a light
+  animal (a rabbit) is spent in **~1 minute**, a mid-size deer takes **~2–3**, and a big-bodied horse has
+  real staying power at **~5**. And a **skilled tracker** reads the quarry and presses it harder, so the
+  better you get, the sooner it flags.
 
 ## Blood trails — track a wounded animal
 

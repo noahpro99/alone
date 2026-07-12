@@ -37,6 +37,9 @@ public final class Wildlife {
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
     private static final double FLEE_RANGE = 12.0;  // how close a standing player they'll tolerate before bolting
+    private static final double PURSUIT_RANGE = 26.0; // once spooked they keep running until you fall this far back —
+                                                       // so you can PACE a deer from a distance and wear it down,
+                                                       // rather than having to sprint-glue to within 12 blocks
     private static final double BOLT_RANGE = 9.0;   // inside this they put on a burst, not just amble off
     private static final double WALK_AWAY = 1.05;   // the animal's own (already fast) pace carries the flee
     private static final double BOLT = 1.25;        // a modest burst when you're on them (base speed does the work)
@@ -104,8 +107,10 @@ public final class Wildlife {
 
         @Override
         public boolean canContinueToUse() {
+            // Keep running until the pursuer falls well back — it's committed to flight now, so you can
+            // pace it (jog to keep it inside this range) instead of having to stay right on top of it.
             return this.threat != null && spooks(this.threat)
-                && this.threat.distanceToSqr(this.mob) < (FLEE_RANGE + 3.0) * (FLEE_RANGE + 3.0);
+                && this.threat.distanceToSqr(this.mob) < PURSUIT_RANGE * PURSUIT_RANGE;
         }
 
         @Override

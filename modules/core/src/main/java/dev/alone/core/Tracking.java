@@ -33,10 +33,15 @@ public final class Tracking {
     private static final double RADIUS = 28.0;         // game this close feels the pursuit (wide enough that a
                                                         // genuinely fast animal stays "in the chase" and tires)
     private static final double FLEE_SPEED_SQ = 0.014; // horizontal speed² above which it's genuinely running
-    private static final float GAIN = 5f;              // fatigue gained per second of hard running (mid-size game)
-    private static final float RECOVER = 2f;           // and shed per second at rest (slower than it builds)
+    // A persistence hunt is a long endurance grind, not a sprint. Real ones run hours; compressed to the
+    // game's clock that's a few real minutes of sustained pressure. So fatigue builds SLOWLY (mid-size game
+    // takes ~2–3 min of keeping it on the run to exhaust) and bleeds off slowly too — an animal you've
+    // worked hard stays hot, it can't cool off the moment you slacken. Per-animal endurance and tracking
+    // skill scale the rate: small game winds in ~1 min, a horse takes ~5; a skilled tracker closes faster.
+    private static final float GAIN = 0.6f;            // fatigue/sec of hard running (mid-size game → ~2.8 min to spend)
+    private static final float RECOVER = 0.2f;         // shed per second out of the chase — 3x slower than it builds
     private static final float MAX = 100f;
-    private static final float SLOW_THRESHOLD = 45f;   // winded — it starts to flag (~9s of sustained chase)
+    private static final float SLOW_THRESHOLD = 30f;   // winded — it starts to visibly flag (~50s of sustained chase)
 
     // Per-animal endurance: little animals wind fast, big-bodied ones have staying power. We scale the
     // fatigue gain by body mass, using max health as the stand-in (rabbit 3, cow/deer 10, horse 15–30):
