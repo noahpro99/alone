@@ -278,11 +278,17 @@ public final class Conditions {
         }
         // An open wound worked with dirty hands festers (§5.6/§1.5): field-dressing a kill with bloody
         // hands, or clutching a cut with filthy ones, contaminates it. Wash up, or bind it, before it turns.
-        if (Hygiene.handsDirty(player) && !isInfected(player)
+        if (Hygiene.handsDirty(player)
             && player.tickCount % 200 == 0 && player.getRandom().nextFloat() < WOUND_INFECT_CHANCE) {
+            // No !isInfected guard: a wound worked with filthy hands keeps festering WORSE the longer it's
+            // left, so an untreated contamination can compound past SEVERE_INFECTION into sepsis and kill —
+            // as the docs promise. (Before, the guard capped it at one dose, well under the septic threshold,
+            // so dirty-hand infection could only ever be a mild fever that cleared.)
+            boolean firstOnset = !isInfected(player);
             addInfection(player, INFECTION_PER_BITE / 2);
-            player.sendSystemMessage(Component.literal(
-                "Filthy hands on an open wound — it's turning. Clean it, or bind it, before it festers."));
+            player.sendSystemMessage(Component.literal(firstOnset
+                ? "Filthy hands on an open wound — it's turning. Clean it, or bind it, before it festers."
+                : "The wound is festering worse — wash and dress it now, or it will turn septic."));
         }
         player.setAttached(BLEEDING, remaining - 1);
     }
