@@ -93,7 +93,7 @@ the cold is effectively free. So *where* you dig your ice house matters as much 
 Salting marks a food as **preserved** (the ~30-day shelf life):
 
 1. Hold the perishable food in your **main hand**.
-2. Hold **salt** in your **off hand**.
+2. Hold **salt** <img class="mc-icon" src="/alone/item/salt.png" alt="Salt"/> in your **off hand**.
 3. **Sneak + right-click.**
 
 This consumes **one salt** and cancels the food's running spoil timer.
@@ -103,7 +103,7 @@ This consumes **one salt** and cancels the food's running spoil timer.
 Salt comes from the sea, the old way. **Fill a fire-safe pot (clay or iron) from the ocean** — it fills
 as **salt water** — then **stand it in a lit campfire** (right-click the fire with the pot). Fresh water
 boils *clean*, but **seawater boils down to dryness and leaves a crust of salt**: right-click the fire
-empty-handed to take the pot back and you get about **2–3 salt** (roughly half the pot's capacity), the
+empty-handed to take the pot back and you get about **2–3 salt** <img class="mc-icon" src="/alone/item/salt.png" alt="Salt"/> (roughly half the pot's capacity), the
 water gone as steam and the pot empty again.
 
 That's **evaporation, not distillation** — you get the salt, not drinkable water back (reclaiming the
@@ -112,12 +112,28 @@ method**: a trip to the coast, a pot, and a fire is all it takes to lay in salt 
 
 ## The drying rack
 
-The drying rack preserves meat without salt. It is crafted from **5 sticks**:
+The drying rack <img class="mc-icon" src="/alone/item/drying_rack.png" alt="Drying Rack"/> preserves meat without salt. It is crafted from **5 sticks**:
 
 ```
 S S S
 S . S
 ```
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/drying_rack.png" alt="Drying Rack"/></div>
+</div>
 
 Place it, then **right-click it with a perishable food** to hang one piece — **the piece is shown
 sitting on the rack** so you can see what's curing. **Right-click an occupied rack** (empty-handed or

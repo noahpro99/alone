@@ -46,15 +46,65 @@ In snow country you can **bare-hand right-click a snow layer or snow block** to 
 
 ## Salt water
 
-Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable. But it isn't useless: boiled to dryness, **seawater leaves a crust of salt** (see [Getting salt](./preservation.md#getting-salt--boil-down-seawater)) — the way to stock salt for preserving food.
+Ocean, beach, and shore water is **salt water**. Drinking it — bare-handed *or* from a vessel — **dehydrates you** instead of quenching thirst. Rivers and lakes stay fresh; only the sea is salt. **Boiling does not desalinate it** — salt water cannot be made drinkable. But it isn't useless: boiled to dryness, **seawater leaves a crust of salt** <img class="mc-icon" src="/alone/item/salt.png" alt="Salt"/> (see [Getting salt](./preservation.md#getting-salt--boil-down-seawater)) — the way to stock salt for preserving food.
 
 ## Vessels
 
 A vessel carries water for drinking away from a source. There are three:
 
-- **Waterskin** — crafted from leather and string. Holds **3 sips**. Not fire-safe: it can't go over a flame to boil.
-- **Clay pot** — fired from clay. Holds **4 sips**, and is **fire-safe** (can be boiled over a fire).
-- **Iron pot** — crafted from iron. Holds **6 sips**, and is **fire-safe**.
+- **Waterskin** <img class="mc-icon" src="/alone/item/waterskin.png" alt="Waterskin"/> — crafted from leather and string. Holds **3 sips**. Not fire-safe: it can't go over a flame to boil.
+- **Clay pot** <img class="mc-icon" src="/alone/item/clay_pot.png" alt="Clay Pot"/> — fired from clay. Holds **4 sips**, and is **fire-safe** (can be boiled over a fire).
+- **Iron pot** <img class="mc-icon" src="/alone/item/iron_pot.png" alt="Iron Pot"/> — crafted from iron. Holds **6 sips**, and is **fire-safe**.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/waterskin.png" alt="Waterskin"/></div>
+</div>
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Clay_Ball.png" alt="Clay Ball"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Clay_Ball.png" alt="Clay Ball"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Clay_Ball.png" alt="Clay Ball"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Clay_Ball.png" alt="Clay Ball"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/unfired_clay_pot.png" alt="Unfired Clay Pot"/></div>
+</div>
+
+<img class="mc-icon" src="/alone/item/unfired_clay_pot.png" alt="Unfired Clay Pot"/> → <img class="mc-icon" src="/alone/item/clay_pot.png" alt="Clay Pot"/> *(campfire or furnace)*
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron Ingot"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron Ingot"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron Ingot"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/iron_pot.png" alt="Iron Pot"/></div>
+</div>
 
 Both work the same way:
 
@@ -84,7 +134,7 @@ Boiling is the way to make untreated water safe.
 The **waterskin can't go over a flame**, so you boil it the way people actually did with a hide or bark
 container: **heat stones in the fire and drop them in.**
 
-1. **Heat a stone.** Hold a **rock** and **sneak + right-click a lit campfire** — it comes out a glowing
+1. **Heat a stone.** Hold a **rock** <img class="mc-icon" src="/alone/item/rock.png" alt="Rock"/> and **sneak + right-click a lit campfire** — it comes out a glowing
    **Hot Rock** (this costs the fire a little fuel). A hot rock **cools as you carry it** (its bar is the
    heat left) and turns back into a plain rock after about **2 minutes**.
 2. **Drop it in.** Hold the **waterskin in your off hand** and the **hot rock in your main hand**, then

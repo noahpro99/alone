@@ -39,3 +39,85 @@
 .markdown table th {
   text-align: left;
 }
+
+/* ---- Item icons & crafting recipes -------------------------------------------------
+ * Item art is served straight from the mod's texture tree (mod items) or hotlinked from
+ * minecraft.wiki (vanilla items). All game art is pixel art, so render it nearest-neighbour. */
+
+.mc-icon {
+  height: 1.35em;
+  width: auto;
+  vertical-align: -0.28em;
+  image-rendering: pixelated;
+  margin: 0 0.1em;
+}
+
+/* A Minecraft-style crafting recipe: a 3x3 grid, an arrow, and the result. */
+.mc-recipe {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--ifm-toc-border-color, #d0d0d0);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.mc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  grid-template-rows: repeat(3, 36px);
+  gap: 3px;
+}
+
+/* A single inventory slot: the classic sunken grey bevel. */
+.mc-slot,
+.mc-result {
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  background: #8b8b8b;
+  border-top: 3px solid #373737;
+  border-left: 3px solid #373737;
+  border-right: 3px solid #ffffff;
+  border-bottom: 3px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc-slot img,
+.mc-result img {
+  width: 26px;
+  height: 26px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.mc-arrow {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--ifm-color-emphasis-600);
+  padding: 0 0.1rem;
+}
+
+/* The result slot is a touch bigger and highlighted. */
+.mc-result {
+  width: 44px;
+  height: 44px;
+}
+
+.mc-result img {
+  width: 32px;
+  height: 32px;
+}
+
+.mc-recipe figcaption,
+.mc-recipe .mc-label {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}

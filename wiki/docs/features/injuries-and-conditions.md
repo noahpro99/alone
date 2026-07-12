@@ -28,13 +28,29 @@ When you take damage, it can leave a lasting condition rather than just a number
 
 ### Bleeding
 
-Cuts, claws, and arrows can open a bleed that **steadily drains your health** (about 1 HP every couple of seconds) until it clots on its own or you bandage it. **Bandaging** is done by holding cloth — string, wool, or paper — and **sneaking + right-clicking**.
+Cuts, claws, and arrows can open a bleed that **steadily drains your health** (about 1 HP every couple of seconds) until it clots on its own or you bandage it. **Bandaging** is done by holding cloth — string <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/>, wool <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White wool"/>, or paper <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Paper.png" alt="Paper"/> — and **sneaking + right-clicking**.
 
 An open wound also **reeks of blood**: while you're bleeding, **predators are drawn to you** — a wolf or polar bear in the area smells it from about 8 blocks off (and it stacks with any raw meat you carry — see [Food Preservation](./preservation.md#fresh-meat-draws-predators)). So in predator country, **bind a wound fast for more than just the health** — bleeding is what brings them.
 
 ### Sprains and fractures
 
-A bad fall gives you a **sprain** — you limp, slowed, until it mends, which takes about a **week** (in-game). A heavy blow (8+ damage) can **break a bone** — a far graver injury that takes roughly **three weeks** to heal. These are real durations, so you don't sit and wait them out in real time: you **[rest to pass the days](./sleep-and-rest.md)** — lie down, day or night, to fast-forward the clock. A **splint** (2 sticks + string; sneak + right-click while injured) cuts the remaining time to about a **quarter**, so a break is a genuine convalescence you splint, then rest and eat your way through.
+A bad fall gives you a **sprain** — you limp, slowed, until it mends, which takes about a **week** (in-game). A heavy blow (8+ damage) can **break a bone** — a far graver injury that takes roughly **three weeks** to heal. These are real durations, so you don't sit and wait them out in real time: you **[rest to pass the days](./sleep-and-rest.md)** — lie down, day or night, to fast-forward the clock. A **splint** <img class="mc-icon" src="/alone/item/splint.png" alt="Splint"/> (2 sticks + string; sneak + right-click while injured) cuts the remaining time to about a **quarter**, so a break is a genuine convalescence you splint, then rest and eat your way through.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/splint.png" alt="Splint"/></div>
+</div>
 
 A serious fall can also **kill outright**. Falls under about **3.5 blocks** are harmless; above roughly **8 blocks** the fall rolls for death — about a **coin-flip at 15 blocks** and near-certain past about **22 blocks** (deep water, hay, or honey soften it). Survive the fall and you're left with the injuries — but a sprain is a **chance that climbs with the height**, not a certainty: a fit person **walks off a ~4-block drop most of the time** (only ~1 in 10 turns an ankle), while by ~8 blocks a sprain is near-certain, with a fracture and internal bleeding on the harder landings.
 
@@ -44,7 +60,23 @@ Infection comes two ways: a **zombie-type bite** (about a **30% chance** to fest
 
 ### Sickness (foodborne illness)
 
-Several things can make you **sick** — a lingering illness that keeps you weak and hungry and persists even through a relog: drinking untreated or tainted water, eating raw or spoiled food, eating with dirty hands, or **a chill from prolonged cold-and-wet exposure** (see [Body Temperature](./body-temperature.md#cold--hypothermia)). See [Food & Eating](./food-and-eating.md) for the per-food sickness odds and [Water, Thirst & Vessels](./water-and-drinking.md) for water quality. **Drink an herbal remedy** (crafted from 2 flowers + plant fiber) to knock time off the sickness, ease an infection, and clear acute nausea and poison. Otherwise it runs its multi-minute course on its own.
+Several things can make you **sick** — a lingering illness that keeps you weak and hungry and persists even through a relog: drinking untreated or tainted water, eating raw or spoiled food, eating with dirty hands, or **a chill from prolonged cold-and-wet exposure** (see [Body Temperature](./body-temperature.md#cold--hypothermia)). See [Food & Eating](./food-and-eating.md) for the per-food sickness odds and [Water, Thirst & Vessels](./water-and-drinking.md) for water quality. **Drink an herbal remedy** <img class="mc-icon" src="/alone/item/herbal_remedy.png" alt="Herbal remedy"/> (crafted from 2 flowers + plant fiber) to knock time off the sickness, ease an infection, and clear acute nausea and poison.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Poppy.png" alt="Flower"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Poppy.png" alt="Flower"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/herbal_remedy.png" alt="Herbal remedy"/></div>
+</div> Otherwise it runs its multi-minute course on its own.
 
 ### Dysentery
 

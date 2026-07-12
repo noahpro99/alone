@@ -17,8 +17,56 @@ Bare hands don't fell timber:
 
 Before any metal, flint is knapped into primitive tools:
 
-- **Knapping** is a real action, not a grid recipe: hold **flint** in one hand and a **rock** (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** flakes off — but a **raw novice shatters** nearly half their flint. That improves with practice (see [Skill by doing](#skill-by-doing) below): a **skilled** knapper wastes far less.
-- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** (fells trees), a **flint pick** (mines stone, coal, and **copper ore** — but **not iron ore**, which shatters flint; that needs a copper pick, gating the flint → copper → iron ladder), a **flint knife** (a crude cutting blade that also strips plant fiber, below), a **flint hoe** (to till a field — the stone-age hoe that lets you farm long before any metal, as the Neolithic did), or a **flint spear** (below).
+- **Knapping** is a real action, not a grid recipe: hold **flint** <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Flint.png" alt="Flint"/> in one hand and a **rock** <img class="mc-icon" src="/alone/item/rock.png" alt="Rock"/> (a hammerstone) in the other, then **sneak and hold right-click** to strike it. After about ten strikes a sharp **flint shard** <img class="mc-icon" src="/alone/item/flint_shard.png" alt="Flint shard"/> flakes off — but a **raw novice shatters** nearly half their flint. That improves with practice (see [Skill by doing](#skill-by-doing) below): a **skilled** knapper wastes far less.
+- Flint shards are then crafted (with sticks and plant fiber) into a **flint hatchet** <img class="mc-icon" src="/alone/item/flint_hatchet.png" alt="Flint hatchet"/> (fells trees), a **flint pick** <img class="mc-icon" src="/alone/item/flint_pick.png" alt="Flint pick"/> (mines stone, coal, and **copper ore** — but **not iron ore**, which shatters flint; that needs a copper pick, gating the flint → copper → iron ladder), a **flint knife** <img class="mc-icon" src="/alone/item/flint_knife.png" alt="Flint knife"/> (a crude cutting blade that also strips plant fiber, below), a **flint hoe** (to till a field — the stone-age hoe that lets you farm long before any metal, as the Neolithic did), or a **flint spear** (below).
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/flint_hatchet.png" alt="Flint hatchet"/></div>
+</div>
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/flint_pick.png" alt="Flint pick"/></div>
+</div>
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="/alone/item/flint_shard.png" alt="Flint shard"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/flint_knife.png" alt="Flint knife"/></div>
+</div>
 
 ### The spear — reach, from the first day
 
@@ -60,9 +108,42 @@ String does not require spiders:
 
 Cordage is the real, slow way people made it — three steps, and a serious investment:
 
-- **Strip plant fiber** — a timed pull (hold right-click on grass, ferns, vines, or dead bushes for a couple of seconds). Bare hands yield **1–2 strands** (a second on about half the strips); a **cutting blade** (sword, axe, hoe, or flint knife) strips **2–3 clean lengths** at once.
-- **Bundle it into a hank** — **4 fiber makes 1 fiber bundle**, a handful gathered ready to twist.
-- **Twist a length of string** — **2 bundles (8 fiber) makes 1 string**, and the reverse-wrap twisting takes **~35 seconds** (it stands in for ~40 real minutes of hand-work — cordage is genuinely one of the slowest bushcraft jobs).
+- **Strip plant fiber** <img class="mc-icon" src="/alone/item/plant_fiber.png" alt="Plant fiber"/> — a timed pull (hold right-click on grass, ferns, vines, or dead bushes for a couple of seconds). Bare hands yield **1–2 strands** (a second on about half the strips); a **cutting blade** (sword, axe, hoe, or flint knife) strips **2–3 clean lengths** at once.
+- **Bundle it into a hank** — **4 fiber makes 1 fiber bundle** <img class="mc-icon" src="/alone/item/fiber_bundle.png" alt="Fiber bundle"/>, a handful gathered ready to twist.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/fiber_bundle.png" alt="Fiber bundle"/></div>
+</div>
+
+- **Twist a length of string** <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/> — **2 bundles (8 fiber) makes 1 string**, and the reverse-wrap twisting takes **~35 seconds** (it stands in for ~40 real minutes of hand-work — cordage is genuinely one of the slowest bushcraft jobs).
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="/alone/item/fiber_bundle.png" alt="Fiber bundle"/></div>
+<div class="mc-slot"><img src="/alone/item/fiber_bundle.png" alt="Fiber bundle"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+</div>
 
 So a single string is **eight strands of fiber and a long twist** — real cordage is precious, which is exactly why you'd throw down a no-cordage **[deadfall](./hunting.md#which-trap-and-when)** before you'd spend string on snares. It feeds rope, bandages, bows, snares, fishing gear, and more.
 
@@ -106,9 +187,27 @@ A craft is not instant. Once a valid recipe sits in the grid, it must be **worke
 Metal tools and armor aren't finished in the crafting grid. A grid-crafted iron or steel piece comes out a **brittle unforged blank** (barely usable) until it is worked hot:
 
 1. **Heat it** — holding the blank **by a lit forge** (blast furnace, furnace, smoker, campfire, or lava) makes it glow hotter. Stepping away cools it. It can only be worked while hot.
-2. **Hammer it** — with a **smithing hammer** in the pack, **right-clicking an anvil** lands a blow. A piece takes **many blows across several heats** — a dozen for a tool, up to twenty for a chestplate.
+2. **Hammer it** — with a **smithing hammer** <img class="mc-icon" src="/alone/item/smithing_hammer.png" alt="Smithing hammer"/> in the pack, **right-clicking an anvil** lands a blow. A piece takes **many blows across several heats** — a dozen for a tool, up to twenty for a chestplate.
 3. **Quality** — when it finishes it rolls a **random quality**, from **crude → masterwork**, which sets its durability.
 4. **Re-temper** — reheating and rehammering a finished piece **rerolls its quality**. Each rework **lowers the ceiling** on how good it can get, and also **fully repairs** the piece.
+
+The **smithing hammer** — 3 iron ingots and 2 sticks:
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron ingot"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron ingot"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron ingot"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/smithing_hammer.png" alt="Smithing hammer"/></div>
+</div>
 
 The forge state and quality grade show in the item's tooltip; heat and blows show on the action bar during work.
 
@@ -116,7 +215,23 @@ The forge state and quality grade show in the item's tooltip; heat and blows sho
 
 A whetstone hones tools:
 
-- A **whetstone** is crafted from two smooth stone and a stick.
+- A **whetstone** <img class="mc-icon" src="/alone/item/whetstone.png" alt="Whetstone"/> is crafted from two smooth stone and a stick.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Smooth_Stone.png" alt="Smooth stone"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Smooth_Stone.png" alt="Smooth stone"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/whetstone.png" alt="Whetstone"/></div>
+</div>
 - Holding a worn tool or weapon, keeping the **whetstone in the off hand**, and **sneak + right-click** re-hones the edge.
 - Each pass **restores ~25% durability**, wears the whetstone a little, and has a short cooldown.
 - Armor has no edge and can't be honed — **leather/hide clothing** is mended with a **sewing kit** (below), and **metal armor** needs a forge **re-temper**.
@@ -138,7 +253,7 @@ Keeping your hides mended matters for more than durability: leather is your **in
 
 Steel replaces diamond as the best gear:
 
-- **Blasting an iron ingot** (in a blast furnace) makes a **steel ingot**.
+- **Blasting an iron ingot** (in a blast furnace) makes a **steel ingot** <img class="mc-icon" src="/alone/item/steel_ingot.png" alt="Steel ingot"/>: <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Iron_Ingot.png" alt="Iron ingot"/> → <img class="mc-icon" src="/alone/item/steel_ingot.png" alt="Steel ingot"/> *(blast furnace)*.
 - **Steel tools** mine at diamond level with high durability, and **steel armor** sits above iron.
 - The set includes a **steel spear** (1 steel ingot + 2 sticks) — the top-tier reach weapon, so the spear runs the full ladder alongside the sword and axe.
 

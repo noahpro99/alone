@@ -21,6 +21,11 @@ const config = {
   projectName: 'alone', // repo name
   trailingSlash: false,
 
+  // Serve the mod's own item/block textures straight from the source tree at build time, so the
+  // wiki can show real in-game art WITHOUT copying any PNGs into wiki/ (they'd bloat the repo).
+  // Files land at the site root: e.g. modules/.../textures/item/waterskin.png -> /alone/item/waterskin.png
+  staticDirectories: ['static', '../modules/core/src/main/resources/assets/alone/textures'],
+
   onBrokenLinks: 'warn',
 
   i18n: {

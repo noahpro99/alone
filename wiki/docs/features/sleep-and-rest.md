@@ -26,15 +26,47 @@ If it fails, the game reports why (wrong time, rain, or still on cooldown).
 
 ## The bedroll — a real bed
 
-The **bedroll** is a craftable bed block (from wool and leather) and a big upgrade over the ground:
+The **bedroll** <img class="mc-icon" src="/alone/item/bedroll.png" alt="Bedroll"/> is a craftable bed block (from wool and leather) and a big upgrade over the ground:
 
 - **Place it** and **sleep in it** like a proper bed.
 - It **sets your spawn point**, so you respawn where you slept.
 - It gives **far better rest** than the bare ground.
 
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White Wool"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White Wool"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/bedroll.png" alt="Bedroll"/></div>
+</div>
+
 ### The sleeping bag — a warmth-rated upgrade
 
-The **sleeping bag** (crafted from more wool and a leather shell — 3 wool + 2 leather) places and sleeps exactly like a bedroll, but it's a **warmth-rated cold-weather tool**. On a cold — even freezing — night, where a plain bedroll leaves you shivering through a poor rest, zipped into the bag you trap your body heat and still get a **full night's recovery**.
+The **sleeping bag** <img class="mc-icon" src="/alone/item/sleeping_bag.png" alt="Sleeping Bag"/> (crafted from more wool and a leather shell — 3 wool + 2 leather) places and sleeps exactly like a bedroll, but it's a **warmth-rated cold-weather tool**. On a cold — even freezing — night, where a plain bedroll leaves you shivering through a poor rest, zipped into the bag you trap your body heat and still get a **full night's recovery**.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White Wool"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White Wool"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_White_Wool.png" alt="White Wool"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/sleeping_bag.png" alt="Sleeping Bag"/></div>
+</div>
 
 But insulation cuts both ways, so **which one you reach for is a real choice, not an upgrade:**
 

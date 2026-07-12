@@ -70,7 +70,23 @@ Camp by standing water in the warmth and the bugs will find you — just as they
 
 Torches are a **fuel item**, not an infinite light:
 
-- **Craft** a torch from **coal + stick**, then **light it** at a fire source or with **flint & steel**.
+- **Craft** a torch <img class="mc-icon" src="/alone/item/torch.png" alt="Torch"/> from **coal + stick**, then **light it** at a fire source or with **flint & steel**.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Coal.png" alt="Coal"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/torch.png" alt="Torch"/></div>
+</div>
 - A **lit torch — placed or held — burns down over time** to a spent stub. Its remaining fuel is shown like a durability bar.
 - **Mining a placed torch returns its remaining fuel** (as a torch with that much life left) — no free top-up, but no waste either.
 

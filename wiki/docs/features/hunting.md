@@ -125,7 +125,23 @@ Active hunting costs time and daylight; a **trap** feeds you while you do everyt
 really live on the show *Alone*. You have two land traps — the **snare** and the **deadfall** — and *which*
 you reach for is a real decision that comes down to what you can spare (see [below](#which-trap-and-when)).
 
-The **snare** is a cordage noose set on the ground.
+The **snare** <img class="mc-icon" src="/alone/item/snare.png" alt="Snare"/> is a cordage noose set on the ground.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/snare.png" alt="Snare"/></div>
+</div>
 
 - **Craft** it from cordage: two **string** and a **stick** — and string is a real investment now (strip
   plant fibre, then slowly reverse-wrap it into a length), so a snare is cordage you've *earned*.

@@ -26,7 +26,23 @@ You can free-climb a **flat, at-least-two-block-tall wall** — no height limit 
 
 Rope makes a cliff a free, ladder-speed climb.
 
-- **Craft a coil** from string: **3 string → 3 rope**. (String itself comes from twisting plant fiber — see [Tools & Crafting](./tools-and-crafting.md).)
+- **Craft a coil** <img class="mc-icon" src="/alone/item/rope.png" alt="Rope"/> from string: **3 string → 3 rope**. (String itself comes from twisting plant fiber — see [Tools & Crafting](./tools-and-crafting.md).)
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/rope.png" alt="Rope"/></div>
+</div>
 - **Aim at a block face** and use the coil to anchor a rope that hangs down **one block**. Use the coil on the **top** of that line again to **pay out another length**. Each length heads straight down, but if the space directly below is blocked it **routes sideways** into an open neighbour to work around a ledge and keep descending.
 - The hanging rope **climbs like a ladder**: **full-speed and safe** both up and down, with no fall risk. Crouch to lower yourself down. Hanging on it costs a **small, steady trickle of stamina** — far less than free-climbing rock.
 - **Break the top of the line** to reel it back in **one length at a time**, recovering a coil for each — the rope can be used again elsewhere.
