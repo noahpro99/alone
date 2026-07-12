@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.TamableAnimal;
@@ -31,10 +32,18 @@ public final class Tracking {
     private static final int SCAN = 20;               // press the chase ~every 1s
     private static final double RADIUS = 18.0;         // game this close feels the pursuit
     private static final double FLEE_SPEED_SQ = 0.014; // horizontal speed² above which it's genuinely running
-    private static final float GAIN = 5f;              // fatigue gained per second of hard running
+    private static final float GAIN = 5f;              // fatigue gained per second of hard running (mid-size game)
     private static final float RECOVER = 2f;           // and shed per second at rest (slower than it builds)
     private static final float MAX = 100f;
     private static final float SLOW_THRESHOLD = 45f;   // winded — it starts to flag (~9s of sustained chase)
+
+    // Per-animal endurance: little animals wind fast, big-bodied ones have staying power. We scale the
+    // fatigue gain by body mass, using max health as the stand-in (rabbit 3, cow/deer 10, horse 15–30):
+    // a rabbit tires several times faster than the reference grazer, a horse markedly slower. Clamped so
+    // nothing tires instantly or is impossible to run down.
+    private static final float REFERENCE_HEALTH = 10f; // the mid-size grazer GAIN is tuned for (cow, deer)
+    private static final float MIN_TIRE = 0.5f;        // biggest game — half-speed fatigue (~18s to flag)
+    private static final float MAX_TIRE = 3f;          // smallest game — triple-speed fatigue (~3s to flag)
 
     /** Chase fatigue on a hunted animal, 0..{@link #MAX}. Transient — a session state, not saved. */
     public static final AttachmentType<Float> FATIGUE = AttachmentRegistry.createDefaulted(
@@ -65,7 +74,9 @@ public final class Tracking {
             boolean running = (v.x * v.x + v.z * v.z) > FLEE_SPEED_SQ
                 && animal.distanceToSqr(player) <= radiusSq;
             if (running) {
-                fatigue = Math.min(MAX, fatigue + gain);
+                // Lighter game winds faster than heavy game (rabbit vs. horse); scale by body mass.
+                float tireRate = Mth.clamp(REFERENCE_HEALTH / animal.getMaxHealth(), MIN_TIRE, MAX_TIRE);
+                fatigue = Math.min(MAX, fatigue + gain * tireRate);
                 if (fatigue >= SLOW_THRESHOLD) {
                     // The more spent it is, the harder it flags — Slowness I..III as it approaches collapse.
                     int amplifier = (int) ((fatigue - SLOW_THRESHOLD) / (MAX - SLOW_THRESHOLD) * 2f);

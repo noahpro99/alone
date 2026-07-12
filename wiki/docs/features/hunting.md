@@ -30,8 +30,9 @@ did before the bow: **keep the pressure on and chase it to exhaustion.**
 - This is for **wild game that runs** — not calm livestock, tamed pets, or bold predators (wolves and
   polar bears don't tire this way).
 
-> All game currently tires at the same rate; a rabbit realistically winds faster than a horse, which a
-> per-animal endurance could capture later.
+- **Little animals wind faster than big ones.** A quarry's endurance scales with its body size, so a
+  light animal (a rabbit) flags after only a few seconds of hard running, while a big-bodied one (a horse)
+  has real staying power and takes far longer to run down. A mid-size grazer like a deer sits in between.
 
 ## Blood trails — track a wounded animal
 
