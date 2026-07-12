@@ -184,14 +184,15 @@ things to keep honest as the pack fills in:
     flint pick can't work them; the vanilla **copper** pick (the next tier up) is the first that can. You
     must reach the copper age to mine iron.
   - **Iron needs the bloomery.** The vanilla furnace/blast-furnace recipes for iron are neutralised too, so
-    the *only* route to an iron ingot is ore → **bloomery** → bloom → hammer it out. No furnace shortcut.
-  - **No iron off corpses.** Iron ingots and nuggets are stripped from **mob drops** — so you can't farm a
-    village's **iron golems** (or the odd undead) for iron and skip the smelting chain. This leaves the
-    forge as the only route, and matches the design rule that the *good gear is in chests, not corpses*.
+    the *only* smelting route to an iron ingot is ore → **bloomery** → bloom → hammer it out. No furnace shortcut.
 
   Each age still *requires* the last in spirit too: farming needs Age 1's fire and water; metal needs a
-  food surplus to afford the days at the forge. The one deliberate exception left is **iron found in
-  structure loot** — the planned "old-world leavings," which chest loot keeps on purpose.
+  food surplus to afford the days at the forge. Two sources of ready iron sit outside the forge on purpose:
+  **structure loot** (the planned "old-world leavings"), and a village **iron golem** — which, being made of
+  iron, realistically drops it when killed. Everything drops what it should; the golem is kept from being a
+  cheap bypass not by removing its iron but by making it a **genuinely dangerous fight** you can't safely
+  cheese (hitting it from above, or poking it through a gap it can't reach through). *(Hardening the golem
+  that way is a planned task.)*
 - **Time and effort are the real tech tree.** Every rung must cost what it did in life — the danger is a
   shortcut sneaking in (a fast craft, a free resource, a mob that drops good gear). When auditing, the
   question is always: *could you really do this, this fast, with what you have?*
