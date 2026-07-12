@@ -23,13 +23,14 @@ Season affects body temperature — see [Body Temperature](./body-temperature.md
 
 Crop growth and survival depend on the season:
 
-- **A crop is a season's patience.** Growth is paced to roughly **one growing season** (a plant-in-spring, harvest-by-summer investment, versus vanilla's day or two) — a field is something you tend and live around, not a fast turnaround. You pass the wait by living your days, and [resting fast-forwards them](./sleep-and-rest.md#sleeping-fast-forwards-the-night--it-doesnt-skip-it). *(Bonemeal still forces growth when you can't wait.)*
+- **A crop is a season's patience.** Growth is paced to roughly **one growing season** (a plant-in-spring, harvest-by-summer investment, versus vanilla's day or two) — a field is something you tend and live around, not a fast turnaround. You pass the wait by living your days, and [resting fast-forwards them](./sleep-and-rest.md#sleeping-fast-forwards-the-night--it-doesnt-skip-it). *(There's no shortcut: bonemeal feeds the soil, it doesn't ripen the plant — see below.)*
 - **Crops must be watered — or they dry out.** A crop whose farmland has **no water reaching it** (it's gone fully dry) **wilts and dies**, and **twice as fast in summer heat**. So a field has to be **irrigated** — kept within reach of water (a channel, a pond, a placed source) — exactly as a real one does. Neglect the water in a hot spell and you'll lose the crop.
-- **Crops stop growing in winter, and frost kills them.** Nothing advances until spring, and an exposed crop dies within days of winter setting in (**bonemeal still forces growth**).
+- **Crops stop growing in winter, and frost kills them.** Nothing advances until spring, and an exposed crop dies within days of winter setting in.
 - **Weeds and blight.** Weeds encroaching from neglected soil choke a crop (and it sows more onto bare soil if you don't clear them), and there's always a small chance of **blight** — so even a watered, weeded field is never a guarantee. A well-tended one mostly succeeds.
-- **Soil wears out — rotate or rest it.** Every harvest **draws fertility out** of the ground, and taking the **same crop off the same plot over and over** exhausts it fastest (**monoculture**). Worn-out soil grows crops **slowly** and eventually **starves them outright**. You restore it the way farmers did for millennia, with no bagged fertilizer:
+- **Soil wears out — rotate or rest it.** Every harvest **draws fertility out** of the ground, and taking the **same crop off the same plot over and over** exhausts it fastest (**monoculture**). Worn-out soil grows crops **slowly** and eventually **starves them outright**. You restore it the way farmers always have:
   - **Rotate your crops** — following one crop with a *different* one is far gentler on the soil than repeating it.
   - **Let a plot lie fallow** — tilled ground with nothing growing on it slowly heals (fully-worn soil takes about a season of rest to recover).
+  - **Fertilize with bonemeal** — bone meal is a real fertilizer, so working it into a tilled plot **feeds the soil back up** (a quick top-up instead of waiting out a fallow season). It's the payoff for a good hunt: bone from the carcass becomes fertility for the field. Note it feeds the *soil* — it no longer force-ripens the crop.
   
   So a real farm is several plots you cycle through, not one you flog forever.
 - **Fields sow weeds.** Over time, crops scatter **weeds (short grass)** onto nearby soil, and accumulated weeds raise the death chance.

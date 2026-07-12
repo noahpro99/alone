@@ -70,7 +70,8 @@ off a squirrel.
 
 Every part has a use:
 
-- **Bone** → crafted into **bonemeal**, it feeds your crops — so a good hunt helps grow the produce that
+- **Bone** → crafted into **bonemeal**, a real fertilizer that **feeds the soil** (restoring a tilled plot's
+  fertility — it doesn't force-ripen the plant) — so a good hunt helps grow the produce that
   keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet) at bay.
 - **Sinew** (string) → **animal cordage**, an alternative to twisting plant fibre — for rope, bandages,
   bows, and more.

@@ -26,8 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  *   <li><b>Drought</b> — a crop whose farmland has no water reaching it (moisture 0) <b>dries out and
  *       dies</b>, twice as fast in summer heat. So a field must be irrigated — kept within reach of water.</li>
  * </ul>
- * All numbers are a chance per random-tick (~17/day per crop) and tunable. Bonemeal (a deliberate act)
- * still forces growth past all of this.
+ * All numbers are a chance per random-tick (~17/day per crop) and tunable. Bonemeal no longer force-grows a
+ * crop (that would skip the whole season) — it feeds the <b>soil</b> instead, topping up fertility; see
+ * {@link dev.alone.core.SoilFertility}.
  */
 @Mixin(CropBlock.class)
 public class CropGrowthMixin {
