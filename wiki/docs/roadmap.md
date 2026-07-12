@@ -97,8 +97,9 @@ recovers, and animals won't breed in the dead of winter. See
   hunting, blood trails, and bleed-out have shipped, and now a **prevailing wind** — a steady direction
   each day that carries your scent, so a predator downwind finds you from far off and one upwind barely
   at all; see [Hunting & Wildlife](./features/hunting.md#the-wind-carries-your-scent).)*
-- **Fat from a carcass** (→ rendered tallow → candles) — the last piece of full-animal use. *(A blade
-  kill already yields meat, hide, bone, and sinew; see
+- **Rendered tallow → candles** — the last piece of full-animal use. *(A blade kill already yields meat,
+  hide, bone, and sinew, and **bone marrow now delivers dietary fat** — crack a bone for the fatty tissue
+  inside; only **rendering fat to tallow for candles** is still to come. See
   [Hunting & Wildlife](./features/hunting.md#a-blade-kill-butchers-the-carcass--hide-bone-and-sinew).)*
 - **Netting** as a second counter to insect pressure. *(Insect pressure near standing water — countered by
   a smudge fire — and **insect-borne fever** (sustained unprotected exposure in humid wetlands can give you

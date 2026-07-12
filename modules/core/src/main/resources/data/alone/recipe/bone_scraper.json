@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:bone", "alone:plant_fiber", "minecraft:stick"],
+  "result": {"id": "alone:bone_scraper", "count": 1}
+}

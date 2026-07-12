@@ -89,5 +89,8 @@
   "subtitles.entity.deer.hurt": "Deer groans",
   "subtitles.entity.deer.death": "Deer dies",
   "item.alone.raw_hide": "Raw Hide",
-  "item.alone.animal_brains": "Animal Brains"
+  "item.alone.animal_brains": "Animal Brains",
+  "item.alone.bone_scraper": "Bone Scraper",
+  "item.alone.bone_marrow": "Bone Marrow",
+  "item.alone.bone_hook": "Bone Hook"
 }

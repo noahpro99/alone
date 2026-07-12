@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:stick", "minecraft:string", "alone:bone_hook"],
+  "result": {"id": "minecraft:fishing_rod", "count": 1}
+}

@@ -80,11 +80,9 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
             SquirrelRenderer.SQUIRREL_MODEL_LAYER, SquirrelModel::createBodyLayer);
 
-        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
-            BisonRenderer.BISON_MODEL_LAYER, BisonModel::createBodyLayer);
-
-        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
-            WildBoarRenderer.WILD_BOAR_MODEL_LAYER, WildBoarModel::createBodyLayer);
+        // The bison and wild boar draw with the vanilla cow/pig models (see BisonRenderer/WildBoarRenderer),
+        // whose model layers vanilla already registers — so there's nothing custom to register here. (The
+        // earlier BisonModel/WildBoarModel references were dead: those classes were never added.)
 
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.DEER, DeerRenderer::new);

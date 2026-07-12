@@ -10,6 +10,7 @@
     "minecraft:tropical_fish",
     "minecraft:apple", "minecraft:melon_slice", "minecraft:sweet_berries",
     "minecraft:glow_berries", "minecraft:carrot", "minecraft:potato", "minecraft:beetroot",
-    "alone:animal_brains"
+    "alone:animal_brains",
+    "alone:bone_marrow"
   ]
 }

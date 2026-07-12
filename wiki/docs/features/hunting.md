@@ -93,13 +93,21 @@ off a squirrel.
 
 Every part has a use:
 
-- **Bone** → crafted into **bonemeal**, a real fertilizer that **feeds the soil** (restoring a tilled plot's
-  fertility — it doesn't force-ripen the plant) — so a good hunt helps grow the produce that
-  keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet) at bay.
+- **Bone** is a real tool material, not just fertilizer — one bone, several jobs, so a kill is worth carving up:
+    - → crushed into **bonemeal**, a real fertilizer that **feeds the soil** (restoring a tilled plot's
+      fertility — it doesn't force-ripen the plant) — so a good hunt helps grow the produce that
+      keeps [scurvy](./food-and-eating.md#scurvy--keep-fresh-food-in-your-diet) at bay.
+    - → a **bone scraper** (bone + cordage + a stick): a fleshing tool that **halves tanning time** — see below.
+    - → **bone marrow** (crack a bone): the fatty, calorie-dense tissue inside, a rare source of **fat** out
+      here. A small morsel that fills you well out of proportion to its size — but raw, it **spoils** like any
+      offal, so eat it fresh.
+    - → a **bone hook** (a carved gorge-hook): with cordage and a stick it makes a **primitive fishing rod**,
+      so you can **fish before you ever smelt iron** — genuine early tech.
 - **Sinew** (string) → **animal cordage**, an alternative to twisting plant fibre — for rope, bandages,
   bows, and more.
 
-(Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
+(Marrow already puts the animal's **fat** to use as food; rendering fat to **tallow** for candles is the last
+piece of full-animal use, still to come.)
 
 ## From raw hide to leather — tanning
 
@@ -113,6 +121,11 @@ and tan a hide, and so do you. What the rack does depends on **what you load it 
   classic **brain-tan**, because *"a beast has just enough brains to tan its own hide."* Both are consumed to
   start the work, and the hide stretches on the frame while it cures. (Try it without brains and the rack tells
   you it won't take.)
+- **Flesh it first with a bone scraper** and the work goes far faster. A real hide is *scraped* — fat and
+  membrane taken off — before it will take the tan. If you're carrying a **bone scraper** when you load the
+  hide, it's fleshed on the spot and tans in **half the time**; the scraping **wears the scraper down** (it
+  fleshes about 16 hides before the bone edge is gone). It's a **soft bonus** — tanning still works without one,
+  just at the full, slow pace.
 - **Come back days later.** Tanning is the slow, patient job — the rack works for roughly **three in-game
   days** (about an hour of real time, and it keeps curing while the chunk is unloaded, so it runs through the
   days you [fast-forward by resting](./sleep-and-rest.md)). That's deliberately **about twice** as long as the
