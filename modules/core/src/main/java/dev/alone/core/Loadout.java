@@ -79,8 +79,8 @@ public final class Loadout {
             () -> List.of(new ItemStack(Items.FISHING_ROD))),
         new Choice("sewing_kit", "Sewing kit — mend your hide clothing",
             () -> List.of(new ItemStack(AloneItems.SEWING_KIT))),
-        new Choice("rope", "2 rope coils — a climb line down cliffs",
-            () -> List.of(new ItemStack(AloneItems.ROPE, 2))),
+        new Choice("rope", "16 m of rope — a real climb line down a cliff",
+            () -> List.of(new ItemStack(AloneItems.ROPE, 16))),
         new Choice("rations", "8 cooked rations — food to buy you time",
             () -> List.of(new ItemStack(Items.COOKED_BEEF, 8)))
     );

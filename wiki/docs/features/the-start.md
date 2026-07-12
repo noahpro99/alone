@@ -38,7 +38,7 @@ The approved list — each is real gear whose mechanic already exists, and each 
 | **Field knife** | A proper blade for butchering and carving |
 | <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Fishing_Rod.png" alt="Fishing rod"/> **Fishing rod** | Fish the water without building a weir |
 | **Sewing kit** | Keep your hide clothing mended (see [Tools & Crafting](./tools-and-crafting.md)) |
-| <img class="mc-icon" src="/alone/item/rope.png" alt="Rope"/> **Rope** ×2 | A ready climb line down any cliff (see [Climbing & Rope](./climbing-and-rope.md)) |
+| <img class="mc-icon" src="/alone/item/rope.png" alt="Rope"/> **Rope** ×16 | A 16 m coil — a real climb line down a cliff (see [Climbing & Rope](./climbing-and-rope.md)) |
 | **Rations** ×8 | A starting stock of cooked food to buy you time |
 
 Read the two picks against the biome, drop in, and survive on what you brought and what you can make.
