@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -85,14 +86,36 @@ public final class Drinking {
         if (isStagnantWater(level, pos)) {
             return 0.45f; // warm swamp/jungle water — drinking it raw is asking for dysentery
         }
+        float base;
         float temp = level.getBiome(pos).value().getBaseTemperature();
         if (temp < 0.2f) {
-            return 0.06f; // cold mountain/tundra water — clear and cold, much safer (never zero)
+            base = 0.06f; // cold mountain/tundra water — clear and cold, much safer (never zero)
+        } else if (temp > 0.9f) {
+            base = 0.25f; // warm, dry country — the water sits warm and breeds bugs
+        } else {
+            base = SICKNESS_CHANCE; // temperate — the ~15% baseline
         }
-        if (temp > 0.9f) {
-            return 0.25f; // warm, dry country — the water sits warm and breeds bugs
+        // Moving water — a river, or a pool fed by a flowing stream or fall — is aerated and keeps turning
+        // over, so it's markedly safer than the same water sitting still (though never risk-free). This is
+        // the "cold AND flowing" of the real rule: a cold stream is the safest raw drink there is.
+        if (isMovingWater(level, pos)) {
+            base *= 0.4f;
         }
-        return SICKNESS_CHANCE; // temperate — the ~15% baseline
+        return base;
+    }
+
+    /** Is this water moving rather than a still pool? Rivers count outright; so does any pool with flowing
+     *  water beside it (a stream or a fall feeding it) — the freshness that makes running water safer. */
+    private static boolean isMovingWater(Level level, BlockPos pos) {
+        if (level.getBiome(pos).is(BiomeTags.IS_RIVER)) {
+            return true;
+        }
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            if (level.getFluidState(pos.relative(dir)).getType() == Fluids.FLOWING_WATER) {
+                return true; // fed by flowing water — a stream or a fall, not a stagnant pond
+            }
+        }
+        return false;
     }
 
     public static void init() {

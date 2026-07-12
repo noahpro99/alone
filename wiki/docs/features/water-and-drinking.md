@@ -35,6 +35,7 @@ Pointing at a water source and **right-clicking bare-handed** drinks straight fr
 | **Temperate** (plains, forest) | ~15% |
 | **Cold biomes** (mountains, tundra, snowy) | **~6%** — much safer, but never zero |
 
+- **Moving water is safer still.** A **river**, or any pool with **flowing water beside it** (a stream or a fall feeding it), is aerated and keeps turning over, so it cuts the risk of whatever tier it's in by well over half. A **cold mountain stream** — cold *and* moving — is the safest raw drink there is (~2–3%), while a warm, still pond is the worst short of a swamp. It's the "cold **and** flowing" of the real rule.
 - No source is ever *truly* safe raw — even a clear cold stream keeps a small floor of risk (giardia doesn't care how pretty the water is). **Boiling is the only sure cure.**
 - A **vessel filled from swamp/jungle water fills murky** (tainted, the ~45% tier), so you must boil it before it's safe — via a fire-safe pot, or **[hot-rock boiling](#hot-rock-boiling--for-the-waterskin)** for a hide waterskin.
 - Sickness is a lingering foodborne illness.
