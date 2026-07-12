@@ -35,10 +35,14 @@ public final class Wildlife {
     public static final TagKey<EntityType<?>> DOMESTIC =
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
-    private static final double FLEE_RANGE = 12.0;  // sight/sound: how close a STANDING player they spot before bolting
-    private static final double SNEAK_SIGHT = 4.0;  // crouched (stalking), they only see/hear you up close
-    private static final double SCENT_RANGE = 20.0; // and they SMELL you from here when you're UPWIND (your scent
-                                                     // blows to them) — no crouch hides that. Stalk from downwind.
+    // Detection ranges tuned to real deer, compressed only where the game must. A deer's nose is the giant
+    // sense — it winds a human a couple hundred metres downwind — while sight needs line of sight and a
+    // crouched stalk gets you to bow range. So the only approach is crouched, from downwind.
+    private static final double FLEE_RANGE = 45.0;  // sight of a STANDING/moving player, if it can SEE you (LOS)
+    private static final double SNEAK_SIGHT = 9.0;  // crouched, it only makes you out up close — bow range
+    private static final double SCENT_RANGE = 200.0; // it SMELLS you from here directly downwind in a strong wind
+                                                      // (scaled by wind strength × how downwind you are); no crouch
+                                                      // hides scent. (Beyond loaded range a far deer just isn't ticking.)
     private static final double PURSUIT_RANGE = 30.0; // once spooked they keep running until you fall this far back —
                                                        // so you can PACE a deer from a distance and wear it down,
                                                        // rather than having to sprint-glue to within 12 blocks
@@ -79,14 +83,22 @@ public final class Wildlife {
      * stalk crouched <b>and</b> from downwind (wind in your face). The wider of the two senses wins.
      */
     private static double noticeRange(PathfinderMob mob, Player player, Vec3 wind, float windStrength) {
-        double sight = player.isShiftKeyDown() ? SNEAK_SIGHT : FLEE_RANGE;
         // Scent reaches when the animal lies downwind of you: the player→animal direction runs with the wind.
         // Directly downwind = full reach, crosswind less, upwind (into your face) = nothing. And it only
-        // carries as hard as the wind blows — on a calm day there's next to no scent to give you away.
+        // carries as hard as the wind blows — on a calm day there's next to no scent to give you away. Smell
+        // travels around terrain (no line of sight needed).
         Vec3 toAnimal = mob.position().subtract(player.position());
         double horiz = Math.sqrt(toAnimal.x * toAnimal.x + toAnimal.z * toAnimal.z);
         double align = horiz < 1.0e-3 ? 0.0 : (toAnimal.x * wind.x + toAnimal.z * wind.z) / horiz;
         double scent = SCENT_RANGE * windStrength * Math.max(0.0, align);
+        // Sight/sound: farther standing/moving than crouched, but only if the animal can actually SEE you —
+        // it won't spook at a human behind a hill, and forest cover lets you close in. Only raytrace when
+        // you're within the sight range at all (cheap distance gate first).
+        double sightRange = player.isShiftKeyDown() ? SNEAK_SIGHT : FLEE_RANGE;
+        double sight = 0.0;
+        if (player.distanceToSqr(mob) <= sightRange * sightRange && mob.hasLineOfSight(player)) {
+            sight = sightRange;
+        }
         return Math.max(sight, scent);
     }
 
