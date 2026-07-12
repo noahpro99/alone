@@ -174,6 +174,10 @@ public final class Carry {
         if (item == AloneItems.REFRACTORY_CLAY) return 0.030f; // a clay lump — several carriable
         if (item == AloneItems.GROG) return 0.010f;            // gritty temper
         if (item == AloneItems.PLANT_FIBER) return 0.001f;
+        // Bone tools are small and pocketable — a hand-scraper, a food morsel, a carved hook.
+        if (item == AloneItems.BONE_SCRAPER) return 0.004f;
+        if (item == AloneItems.BONE_MARROW) return 0.004f;
+        if (item == AloneItems.BONE_HOOK) return 0.0006f;
         if (item == AloneItems.SPLINT) return 0.005f;
         if (item == AloneItems.SMITHING_HAMMER) return 0.300f; // a heavy, unwieldy tool — hand-carried
         if (item == AloneItems.WHETSTONE) return 0.002f;
@@ -350,6 +354,10 @@ public final class Carry {
         if (item == AloneItems.GROG) return 0.30f;             // crushed fired pottery — a gritty temper
         if (item == AloneItems.ROCK || item == AloneItems.HOT_ROCK) return 0.40f; // a fist-sized stone
         if (item == AloneItems.PLANT_FIBER) return 0.01f;
+        // Bone is light — a scraper, a fatty morsel, a sliver of a hook.
+        if (item == AloneItems.BONE_SCRAPER) return 0.20f;
+        if (item == AloneItems.BONE_MARROW) return 0.15f;
+        if (item == AloneItems.BONE_HOOK) return 0.02f;
         if (item == AloneItems.SPLINT) return 0.40f;
         if (item == AloneItems.SMITHING_HAMMER) return 2.50f;
         if (item == AloneItems.WHETSTONE) return 0.50f;

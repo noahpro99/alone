@@ -72,6 +72,9 @@ public class DryingRackBlockEntity extends BlockEntity {
         Identifier.fromNamespaceAndPath("alone", "drying_rack_spoil"), com.mojang.serialization.Codec.INT);
     public static final AttachmentType<Long> LAST_TICK = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "drying_rack_last_tick"), com.mojang.serialization.Codec.LONG);
+    /** Set when a hide was fleshed with a bone scraper as it went on — a fleshed hide tans in half the time. */
+    public static final AttachmentType<Boolean> FLESHED = AttachmentRegistry.createPersistent(
+        Identifier.fromNamespaceAndPath("alone", "drying_rack_fleshed"), com.mojang.serialization.Codec.BOOL);
 
     public DryingRackBlockEntity(BlockPos pos, BlockState state) {
         super(AloneBlocks.DRYING_RACK_BLOCK_ENTITY, pos, state);
@@ -138,10 +141,12 @@ public class DryingRackBlockEntity extends BlockEntity {
             return;
         }
         progress += elapsed;
-        if (progress >= TAN_TIME) {
+        // A hide fleshed with a bone scraper is already half-worked, so it tans in half the time.
+        int target = rack.getAttachedOrElse(FLESHED, false) ? TAN_TIME / 2 : TAN_TIME;
+        if (progress >= target) {
             // Worked through: the hide is leather now. Keep the count (a 1:1 tan).
             rack.item = new ItemStack(Items.LEATHER, hide.getCount());
-            rack.setAttached(PROGRESS, TAN_TIME);
+            rack.setAttached(PROGRESS, target);
             rack.syncItem(); // the rack now shows leather, not a green hide
         } else {
             rack.setAttached(PROGRESS, progress);
@@ -296,6 +301,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             this.item = held.copyWithCount(1);
             setAttached(PROGRESS, 0);
             setAttached(SPOIL, 0);
+            setAttached(FLESHED, false); // meat-drying doesn't use the fleshed flag; keep it clean
             setAttached(LAST_TICK, level.getGameTime());
             setChanged();
             syncItem(); // show it on the rack now
@@ -320,6 +326,10 @@ public class DryingRackBlockEntity extends BlockEntity {
         if (!level.isClientSide()) {
             this.item = held.copyWithCount(1);
             setAttached(PROGRESS, 0);
+            // If the player carries a bone scraper, flesh the hide now — fat and membrane off — so it tans
+            // in half the time; the scraping wears the tool. A soft bonus: tanning still works without one.
+            boolean fleshed = fleshWithScraper(player);
+            setAttached(FLESHED, fleshed);
             setAttached(LAST_TICK, level.getGameTime());
             setChanged();
             syncItem(); // show the stretched hide on the rack now
@@ -327,9 +337,42 @@ public class DryingRackBlockEntity extends BlockEntity {
                 held.shrink(1);
                 consumeBrains(player);
             }
+            if (fleshed && player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.sendSystemMessage(Component.literal(
+                    "You flesh the hide with the bone scraper — it will tan far faster."), true);
+            }
         }
         player.swing(hand);
         return InteractionResult.SUCCESS;
+    }
+
+    /** If the player is carrying a bone scraper, use it to flesh the hide: wear the tool a notch and report
+     *  that the hide was fleshed (it will then tan in half the time). Returns false if they had none. */
+    private static boolean fleshWithScraper(Player player) {
+        if (player.isCreative()) {
+            // Creative: flesh freely if a scraper is present, but don't wear it down.
+            return hasScraper(player);
+        }
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(AloneItems.BONE_SCRAPER)) {
+                stack.hurtAndBreak(AloneItems.SCRAPE_DURABILITY_COST, player,
+                    net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasScraper(Player player) {
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            if (inventory.getItem(i).is(AloneItems.BONE_SCRAPER)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Take whatever is on the rack (dried jerky or a still-drying piece; finished leather or a still-green hide). */
@@ -343,6 +386,7 @@ public class DryingRackBlockEntity extends BlockEntity {
             removeAttached(PROGRESS);
             removeAttached(SPOIL);
             removeAttached(LAST_TICK);
+            removeAttached(FLESHED);
             setChanged();
             syncItem(); // rack is empty now — clears the item on the client too
             if (!player.getInventory().add(taken)) {
@@ -379,7 +423,8 @@ public class DryingRackBlockEntity extends BlockEntity {
             return;
         }
         boolean tanning = it.is(AloneItems.RAW_HIDE);
-        int target = Math.max(1, tanning ? TAN_TIME : DRY_TIME);
+        int tanTarget = getAttachedOrElse(FLESHED, false) ? TAN_TIME / 2 : TAN_TIME;
+        int target = Math.max(1, tanning ? tanTarget : DRY_TIME);
         int pct = Math.min(100, getAttachedOrElse(PROGRESS, 0) * 100 / target);
         serverPlayer.sendSystemMessage(Component.literal(
             (tanning ? "Tanning" : "Drying") + "… " + pct + "%  —  sneak-use to take it off early"), true);

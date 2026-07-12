@@ -332,6 +332,31 @@ public final class AloneItems {
     public static final Item ANIMAL_BRAINS = register("animal_brains",
         key -> new Item(new Item.Properties().setId(key)));
 
+    // ── Bone tools (§7.3) — a butchered animal yields bone, and bone is a real tool material, not just
+    // bonemeal fodder. Each of these is a genuine primitive bone use: fleshing a hide, cracking marrow,
+    // and a carved gorge-hook for fishing. All are light and pocketable (see Carry).
+    /** How much fleshing one hide wears the bone scraper — {@link #BONE_SCRAPER_DURABILITY}/this many hides. */
+    public static final int SCRAPE_DURABILITY_COST = 8;
+    public static final int BONE_SCRAPER_DURABILITY = 128; // ~16 hides fleshed before the edge is worn away
+    /** A bone scraper / fleshing tool (§7.3) — a bone blade lashed to a handle. Scrape the fat and membrane
+     *  off a green hide before it goes on the rack and it <b>tans in half the time</b> (see
+     *  {@link DryingRackBlockEntity#placeHide}); the scraping wears the tool down. A soft bonus — tanning
+     *  still works without one, just slower. */
+    public static final Item BONE_SCRAPER = register("bone_scraper",
+        key -> new Item(new Item.Properties().durability(BONE_SCRAPER_DURABILITY).setId(key)));
+    /** Bone marrow (§7.3) — crack a bone for the fatty, calorie-dense tissue inside. Fat is otherwise scarce
+     *  out here, so this is a real prize: a small morsel that fills you out of proportion to its size (high
+     *  saturation). Raw, it spoils like any offal (on the {@code alone:perishable_foods} tag). */
+    public static final Item BONE_MARROW = register("bone_marrow",
+        key -> new Item(new Item.Properties().food(
+            new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(1.2F).build())
+            .setId(key)));
+    /** A bone gorge-hook (§7.3) — a splinter of bone carved to a point at each end and lashed to a line: the
+     *  genuine pre-metal fish hook. Twist it with cordage and a stick into a primitive rod so you can
+     *  <b>fish before you ever smelt iron</b> (see the {@code bone_fishing_rod} recipe). */
+    public static final Item BONE_HOOK = register("bone_hook",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Touching this class registers the items above; {@link #init()} then adds the creative tab. */
     public static void init() {
         registerCreativeTab();

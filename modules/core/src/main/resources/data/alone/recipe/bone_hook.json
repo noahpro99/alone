@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:bone"],
+  "result": {"id": "alone:bone_hook", "count": 2}
+}
