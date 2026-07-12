@@ -46,7 +46,7 @@ public final class AloneEntities {
 
     public static final EntityType<Deer> DEER = EntityType.Builder
         .of(Deer::new, MobCategory.CREATURE)
-        .sized(0.9f, 1.5f) // a lean, tall grazer (placeholder cow model for now)
+        .sized(0.6f, 1.2f) // a slender, wild grazer (scaled placeholder model)
         .build(DEER_KEY);
 
     public static final ResourceKey<EntityType<?>> SQUIRREL_KEY =

@@ -1,15 +1,18 @@
 package dev.alone.core;
 
+import java.util.EnumSet;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Wary wildlife (proposal §7.2). With hostile mobs cleared out of the open wilderness (§7.1), the
@@ -19,8 +22,11 @@ import net.minecraft.world.entity.player.Player;
  *
  * <p>What counts as wild vs. tame is a datapack classification: <b>{@code alone:domestic}</b> (cows,
  * pigs, sheep, chickens, and the ride-able livestock, §9.1) stay calm so farming/companions work,
- * while everything else passive is treated as skittish wildlife. (There's a companion
- * {@code alone:wildlife} tag for the wild things, incl. spiders, for hunting/spawn rules to build on.)
+ * while everything else passive is treated as skittish wildlife.
+ *
+ * <p>The flee is a purpose-built goal ({@link SkittishFleeGoal}) rather than vanilla's
+ * {@code AvoidEntityGoal}: it triggers on <b>proximity</b> (a wary animal reads scent and sound, not just
+ * line of sight), sits at its own priority so it can't be shadowed by another goal, and is fully tunable.
  */
 public final class Wildlife {
     private Wildlife() {
@@ -30,15 +36,15 @@ public final class Wildlife {
     public static final TagKey<EntityType<?>> DOMESTIC =
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
-    private static final float FLEE_RANGE = 12f;   // how close a standing player they'll tolerate
-    private static final double WALK_AWAY = 1.0;   // amble off when you're at the edge of range
-    private static final double BOLT = 1.35;        // sprint clear when you're right on them
+    private static final double FLEE_RANGE = 12.0;  // how close a standing player they'll tolerate before bolting
+    private static final double BOLT_RANGE = 7.0;   // inside this they sprint clear, not just amble off
+    private static final double WALK_AWAY = 1.1;    // speed modifier ambling away at the edge of tolerance
+    private static final double BOLT = 1.5;         // speed modifier sprinting when you're right on them
 
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof Animal animal && shouldBeWary(animal)) {
-                animal.getGoalSelector().addGoal(1, new AvoidEntityGoal<>(
-                    animal, Player.class, FLEE_RANGE, WALK_AWAY, BOLT, Wildlife::spooks));
+                animal.getGoalSelector().addGoal(2, new SkittishFleeGoal(animal));
             }
         });
     }
@@ -54,9 +60,84 @@ public final class Wildlife {
         return !(animal instanceof TamableAnimal tame && tame.isTame());
     }
 
-    /** A player worth fleeing — one who isn't sneaking up on you (and isn't in creative/spectator). */
-    private static boolean spooks(LivingEntity entity) {
-        return entity instanceof Player player
-            && !player.isShiftKeyDown() && !player.isCreative() && !player.isSpectator();
+    /** A player worth fleeing — one who isn't sneaking up on you (stalking), and isn't in creative/spectator. */
+    private static boolean spooks(Player player) {
+        return player.isAlive() && !player.isShiftKeyDown() && !player.isCreative() && !player.isSpectator();
+    }
+
+    /**
+     * Bolt from a standing player who comes within range — sprinting when they get close, ambling when
+     * they're at the edge. Proximity-triggered (no line-of-sight requirement), re-pathing as it goes so it
+     * keeps its distance rather than fleeing once and stopping. Sneak to stalk within range without spooking it.
+     */
+    private static class SkittishFleeGoal extends Goal {
+        private final PathfinderMob mob;
+        private Player threat;
+
+        SkittishFleeGoal(PathfinderMob mob) {
+            this.mob = mob;
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        private Player nearestThreat() {
+            Player nearest = null;
+            double best = FLEE_RANGE * FLEE_RANGE;
+            for (Player p : this.mob.level().players()) {
+                if (!spooks(p)) {
+                    continue;
+                }
+                double d = p.distanceToSqr(this.mob);
+                if (d < best) {
+                    best = d;
+                    nearest = p;
+                }
+            }
+            return nearest;
+        }
+
+        @Override
+        public boolean canUse() {
+            this.threat = nearestThreat();
+            return this.threat != null && fleeFrom(this.threat);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.threat != null && spooks(this.threat)
+                && this.threat.distanceToSqr(this.mob) < (FLEE_RANGE + 3.0) * (FLEE_RANGE + 3.0);
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            if (this.threat == null) {
+                return;
+            }
+            this.mob.getLookControl().setLookAt(this.threat); // keep an eye on the threat
+            boolean close = this.mob.distanceToSqr(this.threat) < BOLT_RANGE * BOLT_RANGE;
+            this.mob.getNavigation().setSpeedModifier(close ? BOLT : WALK_AWAY);
+            if (this.mob.getNavigation().isDone()) {
+                fleeFrom(this.threat); // reached the last spot but still too close — pick a fresh escape
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.threat = null;
+            this.mob.getNavigation().stop();
+        }
+
+        private boolean fleeFrom(Player p) {
+            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 16, 7, p.position());
+            if (away == null) {
+                return false;
+            }
+            boolean close = this.mob.distanceToSqr(p) < BOLT_RANGE * BOLT_RANGE;
+            return this.mob.getNavigation().moveTo(away.x, away.y, away.z, close ? BOLT : WALK_AWAY);
+        }
     }
 }

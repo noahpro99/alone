@@ -22,4 +22,10 @@ public class DeerRenderer extends CowRenderer {
     public Identifier getTextureLocation(CowRenderState state) {
         return TEXTURE;
     }
+
+    @Override
+    protected void scale(CowRenderState state, com.mojang.blaze3d.vertex.PoseStack poseStack) {
+        poseStack.scale(0.6F, 0.85F, 0.6F);
+        super.scale(state, poseStack);
+    }
 }
