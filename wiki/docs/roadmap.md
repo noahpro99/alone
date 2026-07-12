@@ -60,7 +60,10 @@ weed by hand, not a one-time build; trampling and farmland erosion are vanilla. 
 
 ## Wildlife & hunting
 
-- **Deer and rabbit populations** with seasonal breeding and local overhunting.
+- **Deer** (a proper wild-game model) and **seasonal breeding**. *(**Local overhunting** has shipped —
+  hunt a patch of country too hard and the game thins out and stops spawning there until it recovers over
+  the following days, so you work a range instead of stripping one valley; see
+  [Hunting & Wildlife](./features/hunting.md#game-runs-out-if-you-overhunt).)*
 - **More tracking sign:** footprints and snow tracking, to follow quarry you can't see. *(Persistence
   hunting, blood trails, and bleed-out have shipped, and now a **prevailing wind** — a steady direction
   each day that carries your scent, so a predator downwind finds you from far off and one upwind barely

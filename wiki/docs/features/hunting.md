@@ -71,6 +71,10 @@ Every part has a use:
 
 (Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
 
+## Game runs out if you overhunt
+
+Wild game isn't infinite. **Hunt one patch of country too hard and you thin it out** — the animals grow scarce there and **stop spawning**, until the population **breeds back over the following days**, or you move to fresh ground. It's the hunting twin of [finite fish stocks](./food-and-eating.md#fishing): a small valley empties fast, a broad range lasts. So a survivor **works a range** rather than camping one spot and stripping it bare. (Predators don't count as game — only the animals you hunt for food.)
+
 ## The wind carries your scent
 
 There is a **prevailing wind** — a single direction the whole map shares, steady through the day and **shifting from one day to the next**. It matters because **scent travels downwind**:

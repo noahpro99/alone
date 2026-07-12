@@ -28,11 +28,21 @@ public class MobSpawnMixin {
             return;
         }
         Mob self = (Mob) (Object) this;
-        if (!(self instanceof Enemy) || !(self.level() instanceof ServerLevel level)) {
+        if (!(self.level() instanceof ServerLevel level)) {
             return;
         }
-        if (!Spawns.nearStructure(level, self.blockPosition())) {
-            cir.setReturnValue(false); // out in the wilds, far from any ruin — nothing spawns
+        // Hostiles only spawn near loot structures — the open wilds stay lonely.
+        if (self instanceof Enemy) {
+            if (!Spawns.nearStructure(level, self.blockPosition())) {
+                cir.setReturnValue(false); // out in the wilds, far from any ruin — nothing spawns
+            }
+            return;
+        }
+        // Wild game thins out where it's been hunted hard — overhunt a patch and it stops spawning there
+        // until the population recovers (see GameStock), so you work a range instead of stripping one valley.
+        if (dev.alone.core.GameStock.isGame(self)
+            && !dev.alone.core.GameStock.spawnAllowed(level, self.blockPosition(), self.getRandom())) {
+            cir.setReturnValue(false);
         }
     }
 }
