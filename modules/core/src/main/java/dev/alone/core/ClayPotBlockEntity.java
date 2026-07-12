@@ -123,7 +123,7 @@ public class ClayPotBlockEntity extends BlockEntity {
             // Every pot in the sheltered space below this panel draws from the same roof.
             for (int dy = 1; dy <= 4; dy++) {
                 BlockState below = level.getBlockState(p.below(dy));
-                if (below.is(AloneBlocks.CLAY_POT)) {
+                if (below.is(AloneBlocks.CLAY_POT) || below.is(AloneBlocks.IRON_POT)) {
                     pots.add(p.below(dy));
                 } else if (below.is(AloneBlocks.TARP) || (!below.isAir() && !below.canBeReplaced())) {
                     break; // another tarp layer, or a solid floor — stop scanning down this column

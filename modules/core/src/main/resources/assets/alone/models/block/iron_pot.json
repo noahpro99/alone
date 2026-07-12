@@ -1,0 +1,7 @@
+{
+  "parent": "alone:block/clay_pot",
+  "textures": {
+    "pot": "minecraft:block/light_gray_terracotta",
+    "particle": "minecraft:block/light_gray_terracotta"
+  }
+}

@@ -169,6 +169,15 @@ public final class AloneBlocks {
             .strength(0.4F)
             .noOcclusion()
             .setId(key)));
+    /** A set-down iron pot — the same rain-catcher as the clay pot (reuses ClayPotBlock + its block entity),
+     *  just the bigger/later vessel. Placeholder gray-terracotta look "for now". */
+    public static final Block IRON_POT = register("iron_pot",
+        key -> new ClayPotBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .sound(SoundType.METAL)
+            .strength(0.6F)
+            .noOcclusion()
+            .setId(key)));
 
     /** The block entity that stores the set-down backpack's contents. Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BackpackBlockEntity> BACKPACK_BLOCK_ENTITY;
@@ -260,7 +269,7 @@ public final class AloneBlocks {
         CLAY_POT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("alone", "clay_pot"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
-                ClayPotBlockEntity::new, java.util.Set.of(CLAY_POT)));
+                ClayPotBlockEntity::new, java.util.Set.of(CLAY_POT, IRON_POT)));
         DRYING_RACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("alone", "drying_rack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(

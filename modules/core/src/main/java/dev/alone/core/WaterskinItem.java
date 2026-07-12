@@ -76,10 +76,11 @@ public class WaterskinItem extends Item {
         }
         // Set an EMPTY clay pot down under the open sky to catch rain (§2) — the early rain-catcher, before
         // you have iron for a cauldron. Only the clay pot places, and only when empty (pour or drink first).
-        if (this == AloneItems.CLAY_POT && context.getPlayer() != null
+        if ((this == AloneItems.CLAY_POT || this == AloneItems.IRON_POT) && context.getPlayer() != null
             && context.getItemInHand().getOrDefault(AloneItems.WATER_CHARGES, 0) == 0) {
             BlockPos placePos = pos.relative(context.getClickedFace());
-            BlockState target = AloneBlocks.CLAY_POT.defaultBlockState();
+            BlockState target = (this == AloneItems.IRON_POT ? AloneBlocks.IRON_POT : AloneBlocks.CLAY_POT)
+                .defaultBlockState();
             if (level.getBlockState(placePos).canBeReplaced() && target.canSurvive(level, placePos)) {
                 if (!level.isClientSide()) {
                     level.setBlockAndUpdate(placePos, target);
