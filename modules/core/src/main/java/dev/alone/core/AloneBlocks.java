@@ -42,9 +42,11 @@ public final class AloneBlocks {
      * A warmth-rated sleeping bag (§5.5) — a bedroll that sleeps like a real cold-weather bag. Mechanically
      * it places, sleeps, sets spawn and skips the night like the {@link #BEDROLL}, but {@link SurvivalMeters}
      * gives it strong insulation <b>while you sleep in it</b>, so a cold or even freezing night still rests
-     * you fully (a bedroll leaves you shivering). The trade: it costs more loft (wool) and a shell (leather)
-     * to make, and — like all insulation — a soaked bag holds almost no heat, so keep it dry. Reuses the
-     * bedroll model/textures as <b>placeholder art</b> for now.
+     * you fully (a bedroll leaves you shivering). But insulation cuts both ways: on a <b>warm</b> night the
+     * bag is a sweatbox that makes you overheat and sleep badly, so it's a cold-weather tool and the bedroll
+     * is the better bed in the heat — a real choice, not a pure upgrade. It also costs more loft (wool) and a
+     * shell (leather), and — like all insulation — a soaked bag holds almost no heat, so keep it dry. Reuses
+     * the bedroll model/textures as <b>placeholder art</b> for now.
      */
     public static final Block SLEEPING_BAG = register("sleeping_bag",
         key -> new BedBlock(DyeColor.RED, BlockBehaviour.Properties.of()

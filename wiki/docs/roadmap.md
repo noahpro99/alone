@@ -184,10 +184,10 @@ the list, with reason**):
   trap is the weir; a portable net could be its own item), fishing line & hooks ✅ (rod), bank line ✅ (rope),
   **slingshot** 🔨 (a low-power ranged small-game option below the bow — nice-to-have).
 - **Shelter & cordage:** paracord/rope ✅, **heavy tarp** 🔨 (a quick waterproof rain/shelter cover — ties
-  into the planned shelter ladder), bivy/−40 **sleeping bag** ✅ (a warmth-rated bedroll variant: places and
-  sleeps like the bedroll but insulates you through a cold/freezing night for full recovery, where a plain
-  bedroll leaves you shivering; dies wet like all loft. 3 wool + 2 leather), wool blanket 🔶 (warmth; maps
-  to insulation).
+  into the planned shelter ladder), bivy/−40 **sleeping bag** ✅ (a warmth-rated bedroll variant: full
+  recovery through a cold/freezing night where a bedroll leaves you shivering — but a sweatbox on a warm
+  night, so it's a cold-weather tool and the bedroll wins in the heat: a real biome-driven choice. Dies wet.
+  3 wool + 2 leather), wool blanket 🔶 (warmth; maps to insulation).
 - **Fire & cooking:** **ferro rod** ✅ (a reliable, rain-tolerant fire-starter above friction fire — exactly
   why contestants prize it: catches in ~2 strokes at ~0.6 chance, works in the rain where the bow drill only
   smokes, near-zero stamina, 200-use rod. Forged from 2 steel + flint, so it's a hard endgame gate you build

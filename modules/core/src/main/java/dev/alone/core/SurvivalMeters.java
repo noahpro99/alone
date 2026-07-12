@@ -593,12 +593,18 @@ public final class SurvivalMeters {
             // moot (handled above); in air it insulates — but soaked layers keep only a fraction of it.
             envTarget = clothingShift(player, envTarget, wet);
         }
-        // A warmth-rated sleeping bag traps your body heat while you sleep, so a cold — even freezing —
-        // night still rests you (§5.5). It's the last insulating layer, over your clothes. Like all loft it
-        // dies wet, so a soaked bag barely helps: keep it dry. Only warms (a bag never cools you in heat).
-        if (!submerged && envTarget < 0f && inSleepingBag(player)) {
+        // A warmth-rated sleeping bag is the last insulating layer while you sleep (§5.5), over your clothes,
+        // and like all loft it dies wet (keep it dry). Insulation cuts both ways, though — same as clothing:
+        // on a COLD night it traps your body heat and rests you fully where a bedroll leaves you shivering;
+        // on a WARM night it's a sweatbox that makes you overheat and sleep badly. So it's a cold-weather
+        // tool — in the heat you sleep better on a plain bedroll. That's the choice between the two.
+        if (!submerged && inSleepingBag(player)) {
             float bag = wet ? BAG_INSULATION * WET_INSULATION_FACTOR : BAG_INSULATION;
-            envTarget += (0f - envTarget) * bag;
+            if (envTarget < 0f) {
+                envTarget += (0f - envTarget) * bag;   // warms a cold night toward comfort
+            } else {
+                envTarget += envTarget * bag;          // traps heat on a warm night — you roast
+            }
         }
         envTarget = clampTemp(envTarget);
         float envRate = Math.abs(envTarget) > Math.abs(bodyTemp) ? EXPOSURE_RATE : RECOVERY_RATE;

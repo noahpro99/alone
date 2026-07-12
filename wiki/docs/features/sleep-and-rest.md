@@ -34,9 +34,16 @@ The **bedroll** is a craftable bed block (from wool and leather) and a big upgra
 
 ### The sleeping bag — a warmth-rated upgrade
 
-The **sleeping bag** (crafted from more wool and a leather shell — 3 wool + 2 leather) places and sleeps exactly like a bedroll, but adds one thing that matters in the cold: **it keeps you warm while you sleep in it**. A bedroll leaves you shivering on a freezing night — a poor rest — but zipped into a warmth-rated bag, a cold or even freezing night still gives you a **full night's recovery**. It's the difference between surviving a winter night and dreading it.
+The **sleeping bag** (crafted from more wool and a leather shell — 3 wool + 2 leather) places and sleeps exactly like a bedroll, but it's a **warmth-rated cold-weather tool**. On a cold — even freezing — night, where a plain bedroll leaves you shivering through a poor rest, zipped into the bag you trap your body heat and still get a **full night's recovery**.
 
-The catch is the same one that governs all insulation: **a soaked bag holds almost no heat**. Keep it dry (under a roof, out of the rain) or its loft collapses and it barely helps — so it pairs with shelter, it doesn't replace it.
+But insulation cuts both ways, so **which one you reach for is a real choice, not an upgrade:**
+
+- **Cold biome / winter / night** → the **sleeping bag** wins: it's the difference between a full night and shivering till dawn.
+- **Warm biome / hot night** → the **bedroll** wins: a heavy bag is a sweatbox — zipped in when it's warm, you **overheat and sleep badly**, while a bedroll breathes.
+
+So a bag is worth the extra wool, leather, and pack weight only where it's cold. In the heat it's a liability — carry the bedroll. (This is exactly the kind of read the biome-aware [starting loadout](../roadmap#the-start--an-alone-style-loadout) is built around.)
+
+The other catch is the one that governs all insulation: **a soaked bag holds almost no heat**. Keep it dry (under a roof, out of the rain) or its loft collapses — so it pairs with shelter, it doesn't replace it.
 
 ## Sleeping fast-forwards the night — it doesn't skip it
 
