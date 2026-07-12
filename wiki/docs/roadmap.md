@@ -132,6 +132,10 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 - **Rationalized mob drops** (the good gear is in the chests, not the corpses).
 - **Redstone gated** behind found engineering plans.
 - **Villager barter and reputation**, and **hired villagers** you pay in food.
+- **Village guards** — armed defenders (**bow and sword**) that hold a village. Steal from or strike
+  *anything* in the village and **the whole place turns on you** — guards close in, tactically (this is the
+  real home for the cover / advance-under-fire AI first tried on the iron golem). A village becomes a
+  guarded settlement to raid or trade with, not a free larder.
 - **Diamonds repurposed:** not armour (that's abolished) but **diamond-tipped picks and saws** that
   cut faster and cleaner, and an elite trade good in their own right.
 
@@ -157,6 +161,46 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 
 - **Domesticated animals as bartered wealth**, priced in grain — earned through many harvests, never
   spawned or found wild.
+
+## The start — an Alone-style loadout
+
+Like the show: at the start of a new world you **choose a small kit** (10 items) from an approved master
+list, then you're dropped with only that. The selection screen **shows your starting biome**, so the pick
+is a real strategic read — a gill net and heavy tarp for a coast, a felling axe and −40 bag for the boreal
+winter. This is the framing that turns worldgen into a *run*, and it pairs with the run-modes below.
+
+The design rule (from the pack's [north star](./features/survival-meters.md)): **every item on the list
+must be real gear with a real mechanic** — if picking it wouldn't change how you play, we either build the
+mechanic behind it or leave it off the list with a reason. Audit of the show's actual list against what the
+pack has today (**✅ real mechanic · 🔶 maps to an existing system, could deepen · 🔨 gap to build · 🚫 off
+the list, with reason**):
+
+- **Cutting & tools:** felling axe ✅ (axes fell trees), hand saw 🔶 (riving planks exists; a saw could speed
+  log→plank), field knife ✅ (flint knife strips fibre, butchers), shovel ✅ (digs, rammed earth), sharpening
+  stone ✅ (whetstone hones), **machete** 🚫 (knife+axe cover it), **multitool** 🚫 (too modern for the tech
+  floor), **sewing kit** 🔨 (no cloth/leather *repair* yet — worth adding: mend clothing/patch a tarp).
+- **Hunting & gathering:** takedown bow ✅, **snare/trapping wire** ✅ (this is why cordage is now a real
+  chore — brought wire is the shortcut past hand-twisting; a spool of ready cordage), gill net 🔶 (the fish
+  trap is the weir; a portable net could be its own item), fishing line & hooks ✅ (rod), bank line ✅ (rope),
+  **slingshot** 🔨 (a low-power ranged small-game option below the bow — nice-to-have).
+- **Shelter & cordage:** paracord/rope ✅, **heavy tarp** 🔨 (a quick waterproof rain/shelter cover — ties
+  into the planned shelter ladder), bivy/−40 sleeping bag 🔶 (bedroll exists; a *warmth-rated* bag variant is
+  the gap — strong cold insulation for sleep), wool blanket 🔶 (warmth; maps to insulation).
+- **Fire & cooking:** **ferro rod** 🔨 (a reliable, rain-tolerant fire-starter above friction fire — exactly
+  why contestants prize it; slots between the bow drill and the planned flint-and-pyrite), steel pot ✅ (iron
+  pot boils/cooks), frying pan 🔶 (campfire cooking exists; a pan could be a faster/better cook surface).
+- **Food rations (max 2):** pemmican/jerky ✅ (drying rack + the long preserved shelf), salt block ✅
+  (preservation), flour/rice/sugar/legumes/hardtack 🔶 (all "a starting stock of food"; some want a
+  bread/grain path). These are the low-effort mechanic — you just *start with* a ration.
+- **Comfort & hygiene:** bar of soap 🔶 (Hygiene exists; soap = better/faster clean), towel 🔶 (dry off — the
+  wetness system exists), **personal photograph** 🔨 (a **morale/loneliness** system is the real missing
+  piece — the show's core; a small mechanic where isolation grinds you down and comforts/wins lift it),
+  eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
+
+So the loadout doubles as a **to-do list of mechanics**: the clear 🔨 builds are a **morale system**, a
+**ferro rod**, a **tarp**, a **warmth-rated sleeping bag**, a **cloth/leather sewing-repair**, and
+optionally a **slingshot** and a **portable net**. Build those and nearly the whole real list becomes a
+meaningful choice.
 
 ## Death, respawn & run modes
 
