@@ -1,1 +1,6 @@
-{ "model": { "type": "minecraft:model", "model": "alone:item/tarp" } }
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "alone:block/tarp"
+  }
+}
