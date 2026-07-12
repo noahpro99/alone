@@ -175,11 +175,23 @@ things to keep honest as the pack fills in:
   iron → steel**. (This is a chosen simplification, not a missing rung.)
 - **Steel is a slight anachronism.** Mass steel is really post-Roman; here it stands in as the game's top
   metal in place of diamond. Acceptable as a game-tier, but worth naming.
-- **The bridges between ages need real gates** — and they're being enforced. Iron ore now requires a
-  **copper pick** (a flint pick can't work it), so you can't skip the copper age. Each age should *require*
-  the last: farming needs Age 1's fire and water; metal needs Age 2's kiln heat and a food surplus to
-  afford the days at the forge. Where a later tier is still reachable without the earlier work, that's a
-  hole to close.
+- **The bridges between ages have real, verified gates.** The metal ladder can't be short-circuited, and
+  the enforcement has been audited:
+  - **No stone-tier shortcut.** Vanilla **wood, stone, and gold** tool recipes are removed (overridden to
+    an unobtainable ingredient), so you can't craft a stone pickaxe to skip ahead — flint tools *are* the
+    early tier.
+  - **Iron needs copper.** Iron ore and deepslate iron ore sit in the flint tools' *incorrect* list, so a
+    flint pick can't work them; the vanilla **copper** pick (the next tier up) is the first that can. You
+    must reach the copper age to mine iron.
+  - **Iron needs the bloomery.** The vanilla furnace/blast-furnace recipes for iron are neutralised too, so
+    the *only* route to an iron ingot is ore → **bloomery** → bloom → hammer it out. No furnace shortcut.
+  - **No iron off corpses.** Iron ingots and nuggets are stripped from **mob drops** — so you can't farm a
+    village's **iron golems** (or the odd undead) for iron and skip the smelting chain. This leaves the
+    forge as the only route, and matches the design rule that the *good gear is in chests, not corpses*.
+
+  Each age still *requires* the last in spirit too: farming needs Age 1's fire and water; metal needs a
+  food surplus to afford the days at the forge. The one deliberate exception left is **iron found in
+  structure loot** — the planned "old-world leavings," which chest loot keeps on purpose.
 - **Time and effort are the real tech tree.** Every rung must cost what it did in life — the danger is a
   shortcut sneaking in (a fast craft, a free resource, a mob that drops good gear). When auditing, the
   question is always: *could you really do this, this fast, with what you have?*
