@@ -13,6 +13,8 @@ public final class ClientSurvivalState {
     public static volatile int conditions = 0;
     /** Medium-term fatigue/soreness, 0..100. */
     public static volatile float fatigue = 0f;
+    /** Water in the gut, absorbing into hydration, 0..MAX_GUT. */
+    public static volatile float gut = 0f;
 
     private ClientSurvivalState() {
     }
@@ -26,5 +28,6 @@ public final class ClientSurvivalState {
         temperature = newTemperature;
         conditions = payload.conditions();
         fatigue = payload.fatigue();
+        gut = payload.gut();
     }
 }

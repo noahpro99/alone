@@ -68,6 +68,11 @@ public final class SurvivalMeters {
     private static final float THIRST_DRAIN_SPRINT = 0.02f; // exertion
     private static final float THIRST_DRAIN_SWEAT = 0.04f;  // full-body-heat sweat rate (scaled by how hot you run)
     private static final float THIRST_LOW = 15f;
+    // Two-stage water (§1.2): a drink goes into your GUT first, and absorbs into hydration over the next
+    // minute — you can't chug straight to full. MAX_GUT caps how much you can hold at once (drinking on a
+    // full gut does nothing); GUT_ABSORB is how fast the gut feeds hydration.
+    public static final float MAX_GUT = 45f;
+    private static final float GUT_ABSORB = 0.06f; // ~a full gut (45) soaks into hydration over ~40s
     // Thermoregulation feedback (§1.3) — a hot body sweats (dehydrates), a cold body burns food and shivers.
     private static final float COLD_SHIVER = -30f;      // below this, stiff muscles recover stamina poorly
     private static final int CHILL_INTERVAL = 600;      // roll a chill about every 30s of cold-and-wet
@@ -108,6 +113,9 @@ public final class SurvivalMeters {
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "fatigue"), Codec.FLOAT);
     public static final AttachmentType<Float> THIRST =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "thirst"), Codec.FLOAT);
+    /** Water sitting in your gut, waiting to absorb into hydration (§1.2 two-stage water). */
+    public static final AttachmentType<Float> GUT =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "gut_water"), Codec.FLOAT);
 
     // Body temperature (§1.3): -100 (freezing) .. 0 (comfortable) .. +100 (overheating).
     private static final float NEUTRAL_AMBIENT = 0.8f; // biome temp that feels comfortable
@@ -272,14 +280,28 @@ public final class SurvivalMeters {
         return player.getAttachedOrElse(THIRST, MAX_THIRST);
     }
 
+    /** Water currently in the gut, absorbing into hydration (0..MAX_GUT). */
+    public static float getGut(Player player) {
+        return player.getAttachedOrElse(GUT, 0f);
+    }
+
     public static float getBodyTemp(Player player) {
         return player.getAttachedOrElse(BODY_TEMP, 0f);
     }
 
-    /** Restore thirst (drinking). */
+    /**
+     * Drink (positive) or dehydrate (negative). A <b>drink</b> fills your GUT — capped at {@link #MAX_GUT},
+     * so you can't chug straight to full; it absorbs into hydration over the next minute (see the tick).
+     * <b>Dehydration</b> (salt water, sleep, dysentery — negative amounts) pulls straight from body
+     * hydration, not the gut.
+     */
     public static void drink(Player player, float amount) {
-        // clamps both ends so a negative amount (salt water dehydrating you, §1.2) is safe too
-        player.setAttached(THIRST, Math.max(0f, Math.min(MAX_THIRST, getThirst(player) + amount)));
+        if (amount < 0f) {
+            player.setAttached(THIRST, clamp(getThirst(player) + amount, MAX_THIRST));
+            return;
+        }
+        // Into the gut (capped) — drinking on a full gut does nothing; you're full.
+        player.setAttached(GUT, Math.max(0f, Math.min(MAX_GUT, getGut(player) + amount)));
     }
 
     /**
@@ -570,6 +592,16 @@ public final class SurvivalMeters {
             + (player.isSprinting() ? THIRST_DRAIN_SPRINT : 0f)
             + (bodyHeat > 0f ? bodyHeat / 100f * THIRST_DRAIN_SWEAT : 0f);
         thirst = clamp(thirst - drain, MAX_THIRST);
+        // Gut water absorbs into hydration a little each tick, so a big drink hydrates you over ~a minute
+        // rather than instantly. This is what stops chugging to full.
+        float gut = getGut(player);
+        if (gut > 0f) {
+            float absorb = Math.min(Math.min(gut, GUT_ABSORB), MAX_THIRST - thirst);
+            if (absorb > 0f) {
+                thirst += absorb;
+                player.setAttached(GUT, gut - absorb);
+            }
+        }
         applyThirstPenalties(player, thirst);
         player.setAttached(THIRST, thirst);
 
@@ -680,7 +712,7 @@ public final class SurvivalMeters {
         // Push state to the client HUD a few times a second (temperature field carries body temp).
         if (player.tickCount % 10 == 0) {
             ServerPlayNetworking.send(player,
-                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player)));
+                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player), getGut(player)));
         }
     }
 

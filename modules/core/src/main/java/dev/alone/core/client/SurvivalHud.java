@@ -25,6 +25,7 @@ public final class SurvivalHud {
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.GOLDEN_PICKAXE);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
+    private static final ItemStack ICON_GUT = new ItemStack(Items.GLASS_BOTTLE); // water in your belly, absorbing
     private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);   // hands (bulky carry)
     private static final ItemStack ICON_POCKET = new ItemStack(Items.LEATHER);  // pockets (small items)
     private static final ItemStack ICON_WEIGHT = new ItemStack(Items.ANVIL);
@@ -41,6 +42,7 @@ public final class SurvivalHud {
         int yStamina = y0;
         int yFatigue = y0 + rowH;
         int yThirst = y0 + rowH * 2;
+        int yGut = y0 + rowH * 3;
 
         // NO single "health"/vitality bar (§1.5). The body is a set of separate systems: you bleed out,
         // freeze, dehydrate, starve, or die of trauma — each shows through its own meter, the body
@@ -56,6 +58,11 @@ public final class SurvivalHud {
 
         drawItemIcon(g, ICON_THIRST, left, yThirst - 3);
         drawBar(g, barX, yThirst, ClientSurvivalState.thirst / SurvivalMeters.MAX_THIRST, 0xFF4A90D9);
+
+        // Gut water — how full your stomach is with water still absorbing into hydration. It jumps up when
+        // you drink and drains as it soaks in; a full gut means you can't drink more right now.
+        drawItemIcon(g, ICON_GUT, left, yGut - 3);
+        drawBar(g, barX, yGut, ClientSurvivalState.gut / SurvivalMeters.MAX_GUT, 0xFF7EC8E3);
 
         // Carry (volume + weight) isn't on the always-on HUD — it's a pack-management concern, so it's
         // drawn only while your inventory is open (see {@link #renderCarry}).

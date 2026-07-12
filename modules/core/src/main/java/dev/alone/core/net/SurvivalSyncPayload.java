@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
  * Server → client sync of the player's survival state, so the HUD has something to draw.
  * One packet carries every meter; add fields here as meters land.
  */
-public record SurvivalSyncPayload(float stamina, float thirst, float temperature, int conditions, float fatigue) implements CustomPacketPayload {
+public record SurvivalSyncPayload(float stamina, float thirst, float temperature, int conditions, float fatigue, float gut) implements CustomPacketPayload {
     public static final Type<SurvivalSyncPayload> TYPE =
         new Type<>(Identifier.fromNamespaceAndPath(AloneCore.NAMESPACE, "survival_sync"));
 
@@ -21,6 +21,7 @@ public record SurvivalSyncPayload(float stamina, float thirst, float temperature
         ByteBufCodecs.FLOAT, SurvivalSyncPayload::temperature,
         ByteBufCodecs.VAR_INT, SurvivalSyncPayload::conditions,
         ByteBufCodecs.FLOAT, SurvivalSyncPayload::fatigue,
+        ByteBufCodecs.FLOAT, SurvivalSyncPayload::gut,
         SurvivalSyncPayload::new);
 
     @Override
