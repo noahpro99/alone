@@ -111,6 +111,12 @@ of meat**, so small game is a numbers game: you take several, not one big kill. 
 [game](#game-runs-out-if-you-overhunt) too — hunt a patch of them too hard and they thin out. It's the
 food economy of the show *Alone*: rarely a deer, often a squirrel.
 
+The **squirrel doesn't flee like a rabbit** — it scurries along the ground, and when you close within a
+dozen-odd blocks it **makes for the nearest tree and climbs the trunk**, then clings and watches from up in
+the canopy where you can't follow on foot. Cornered near a tree it goes *vertical*, not sideways — so you
+either take the shot before it reaches a trunk, get one out in the open away from timber, or trap it. (It
+only climbs actual trees, not walls or fences.)
+
 *(Squirrels currently use placeholder rabbit art until a proper squirrel model is made.)*
 
 ## Trapping — the food that works while you don't
