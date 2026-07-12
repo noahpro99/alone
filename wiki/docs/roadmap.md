@@ -205,10 +205,11 @@ the list, with reason**):
   abstraction rather than a felt mechanic), eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
 
 So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅, the warmth-rated sleeping bag ✅, the
-quick **thatch** roof ✅, and the premium **tarp** ✅ are **done** — the whole shelter-and-fire rung of the
-list is now real. The remaining 🔨 builds are a **cloth/leather sewing-repair**, and optionally a
-**slingshot** and a **portable net** — plus the **pick-2 selection screen** itself, the centerpiece that
-ties the loadout together. Build those and nearly the whole real list becomes a meaningful choice.
+quick **thatch** roof ✅, the premium **tarp** ✅, and the **sewing kit** ✅ (mend worn leather/hide clothing
+by hand, a plant-fibre thread per patch) are **done** — the whole shelter, fire, and clothing-upkeep rung of
+the list is now real. What's left is the **pick-2 selection screen** itself — the centerpiece that ties the
+loadout together — and optionally a **slingshot** and a **portable net**. Build those and nearly the whole
+real list becomes a meaningful choice.
 
 ## Death, respawn & run modes
 
