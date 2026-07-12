@@ -27,8 +27,11 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ClayPotBlockEntity extends BlockEntity {
     /** A set-down pot is a small reservoir — more than the hand-carried vessel, less than an iron cauldron. */
     public static final int CAPACITY = 8;
-    /** ~10s of steady rain per litre caught — filling a pot is a patient, weather-dependent thing. */
+    /** ~10s of steady rain per litre caught by a bare pot's own mouth — a patient, weather-dependent thing.
+     *  A tarp funnel rigged above catches far faster (its whole area drains into the pot). */
     public static final int FILL_TICKS = 200;
+    /** Cap on tarp-funnel catchment, so a huge roof fills fast but not absurdly (litres of rain per tick). */
+    private static final int MAX_CATCHMENT = 12;
     private static final float THIRST_PER_SIP = 30f;
 
     /**
@@ -58,13 +61,17 @@ public class ClayPotBlockEntity extends BlockEntity {
         if (water >= CAPACITY) {
             return;
         }
-        if (!level.isRainingAt(pos.above())) {
+        // How much rain the pot catches this tick: nothing if sheltered/dry, 1 for a bare pot under open
+        // sky (its own small mouth), or the number of connected sky-exposed tarp blocks draped above — a
+        // funnel, so a tarp roof fills the pot many times faster (real rain-catchment rigging, §2).
+        int catchment = rainCatchment(level, pos);
+        if (catchment <= 0) {
             if (pot.getAttachedOrElse(FILL, 0) != 0) {
-                pot.setAttached(FILL, 0); // the shower stopped before a full litre — no half-measures banked
+                pot.setAttached(FILL, 0); // the shower stopped (or it's sheltered) — no half-litre banked
             }
             return;
         }
-        int fill = pot.getAttachedOrElse(FILL, 0) + 1;
+        int fill = pot.getAttachedOrElse(FILL, 0) + catchment;
         if (fill >= FILL_TICKS) {
             pot.setAttached(FILL, 0);
             level.setBlock(pos, state.setValue(ClayPotBlock.WATER, water + 1), Block.UPDATE_ALL);
@@ -75,6 +82,47 @@ public class ClayPotBlockEntity extends BlockEntity {
         } else {
             pot.setAttached(FILL, fill);
         }
+    }
+
+    /** Rain caught per tick: 0 if sheltered/dry, 1 for a bare pot under open sky, or the number of connected
+     *  sky-exposed tarp blocks draped above (a funnel), capped — so a tarp roof fills a pot much faster. */
+    private static int rainCatchment(Level level, BlockPos pos) {
+        // A tarp draped just above funnels its whole catchment into the pot, even though it shelters the
+        // pot's own mouth. Scan up for one; a solid non-tarp block above simply shelters the pot (catches 0).
+        for (int dy = 1; dy <= 4; dy++) {
+            BlockState above = level.getBlockState(pos.above(dy));
+            if (above.is(AloneBlocks.TARP)) {
+                return Math.min(MAX_CATCHMENT, tarpCatchment(level, pos.above(dy)));
+            }
+            if (!above.isAir() && !above.canBeReplaced()) {
+                return 0; // roofed by something solid that isn't a tarp — no rain reaches the pot
+            }
+        }
+        return level.isRainingAt(pos.above()) ? 1 : 0; // a bare pot catches only from its own small mouth
+    }
+
+    /** Connected tarp blocks (flood-filled horizontally from the given one) that rain actually reaches — the
+     *  funnel's catchment area, in litres of rain caught per tick. */
+    private static int tarpCatchment(Level level, BlockPos start) {
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        seen.add(start);
+        queue.add(start);
+        int catchment = 0;
+        while (!queue.isEmpty() && seen.size() <= 64) {
+            BlockPos p = queue.poll();
+            if (level.isRainingAt(p.above())) {
+                catchment++; // this panel of the roof is open to the sky and catching rain
+            }
+            for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                BlockPos n = p.relative(d);
+                if (!seen.contains(n) && level.getBlockState(n).is(AloneBlocks.TARP)) {
+                    seen.add(n);
+                    queue.add(n);
+                }
+            }
+        }
+        return catchment;
     }
 
     /** Pour clean rainwater from the pot into a held vessel (§2). Won't mix into raw/salt water already in it. */
