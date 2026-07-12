@@ -90,9 +90,17 @@ public class ItemStackFinishUsingMixin {
         // rising sickness chance, climbing toward the brink of rotting. Ties the freshness system to the bite.
         Long freshness = self.get(dev.alone.food.Spoilage.FRESHNESS);
         if (freshness != null && freshness > 0L) {
+            // Freshness is stamped, not churned: the stored value only re-writes on a temperature-band
+            // change, so we must drain the elapsed time here exactly as the tooltip (AloneFoodClient) and
+            // the writer (Spoilage.tickStack) do — otherwise, at a stable temperature, this reads ~full and
+            // the "going off" risk never fires even as the tooltip warns the food is nearly rotten.
+            long now = level.getGameTime();
+            long elapsed = Math.max(0L, now - self.getOrDefault(dev.alone.food.Spoilage.FRESHNESS_SEEN, now));
+            long current = freshness - Math.round(
+                elapsed * dev.alone.food.Spoilage.rateForBand(self.getOrDefault(dev.alone.food.Spoilage.RATE_BAND, 0)));
             long budget = self.getOrDefault(dev.alone.food.Spoilage.PRESERVED, false)
                 ? dev.alone.food.Spoilage.PRESERVED_SHELF_TICKS : dev.alone.food.Spoilage.SPOIL_TICKS;
-            float fraction = (float) freshness / budget;
+            float fraction = Math.max(0f, Math.min(1f, (float) current / budget));
             if (fraction < 0.33f) {
                 chance = Math.min(0.95f, chance + (0.33f - fraction) / 0.33f * 0.4f); // up to +0.4 near rotting
             }
