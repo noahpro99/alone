@@ -165,6 +165,9 @@ public final class Carry {
         if (item == AloneItems.UNFIRED_CLAY_POT) return 0.15f;
         if (item == AloneItems.BACKPACK) return 0.080f;
         if (item == AloneItems.SALT) return 0.001f;
+        if (item == AloneItems.IRON_BLOOM) return 0.35f;       // a dense lump — hand-carried, never pocketed
+        if (item == AloneItems.REFRACTORY_CLAY) return 0.030f; // a clay lump — several carriable
+        if (item == AloneItems.GROG) return 0.010f;            // gritty temper
         if (item == AloneItems.PLANT_FIBER) return 0.001f;
         if (item == AloneItems.SPLINT) return 0.005f;
         if (item == AloneItems.SMITHING_HAMMER) return 0.300f; // a heavy, unwieldy tool — hand-carried
@@ -331,6 +334,9 @@ public final class Carry {
         if (item == AloneItems.BACKPACK) return 1.50f;
         if (item == AloneItems.WOVEN_BASKET) return 0.50f; // woven plant fibre — light but bulky
         if (item == AloneItems.SALT) return 0.05f;
+        if (item == AloneItems.IRON_BLOOM) return 2.50f;       // a spongy lump of raw iron and slag — heavy
+        if (item == AloneItems.REFRACTORY_CLAY) return 0.70f;  // a clay-and-temper lump for lining a furnace
+        if (item == AloneItems.GROG) return 0.30f;             // crushed fired pottery — a gritty temper
         if (item == AloneItems.ROCK || item == AloneItems.HOT_ROCK) return 0.40f; // a fist-sized stone
         if (item == AloneItems.PLANT_FIBER) return 0.01f;
         if (item == AloneItems.SPLINT) return 0.40f;
