@@ -1,5 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredients": ["minecraft:stick", "minecraft:stick", "alone:plant_fiber", "alone:plant_fiber"],
-  "result": {"id": "alone:thatch", "count": 3}
+  "ingredients": ["minecraft:stick", "minecraft:stick", "minecraft:leaf_litter", "minecraft:leaf_litter", "minecraft:leaf_litter", "alone:plant_fiber"],
+  "result": {"id": "alone:thatch", "count": 2}
 }

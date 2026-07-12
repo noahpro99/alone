@@ -69,9 +69,13 @@ public final class AloneBlocks {
      * over a dug-out niche or a low wall of logs and the space beneath becomes real shelter through the
      * systems that already exist — it reads as <b>roofed</b> (warmer, out of the night chill and off the
      * blizzard) and, with the sky blocked, <b>rain can't reach you</b>, so you stay <b>dry</b>, which is what
-     * keeps wet-cold from killing you (§1.3). Cheap and fast from sticks + plant fibre — the day-one roof,
-     * long before you can saw planks. But it's bone-dry tinder: it <b>catches readily and fire runs through
-     * it</b>, so keep a thatch roof well clear of your fire. Placeholder straw texture until real art lands.
+     * keeps wet-cold from killing you (§1.3). The day-one roof, long before you can saw planks — but it's
+     * <b>real work, not a free craft</b>: you thatch it from <b>leaf litter</b> (gathered by tearing leaves
+     * apart by hand, see {@link Leaves}) bundled onto stick battens and lashed with a little cordage, and
+     * the weaving itself is a timed job at the bench ({@link CraftingTime}). So a thatch roof is a genuine
+     * morning's labour — you thatch a small lean-to, not a mansion. And it's bone-dry tinder: it <b>catches
+     * readily and fire runs through it</b>, so keep a thatch roof well clear of your fire. Placeholder straw
+     * texture until real art lands.
      */
     public static final Block THATCH = register("thatch",
         key -> new Block(BlockBehaviour.Properties.of()

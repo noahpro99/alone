@@ -48,6 +48,10 @@ public final class CraftingTime {
     private static final int TOOL = 300;     // ~15s: shape and haft a tool or weapon (metal ones then forge)
     private static final int ARMOR = 2400;   // ~2 min assembling the piece — metal is then forged on top
     private static final int BLOOM_WORK = 600; // ~30s: hammering a spongy bloom to consolidate iron and drive out slag
+    // Shelter craft, set by real duration × the 72x day (1 real hour = 1000 ticks), not by feel (§5.5):
+    private static final int THATCH = 300;      // ~18 real min weaving/lashing a rough grass panel — bulk grass is the material cost, the weave is the timed work
+    private static final int SEWN_SHEET = 1200; // ~72 real min hand-stitching tanned hides into an oiled tarp — slow, patient sewing
+    private static final int SEWN_BAG = 1800;   // ~108 real min sewing a lofted, shelled sleeping bag — a real half-day project
 
     // Per player, the accumulated ticks worked on each result item (by item id) — kept so a craft you
     // stepped away from resumes. Side-separated so the integrated server and client don't collide.
@@ -133,6 +137,15 @@ public final class CraftingTime {
             // Working a bloomery bloom into a usable ingot is real hammering — consolidating the spongy,
             // slag-riddled lump — not an instant craft. (This is the only way to grid-craft an iron ingot.)
             return BLOOM_WORK;
+        }
+        if (result.is(AloneItems.THATCH)) {
+            return THATCH; // bulk grass is the material cost; weaving and lashing the panel is the timed work (§5.5)
+        }
+        if (result.is(AloneItems.TARP)) {
+            return SEWN_SHEET; // tanned hides hand-sewn into an oiled sheet — slow, patient stitching (§5.5)
+        }
+        if (result.is(AloneItems.SLEEPING_BAG)) {
+            return SEWN_BAG; // a warm bag is a real sewing project — loft and a shell, all by hand (§5.5)
         }
         if (result.is(ItemTags.PLANKS)) {
             return PLANK; // riving a log into boards by hand is hard, laborious work (§5.4)
