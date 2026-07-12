@@ -135,10 +135,14 @@ public class Squirrel extends Animal {
      * it doesn't just zig-zag away on the ground, it goes vertical where you can't follow.
      */
     private static class ClimbTreeGoal extends Goal {
+        private static final int STALL_LIMIT = 60; // ~3s of no progress toward the tree → give up and flee instead
+
         private final Squirrel squirrel;
         private Player threat;
         private BlockPos perch;
         private int repath;
+        private double bestDistSq;
+        private int stallTicks;
 
         ClimbTreeGoal(Squirrel squirrel) {
             this.squirrel = squirrel;
@@ -163,6 +167,7 @@ public class Squirrel extends Animal {
         @Override
         public boolean canContinueToUse() {
             return threat != null && threat.isAlive() && perch != null
+                && stallTicks < STALL_LIMIT // can't reach the tree/climb → let go, don't grind (or spin) forever
                 && squirrel.distanceToSqr(threat) <= GIVE_UP * GIVE_UP;
         }
 
@@ -170,6 +175,8 @@ public class Squirrel extends Animal {
         public void start() {
             squirrel.getNavigation().moveTo(perch.getX() + 0.5, perch.getY(), perch.getZ() + 0.5, CLIMB_SPEED);
             repath = 0;
+            bestDistSq = Double.MAX_VALUE;
+            stallTicks = 0;
         }
 
         @Override
@@ -181,13 +188,22 @@ public class Squirrel extends Animal {
 
         @Override
         public void tick() {
-            if (threat != null) {
-                squirrel.getLookControl().setLookAt(threat, 30f, 30f);
-            }
             // Reached the perch and hugging the trunk → cling and watch (onClimbable holds it against gravity).
             if (squirrel.getY() >= perch.getY() - 1 && squirrel.besideTree()) {
                 squirrel.getNavigation().stop();
+                if (threat != null) {
+                    squirrel.getLookControl().setLookAt(threat, 30f, 30f); // only watch the threat once perched
+                }
                 return;
+            }
+            // While making for the tree, let the NAVIGATION steer its facing. Do NOT force a look at the
+            // threat here — the look-control and move-control pull opposite ways and the squirrel just spins.
+            double distSq = squirrel.distanceToSqr(perch.getX() + 0.5, perch.getY(), perch.getZ() + 0.5);
+            if (distSq < bestDistSq - 0.02) {
+                bestDistSq = distSq;
+                stallTicks = 0;
+            } else {
+                stallTicks++; // no progress toward the perch — bail out via canContinueToUse if it drags on
             }
             if (squirrel.getNavigation().isDone() && --repath <= 0) {
                 squirrel.getNavigation().moveTo(perch.getX() + 0.5, perch.getY(), perch.getZ() + 0.5, CLIMB_SPEED);

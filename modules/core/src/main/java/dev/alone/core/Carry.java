@@ -178,6 +178,7 @@ public final class Carry {
         if (item == AloneItems.ROPE) return 0.005f;
         if (item == AloneItems.BEDROLL) return 0.150f; // a bulky roll — hand-carried, not pocketed
         if (item == AloneItems.SLEEPING_BAG) return 0.180f; // a lofted bag — bulkier still than a bedroll
+        if (item == AloneItems.TARP) return 0.020f; // a folded sheet — thin, packs small (it's a 1×1 fly, not a 1 m³ block)
         // A travois is a frame of long poles (2–3 m) lashed with crossbars. Even undeployed it's a big,
         // awkward bundle you sling over a shoulder — never a pocket item, and it dominates your hands
         // (most of the 1 m³ carry budget). This is why you deploy and DRAG it rather than pocket it.
