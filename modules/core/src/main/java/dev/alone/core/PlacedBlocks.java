@@ -39,12 +39,15 @@ public final class PlacedBlocks {
     /** Remember that a player set this block down (it's loose now). */
     public static void markPlaced(Level level, BlockPos pos) {
         LevelChunk chunk = level.getChunkAt(pos);
-        Set<Long> set = chunk.getAttached(PLACED);
-        if (set == null) {
-            set = new HashSet<>();
+        Set<Long> existing = chunk.getAttached(PLACED);
+        // Store a FRESH set instance (not the mutated old reference) so the attachment change is actually
+        // detected, and mark the chunk unsaved so it's re-serialised — otherwise the "placed" flags were
+        // lost across a world close/reopen (a set placed by the player looked rooted again on reload).
+        Set<Long> set = existing == null ? new HashSet<>() : new HashSet<>(existing);
+        if (set.add(pos.asLong())) {
+            chunk.setAttached(PLACED, set);
+            chunk.markUnsaved();
         }
-        set.add(pos.asLong());
-        chunk.setAttached(PLACED, set);
     }
 
     /** Was this block set down by a player (loose), as opposed to naturally generated (rooted)? */
@@ -64,9 +67,12 @@ public final class PlacedBlocks {
 
     private static void unmark(Level level, BlockPos pos) {
         LevelChunk chunk = level.getChunkAt(pos);
-        Set<Long> set = chunk.getAttached(PLACED);
-        if (set != null && set.remove(pos.asLong())) {
+        Set<Long> existing = chunk.getAttached(PLACED);
+        if (existing != null && existing.contains(pos.asLong())) {
+            Set<Long> set = new HashSet<>(existing); // fresh instance + markUnsaved, so the removal persists
+            set.remove(pos.asLong());
             chunk.setAttached(PLACED, set);
+            chunk.markUnsaved();
         }
     }
 }

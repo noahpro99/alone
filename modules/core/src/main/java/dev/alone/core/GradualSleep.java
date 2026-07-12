@@ -32,15 +32,17 @@ public final class GradualSleep {
     }
 
     private static void onServerTick(MinecraftServer server) {
-        boolean anyResting = anyPlayerSleeping(server);
+        boolean allResting = allPlayersResting(server);
         long timeOfDay = server.overworld().getOverworldClockTime() % 24000L;
         boolean morning = timeOfDay < MORNING_RISE; // first light — time to get up
         var tickRate = server.tickRateManager();
 
-        // Anyone lying down — a night's sleep OR a daytime rest to pass the hours (convalescing an injury,
-        // waiting out weather, letting a crop grow) — fast-forwards the world until first light. It's the
-        // one way to skip the long real durations the pack models: you rest, and the clock runs.
-        if (anyResting && !morning) {
+        // The world only fast-forwards when EVERY (non-spectator) player is lying down — a night's sleep OR a
+        // daytime rest to pass the hours (convalescing an injury, waiting out weather, letting a crop grow).
+        // Requiring all of them means one player can't drag everyone else's clock forward in multiplayer; it
+        // runs fast for the whole server only once they're all resting. It's the one way to skip the long
+        // real durations the pack models: you all rest, and the clock runs.
+        if (allResting && !morning) {
             if (!fastForwarding) {
                 tickRate.setTickRate(SLEEP_TICK_RATE);
                 fastForwarding = true;
@@ -48,13 +50,13 @@ public final class GradualSleep {
             return;
         }
 
-        // First light (or everyone got up on their own): hand the tick rate back to real time...
+        // First light (or someone got up, so it's no longer unanimous): hand the tick rate back to real time.
         if (fastForwarding) {
             tickRate.setTickRate(NORMAL_TICK_RATE);
             fastForwarding = false;
         }
-        // ...and rouse anyone still lying down when morning comes.
-        if (anyResting) {
+        // Rouse anyone still lying down when morning comes, so a rest always ends at dawn.
+        if (morning) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player.isSleeping()) {
                     player.stopSleeping();
@@ -63,12 +65,19 @@ public final class GradualSleep {
         }
     }
 
-    private static boolean anyPlayerSleeping(MinecraftServer server) {
+    /** True only when there's at least one non-spectator player and every one of them is lying down. So a
+     *  lone sleeper in multiplayer just waits in bed (no time skip) until the rest join them. */
+    private static boolean allPlayersResting(MinecraftServer server) {
+        boolean anyReal = false;
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (player.isSleeping()) {
-                return true;
+            if (player.isSpectator()) {
+                continue;
+            }
+            anyReal = true;
+            if (!player.isSleeping()) {
+                return false;
             }
         }
-        return false;
+        return anyReal;
     }
 }
