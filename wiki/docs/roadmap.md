@@ -164,7 +164,7 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 
 ## The start — an Alone-style loadout
 
-Like the show: at the start of a new world you **choose a small kit** (10 items) from an approved master
+Like the show: at the start of a new world you **choose a small kit** (**2 items**) from an approved master
 list, then you're dropped with only that. The selection screen **shows your starting biome**, so the pick
 is a real strategic read — a gill net and heavy tarp for a coast, a felling axe and −40 bag for the boreal
 winter. This is the framing that turns worldgen into a *run*, and it pairs with the run-modes below.
@@ -186,21 +186,23 @@ the list, with reason**):
 - **Shelter & cordage:** paracord/rope ✅, **heavy tarp** 🔨 (a quick waterproof rain/shelter cover — ties
   into the planned shelter ladder), bivy/−40 sleeping bag 🔶 (bedroll exists; a *warmth-rated* bag variant is
   the gap — strong cold insulation for sleep), wool blanket 🔶 (warmth; maps to insulation).
-- **Fire & cooking:** **ferro rod** 🔨 (a reliable, rain-tolerant fire-starter above friction fire — exactly
-  why contestants prize it; slots between the bow drill and the planned flint-and-pyrite), steel pot ✅ (iron
+- **Fire & cooking:** **ferro rod** ✅ (a reliable, rain-tolerant fire-starter above friction fire — exactly
+  why contestants prize it: catches in ~2 strokes at ~0.6 chance, works in the rain where the bow drill only
+  smokes, near-zero stamina, 200-use rod. Forged from 2 steel + flint, so it's a hard endgame gate you build
+  toward — or bring as one of your 2 loadout picks), steel pot ✅ (iron
   pot boils/cooks), frying pan 🔶 (campfire cooking exists; a pan could be a faster/better cook surface).
 - **Food rations (max 2):** pemmican/jerky ✅ (drying rack + the long preserved shelf), salt block ✅
   (preservation), flour/rice/sugar/legumes/hardtack 🔶 (all "a starting stock of food"; some want a
   bread/grain path). These are the low-effort mechanic — you just *start with* a ration.
 - **Comfort & hygiene:** bar of soap 🔶 (Hygiene exists; soap = better/faster clean), towel 🔶 (dry off — the
-  wetness system exists), **personal photograph** 🔨 (a **morale/loneliness** system is the real missing
-  piece — the show's core; a small mechanic where isolation grinds you down and comforts/wins lift it),
-  eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
+  wetness system exists), **personal photograph** 🚫 (would need a **morale/loneliness** system, which is
+  deliberately *not* being built — Alone's realism here is physical, and a happiness meter would be a HUD
+  abstraction rather than a felt mechanic), eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
 
-So the loadout doubles as a **to-do list of mechanics**: the clear 🔨 builds are a **morale system**, a
-**ferro rod**, a **tarp**, a **warmth-rated sleeping bag**, a **cloth/leather sewing-repair**, and
-optionally a **slingshot** and a **portable net**. Build those and nearly the whole real list becomes a
-meaningful choice.
+So the loadout doubles as a **to-do list of mechanics**. Ferro rod is **done** ✅; the remaining 🔨 builds
+are a **tarp**, a **warmth-rated sleeping bag**, a **cloth/leather sewing-repair**, and optionally a
+**slingshot** and a **portable net** — plus the pick-2 selection screen itself. Build those and nearly the
+whole real list becomes a meaningful choice.
 
 ## Death, respawn & run modes
 

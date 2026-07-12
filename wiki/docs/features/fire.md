@@ -10,9 +10,19 @@ Fire warms you, cooks food, and boils water clean. It is never free, and keeping
 There is no flint-and-steel. The first fire comes from friction:
 
 - First **lay an unlit campfire** (crafted from **3 sticks and plant fiber** — the fiber is its built-in tinder).
-- Then **hold right-click on the unlit campfire** to drill it alight. Two tools work: a bare **stick** (a hand drill — slow, exhausting, and a long gamble) or a **bow drill** (crafted from sticks and cordage — it catches sooner, for less stamina, and wears out with use).
+- Then **hold right-click on the unlit campfire** to drill it alight. Two friction tools work: a bare **stick** (a hand drill — slow, exhausting, and a long gamble) or a **bow drill** (crafted from sticks and cordage — it catches sooner, for less stamina, and wears out with use).
 - Drilling **costs stamina** and only makes **smoke** until enough strokes finally catch.
-- **Rain and being wet make it fail.** Drilling needs dry conditions.
+- **Rain and being wet make friction fire fail.** Drilling needs dry conditions.
+
+### The ferro rod — the reliable fire
+
+Above friction there is one dependable fire-starter: a **ferro rod** (fire steel). Held like the drills, you **hold right-click on the unlit campfire** to strike it — and it behaves nothing like friction:
+
+- It **catches almost at once** (about two strikes, a high chance each) and costs **next to no stamina** — it's struck, not worked.
+- **It lights in the rain.** The sparks run hot enough to take wet tinder, where a bow drill would only smoke. (Fully submerged still fails — everything's soaked.)
+- It **wears with use** — a rod is good for about 200 fires before it grinds away.
+
+The ferro rod is **endgame gear**: forged from **2 steel ingots and a flint** (steel is the deep metallurgy tier), so it's something you build toward — or bring as one of your [starting loadout](../roadmap#the-start--an-alone-style-loadout) picks, exactly as contestants prize it on the show.
 
 ## The campfire
 

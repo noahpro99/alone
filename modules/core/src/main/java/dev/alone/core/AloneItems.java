@@ -225,6 +225,13 @@ public final class AloneItems {
      *  down, so it wears out (durability) and eventually needs re-stringing. */
     public static final Item BOW_DRILL = register("bow_drill",
         key -> new Item(new Item.Properties().durability(24).setId(key)));
+
+    /** A ferro rod / fire steel (§3.1) — a hard steel striker that throws hot sparks: a <b>fast, reliable</b>
+     *  light that works even in the wet, unlike a friction drill. It's a real gate to get one — you must
+     *  have <b>steel</b> to forge it — or you bring it in a starting loadout, which is exactly why it's a
+     *  prized pick. Wears down over many, many strikes (durability). */
+    public static final Item FERRO_ROD = register("ferro_rod",
+        key -> new Item(new Item.Properties().durability(200).setId(key)));
     // Copper (flint → copper → iron → steel) is vanilla in 26.2 — its tools/armour, recipes, and tool
     // tags are all built in, and it needs no forging (a soft metal), so it fits the pack as-is. Nothing
     // to add here; we just don't remove it the way wood/stone were removed.

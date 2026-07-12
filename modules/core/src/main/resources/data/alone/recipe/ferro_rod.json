@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shaped", "pattern": ["S","S","F"], "key": { "S": "alone:steel_ingot", "F": "minecraft:flint" }, "result": { "id": "alone:ferro_rod", "count": 1 } }
