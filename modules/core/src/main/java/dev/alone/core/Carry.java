@@ -148,7 +148,7 @@ public final class Carry {
         // A tarp is a full-collision block for placement/shelter, but as CARGO it's a thin folded sheet, not
         // a 1 m³ cube — so it must be caught HERE, before the generic full-cube path below claims it.
         if (item == AloneItems.TARP) {
-            return 0.020f;
+            return 0.008f;
         }
         if (item instanceof BlockItem blockItem) {
             float shape = blockShapeVolume(blockItem);
@@ -327,7 +327,7 @@ public final class Carry {
         // As with its volume: a tarp weighs as a folded hide sheet, not a solid cube — caught before the
         // generic block-density path below (which would otherwise read it as a ~10 kg full block).
         if (item == AloneItems.TARP) {
-            return 2.50f;
+            return 2.00f;
         }
         if (item instanceof BlockItem && perItemVolume(item) >= 0.4f) {
             float shape = perItemVolume(item);
@@ -531,6 +531,9 @@ public final class Carry {
 
     /** True if this item is small enough to go in a pocket (vs. bulky, hand-carried). */
     public static boolean isPocketable(ItemStack stack) {
+        if (stack.is(AloneItems.TARP)) {
+            return false; // a folded 1 m² sheet — small, but too floppy/awkward to pocket; you sling it, hand-carried
+        }
         return unitVolume(stack) <= POCKET_ITEM_MAX;
     }
 
