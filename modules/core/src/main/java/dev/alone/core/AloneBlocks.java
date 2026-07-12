@@ -86,19 +86,22 @@ public final class AloneBlocks {
             .setId(key)));
 
     /**
-     * Tarp (§5.5) — a sewn, oiled hide sheet: the manufactured top rung of the shelter-roof ladder above
-     * {@link #THATCH}. Same core mechanic (a solid block that blocks the sky, so the space beneath is
-     * roofed and dry), but it's <b>premium, packable gear</b>, not bushcraft: unlike thatch it does
-     * <b>not burn</b> — so you can pitch it right over a fire and keep the flame and the rain off at once —
-     * and it's reusable, you break it and carry it on. The cost is that it's <b>hard to make</b>: it takes
-     * real tanned hide and cordage (leather + string), where thatch is free forage. The contestant's
-     * brought tarp, or a mid-game craft once you're hunting and tanning. Placeholder canvas texture for now.
+     * Tarp (§5.5) — a sewn, oiled hide <b>sheet</b> (see {@link TarpBlock}): the manufactured top rung of the
+     * shelter-roof ladder above {@link #THATCH}. It's a <b>thin, no-collision fly</b> you drape and walk
+     * under — not a 1&nbsp;m³ block — but it still <b>blocks the sky</b>, so the space beneath is roofed and
+     * dry. Premium, packable gear, not bushcraft: unlike thatch it does <b>not burn</b> (pitch it right over
+     * a fire and keep flame and rain off at once), and it's reusable — break it and carry it on. The cost is
+     * that it's <b>hard to make</b>: real tanned hide and cordage (leather + string), where thatch is free
+     * forage. The contestant's brought tarp, or a mid-game craft. Placeholder canvas texture for now.
      */
     public static final Block TARP = register("tarp",
-        key -> new Block(BlockBehaviour.Properties.of()
+        key -> new TarpBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.COLOR_GREEN)
             .sound(SoundType.WOOL)
             .strength(0.4F)
+            .noCollision()
+            .noOcclusion()
+            .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
     /**
