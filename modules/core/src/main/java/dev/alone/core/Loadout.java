@@ -30,8 +30,8 @@ import com.mojang.serialization.Codec;
  * a tarp read very differently on a cold coast than in a boreal winter.
  *
  * <p>This is the <b>functional, command-driven</b> version of that idea: on your first join to a world you're
- * told your biome and that you may bring two things; <code>/loadout</code> lists the options (biome shown),
- * and <code>/loadout pick &lt;item&gt;</code> packs one. It's deliberately server-side and testable — a
+ * told your biome and that you may bring two things; <code>/alone loadout</code> lists the options (biome shown),
+ * and <code>/alone loadout pick &lt;item&gt;</code> packs one. It's deliberately server-side and testable — a
  * graphical selection screen is a later polish pass over this same foundation (the picks, the biome read,
  * the one-time gate all live here). Picks are stored per player, per world, so it happens once per run.
  */
@@ -107,18 +107,20 @@ public final class Loadout {
             newPlayer.setAttached(TAKEN, oldPlayer.getAttachedOrElse(TAKEN, ""));
         });
 
+        // Registered under "alone" (→ "/alone loadout"); Brigadier merges this with AdminCommand's "alone".
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-            dispatcher.register(Commands.literal("loadout")
-                .executes(ctx -> list(ctx.getSource()))
-                .then(Commands.literal("pick")
-                    .then(Commands.argument("item", StringArgumentType.word())
-                        .suggests((ctx, builder) -> {
-                            for (Choice c : CHOICES) {
-                                builder.suggest(c.key());
-                            }
-                            return builder.buildFuture();
-                        })
-                        .executes(ctx -> pick(ctx.getSource(), StringArgumentType.getString(ctx, "item")))))));
+            dispatcher.register(Commands.literal("alone")
+                .then(Commands.literal("loadout")
+                    .executes(ctx -> list(ctx.getSource()))
+                    .then(Commands.literal("pick")
+                        .then(Commands.argument("item", StringArgumentType.word())
+                            .suggests((ctx, builder) -> {
+                                for (Choice c : CHOICES) {
+                                    builder.suggest(c.key());
+                                }
+                                return builder.buildFuture();
+                            })
+                            .executes(ctx -> pick(ctx.getSource(), StringArgumentType.getString(ctx, "item"))))))));
     }
 
     /** The welcome on first join: your biome, what it will do to you, and that you may bring two things. */
@@ -130,10 +132,10 @@ public final class Loadout {
             "You may bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home.  ")
             .append(Component.literal("[Choose your kit]").withStyle(s -> s
                 .withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent.RunCommand("/loadout")))));
+                .withClickEvent(new ClickEvent.RunCommand("/alone loadout")))));
     }
 
-    /** {@code /loadout} — show the biome, how many picks are left, and the whole approved list. */
+    /** {@code /alone loadout} — show the biome, how many picks are left, and the whole approved list. */
     private static int list(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         int remaining = Math.max(0, initialised(player));
@@ -146,17 +148,17 @@ public final class Loadout {
             "You woke in " + biomeName(player) + ". " + biomeAdvice(player)), false);
         source.sendSuccess(() -> Component.literal(
             "You may still pack " + left + " item" + (left == 1 ? "" : "s")
-                + " — click one to pack it (or type /loadout pick <name>):"), false);
+                + " — click one to pack it (or type /alone loadout pick <name>):"), false);
         for (Choice c : CHOICES) {
             Component line = Component.literal("  ▶ " + c.label()).withStyle(s -> s
                 .withColor(ChatFormatting.GREEN).withUnderlined(true)
-                .withClickEvent(new ClickEvent.RunCommand("/loadout pick " + c.key())));
+                .withClickEvent(new ClickEvent.RunCommand("/alone loadout pick " + c.key())));
             source.sendSuccess(() -> line, false);
         }
         return Command.SINGLE_SUCCESS;
     }
 
-    /** {@code /loadout pick <item>} — pack one item, if you've a pick left. */
+    /** {@code /alone loadout pick <item>} — pack one item, if you've a pick left. */
     private static int pick(CommandSourceStack source, String key) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         int remaining = initialised(player);
@@ -172,7 +174,7 @@ public final class Loadout {
             }
         }
         if (choice == null) {
-            source.sendFailure(Component.literal("No such item '" + key + "'. Run /loadout to see the list."));
+            source.sendFailure(Component.literal("No such item '" + key + "'. Run /alone loadout to see the list."));
             return 0;
         }
         // Bring two DIFFERENT things — you wouldn't pack two identical tools.
