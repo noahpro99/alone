@@ -36,7 +36,10 @@ public final class Wildlife {
     public static final TagKey<EntityType<?>> DOMESTIC =
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
-    private static final double FLEE_RANGE = 12.0;  // how close a standing player they'll tolerate before bolting
+    private static final double FLEE_RANGE = 12.0;  // sight/sound: how close a STANDING player they spot before bolting
+    private static final double SNEAK_SIGHT = 4.0;  // crouched (stalking), they only see/hear you up close
+    private static final double SCENT_RANGE = 20.0; // and they SMELL you from here when you're UPWIND (your scent
+                                                     // blows to them) — no crouch hides that. Stalk from downwind.
     private static final double PURSUIT_RANGE = 26.0; // once spooked they keep running until you fall this far back —
                                                        // so you can PACE a deer from a distance and wear it down,
                                                        // rather than having to sprint-glue to within 12 blocks
@@ -63,15 +66,33 @@ public final class Wildlife {
         return !(animal instanceof TamableAnimal tame && tame.isTame());
     }
 
-    /** A player worth fleeing — one who isn't sneaking up on you (stalking), and isn't in creative/spectator. */
-    private static boolean spooks(Player player) {
-        return player.isAlive() && !player.isShiftKeyDown() && !player.isCreative() && !player.isSpectator();
+    /** A player the animal will react to at all — alive, and not in creative/spectator. */
+    private static boolean valid(Player player) {
+        return player.isAlive() && !player.isCreative() && !player.isSpectator();
     }
 
     /**
-     * Bolt from a standing player who comes within range — sprinting when they get close, ambling when
-     * they're at the edge. Proximity-triggered (no line-of-sight requirement), re-pathing as it goes so it
-     * keeps its distance rather than fleeing once and stopping. Sneak to stalk within range without spooking it.
+     * How far off an animal notices a player right now. Two senses: <b>sight/sound</b> (shorter when the
+     * player is crouched — the stalk), and <b>smell</b> — which reaches when the player is <b>upwind</b> so
+     * their scent blows to the animal, and <em>no crouch hides it</em>. So the only way to get close is to
+     * stalk crouched <b>and</b> from downwind (wind in your face). The wider of the two senses wins.
+     */
+    private static double noticeRange(PathfinderMob mob, Player player, Vec3 wind) {
+        double sight = player.isShiftKeyDown() ? SNEAK_SIGHT : FLEE_RANGE;
+        // Scent reaches when the animal lies downwind of you: the player→animal direction runs with the wind.
+        // Directly downwind = full reach, crosswind less, upwind (into your face) = nothing.
+        Vec3 toAnimal = mob.position().subtract(player.position());
+        double horiz = Math.sqrt(toAnimal.x * toAnimal.x + toAnimal.z * toAnimal.z);
+        double align = horiz < 1.0e-3 ? 0.0 : (toAnimal.x * wind.x + toAnimal.z * wind.z) / horiz;
+        double scent = SCENT_RANGE * Math.max(0.0, align);
+        return Math.max(sight, scent);
+    }
+
+    /**
+     * Bolt from a player the animal notices (by {@link #noticeRange sight or smell}) — sprinting when they
+     * get close, ambling at the edge, re-pathing as it goes so it keeps its distance. To close on one you
+     * must beat <b>both</b> senses: <b>crouch</b> (so it doesn't see you) and stay <b>downwind</b> (so it
+     * doesn't smell you). Approach standing, or from upwind, and it's gone before you're in reach.
      */
     private static class SkittishFleeGoal extends Goal {
         private final PathfinderMob mob;
@@ -84,14 +105,16 @@ public final class Wildlife {
         }
 
         private Player nearestThreat() {
+            Vec3 wind = Wind.direction(this.mob.level());
             Player nearest = null;
-            double best = FLEE_RANGE * FLEE_RANGE;
+            double best = Double.MAX_VALUE;
             for (Player p : this.mob.level().players()) {
-                if (!spooks(p)) {
+                if (!valid(p)) {
                     continue;
                 }
+                double range = noticeRange(this.mob, p, wind);
                 double d = p.distanceToSqr(this.mob);
-                if (d < best) {
+                if (d <= range * range && d < best) {
                     best = d;
                     nearest = p;
                 }
@@ -109,7 +132,7 @@ public final class Wildlife {
         public boolean canContinueToUse() {
             // Keep running until the pursuer falls well back — it's committed to flight now, so you can
             // pace it (jog to keep it inside this range) instead of having to stay right on top of it.
-            return this.threat != null && spooks(this.threat)
+            return this.threat != null && valid(this.threat)
                 && this.threat.distanceToSqr(this.mob) < PURSUIT_RANGE * PURSUIT_RANGE;
         }
 

@@ -10,9 +10,19 @@ patience, and endurance.
 
 ## Wary game
 
-Wild animals are **skittish**. Approach a wild animal standing up and it **bolts** — it tolerates you
-only to about 12 blocks, then walks off, and sprints clear if you get right on it. To close the distance
-you must **sneak** (stalk), so hunting means stealth, a bow, or wearing the animal down (below).
+Wild animals are **skittish**, and they watch you with **two senses — sight and smell**:
+
+- **Sight/sound.** Standing, they spot you at about **12 blocks** and bolt. **Crouch** (stalk) and they
+  only notice you up close (~4 blocks), so you can creep in.
+- **Smell — and this is the one that matters.** An animal **smells you from ~20 blocks when you're upwind
+  of it** (your scent blows to it), and **no amount of crouching hides that**. Your scent rides the
+  [prevailing wind](#the-wind-carries-your-scent) exactly as it does for predators: it reaches an animal
+  **downwind** of you and blows harmlessly away from one **upwind**.
+
+So to actually get close to a deer you have to beat **both** — **crouch *and* keep the wind in your face**
+(approach from downwind). Stalk in standing, or with the wind at your back, and it's gone before you're in
+range. Reading the wind isn't just about predators; it's the heart of the stalk — the way it is in real
+life and on the show. Failing that, wear the animal down by [persistence](#persistence-hunting--run-it-down).
 
 Domestic livestock (cows, pigs, sheep, chickens) stay calm, so farming and herding still work.
 
