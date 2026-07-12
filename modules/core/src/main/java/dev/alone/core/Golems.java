@@ -1,10 +1,12 @@
 package dev.alone.core;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.level.ClipContext;
@@ -47,6 +49,14 @@ public final class Golems {
             if (entity instanceof IronGolem golem) {
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
+            }
+        });
+        // Hit a golem and it comes for YOU. Vanilla iron golems are oddly forgiving — a village/built golem
+        // won't reliably turn on the player who strikes it — so we force the aggro: attacking one makes it
+        // target you. That's what makes it a real fight (and gives the anti-cheese goals a target to work on).
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+            if (entity instanceof IronGolem golem && source.getEntity() instanceof Player player) {
+                golem.setTarget(player);
             }
         });
     }

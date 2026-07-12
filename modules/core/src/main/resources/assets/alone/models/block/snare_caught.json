@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "minecraft:block/tripwire",
-    "cord": "minecraft:block/tripwire",
-    "catch": "minecraft:block/dirt"
+    "particle": "alone:block/snare",
+    "cord": "alone:block/snare",
+    "catch": "alone:entity/squirrel"
   },
   "elements": [
     {
