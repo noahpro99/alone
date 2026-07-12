@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -63,6 +64,13 @@ public final class Skills {
 
     /** Registers the skill-granting hooks (and forces the attachment to load) at mod init. */
     public static void init() {
+        // Practice must survive death (see the field doc, and "death is a setback, not a reset" in §11).
+        // But persistent attachments are NOT carried to the new player entity on respawn (copyOnDeath
+        // defaults off), so without this every death would silently wipe all your skill progress. Carry the
+        // whole map across every respawn — death and return-from-End alike.
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, returnFromEnd) ->
+            newPlayer.setAttached(SKILLS, new HashMap<>(oldPlayer.getAttachedOrElse(SKILLS, Map.of()))));
+
         // Quarrying stone/ore builds the miner's hand — dig speed then rises (see PlayerDestroySpeedMixin).
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, be) -> {
             if (!level.isClientSide() && !player.isCreative()
