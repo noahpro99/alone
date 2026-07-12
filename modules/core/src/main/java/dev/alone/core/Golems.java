@@ -1,13 +1,10 @@
 package dev.alone.core;
 
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.level.ClipContext;
@@ -27,9 +24,10 @@ import net.minecraft.world.phys.Vec3;
  * through. Metal, obsidian, and deepslate are too tough for even a golem to shrug aside, so a real fortified
  * bunker still holds; a thrown-up dirt wall does not.
  *
- * <p>Only fires while the golem has a target it can't see (something's in the way) and only touches blocks
- * right next to it, so it opens a path rather than levelling the countryside. (Hitting a target standing
- * above the golem is a separate piece, still to come.)
+ * <p>It also closes the other cheeses: it can <b>reach up</b> to strike a target perched a few blocks above
+ * it, and if you <b>tower up higher</b> to snipe with a bow it <b>digs the pillar out from under you</b> —
+ * loose soil then collapses and drops you back into reach. Only touches blocks right next to it, so it opens
+ * a path (or knocks a tower down) rather than levelling the countryside.
  */
 public final class Golems {
     private Golems() {
@@ -38,6 +36,7 @@ public final class Golems {
     private static final float MAX_HARDNESS = 3.0f;   // earth/wood/stone tier — not metal, obsidian, deepslate
     private static final double SMASH_RANGE_SQ = 9.0;  // only cover within ~3 blocks of the golem
     private static final int SMASH_INTERVAL = 15;      // pulverise ~one block every 0.75s (tune in playtest)
+    private static final double UNDERMINE_MIN_DY = 2.0; // a target perched this far above (a tower) gets its pillar dug out
 
     // Reaching a target perched above: vanilla melee already covers ~2 blocks up (the golem is wide, so its
     // reach is generous), so we only need to cover the taller perch a survivor climbs to feel safe.
@@ -50,18 +49,6 @@ public final class Golems {
             if (entity instanceof IronGolem golem) {
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
-            }
-        });
-        // Hit a golem and it comes for YOU. Iron golems are NEUTRAL — a bare setTarget gets wiped by their
-        // anger-management next tick, which is why it wouldn't aggro. Anger it properly: record the
-        // persistent-anger target and start its timer, so it stays hostile, paths to you, and fights — which
-        // is what makes it a real encounter and gives the anti-cheese goals a live target to work against.
-        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
-            if (entity instanceof IronGolem golem && source.getEntity() instanceof Player player) {
-                golem.setPersistentAngerTarget(EntityReference.of(player));
-                golem.startPersistentAngerTimer();
-                golem.setLastHurtByMob(player);
-                golem.setTarget(player);
             }
         });
     }
@@ -79,8 +66,17 @@ public final class Golems {
         @Override
         public boolean canUse() {
             LivingEntity target = golem.getTarget();
-            return target != null && target.isAlive() && golem.distanceToSqr(target) <= 64.0
-                && !golem.getSensing().hasLineOfSight(target); // can't see it — something's in the way
+            if (target == null || !target.isAlive()) {
+                return false;
+            }
+            double dx = target.getX() - golem.getX();
+            double dz = target.getZ() - golem.getZ();
+            if (dx * dx + dz * dz > 64.0) {
+                return false; // too far off horizontally to be worth digging at
+            }
+            // A wall between us (can't see it), OR it's perched up a tower out of reach (see it, can't get it).
+            return !golem.getSensing().hasLineOfSight(target)
+                || target.getY() - golem.getY() > UNDERMINE_MIN_DY;
         }
 
         @Override
@@ -104,23 +100,50 @@ public final class Golems {
                 return;
             }
             Level level = golem.level();
-            BlockHitResult hit = level.clip(new ClipContext(golem.getEyePosition(), target.getEyePosition(),
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, golem));
-            if (hit.getType() != HitResult.Type.BLOCK) {
-                return; // clear line to the target — nothing in the way, so nothing to smash
+            // A wall between us: smash straight through it toward the target.
+            if (!golem.getSensing().hasLineOfSight(target)) {
+                BlockHitResult hit = level.clip(new ClipContext(golem.getEyePosition(), target.getEyePosition(),
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, golem));
+                if (hit.getType() == HitResult.Type.BLOCK) {
+                    smash(level, hit.getBlockPos());
+                }
+                return;
             }
-            BlockPos pos = hit.getBlockPos();
+            // Otherwise it's perched above (towered up to snipe with a bow) — pound the pillar out from under
+            // it. Loose soil then collapses (see DirtFalling), dropping it to you; a flung-up dirt tower is
+            // no refuge from a construct that can knock it down.
+            if (target.getY() - golem.getY() > UNDERMINE_MIN_DY) {
+                undermine(level, target);
+            }
+        }
+
+        /** Break a single block near the golem if it's within reach and not too tough. */
+        private void smash(Level level, BlockPos pos) {
             if (golem.distanceToSqr(Vec3.atCenterOf(pos)) > SMASH_RANGE_SQ) {
-                return; // the obstruction is too far to be the cheese wall — leave the world alone
+                return; // too far to be the cheese wall — leave the world alone
             }
             BlockState state = level.getBlockState(pos);
             float hardness = state.getDestroySpeed(level, pos);
             if (state.isAir() || hardness < 0f || hardness > MAX_HARDNESS) {
-                return; // air, unbreakable (bedrock), or too tough for even a golem to force through
+                return; // air, unbreakable (bedrock), or too tough for even a golem
             }
             golem.swing(InteractionHand.MAIN_HAND);
             level.destroyBlock(pos, false, golem, 512); // pulverised — plays the break effect itself
             cooldown = SMASH_INTERVAL;
+        }
+
+        /** Dig out the pillar under a perched target: break a reachable block of its supporting column near
+         *  the golem's own height. With the base gone, loose soil above it falls and the tower comes down. */
+        private void undermine(Level level, LivingEntity target) {
+            int cx = (int) Math.floor(target.getX());
+            int cz = (int) Math.floor(target.getZ());
+            int gy = golem.blockPosition().getY();
+            for (int y = gy + 2; y >= gy - 1; y--) {
+                smash(level, new BlockPos(cx, y, cz));
+                if (cooldown > 0) {
+                    return; // smashed one this pass
+                }
+            }
         }
     }
 
