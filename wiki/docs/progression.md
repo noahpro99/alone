@@ -47,7 +47,10 @@ The four ages below map to the real arc:
    it clean in a hide waterskin. In snow country you can eat a handful of snow in a pinch — but it
    [chills you](./features/water-and-drinking.md#eating-snow), so melt it if you can.
 6. **Hunt and butcher.** The [spear's reach](./features/hunting.md#the-spear--reach-from-the-first-day) is
-   the early game's best weapon; [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
+   the early game's best weapon against the woods' main wild game, the
+   **[deer](./features/hunting.md#deer--the-forests-wild-game)** (a skittish grazer you must stalk or run
+   down — small animals wind quickly, a big one takes real endurance to tire);
+   [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the
    meat over your fire. You can also **fish** for an easier, renewable catch — but a spot can be
@@ -69,9 +72,11 @@ The four ages below map to the real arc:
 
 *The turn from wandering to staying: grow more food than you eat today, and make it keep.*
 
-1. **Work clay.** Dig **clay** by water, shape an **unfired clay pot**, and you have a start on
-   [pottery](./features/water-and-drinking.md#vessels) — a real water and cooking vessel once fired (Age 3's
-   kiln). Woven **baskets** from plant fibre carry the light, bulky things.
+1. **Work clay.** Dig **clay** by water, shape an **unfired clay pot**, and **fire it hard in your campfire**
+   — open-hearth (pit) firing, the way the first potters hardened ware long before kilns existed — for a real
+   water and cooking [vessel](./features/water-and-drinking.md#vessels). You can bake **bricks** from clay the
+   same way. It's slow, one piece at a time — a proper **kiln** (Age 3) fires a whole batch at once. Woven
+   **baskets** from plant fibre carry the light, bulky things.
 2. **Plant a crop.** Till the ground with a **flint hoe** (a knapped blade lashed to a handle — the way
    the Neolithic farmed, long before any metal), then sow and harvest. The point isn't calories-per-click,
    it's **variety**: a
@@ -103,9 +108,11 @@ The four ages below map to the real arc:
 
 *A camp becomes a village: fired brick, high heat, and the first metal you can pour and hammer.*
 
-1. **Build a kiln.** Fire your clay in a [kiln](./features/fire.md) built of **fired bricks** — it hardens
-   pottery and bricks over a long, fuel-hungry burn, the first purpose-built heat structure above the
-   open campfire.
+1. **Build a kiln.** You can already pit-fire pottery and brick a piece at a time on the campfire; a
+   [kiln](./features/fire.md) built of those **fired bricks** is the **throughput** jump — it fires a
+   **whole batch (a full stack) in one long, fuel-hungry burn**, the first purpose-built heat structure
+   above the open fire, and the reason a village turns out pottery and brick by the load rather than one
+   at a time.
 2. **Make charcoal.** You need it hotter than wood-fire for metal: char wood down to **charcoal** (a
    burnt-out campfire leaves some; a furnace makes more). ⏳ A **charcoal clamp** will make it in bulk.
 3. **Work copper — the first metal.** Mine **copper ore** (a flint pick handles it), smelt it, and cast
