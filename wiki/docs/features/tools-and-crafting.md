@@ -73,7 +73,13 @@ Before saws, boards were **split from a log** with a froe and mallet — here, y
 - It's **brutal, slow work** — dozens of blows (~13 seconds) that **drain most of your stamina**, and a log yields just **2 rough boards**. A stack of planks is a real day's labour, not a crafting-grid afterthought.
 - Splitting runs *along* the grain, so it's gentle on the edge — the hatchet barely wears.
 
-A **hand saw** (an iron blade — **2 iron + a stick**) changes that. Same sneak + hold-right-click on a log, but sawing is **far quicker** (~6 seconds), **much easier on your wind** (a fraction of the stamina), and gives **4 clean boards** per log. It's the tool that turns plank-making from a chore into ordinary work — worth the iron once you're building in earnest.
+A **hand saw** turns that chore into ordinary work. **Craft it** from **2 iron ingots + a stick**, then use it exactly like riving:
+
+1. Hold a **log** in one hand and the **hand saw** in the other (either way round).
+2. **Sneak (crouch) and hold right-click** — a "Sawing…" progress readout ticks up.
+3. Keep holding for about **6 seconds** and the log saws into **4 clean boards**.
+
+Sawing costs only **a fraction of the stamina** riving does and yields **twice the boards**, so once you can spare the iron it's the way you make planks. (There's no crafting-grid shortcut — logs never craft straight into planks; you rive or saw them.)
 
 ## Timed, stationary crafting
 
