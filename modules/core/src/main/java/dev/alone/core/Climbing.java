@@ -40,11 +40,9 @@ public final class Climbing {
     private static final float CLIMB_STAMINA_DRAIN = 2.0f;  // clinging to bare rock is brutal, every tick
     private static final float LEAF_CLIMB_DRAIN = 0.6f;     // hauling up a tree is hard work too (a ~6 m tree ≈ most of your wind)
     private static final float CLIMB_MAX_WEIGHT = 25f;      // more than ~one block's mass and you can't haul up at all
-    /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate bare-rock climbing. */
+    /** Wall-climbing pace as a fraction of ladder speed — slow, deliberate bare-rock climbing. The lip is
+     *  climbed at this same pace; we never add an upward push of our own (that used to launch you over). */
     public static final double WALL_CLIMB_SPEED = 0.3;
-    /** Upward pace while cresting a wall's lip — the same slow, steady climb as the rest of the face, so
-     *  finishing a climb doesn't lurch; it just carries you over the edge at climbing speed. */
-    public static final double TOP_OUT_LIFT = 0.07;
     /** Tree/canopy pace — slow, but a touch quicker than bare rock since branches give you holds. */
     public static final double LEAF_CLIMB_SPEED = 0.4;
 
@@ -324,25 +322,11 @@ public final class Climbing {
         if (!recentlyGripped(player)) {
             return false; // a lone step you weren't already climbing — just jump it
         }
-        // Finishing a climb: the top block of the wall (foot hold, clear above), OR the block just
-        // above the lip (nothing at your feet yet, but the wall you climbed is right below) — so the
-        // climb carries you all the way up and over the edge instead of stranding you under it.
-        boolean belowFoot = isFlatWall(level, feet.below().relative(dir));
-        return (foot && !head) || (!foot && belowFoot);
-    }
-
-    /** In the finishing zone of a climb — cresting the wall's lip — where the climb should lift you
-     *  steadily up and over rather than clamp you to the wall face. */
-    public static boolean isToppingOut(Player player) {
-        return !inLeaves(player) && recentlyGripped(player) && hasClimbableWall(player) && isCresting(player);
-    }
-
-    private static boolean isCresting(Player player) {
-        Level level = player.level();
-        Direction dir = player.getDirection();
-        BlockPos feet = player.blockPosition();
-        boolean head = isFlatWall(level, feet.above().relative(dir));
-        return !head; // no wall at head height → you're at/over the top, not mid-face
+        // Finishing a climb: the top block of the wall still counts (foot hold, clear above) so you can climb
+        // it to crest. But we do NOT extend the climb ABOVE the wall's top — that "block below the lip" path
+        // kept you gripping while standing over the edge, which read as floating and let the crest launch you.
+        // Once your feet clear the top block there's no face here, so the climb ends and you walk onto the ledge.
+        return foot && !head;
     }
 
     private static boolean recentlyGripped(Player player) {

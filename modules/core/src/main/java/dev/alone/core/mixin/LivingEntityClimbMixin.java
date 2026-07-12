@@ -53,14 +53,12 @@ public class LivingEntityClimbMixin {
             cir.setReturnValue(new Vec3(m.x, Climbing.LEAF_DESCEND_SPEED, m.z));
             return;
         }
-        // Finishing the climb: over the lip, rise steadily up and let your forward input carry you onto
-        // the ledge — climb all the way up, no lurch.
-        if (Climbing.isToppingOut(player)) {
-            cir.setReturnValue(new Vec3(m.x, Climbing.TOP_OUT_LIFT, m.z));
-            return;
-        }
+        // Slow the climb up — the whole face AND the last block at the lip run at this one steady pace, and
+        // ONLY while you're actually pressing up (m.y > 0). We never force an upward push of our own: that's
+        // what used to launch you over the top and read as "faster at the end". You crest under your own
+        // input, then walk forward onto the ledge. The climb down stays ladder-smooth (m.y ≤ 0 untouched).
         double factor = Climbing.climbSpeedFactor(player);
-        if (factor < 1.0 && m.y > 0.0) { // slow the climb up; leave the climb down ladder-smooth
+        if (factor < 1.0 && m.y > 0.0) {
             cir.setReturnValue(new Vec3(m.x, m.y * factor, m.z));
         }
     }
