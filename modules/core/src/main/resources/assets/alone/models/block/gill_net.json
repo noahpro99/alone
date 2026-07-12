@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
-  "textures": { "particle": "minecraft:block/cobweb", "all": "minecraft:block/cobweb" },
+  "textures": { "particle": "alone:block/gill_net", "all": "alone:block/gill_net" },
   "elements": [
     {
       "from": [0, 0, 0],

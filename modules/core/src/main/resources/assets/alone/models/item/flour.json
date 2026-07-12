@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "minecraft:item/sugar" } }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "alone:item/flour"
+  }
+}

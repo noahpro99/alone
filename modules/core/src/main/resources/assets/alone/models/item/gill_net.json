@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "minecraft:block/cobweb" } }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "alone:item/gill_net"
+  }
+}

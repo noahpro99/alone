@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "alone:item/rock"
+    "layer0": "alone:item/hot_rock"
   }
 }
