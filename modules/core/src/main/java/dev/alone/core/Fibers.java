@@ -94,8 +94,14 @@ public final class Fibers {
             0.4f, 0.9f + rng.nextFloat() * 0.2f);
         SurvivalMeters.exert(player, STAMINA_PER_TUG);
 
+        // Keep accumulating as long as the tugs keep coming and you're still on a fibrous plant — we do NOT
+        // require the exact same block each tug. A double-height plant (tall grass, large fern) is two block
+        // positions, and view-bob alone jitters your crosshair between its upper and lower halves; requiring
+        // an exact pos match reset the count every other tug, so stripping tall grass would hang forever at
+        // "Stripping fibre…" and never finish. Looking away to a non-plant still breaks it (findFibrousPlant
+        // returns null above), so this only forgives which *part* of the greenery you're aimed at.
         Strip current = ACTIVE.get(player.getUUID());
-        boolean continuing = current != null && current.pos.equals(plant) && player.tickCount - current.atTick <= 12;
+        boolean continuing = current != null && player.tickCount - current.atTick <= 16;
         int tugs = continuing ? current.tugs + 1 : 1;
         if (tugs < TUGS_TO_STRIP) {
             player.sendSystemMessage(Component.literal("Stripping fibre…"), true);
