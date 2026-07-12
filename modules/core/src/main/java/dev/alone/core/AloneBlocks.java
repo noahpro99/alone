@@ -39,6 +39,29 @@ public final class AloneBlocks {
         });
 
     /**
+     * A warmth-rated sleeping bag (§5.5) — a bedroll that sleeps like a real cold-weather bag. Mechanically
+     * it places, sleeps, sets spawn and skips the night like the {@link #BEDROLL}, but {@link SurvivalMeters}
+     * gives it strong insulation <b>while you sleep in it</b>, so a cold or even freezing night still rests
+     * you fully (a bedroll leaves you shivering). The trade: it costs more loft (wool) and a shell (leather)
+     * to make, and — like all insulation — a soaked bag holds almost no heat, so keep it dry. Reuses the
+     * bedroll model/textures as <b>placeholder art</b> for now.
+     */
+    public static final Block SLEEPING_BAG = register("sleeping_bag",
+        key -> new BedBlock(DyeColor.RED, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_RED)
+            .sound(SoundType.WOOL)
+            .strength(0.2F)
+            .noOcclusion()
+            .ignitedByLava()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)) {
+            @Override
+            public net.minecraft.world.level.block.RenderShape getRenderShape(net.minecraft.world.level.block.state.BlockState state) {
+                return net.minecraft.world.level.block.RenderShape.MODEL;
+            }
+        });
+
+    /**
      * Rope (proposal §5.7) — a hanging climb line. No collision (you move through it) and it's in the
      * {@code minecraft:climbable} tag, so vanilla treats it exactly like a ladder: full-speed, no-cost,
      * safe up-and-down climbing — the civilized alternative to brutal free-climbing. Deployed as a run

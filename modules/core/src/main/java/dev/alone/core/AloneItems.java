@@ -79,6 +79,10 @@ public final class AloneItems {
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));
+    /** A warmth-rated sleeping bag — a bedroll that keeps you warm enough to rest well on a cold night
+     *  (see {@link AloneBlocks#SLEEPING_BAG}; insulation applied in {@link SurvivalMeters}). */
+    public static final Item SLEEPING_BAG = register("sleeping_bag",
+        key -> new BedItem(AloneBlocks.SLEEPING_BAG, new Item.Properties().stacksTo(1).setId(key)));
     public static final Item WATERSKIN = register("waterskin",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3, false));
     /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */

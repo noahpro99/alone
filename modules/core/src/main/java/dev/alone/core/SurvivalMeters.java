@@ -134,6 +134,7 @@ public final class SurvivalMeters {
     private static final float METAL_INSULATION = 2f;    // per metal plate — barely a windbreak
     private static final float HEAT_TRAP = 0.4f;         // fraction of your insulation that turns into a burden when hot
     private static final float WET_INSULATION_FACTOR = 0.25f; // soaked hide/wool holds almost no heat — wet is deadly
+    private static final float BAG_INSULATION = 0.9f;    // a warmth-rated sleeping bag pulls a cold night nearly to comfort (§5.5)
     private static final float METAL_SUN_HEAT = 4f;      // per metal plate baking under an open sky
     private static final EquipmentSlot[] ARMOR_SLOTS =
         {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
@@ -468,6 +469,14 @@ public final class SurvivalMeters {
         return envTarget;
     }
 
+    /** True when the player is asleep in a {@link AloneBlocks#SLEEPING_BAG} — the warmth-rated bag that
+     *  insulates you through a cold night (§5.5), as opposed to a bare bedroll. */
+    private static boolean inSleepingBag(Player player) {
+        return player.isSleeping() && player.getSleepingPos()
+            .map(pos -> player.level().getBlockState(pos).is(AloneBlocks.SLEEPING_BAG))
+            .orElse(false);
+    }
+
     /** Leather/hide armour — the insulating layers, as opposed to conducting metal plates. */
     private static boolean isLeather(ItemStack stack) {
         return stack.is(Items.LEATHER_HELMET) || stack.is(Items.LEATHER_CHESTPLATE)
@@ -583,6 +592,13 @@ public final class SurvivalMeters {
             // What you're wearing shifts how the environment reaches you (§1.3/§5.5). Submerged, clothing is
             // moot (handled above); in air it insulates — but soaked layers keep only a fraction of it.
             envTarget = clothingShift(player, envTarget, wet);
+        }
+        // A warmth-rated sleeping bag traps your body heat while you sleep, so a cold — even freezing —
+        // night still rests you (§5.5). It's the last insulating layer, over your clothes. Like all loft it
+        // dies wet, so a soaked bag barely helps: keep it dry. Only warms (a bag never cools you in heat).
+        if (!submerged && envTarget < 0f && inSleepingBag(player)) {
+            float bag = wet ? BAG_INSULATION * WET_INSULATION_FACTOR : BAG_INSULATION;
+            envTarget += (0f - envTarget) * bag;
         }
         envTarget = clampTemp(envTarget);
         float envRate = Math.abs(envTarget) > Math.abs(bodyTemp) ? EXPOSURE_RATE : RECOVERY_RATE;

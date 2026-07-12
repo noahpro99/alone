@@ -32,6 +32,12 @@ The **bedroll** is a craftable bed block (from wool and leather) and a big upgra
 - It **sets your spawn point**, so you respawn where you slept.
 - It gives **far better rest** than the bare ground.
 
+### The sleeping bag — a warmth-rated upgrade
+
+The **sleeping bag** (crafted from more wool and a leather shell — 3 wool + 2 leather) places and sleeps exactly like a bedroll, but adds one thing that matters in the cold: **it keeps you warm while you sleep in it**. A bedroll leaves you shivering on a freezing night — a poor rest — but zipped into a warmth-rated bag, a cold or even freezing night still gives you a **full night's recovery**. It's the difference between surviving a winter night and dreading it.
+
+The catch is the same one that governs all insulation: **a soaked bag holds almost no heat**. Keep it dry (under a roof, out of the rain) or its loft collapses and it barely helps — so it pairs with shelter, it doesn't replace it.
+
 ## Sleeping fast-forwards the night — it doesn't skip it
 
 Lying down in a bed **doesn't blink you to dawn**. Instead the whole world **runs fast** until morning, then drops back to normal speed:

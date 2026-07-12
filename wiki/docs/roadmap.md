@@ -184,8 +184,10 @@ the list, with reason**):
   trap is the weir; a portable net could be its own item), fishing line & hooks ✅ (rod), bank line ✅ (rope),
   **slingshot** 🔨 (a low-power ranged small-game option below the bow — nice-to-have).
 - **Shelter & cordage:** paracord/rope ✅, **heavy tarp** 🔨 (a quick waterproof rain/shelter cover — ties
-  into the planned shelter ladder), bivy/−40 sleeping bag 🔶 (bedroll exists; a *warmth-rated* bag variant is
-  the gap — strong cold insulation for sleep), wool blanket 🔶 (warmth; maps to insulation).
+  into the planned shelter ladder), bivy/−40 **sleeping bag** ✅ (a warmth-rated bedroll variant: places and
+  sleeps like the bedroll but insulates you through a cold/freezing night for full recovery, where a plain
+  bedroll leaves you shivering; dies wet like all loft. 3 wool + 2 leather), wool blanket 🔶 (warmth; maps
+  to insulation).
 - **Fire & cooking:** **ferro rod** ✅ (a reliable, rain-tolerant fire-starter above friction fire — exactly
   why contestants prize it: catches in ~2 strokes at ~0.6 chance, works in the rain where the bow drill only
   smokes, near-zero stamina, 200-use rod. Forged from 2 steel + flint, so it's a hard endgame gate you build
@@ -199,10 +201,10 @@ the list, with reason**):
   deliberately *not* being built — Alone's realism here is physical, and a happiness meter would be a HUD
   abstraction rather than a felt mechanic), eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
 
-So the loadout doubles as a **to-do list of mechanics**. Ferro rod is **done** ✅; the remaining 🔨 builds
-are a **tarp**, a **warmth-rated sleeping bag**, a **cloth/leather sewing-repair**, and optionally a
-**slingshot** and a **portable net** — plus the pick-2 selection screen itself. Build those and nearly the
-whole real list becomes a meaningful choice.
+So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅ and the warmth-rated sleeping bag ✅
+are **done**; the remaining 🔨 builds are a **tarp**, a quick **leaf/stick shelter block**, a
+**cloth/leather sewing-repair**, and optionally a **slingshot** and a **portable net** — plus the pick-2
+selection screen itself. Build those and nearly the whole real list becomes a meaningful choice.
 
 ## Death, respawn & run modes
 
