@@ -1,33 +1,37 @@
 package dev.alone.core;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BlocksAttacks;
 
 /**
  * A shield doesn't save you from an animal that hits harder than a person (proposal §1.5 / roadmap combat
- * depth). This repurposes vanilla's own <b>temporary shield-disable</b> (the greyed-out, can't-block cooldown
- * an axe hit inflicts) for beasts, in two tiers by how the real fight goes:
+ * depth). This drives beasts through vanilla's <b>own</b> shield-disable — the exact code path a vindicator's
+ * axe uses: {@link BlocksAttacks#disable} on the blocking item, given a number of seconds. That's the greyed-
+ * out, can't-block cooldown (with the shield's own disable sound, its {@code disable_cooldown_scale}, and the
+ * client HUD sync) — not a hand-rolled cooldown. We just supply the seconds, in two tiers by how the real
+ * fight goes:
  * <ul>
  *   <li><b>Smashers</b> ({@link #SHIELD_BREAKERS} — bear, bison, ravager, golem, warden): sheer mass bashes a
- *       braced guard <em>aside</em>. A long disable ({@value #DISABLE_TICKS}t ≈ 6s) — you can brace one blow,
- *       but you can't turtle; the follow-up lands on flesh.</li>
+ *       braced guard <em>aside</em>. A long disable ({@value #SMASH_SECONDS}s) — you can brace one blow, but you
+ *       can't turtle; the follow-up lands on flesh.</li>
  *   <li><b>Staggerers</b> ({@link #SHIELD_STAGGERERS} — the wild boar): a fast, low charge <em>bowls your
- *       guard aside</em> and drives under it at your legs. A brief disable ({@value #STAGGER_TICKS}t ≈ 2s) —
- *       a stagger you recover from, not a shattered guard. So you don't hold block against a boar; you take
- *       the hit off your guard, then strike on its overshoot (the way a boar spear's crossguard, not a shield,
- *       was the real tool). Fast and recoverable, unlike a bear's overwhelming bulk.</li>
+ *       guard aside</em> and drives under it at your legs. A brief disable ({@value #STAGGER_SECONDS}s) — a
+ *       stagger you recover from, not a shattered guard. So you don't hold block against a boar; you take the
+ *       hit off your guard, then strike on its overshoot (the way a boar spear's crossguard, not a shield, was
+ *       the real tool). Fast and recoverable, unlike a bear's overwhelming bulk.</li>
  * </ul>
- * The block still spends the shield's durability as vanilla does — so it's drained as well as beaten.
+ * The block still spends the item's durability as vanilla does — so it's drained as well as beaten.
  */
 public final class ShieldBreaking {
     private ShieldBreaking() {
@@ -41,12 +45,13 @@ public final class ShieldBreaking {
     public static final TagKey<EntityType<?>> SHIELD_STAGGERERS =
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "shield_staggerers"));
 
-    private static final int DISABLE_TICKS = 120; // ~6s — a smasher knocks your guard down; follow-ups land
-    private static final int STAGGER_TICKS = 40;  // ~2s — a boar's charge staggers your guard; you recover
+    private static final float SMASH_SECONDS = 6.0f;   // a smasher knocks your guard down; follow-ups land
+    private static final float STAGGER_SECONDS = 2.0f; // a boar's charge staggers your guard; you recover
 
     public static void init() {
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, takenDamage, blocked) -> {
-            if (!blocked || !(entity instanceof ServerPlayer player)) {
+            if (!blocked || !(entity instanceof ServerPlayer player)
+                || !(player.level() instanceof ServerLevel level)) {
                 return;
             }
             Entity attacker = source.getDirectEntity();
@@ -58,14 +63,19 @@ public final class ShieldBreaking {
             if (!smasher && !staggerer) {
                 return;
             }
-            ItemStack shield = shieldInHand(player);
-            if (shield.isEmpty()) {
+            // The item that just soaked the blow — normally the shield being blocked with (fall back to a
+            // shield in hand). It must actually be a blocking item (carry BLOCKS_ATTACKS) to be disabled.
+            ItemStack blockingWith = player.getItemBlockingWith();
+            if (blockingWith == null || blockingWith.isEmpty()) {
+                blockingWith = shieldInHand(player);
+            }
+            BlocksAttacks blocksAttacks = blockingWith.isEmpty() ? null : blockingWith.get(DataComponents.BLOCKS_ATTACKS);
+            if (blocksAttacks == null) {
                 return;
             }
-            player.getCooldowns().addCooldown(shield, smasher ? DISABLE_TICKS : STAGGER_TICKS);
-            player.stopUsingItem(); // drop the block that just soaked the blow
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0f, smasher ? 0.8f : 1.1f);
+            // Vanilla's exact disable (the vindicator-axe path): cooldown + stop blocking + the shield's own
+            // disable sound + client sync, scaled by the shield's disable_cooldown_scale.
+            blocksAttacks.disable(level, player, smasher ? SMASH_SECONDS : STAGGER_SECONDS, blockingWith);
             player.sendSystemMessage(Component.literal(smasher
                 ? "The blow smashes your guard aside — no shield will hold against that."
                 : "The boar's charge bowls your guard aside — it drives in low, under the shield."), true);
