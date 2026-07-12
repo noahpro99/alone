@@ -290,6 +290,11 @@ public final class AloneItems {
         key -> new Item(new Item.Properties().setId(key)));
     public static final Item STEEL_SWORD = register("steel_sword",
         key -> new Item(new Item.Properties().sword(STEEL, 3.0F, -2.4F).setId(key)));
+    /** A steel knife (§8.5) — a proper forged survival blade, the kind a contestant actually brings from
+     *  home (you knap flint in the field; you don't pack a flint knife). A butchering/carving blade: sharp
+     *  and fast, less damage than the sword but keener than the flint knife. Placeholder art (flint knife). */
+    public static final Item STEEL_KNIFE = register("steel_knife",
+        key -> new Item(new Item.Properties().sword(STEEL, 2.5F, -2.0F).setId(key)));
     public static final Item STEEL_PICKAXE = register("steel_pickaxe",
         key -> new Item(new Item.Properties().pickaxe(STEEL, 1.0F, -2.8F).setId(key)));
     public static final Item STEEL_AXE = register("steel_axe",

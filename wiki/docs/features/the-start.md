@@ -32,10 +32,10 @@ The approved list — each is real gear whose mechanic already exists, and each 
 | **Takedown bow** | Bow + 16 arrows — ranged hunting from day one |
 | <img class="mc-icon" src="/alone/item/iron_pot.png" alt="Iron pot"/> **Iron pot** | Boil water clean and cook, no clay needed |
 | <img class="mc-icon" src="/alone/item/sleeping_bag.png" alt="Sleeping bag"/> **Sleeping bag** | Full rest through a freezing night (see [Sleep & Rest](./sleep-and-rest.md)) |
-| **Tarp** ×3 | Waterproof, fireproof shelter you can pitch anywhere |
+| **Tarp** ×9 | A 9 m² sheet — waterproof, fireproof shelter you can pitch anywhere |
 | **Snare wire** ×12 | Skip the slow hand-twisting of cordage |
 | **Felling axe** | Fell trees and split wood without knapping one first |
-| **Field knife** | A proper blade for butchering and carving |
+| **Steel knife** | A proper forged blade for butchering and carving |
 | <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Fishing_Rod.png" alt="Fishing rod"/> **Fishing rod** | Fish the water without building a weir |
 | **Sewing kit** | Keep your hide clothing mended (see [Tools & Crafting](./tools-and-crafting.md)) |
 | <img class="mc-icon" src="/alone/item/rope.png" alt="Rope"/> **Rope** ×16 | A 16 m coil — a real climb line down a cliff (see [Climbing & Rope](./climbing-and-rope.md)) |

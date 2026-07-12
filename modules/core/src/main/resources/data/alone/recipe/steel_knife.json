@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "alone:steel_ingot",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "alone:steel_knife",
+    "count": 1
+  }
+}
