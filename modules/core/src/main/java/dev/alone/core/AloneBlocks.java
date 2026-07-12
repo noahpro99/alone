@@ -220,6 +220,20 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A gill net (§7.2) — the portable, open-water counterpart to the fixed {@link #FISH_TRAP weir}: a mesh
+     *  of cordage set on open/deep water that catches faster and holds a small batch, but won't fish a shore
+     *  or puddle. Placed on water like a lily pad; random-ticks to catch (see {@link GillNetBlock}). */
+    public static final Block GILL_NET = register("gill_net",
+        key -> new GillNetBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WATER)
+            .sound(SoundType.WET_GRASS)
+            .strength(0.3F)
+            .noCollision()
+            .noOcclusion()
+            .randomTicks()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */

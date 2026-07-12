@@ -186,6 +186,16 @@ the water and it catches fish **passively**, no rod and no standing on the bank.
 - Like the land traps, it keeps working through the days you [fast-forward by resting](./sleep-and-rest.md)
   — set it before bed, take the catch in the morning.
 
+### The gill net — the open-water alternative
+
+The **gill net** is the weir's portable, open-water cousin — a mesh of **cordage** (crafted from **string**, no basket) you string across **deep water**. Where the weir funnels fish at any shoreline, the net is a **lake-and-coast** tool:
+
+- It only fishes **open, deep water** — set it on a **puddle or a narrow creek and it catches nothing** (the fish just go around it), so you read the water before you set it.
+- It's **faster** than the weir, and it **holds a batch** — up to **three** fish accumulate before it's full — so you check it less often and haul up a catch at once (**right-click** to take the whole lot).
+- It draws on the same finite [fish stock](./food-and-eating.md#fishing), so even open water thins if you work it too hard.
+
+So the two fishing traps split by water: the **weir** for a **shore or pond**, the **gill net** for **open water** — pick the tool to the place.
+
 So the trapping ladder is three passive food sources you set and leave: the **snare** (free small game), the
 **deadfall** (baited small game, better odds), and the **fish trap** (passive fishing) — the backbone of how
 you eat when you can't hunt every hour of daylight.

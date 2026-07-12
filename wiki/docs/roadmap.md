@@ -171,10 +171,11 @@ is ways to extend it:
 
 - **Graphical selection screen** — a proper picker window over the existing command/clickable-chat loadout
   (same underlying picks, biome read, and one-time gate).
-- **More list options to build:** a **slingshot** (low-power ranged small game below the bow), a **portable
-  gill net** (a carried alternative to the fixed fish weir), and — deepening existing systems — a **hand
-  saw** (faster log→plank), a **frying pan** (better cook surface), **soap/towel** (better washing/drying),
-  and a **grain/bread path** for the ration slot.
+- **More list options to build:** a **slingshot** (low-power ranged small game below the bow), and —
+  deepening existing systems — a **hand saw** (faster log→plank), a **frying pan** (better cook surface),
+  **soap/towel** (better washing/drying), and a **grain/bread path** for the ration slot. *(The **gill net**
+  — an open-water alternative to the fixed weir — has shipped; see
+  [Hunting & Wildlife](./features/hunting.md#the-gill-net--the-open-water-alternative).)*
 - **Decided against:** a **personal photograph / morale system** — Alone's realism here is physical, and a
   happiness meter would be a HUD abstraction rather than a felt mechanic, so it's deliberately not built.
 

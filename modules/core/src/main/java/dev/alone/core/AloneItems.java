@@ -142,6 +142,9 @@ public final class AloneItems {
 
     public static final Item FISH_TRAP = register("fish_trap",
         key -> new net.minecraft.world.item.PlaceOnWaterBlockItem(AloneBlocks.FISH_TRAP, new Item.Properties().setId(key)));
+    /** A gill net — a portable, open-water fishing net (see {@link AloneBlocks#GILL_NET}); set on deep water. */
+    public static final Item GILL_NET = register("gill_net",
+        key -> new net.minecraft.world.item.PlaceOnWaterBlockItem(AloneBlocks.GILL_NET, new Item.Properties().setId(key)));
 
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",

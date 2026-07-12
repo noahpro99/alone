@@ -73,6 +73,16 @@ public final class FishStock {
         return tryCatch(level, pos);
     }
 
+    /** How much open, deep water a spot needs before a gill net will fish it — below this it's a shore or a
+     *  puddle where a net can't span (a weir still works there). */
+    private static final float OPEN_WATER_MIN = 0.5f;
+
+    /** Whether this spot is open, deep-enough water to string a gill net across, as opposed to a shore or
+     *  narrow creek (where the fixed weir is the tool instead). */
+    public static boolean isOpenWater(ServerLevel level, BlockPos pos) {
+        return richness(level, pos) >= OPEN_WATER_MIN;
+    }
+
     /** Draw a fish from the spot if the stock allows; otherwise deny. Fish return over calendar time, so a
      *  fished-out spot recovers whether or not you keep casting — we only touch state on an actual catch,
      *  and recovery accrues from the last CATCH (not every futile cast, which must not reset the clock). */

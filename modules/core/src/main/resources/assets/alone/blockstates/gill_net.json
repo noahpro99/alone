@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "fish=0": { "model": "alone:block/gill_net" },
+    "fish=1": { "model": "alone:block/gill_net" },
+    "fish=2": { "model": "alone:block/gill_net" },
+    "fish=3": { "model": "alone:block/gill_net" }
+  }
+}
