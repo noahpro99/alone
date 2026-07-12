@@ -1,5 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredients": ["minecraft:bone"],
+  "ingredients": ["minecraft:bone", "alone:rock"],
   "result": {"id": "alone:bone_marrow", "count": 1}
 }
