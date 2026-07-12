@@ -71,6 +71,12 @@ Every part has a use:
 
 (Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
 
+## Deer — the forest's wild game
+
+The **deer** is the proper wild game of the woods — the animal a survivor really lives off. It's a **skittish grazer**: get near and it **bolts**, running *fast*, so you can't just walk up and club it. You **stalk** it (stay downwind, move slow) or **run it down** by [persistence hunting](#persistence-hunting--run-it-down) over distance. A **blade kill** yields **venison** and a **hide** (with bone and sinew), like any hide-bearing animal, and deer count as [game](#game-runs-out-if-you-overhunt) — overhunt a patch and they thin out. They spawn in **forest, taiga, and hill country** in small herds, and — like all animals — **won't breed in winter**.
+
+*(Deer currently use placeholder cow art until a proper deer model is made.)*
+
 ## Game runs out if you overhunt
 
 Wild game isn't infinite. **Hunt one patch of country too hard and you thin it out** — the animals grow scarce there and **stop spawning**, until the population **breeds back over the following days**, or you move to fresh ground. It's the hunting twin of [finite fish stocks](./food-and-eating.md#fishing): a small valley empties fast, a broad range lasts. So a survivor **works a range** rather than camping one spot and stripping it bare. (Predators don't count as game — only the animals you hunt for food.)

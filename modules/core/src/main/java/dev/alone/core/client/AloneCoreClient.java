@@ -73,6 +73,10 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.BROWN_BEAR, BrownBearRenderer::new);
 
+        // The deer (§7.2) reuses the cow model as placeholder art until a real deer model is made.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.DEER, DeerRenderer::new);
+
         // Show the piece of food curing on a drying rack (§4.2) — read from the rack's synced attachment.
         net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
             dev.alone.core.AloneBlocks.DRYING_RACK_BLOCK_ENTITY, DryingRackRenderer::new);
