@@ -116,9 +116,13 @@ food economy of the show *Alone*: rarely a deer, often a squirrel.
 ## Trapping — the food that works while you don't
 
 Active hunting costs time and daylight; a **trap** feeds you while you do everything else. It's how people
-really live on the show *Alone*, and the first rung is the **snare** — a cordage noose set on the ground.
+really live on the show *Alone*. You have two land traps — the **snare** and the **deadfall** — and *which*
+you reach for is a real decision that comes down to what you can spare (see [below](#which-trap-and-when)).
 
-- **Craft** it from cordage: two **string** and a **stick**.
+The **snare** is a cordage noose set on the ground.
+
+- **Craft** it from cordage: two **string** and a **stick** — and string is a real investment now (strip
+  plant fibre, then slowly reverse-wrap it into a length), so a snare is cordage you've *earned*.
 - **Set** it on solid ground near cover and a game trail, then leave it. Over time, small game blunders in
   and it **springs** — you can see a set snare from an empty one.
 - **Check** it with a right-click: take the catch — a **scrap of small-game meat**, sometimes a **hide** —
@@ -134,9 +138,9 @@ really live on the show *Alone*, and the first rung is the **snare** — a corda
 
 ### The deadfall — bait for better odds
 
-The **deadfall** is the next rung: a heavy stone propped over a trigger, the Paiute trap. Where the snare is
-free but slow, the deadfall is the other trade — it **costs bait** and is **one-shot**, but a baited stone
-pulls game in far better:
+The **deadfall** is the other trap: a heavy stone propped over a trigger, the Paiute trap. Where the snare
+costs **cordage** but then runs itself, the deadfall needs **no cordage at all** — you can build one your
+first day — but it **costs bait** and is **one-shot**, in return for pulling game in far better:
 
 - **Craft** it from two **rocks** and two **sticks** (a heavy flat stone and its trigger).
 - **Set** it on the ground, then **right-click it with any food** to **bait and arm** it — you can see a
@@ -145,9 +149,23 @@ pulls game in far better:
   two meat, more often a hide. When it springs, the stone **drops**.
 - **Right-click** the sprung trap to take the catch; it **collapses and must be re-baited** to use again.
 
-So the two early traps are a real choice: run a line of **free, passive snares**, or spend food to **bait
-deadfalls** for better returns where game is worth it. Both draw on the local
-[game population](#game-runs-out-if-you-overhunt), so neither works a stripped-out patch.
+### Which trap, and when
+
+The choice between them is the real one a trapper makes, and it comes down to **what you can spare** —
+cordage, bait, or energy:
+
+- **No cordage yet? Build a deadfall.** It's just rocks, sticks, and a scrap of **bait** — buildable your
+  first day, before you've twisted any string. The price is that it **eats food to bait**, is **one-shot**
+  (re-bait after every catch), and is hands-on to tend — the primitive, higher-effort option.
+- **Have cordage? Run snares.** Cordage is a real investment now (strip fibre, then a slow twist), but once
+  you've paid it, a snare is **bait-free, passive, and resets itself** — you set a line and walk it for next
+  to no food and almost no energy.
+
+That's exactly how it goes on *Alone*: with **cordage** to spare you run passive snares — they cost no food
+and barely any energy, which is *everything* when you're starving — and with **none** (or with bait to
+spare and game that comes to food) you fall back on the deadfall. Both draw on the local
+[game population](#game-runs-out-if-you-overhunt), so neither works a stripped-out patch, and both reward
+**spreading a line across country** rather than bunching them on one spot.
 
 ### The fish trap — passive fishing
 

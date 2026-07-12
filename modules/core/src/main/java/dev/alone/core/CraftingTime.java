@@ -38,7 +38,8 @@ public final class CraftingTime {
     // Craft durations in ticks (20/s) — compressed real-world effort. Tunable; a datapack could refine.
     private static final int SIMPLE = 40;    // ~2s: sticks, a torch
     private static final int PLANK = 240;    // ~12s: riving/sawing a log into boards is slow, real work
-    private static final int CORDAGE = 240;  // ~12s: reverse-wrap twisting fibre into a length of string
+    private static final int CORDAGE = 400;  // ~20s: reverse-wrap twisting fibre into a length of string — the
+                                             // slow, hands-on job real cordage is, so string is a genuine investment
                                              // (~20 min/yard, ~6 m/hr real → ~8–17s at the 72x day scale)
     private static final int FOOD = 100;     // ~5s: prep a meal
     private static final int STATION = 1200; // ~60s: a chest, furnace — real joinery/masonry
