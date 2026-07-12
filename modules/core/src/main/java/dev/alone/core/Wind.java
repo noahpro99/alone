@@ -15,8 +15,33 @@ public final class Wind {
     private Wind() {
     }
 
+    // Debug override (set via /alone wind). Volatile + shared static, so on a single-player integrated server
+    // both the server (Scent) and the client HUD read the same forced wind; on a dedicated server only the
+    // server side sees it. Null = natural, deterministic wind.
+    private static volatile Vec3 overrideToward = null;
+    private static volatile Float overrideStrength = null;
+
+    /** Force the wind (debug): a horizontal unit vector it blows toward, and a 0..1 strength. */
+    public static void setOverride(Vec3 toward, float strength) {
+        overrideToward = toward.normalize();
+        overrideStrength = net.minecraft.util.Mth.clamp(strength, 0f, 1f);
+    }
+
+    /** Back to the natural, day-derived wind. */
+    public static void clearOverride() {
+        overrideToward = null;
+        overrideStrength = null;
+    }
+
+    public static boolean isOverridden() {
+        return overrideToward != null;
+    }
+
     /** Horizontal unit vector the wind blows <b>toward</b> — fixed for the in-game day, shifting each day. */
     public static Vec3 direction(Level level) {
+        if (overrideToward != null) {
+            return overrideToward;
+        }
         long day = level.getOverworldClockTime() / 24000L;
         // Deterministic per-day angle, no RNG — a SplitMix-style mix of the day number spread over a full turn.
         long h = day * 0x9E3779B97F4A7C15L;

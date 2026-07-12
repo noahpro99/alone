@@ -16,8 +16,25 @@ public final class Seasons {
     // survival test you stockpile for, and a crop has a whole season to grow. (Was 7 — over-compressed.)
     public static final int SEASON_LENGTH_DAYS = 28;
 
+    // Debug override (set via /alone season). Volatile shared static — reflects on both sides of a
+    // single-player integrated server. Null = natural, day-derived season.
+    private static volatile Integer overrideIndex = null;
+
+    /** Force the season (debug): 0 spring, 1 summer, 2 autumn, 3 winter. */
+    public static void setOverride(int index) {
+        overrideIndex = ((index % 4) + 4) % 4;
+    }
+
+    /** Back to the natural, day-derived season. */
+    public static void clearOverride() {
+        overrideIndex = null;
+    }
+
     /** 0 = spring, 1 = summer, 2 = autumn, 3 = winter. */
     public static int index(Level level) {
+        if (overrideIndex != null) {
+            return overrideIndex;
+        }
         long day = level.getGameTime() / 24000L;
         return (int) ((day / SEASON_LENGTH_DAYS) % 4L);
     }
