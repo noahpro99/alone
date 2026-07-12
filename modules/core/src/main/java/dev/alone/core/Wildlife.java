@@ -37,9 +37,9 @@ public final class Wildlife {
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
     private static final double FLEE_RANGE = 12.0;  // how close a standing player they'll tolerate before bolting
-    private static final double BOLT_RANGE = 7.0;   // inside this they sprint clear, not just amble off
-    private static final double WALK_AWAY = 1.1;    // speed modifier ambling away at the edge of tolerance
-    private static final double BOLT = 1.5;         // speed modifier sprinting when you're right on them
+    private static final double BOLT_RANGE = 9.0;   // inside this they sprint clear, not just amble off
+    private static final double WALK_AWAY = 1.4;    // speed modifier ambling away at the edge of tolerance
+    private static final double BOLT = 2.0;         // speed modifier sprinting when you're on them — outpaces a sprint
 
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
@@ -73,6 +73,7 @@ public final class Wildlife {
     private static class SkittishFleeGoal extends Goal {
         private final PathfinderMob mob;
         private Player threat;
+        private int repath;
 
         SkittishFleeGoal(PathfinderMob mob) {
             this.mob = mob;
@@ -120,8 +121,11 @@ public final class Wildlife {
             this.mob.getLookControl().setLookAt(this.threat); // keep an eye on the threat
             boolean close = this.mob.distanceToSqr(this.threat) < BOLT_RANGE * BOLT_RANGE;
             this.mob.getNavigation().setSpeedModifier(close ? BOLT : WALK_AWAY);
-            if (this.mob.getNavigation().isDone()) {
-                fleeFrom(this.threat); // reached the last spot but still too close — pick a fresh escape
+            // Re-pick an escape often (not only when the path ends) so it flees decisively away from you
+            // rather than dawdling toward a stale point and letting you close the gap.
+            if (--this.repath <= 0 || this.mob.getNavigation().isDone()) {
+                fleeFrom(this.threat);
+                this.repath = 10;
             }
         }
 

@@ -1,21 +1,25 @@
 package dev.alone.core.client;
 
-import net.minecraft.client.renderer.entity.CowRenderer;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.CowRenderState;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.Identifier;
+import dev.alone.core.Deer;
 
 /**
- * Draws the {@link dev.alone.core.Deer deer} with the cow model and animations as <b>placeholder art</b>,
- * pointing the texture at {@code alone:textures/entity/deer.png} — swap that (and later a real deer model)
- * for the finished look. Reuses everything from {@link CowRenderer}; only the skin is redirected.
+ * Draws the {@link dev.alone.core.Deer deer} using our custom {@link DeerModel} which matches
+ * the exact pixel sizes of the AI-generated texture grid, giving it realistic deer proportions.
  */
-public class DeerRenderer extends CowRenderer {
+public class DeerRenderer extends MobRenderer<Deer, CowRenderState, DeerModel> {
     private static final Identifier TEXTURE =
         Identifier.fromNamespaceAndPath("alone", "textures/entity/deer.png");
 
+    public static final ModelLayerLocation DEER_MODEL_LAYER =
+        new ModelLayerLocation(Identifier.fromNamespaceAndPath("alone", "deer"), "main");
+
     public DeerRenderer(EntityRendererProvider.Context context) {
-        super(context);
+        super(context, new DeerModel(context.bakeLayer(DEER_MODEL_LAYER)), 0.4F);
     }
 
     @Override
@@ -24,8 +28,12 @@ public class DeerRenderer extends CowRenderer {
     }
 
     @Override
-    protected void scale(CowRenderState state, com.mojang.blaze3d.vertex.PoseStack poseStack) {
-        poseStack.scale(0.6F, 0.85F, 0.6F);
-        super.scale(state, poseStack);
+    public CowRenderState createRenderState() {
+        return new CowRenderState();
+    }
+
+    @Override
+    public void extractRenderState(Deer entity, CowRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
     }
 }

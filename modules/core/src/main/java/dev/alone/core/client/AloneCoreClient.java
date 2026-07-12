@@ -73,7 +73,10 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.BROWN_BEAR, BrownBearRenderer::new);
 
-        // The deer (§7.2) reuses the cow model as placeholder art until a real deer model is made.
+        // The deer (§7.2) uses a custom DeerModel matching the AI texture's voxel sizes.
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
+            DeerRenderer.DEER_MODEL_LAYER, DeerModel::createBodyLayer);
+
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.DEER, DeerRenderer::new);
 
