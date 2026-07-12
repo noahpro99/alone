@@ -9,7 +9,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -40,11 +39,12 @@ public final class Wildlife {
     private static final double SNEAK_SIGHT = 4.0;  // crouched (stalking), they only see/hear you up close
     private static final double SCENT_RANGE = 20.0; // and they SMELL you from here when you're UPWIND (your scent
                                                      // blows to them) — no crouch hides that. Stalk from downwind.
-    private static final double PURSUIT_RANGE = 26.0; // once spooked they keep running until you fall this far back —
+    private static final double PURSUIT_RANGE = 30.0; // once spooked they keep running until you fall this far back —
                                                        // so you can PACE a deer from a distance and wear it down,
                                                        // rather than having to sprint-glue to within 12 blocks
     private static final double BOLT_RANGE = 9.0;   // inside this they put on a burst, not just amble off
     private static final double[] FLEE_LEGS = {18.0, 11.0, 6.0}; // straight-away distances to try (long first)
+    private static final float[] FLEE_FAN = {0f, 25f, -25f, 50f, -50f, 78f, -78f}; // veer angles if straight is blocked
     private static final double WALK_AWAY = 1.05;   // the animal's own (already fast) pace carries the flee
     private static final double BOLT = 1.25;        // a modest burst when you're on them (base speed does the work)
 
@@ -169,25 +169,32 @@ public final class Wildlife {
         private boolean fleeFrom(Player p) {
             boolean close = this.mob.distanceToSqr(p) < BOLT_RANGE * BOLT_RANGE;
             double speed = close ? BOLT : WALK_AWAY;
-            // Bolt in a STRAIGHT LINE directly away from the player — the way real game flees, putting
-            // distance between you. Vanilla's getPosAway picks a random spot in a wide arc, which up close
-            // reads as "running around crazily" and lets you cut it off. Aim straight away; try a long leg,
-            // then shorter ones if a wall's right behind it, so it commits to flight instead of circling.
-            Vec3 flat = this.mob.position().subtract(p.position());
-            flat = new Vec3(flat.x, 0.0, flat.z);
-            if (flat.lengthSqr() < 1.0e-4) {
-                flat = new Vec3(1.0, 0.0, 0.0); // player exactly on it — any heading will do
+            // Bolt in a straight line directly away from the player — the way real game flees, putting
+            // distance between you. But if terrain blocks that direct line (a tree, a rise), FAN OUT to
+            // either side and take an angled escape instead of STALLING — that stall is why it "ran, then
+            // stopped and waited for you". It only truly stops if it's hemmed in on every side.
+            Vec3 base = this.mob.position().subtract(p.position());
+            base = new Vec3(base.x, 0.0, base.z);
+            if (base.lengthSqr() < 1.0e-4) {
+                base = new Vec3(1.0, 0.0, 0.0); // player exactly on it — any heading will do
             }
-            Vec3 dir = flat.normalize();
-            for (double leg : FLEE_LEGS) {
-                Vec3 target = this.mob.position().add(dir.scale(leg));
-                if (this.mob.getNavigation().moveTo(target.x, target.y, target.z, speed)) {
-                    return true; // got a clear straight bolt away
+            base = base.normalize();
+            for (float deg : FLEE_FAN) {                 // 0° (straight away) first, then wider veers
+                Vec3 dir = rotateY(base, (float) Math.toRadians(deg));
+                for (double leg : FLEE_LEGS) {           // a long bolt, shorter if that's blocked too
+                    Vec3 target = this.mob.position().add(dir.scale(leg));
+                    if (this.mob.getNavigation().moveTo(target.x, target.y, target.z, speed)) {
+                        return true;
+                    }
                 }
             }
-            // Boxed in directly behind — let it veer to a nearby opening rather than stall against the wall.
-            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 12, 7, p.position());
-            return away != null && this.mob.getNavigation().moveTo(away.x, away.y, away.z, speed);
+            return false; // nowhere to run — hemmed in (a cornered animal stands, and will fight)
+        }
+
+        private static Vec3 rotateY(Vec3 v, float rad) {
+            double cos = Math.cos(rad);
+            double sin = Math.sin(rad);
+            return new Vec3(v.x * cos - v.z * sin, 0.0, v.x * sin + v.z * cos);
         }
     }
 }
