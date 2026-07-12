@@ -80,8 +80,12 @@ public class DryingRackBlockEntity extends BlockEntity {
         // Advance by how much world-time actually passed (so it dries while the chunk was unloaded), capped
         // so a long absence catches up over a second of ticks rather than resolving in a single frame.
         long now = level.getGameTime();
-        int elapsed = (int) Math.max(0L, Math.min(MAX_STEP, now - rack.getAttachedOrElse(LAST_TICK, now)));
-        rack.setAttached(LAST_TICK, now);
+        long last = rack.getAttachedOrElse(LAST_TICK, now);
+        int elapsed = (int) Math.max(0L, Math.min(MAX_STEP, now - last));
+        // Advance only by what we credit this tick — NOT all the way to `now` — so a long absence's backlog
+        // isn't thrown away: it catches up MAX_STEP per tick over the next few ticks (matching Spoilage,
+        // which drains away-time in full). Setting LAST_TICK = now discarded everything past one MAX_STEP.
+        rack.setAttached(LAST_TICK, last + elapsed);
         if (elapsed <= 0) {
             return;
         }
