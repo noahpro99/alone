@@ -71,9 +71,10 @@ recovers, and animals won't breed in the dead of winter. See
   and the **fish trap / weir** (passive fishing on the finite fish stock). All three are placed traps that
   keep working while you're away and draw on the local game/fish population; see
   [Hunting & Wildlife](./features/hunting.md#trapping--the-food-that-works-while-you-dont).
-- **More small game:** the vanilla **rabbit** and **chicken** and a new **squirrel** now behave as skittish
-  wild game (bolt, tire fast, count toward overhunting, give a scrap of meat); **grouse/ptarmigan** and more
-  could join them later.
+- **More small game:** **grouse/ptarmigan** and other birds could join the wild game later. *(The vanilla
+  **rabbit** and **chicken** and a new **squirrel** already behave as skittish wild game — bolt, tire fast,
+  count toward overhunting, give a scrap of meat — and the squirrel **climbs trees** when you close on it;
+  see [Hunting & Wildlife](./features/hunting.md#small-game--the-staple-you-actually-live-on).)*
 - **More tracking sign:** footprints and snow tracking, to follow quarry you can't see. *(Persistence
   hunting, blood trails, and bleed-out have shipped, and now a **prevailing wind** — a steady direction
   each day that carries your scent, so a predator downwind finds you from far off and one upwind barely
@@ -162,56 +163,20 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 - **Domesticated animals as bartered wealth**, priced in grain — earned through many harvests, never
   spawned or found wild.
 
-## The start — an Alone-style loadout
+## The start — extending the loadout
 
-Like the show: at the start of a new world you **choose a small kit** (**2 items**) from an approved master
-list, then you're dropped with only that. The selection screen **shows your starting biome**, so the pick
-is a real strategic read — a gill net and heavy tarp for a coast, a felling axe and −40 bag for the boreal
-winter. This is the framing that turns worldgen into a *run*, and it pairs with the run-modes below.
+The **Alone-style start is built** — you wake with nothing, read your biome, and pick two items from an
+approved list (see [The Start — Your Loadout](./features/the-start.md) for how it plays). What remains here
+is ways to extend it:
 
-The design rule (from the pack's [north star](./features/survival-meters.md)): **every item on the list
-must be real gear with a real mechanic** — if picking it wouldn't change how you play, we either build the
-mechanic behind it or leave it off the list with a reason. Audit of the show's actual list against what the
-pack has today (**✅ real mechanic · 🔶 maps to an existing system, could deepen · 🔨 gap to build · 🚫 off
-the list, with reason**):
-
-- **Cutting & tools:** felling axe ✅ (axes fell trees), hand saw 🔶 (riving planks exists; a saw could speed
-  log→plank), field knife ✅ (flint knife strips fibre, butchers), shovel ✅ (digs, rammed earth), sharpening
-  stone ✅ (whetstone hones), **machete** 🚫 (knife+axe cover it), **multitool** 🚫 (too modern for the tech
-  floor), **sewing kit** 🔨 (no cloth/leather *repair* yet — worth adding: mend clothing/patch a tarp).
-- **Hunting & gathering:** takedown bow ✅, **snare/trapping wire** ✅ (this is why cordage is now a real
-  chore — brought wire is the shortcut past hand-twisting; a spool of ready cordage), gill net 🔶 (the fish
-  trap is the weir; a portable net could be its own item), fishing line & hooks ✅ (rod), bank line ✅ (rope),
-  **slingshot** 🔨 (a low-power ranged small-game option below the bow — nice-to-have).
-- **Shelter & cordage:** paracord/rope ✅, **thatch** ✅ (the built shelter-ladder rung: a cheap sticks +
-  plant-fibre roof block you lay over a niche/wall to get roofed and dry day one — flammable), **heavy
-  tarp** ✅ (the premium rung above it: a waterproof, *fireproof*, reusable hide sheet — roof a fire with
-  it and pack it back up; hard to make from leather + cordage, or brought. A one-action deploy-and-go
-  canopy is a possible future polish; today it's a placed panel), bivy/−40 **sleeping bag** ✅ (a warmth-rated bedroll variant: full
-  recovery through a cold/freezing night where a bedroll leaves you shivering — but a sweatbox on a warm
-  night, so it's a cold-weather tool and the bedroll wins in the heat: a real biome-driven choice. Dies wet.
-  3 wool + 2 leather), wool blanket 🔶 (warmth; maps to insulation).
-- **Fire & cooking:** **ferro rod** ✅ (a reliable, rain-tolerant fire-starter above friction fire — exactly
-  why contestants prize it: catches in ~2 strokes at ~0.6 chance, works in the rain where the bow drill only
-  smokes, near-zero stamina, 200-use rod. Forged from 2 steel + flint, so it's a hard endgame gate you build
-  toward — or bring as one of your 2 loadout picks), steel pot ✅ (iron
-  pot boils/cooks), frying pan 🔶 (campfire cooking exists; a pan could be a faster/better cook surface).
-- **Food rations (max 2):** pemmican/jerky ✅ (drying rack + the long preserved shelf), salt block ✅
-  (preservation), flour/rice/sugar/legumes/hardtack 🔶 (all "a starting stock of food"; some want a
-  bread/grain path). These are the low-effort mechanic — you just *start with* a ration.
-- **Comfort & hygiene:** bar of soap 🔶 (Hygiene exists; soap = better/faster clean), towel 🔶 (dry off — the
-  wetness system exists), **personal photograph** 🚫 (would need a **morale/loneliness** system, which is
-  deliberately *not* being built — Alone's realism here is physical, and a happiness meter would be a HUD
-  abstraction rather than a felt mechanic), eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
-
-So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅, the warmth-rated sleeping bag ✅, the
-quick **thatch** roof ✅, the premium **tarp** ✅, and the **sewing kit** ✅ (mend worn leather/hide clothing
-by hand, a plant-fibre thread per patch) are **done** — the whole shelter, fire, and clothing-upkeep rung of
-the list is now real. And the **pick-2 start itself is now functional** ✅: on your first join to a world you
-wake with nothing, are told your biome, and `/loadout pick <item>` packs two things from the approved list
-(ferro rod, bow, iron pot, sleeping bag, tarp, snare wire, axe, knife, rod, sewing kit, rope, rations) — a
-one-time, per-world choice read against the land you woke in. What's left is **polish**: a **graphical
-selection screen** over this same foundation, and optionally a **slingshot** and a **portable net**.
+- **Graphical selection screen** — a proper picker window over the existing command/clickable-chat loadout
+  (same underlying picks, biome read, and one-time gate).
+- **More list options to build:** a **slingshot** (low-power ranged small game below the bow), a **portable
+  gill net** (a carried alternative to the fixed fish weir), and — deepening existing systems — a **hand
+  saw** (faster log→plank), a **frying pan** (better cook surface), **soap/towel** (better washing/drying),
+  and a **grain/bread path** for the ration slot.
+- **Decided against:** a **personal photograph / morale system** — Alone's realism here is physical, and a
+  happiness meter would be a HUD abstraction rather than a felt mechanic, so it's deliberately not built.
 
 ## Death, respawn & run modes
 

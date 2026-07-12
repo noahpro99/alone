@@ -104,9 +104,20 @@ A whetstone hones tools:
 - A **whetstone** is crafted from two smooth stone and a stick.
 - Holding a worn tool or weapon, keeping the **whetstone in the off hand**, and **sneak + right-click** re-hones the edge.
 - Each pass **restores ~25% durability**, wears the whetstone a little, and has a short cooldown.
-- Armor has no edge and can't be honed — only a forge **re-temper** repairs armor.
+- Armor has no edge and can't be honed — **leather/hide clothing** is mended with a **sewing kit** (below), and **metal armor** needs a forge **re-temper**.
 
 Honing restores durability; only a forge re-temper changes a blade's underlying quality.
+
+## Sewing kit — mending clothing
+
+There's no anvil in the wild, so worn **leather/hide clothing** is mended by hand:
+
+- A **sewing kit** is a bone needle and a length of cordage — crafted from a **bone and string**, and good for many repairs before it wears out.
+- **Hold right-click** with it to sew: it patches the **most worn** leather piece you're wearing (leather armor and the turtle helmet) by about **35%**, taking a couple of seconds of steady stitching.
+- Each mend **spends one plant fibre** as thread and frays the kit a little.
+- **Metal plates are forged, not sewn** — the kit won't touch them (those need a forge re-temper).
+
+Keeping your hides mended matters for more than durability: leather is your **insulation** (see [Body Temperature](./body-temperature.md)), so a repaired coat is a warmer one.
 
 ## Steel — the top tier
 
