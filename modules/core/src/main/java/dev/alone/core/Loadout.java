@@ -133,6 +133,11 @@ public final class Loadout {
             .append(Component.literal("[Choose your kit]").withStyle(s -> s
                 .withColor(ChatFormatting.AQUA).withUnderlined(true)
                 .withClickEvent(new ClickEvent.RunCommand("/alone loadout")))));
+        player.sendSystemMessage(Component.literal("New to living out here? Read the ")
+            .append(Component.literal("[Survival Guide]").withStyle(s -> s
+                .withColor(ChatFormatting.GOLD).withUnderlined(true)
+                .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create("https://noahpro99.github.io/")))))
+            .append(Component.literal(" — how everything here works.")));
     }
 
     /** {@code /alone loadout} — show the biome, how many picks are left, and the whole approved list. */

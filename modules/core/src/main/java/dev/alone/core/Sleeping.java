@@ -29,6 +29,9 @@ public final class Sleeping {
     private static final long COOLDOWN = 1200L; // ~60s between ground-rests
     private static final float FATIGUE_SHED = 40f;
     private static final float STAMINA_RESTORE = 50f;
+    // A bed is a comfier daytime rest than the bare ground.
+    private static final float BED_FATIGUE_SHED = 60f;
+    private static final float BED_STAMINA_RESTORE = 70f;
 
     /** Game time of the player's last ground-rest, for the cooldown. */
     public static final AttachmentType<Long> LAST_REST =
@@ -48,6 +51,16 @@ public final class Sleeping {
             }
         });
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            // A BED by DAY is a rest, not a sleep. Vanilla refuses daytime bed use ("you can only sleep at
+            // night"), but lying on a bed to pass the hours is exactly what you want — so by day we lay you
+            // down on it ourselves (a comfier rest than the bare ground), and GradualSleep runs the clock
+            // fast from that instant. At night we leave it to vanilla's bed sleep (which also sets your spawn).
+            if (hand == InteractionHand.MAIN_HAND && !player.isShiftKeyDown() && !player.isSleeping()
+                && level.getBlockState(hit.getBlockPos()).is(BlockTags.BEDS) && level.isBrightOutside()) {
+                return tryRest(player, level, BED_FATIGUE_SHED, BED_STAMINA_RESTORE,
+                    "You lie down on the bed to rest through the hours.")
+                    ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            }
             // Deliberate: SNEAK + bare hand + right-click the top of bare ground (grass/dirt/sand). Since
             // resting works any time of day now, the sneak means a stray ground-click during normal play
             // won't lie you down and fast-forward the clock by accident. grass_block is in BlockTags.DIRT.
