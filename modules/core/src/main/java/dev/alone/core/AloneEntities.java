@@ -62,8 +62,10 @@ public final class AloneEntities {
             MobCategory.CREATURE, BROWN_BEAR, 6, 1, 1);
 
         Registry.register(BuiltInRegistries.ENTITY_TYPE, DEER_KEY, DEER);
-        // Cow's grazing brain, but tuned to run FAST — a deer bolts and must be run down, not walked up to.
-        FabricDefaultAttributeRegistry.register(DEER, Cow.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.3));
+        // Cow's grazing brain, but quicker — a deer bolts and must be run down, not walked up to. Kept just
+        // fast enough that persistence hunting (Tracking) can keep it in range and tire it; much faster and
+        // it would outrun the chase, escape the range, and never fatigue — uncatchable. Tune in playtest.
+        FabricDefaultAttributeRegistry.register(DEER, Cow.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.25));
         // The woods and their edges — forest, taiga, and grassland. Common wild game, in small herds.
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))
