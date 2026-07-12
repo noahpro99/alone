@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -51,11 +52,15 @@ public final class Golems {
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
             }
         });
-        // Hit a golem and it comes for YOU. Vanilla iron golems are oddly forgiving — a village/built golem
-        // won't reliably turn on the player who strikes it — so we force the aggro: attacking one makes it
-        // target you. That's what makes it a real fight (and gives the anti-cheese goals a target to work on).
+        // Hit a golem and it comes for YOU. Iron golems are NEUTRAL — a bare setTarget gets wiped by their
+        // anger-management next tick, which is why it wouldn't aggro. Anger it properly: record the
+        // persistent-anger target and start its timer, so it stays hostile, paths to you, and fights — which
+        // is what makes it a real encounter and gives the anti-cheese goals a live target to work against.
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
             if (entity instanceof IronGolem golem && source.getEntity() instanceof Player player) {
+                golem.setPersistentAngerTarget(EntityReference.of(player));
+                golem.startPersistentAngerTimer();
+                golem.setLastHurtByMob(player);
                 golem.setTarget(player);
             }
         });
