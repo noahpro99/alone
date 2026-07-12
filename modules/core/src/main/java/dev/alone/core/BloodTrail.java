@@ -32,6 +32,7 @@ public final class BloodTrail {
     }
 
     private static final int DRIP_INTERVAL = 5;             // lay a drop every quarter-second
+    private static final int MORTAL_INTERVAL = 20;          // bleed-out damage once a second (a multiple of DRIP_INTERVAL)
     private static final int BLEED_TICKS_PER_DAMAGE = 40;    // each half-heart of damage → ~2s of bleeding
     private static final int MAX_BLEED = 600;               // a bad wound bleeds up to ~30s
     private static final double TRACK_RADIUS = 26.0;         // drops render for players within this range
@@ -63,15 +64,20 @@ public final class BloodTrail {
             if (server.getTickCount() % DRIP_INTERVAL != 0) {
                 return;
             }
+            // Whether this drip tick is also a bleed-out-damage tick — derived from the SAME server clock as
+            // the drip gate. (Previously the damage keyed off each animal's own tickCount, whose phase is set
+            // by its spawn tick, so it almost never lined up with the drip gate — bleed-out fired for only
+            // ~1 in 5 animals.)
+            boolean bleedOut = server.getTickCount() % MORTAL_INTERVAL == 0;
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player.level() instanceof ServerLevel level) {
-                    dripNearby(level, player);
+                    dripNearby(level, player, bleedOut);
                 }
             }
         });
     }
 
-    private static void dripNearby(ServerLevel level, ServerPlayer player) {
+    private static void dripNearby(ServerLevel level, ServerPlayer player, boolean bleedOut) {
         AABB box = player.getBoundingBox().inflate(TRACK_RADIUS);
         List<Animal> wounded = level.getEntitiesOfClass(Animal.class, box,
             a -> a.getAttachedOrElse(BLEED, 0) > 0);
@@ -83,7 +89,7 @@ public final class BloodTrail {
                 2, 0.12, 0.02, 0.12, 0.0);
             // A deep, fresh wound bleeds it out — once a second (clear of hurt-immunity frames), tapering
             // as the wound clots. Small game drops from one good hit; big game needs more.
-            if (bleed >= MORTAL_BLEED && animal.tickCount % 20 == 0) {
+            if (bleed >= MORTAL_BLEED && bleedOut) {
                 animal.hurtServer(level, level.damageSources().generic(), BLEED_OUT_DAMAGE);
             }
             animal.setAttached(BLEED, Math.max(0, bleed - DRIP_INTERVAL));
