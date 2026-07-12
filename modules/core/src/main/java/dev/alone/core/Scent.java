@@ -62,13 +62,15 @@ public final class Scent {
     private static final long RAID_COOLDOWN_TICKS = 160L; // ~8s between snatches so a pack can't strip you at once
     private static final double FLEE_SPEED = 1.45;       // it runs off with its prize
     private static final double WIND_STRENGTH = 0.6;     // scent on the wind: downwind ~1.6x reach, upwind ~0.4x
-    private static final int WIND_NOTE_INTERVAL = 1200;  // ~once a minute, note the wind while you carry meat
 
     private static final TagKey<Item> PERISHABLE =
         TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("alone", "perishable_foods"));
 
     /** Per-player "next raid allowed" world-time — transient (a session cooldown), keyed by player id. */
     private static final Map<UUID, Long> RAID_COOLDOWN = new HashMap<>();
+    /** Per-player last in-game day we noted the wind, so the message fires only when the wind SHIFTS (once a
+     *  day at most, while carrying meat) instead of on a nagging timer. A HUD wind indicator will replace it. */
+    private static final Map<UUID, Long> WIND_NOTE_DAY = new HashMap<>();
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -98,10 +100,13 @@ public final class Scent {
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
             m -> PREDATORS.contains(m.getType()) && m.isAlive() && smellsAcross(player, m, radius, wind));
         // A hunter reads the wind — while you carry meat, you feel where it's blowing from and can keep
-        // predators upwind of you (so your scent blows away from them, not toward them).
-        if (freshMeat > 0 && player.tickCount % WIND_NOTE_INTERVAL < SCAN) {
+        // predators upwind of you. Only spoken when the wind SHIFTS (once a day at most); a HUD indicator
+        // will show it at a glance, and then this note goes away.
+        long windDay = level.getGameTime() / 24000L;
+        if (freshMeat > 0 && WIND_NOTE_DAY.getOrDefault(player.getUUID(), -1L) != windDay) {
+            WIND_NOTE_DAY.put(player.getUUID(), windDay);
             player.sendSystemMessage(Component.literal(
-                "You feel the wind out of the " + Wind.comingFrom(level) + " — keep predators upwind of you."), true);
+                "The wind has shifted — it's out of the " + Wind.comingFrom(level) + " now. Keep predators upwind."), true);
         }
 
         PathfinderMob raider = null;

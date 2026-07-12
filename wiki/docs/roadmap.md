@@ -118,6 +118,10 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
   covered, and your drying meat in — have both shipped. Drought is folded into the
   [farming](./features/world-and-seasons.md#farming-with-the-seasons) crops-dry-out mechanic.)*
 - **Biome strategies** — each biome a different opening hand.
+- **A wind indicator on the HUD** — under the temperature readout, a small readout of the prevailing
+  [wind](./features/hunting.md#the-wind-carries-your-scent)'s **direction and intensity**, so a hunter can
+  read it at a glance instead of by message. Once it's in, the periodic "you feel the wind" chat notes go
+  away entirely (they're now trimmed to only fire on a wind *shift* until then).
 - **Navigation without coordinates:** a craftable compass, hand-drawn maps that fill as you walk,
   celestial direction, and cairns. Getting lost becomes possible.
 
