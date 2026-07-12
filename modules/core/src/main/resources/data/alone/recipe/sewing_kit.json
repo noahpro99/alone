@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:bone", "minecraft:string"],
+  "result": {"id": "alone:sewing_kit", "count": 1}
+}

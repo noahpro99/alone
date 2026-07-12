@@ -92,6 +92,10 @@ public final class AloneItems {
      *  (see {@link AloneBlocks#TARP}). Hard to make (leather + cordage) or brought. */
     public static final Item TARP = register("tarp",
         key -> new BlockItem(AloneBlocks.TARP, new Item.Properties().setId(key)));
+    /** A sewing kit (bone needle + cordage) — mend worn leather/hide clothing by hand, a thread (plant
+     *  fibre) per patch (see {@link SewingKitItem}). */
+    public static final Item SEWING_KIT = register("sewing_kit",
+        key -> new SewingKitItem(new Item.Properties().durability(64).setId(key)));
     public static final Item WATERSKIN = register("waterskin",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3, false));
     /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */
