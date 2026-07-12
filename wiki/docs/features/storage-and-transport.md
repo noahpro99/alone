@@ -7,7 +7,23 @@ Your body carry is split into two budgets — about **1 m³** of bulky items in 
 
 ## The backpack
 
-**Craft a backpack** from **leather + string**. It's a full storage container you carry with you.
+**Craft a backpack** <img class="mc-icon" src="/alone/item/backpack.png" alt="Backpack"/> from **leather + string**. It's a full storage container you carry with you.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Leather.png" alt="Leather"/></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/backpack.png" alt="Backpack"/></div>
+</div>
 
 - **Right-click to open** a **27-slot pack**. Its contents ride on the item itself and show in the **tooltip**.
 - A **quick-open keybind** (default **B**) opens the **first pack in your inventory**.
@@ -21,7 +37,23 @@ A backpack holds up to about **1.5 m³** of its own — a **separate** budget th
 
 ### The woven basket
 
-A **woven basket** — plant-fibre gear you carry, no leather or animals needed — raises your **hands budget by about 0.5 m³** while it's in your inventory. One is enough; extras don't stack the bonus.
+A **woven basket** <img class="mc-icon" src="/alone/item/woven_basket.png" alt="Woven basket"/> — plant-fibre gear you carry, no leather or animals needed — raises your **hands budget by about 0.5 m³** while it's in your inventory. One is enough; extras don't stack the bonus.
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/woven_basket.png" alt="Woven basket"/></div>
+</div>
 
 See [Weight, Carrying & Blocks](./building-and-blocks.md) for how the carry budgets work.
 

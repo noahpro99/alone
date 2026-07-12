@@ -109,8 +109,8 @@ This is what makes a dug **[root cellar](./preservation.md#cold-storage-the-root
 
 ### Rammed earth — shore with dirt, not timber
 
-If you have no timber to spare, there's an older way: **ram the earth firm.** Hold a **rock** or a
-**smithing hammer** and **sneak + right-click a block of soil** to tamp it. It's **hard, tiring work**
+If you have no timber to spare, there's an older way: **ram the earth firm.** Hold a **rock** <img class="mc-icon" src="/alone/item/rock.png" alt="Rock"/> or a
+**smithing hammer** <img class="mc-icon" src="/alone/item/smithing_hammer.png" alt="Smithing hammer"/> and **sneak + right-click a block of soil** to tamp it. It's **hard, tiring work**
 (each tamp costs stamina), but packed **rammed earth**:
 
 - **won't cave** on its own, and

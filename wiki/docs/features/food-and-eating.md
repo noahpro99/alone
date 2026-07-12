@@ -41,7 +41,7 @@ Perishable foods **rot to rotten flesh after about one in-game day**. Fresh meat
 
 ## Preserving food
 
-Perishable food can be **preserved** to keep for about **30 in-game days** instead of one — by salting it or drying it on a drying rack. See [Food Preservation](./preservation.md) for the full system.
+Perishable food can be **preserved** to keep for about **30 in-game days** instead of one — by salting it or drying it on a drying rack <img class="mc-icon" src="/alone/item/drying_rack.png" alt="Drying Rack"/>. See [Food Preservation](./preservation.md) for the full system.
 
 ## Nutrition variety and food fatigue
 
@@ -82,7 +82,7 @@ What you eat also nudges warmth and thirst:
 
 - **Hot meals warm you.** Eating a cooked meal or stew pushes body temperature toward comfort (it can't overheat you), then drifts back over about 40 seconds — alongside [fire](./fire.md) and shelter.
 - **Food affects thirst:**
-  - **Salt-preserved** food **dehydrates** you (a noticeable water cost).
+  - **Salt-preserved** <img class="mc-icon" src="/alone/item/salt.png" alt="Salt"/> food **dehydrates** you (a noticeable water cost).
   - **Dry** foods (bread, cookies, dried kelp, rotten flesh) cost a little water.
   - **Juicy** foods (fruit, melon, soups) **give water back**.
 

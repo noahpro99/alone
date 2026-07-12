@@ -9,10 +9,46 @@ Fire warms you, cooks food, and boils water clean. It is never free, and keeping
 
 There is no flint-and-steel. The first fire comes from friction:
 
-- First **lay an unlit campfire** (crafted from **3 sticks and plant fiber** — the fiber is its built-in tinder).
-- Then **hold right-click on the unlit campfire** to drill it alight. Two friction tools work: a bare **stick** (a hand drill — slow, exhausting, and a long gamble) or a **bow drill** (crafted from sticks and cordage — it catches sooner, for less stamina, and wears out with use).
+- First **lay an unlit campfire** <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Campfire.png" alt="Campfire"/> (crafted from **3 sticks and plant fiber** — the fiber is its built-in tinder).
+- Then **hold right-click on the unlit campfire** to drill it alight. Two friction tools work: a bare **stick** <img class="mc-icon" src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/> (a hand drill — slow, exhausting, and a long gamble) or a **bow drill** <img class="mc-icon" src="/alone/item/bow_drill.png" alt="Bow drill"/> (crafted from sticks and cordage — it catches sooner, for less stamina, and wears out with use).
 - Drilling **costs stamina** and only makes **smoke** until enough strokes finally catch.
 - **Rain and being wet make friction fire fail.** Drilling needs dry conditions.
+
+The unlit campfire — 3 sticks and plant fiber:
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="/alone/item/plant_fiber.png" alt="Plant fiber"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="https://minecraft.wiki/images/Invicon_Campfire.png" alt="Campfire"/></div>
+</div>
+
+The bow drill — 2 sticks and string:
+
+<div class="mc-recipe">
+<div class="mc-grid">
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_Stick.png" alt="Stick"/></div>
+<div class="mc-slot"><img src="https://minecraft.wiki/images/Invicon_String.png" alt="String"/></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+<div class="mc-slot"></div>
+</div>
+<div class="mc-arrow">→</div>
+<div class="mc-result"><img src="/alone/item/bow_drill.png" alt="Bow drill"/></div>
+</div>
 
 ### The ferro rod — the reliable fire
 
@@ -44,7 +80,7 @@ fire **spreads and burns like any fire** until it's put out or runs out of fuel.
 - **One block of clearance is safe.** Keep the fire a block away from wood, or **ring it with stone/dirt**.
 - The block the campfire **rests on is spared**, so a fire on a wooden floor won't torch its own support —
   but the walls and ceiling around it are fair game.
-- **Torches don't spread fire** — only open campfires do. A torch in a bracket is a contained flame, so you
+- **Torches don't spread fire** <img class="mc-icon" src="/alone/item/torch.png" alt="Torch"/> — only open campfires do. A torch in a bracket is a contained flame, so you
   can still light your home safely.
 - A fire in the **rain** doesn't spread (it's busy going out).
 
@@ -52,7 +88,7 @@ fire **spreads and burns like any fire** until it's put out or runs out of fuel.
 
 Fire can be carried between camps instead of drilling a fresh one:
 
-- **Sneak and right-click a lit campfire empty-handed** to scoop out a glowing **ember**. This costs the fire a little fuel.
+- **Sneak and right-click a lit campfire empty-handed** to scoop out a glowing **ember** <img class="mc-icon" src="/alone/item/ember.png" alt="Ember"/>. This costs the fire a little fuel.
 - The ember **cools as it is carried**. Its durability-style bar shows the remaining glow — it lasts about **3.3 minutes** before dying to cold charcoal.
 - **Right-click an unlit campfire** with a live ember to light it **instantly** — no drilling, no gamble.
 - If the ember runs out before it is used, it dies.
