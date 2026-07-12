@@ -1,15 +1,11 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "FF",
-    "PS",
-    " S"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "alone:flint_shard",
+    "alone:flint_shard",
+    "alone:plant_fiber",
+    "minecraft:stick"
   ],
-  "key": {
-    "F": "alone:flint_shard",
-    "S": "minecraft:stick",
-    "P": "alone:plant_fiber"
-  },
   "result": {
     "id": "alone:flint_hatchet",
     "count": 1

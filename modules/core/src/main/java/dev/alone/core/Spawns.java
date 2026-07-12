@@ -21,11 +21,16 @@ public final class Spawns {
         {0, 0}, {40, 0}, {-40, 0}, {0, 40}, {0, -40}, {28, 28}, {-28, 28}, {28, -28}, {-28, -28}
     };
 
-    /** True if this position is on or near a generated structure — the only place hostiles may spawn naturally. */
+    /** True if this position is on or near a generated structure <b>piece</b> — the only place hostiles may
+     *  spawn naturally. We check for an actual structure PIECE here (a real ruin/dungeon/mineshaft corridor),
+     *  NOT {@code hasAnyStructureAt}: that only asks whether the chunk holds a structure <em>reference</em>
+     *  (overlaps some structure's bounding box), and a single mineshaft's box blankets a huge area — so it
+     *  was true almost everywhere and let monsters spawn across the whole map. Piece-level keeps danger at
+     *  the actual structures. */
     public static boolean nearStructure(ServerLevel level, BlockPos pos) {
         StructureManager structures = level.structureManager();
         for (int[] offset : SAMPLES) {
-            if (structures.hasAnyStructureAt(pos.offset(offset[0], 0, offset[1]))) {
+            if (structures.getStructureWithPieceAt(pos.offset(offset[0], 0, offset[1]), s -> true).isValid()) {
                 return true;
             }
         }
