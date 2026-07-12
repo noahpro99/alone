@@ -37,9 +37,9 @@ public final class Wildlife {
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "domestic"));
 
     private static final double FLEE_RANGE = 12.0;  // how close a standing player they'll tolerate before bolting
-    private static final double BOLT_RANGE = 9.0;   // inside this they sprint clear, not just amble off
-    private static final double WALK_AWAY = 1.4;    // speed modifier ambling away at the edge of tolerance
-    private static final double BOLT = 2.0;         // speed modifier sprinting when you're on them — outpaces a sprint
+    private static final double BOLT_RANGE = 9.0;   // inside this they put on a burst, not just amble off
+    private static final double WALK_AWAY = 1.05;   // the animal's own (already fast) pace carries the flee
+    private static final double BOLT = 1.25;        // a modest burst when you're on them (base speed does the work)
 
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
@@ -125,7 +125,7 @@ public final class Wildlife {
             // rather than dawdling toward a stale point and letting you close the gap.
             if (--this.repath <= 0 || this.mob.getNavigation().isDone()) {
                 fleeFrom(this.threat);
-                this.repath = 10;
+                this.repath = 20;
             }
         }
 
@@ -136,7 +136,7 @@ public final class Wildlife {
         }
 
         private boolean fleeFrom(Player p) {
-            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 16, 7, p.position());
+            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 24, 7, p.position()); // a long, committed flee leg
             if (away == null) {
                 return false;
             }

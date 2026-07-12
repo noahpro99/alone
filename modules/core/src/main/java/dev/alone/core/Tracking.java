@@ -30,8 +30,8 @@ public final class Tracking {
     }
 
     private static final int SCAN = 20;               // press the chase ~every 1s
-    private static final double RADIUS = 22.0;         // game this close feels the pursuit (wide enough that a
-                                                        // fast bolting animal stays "in the chase" and tires)
+    private static final double RADIUS = 28.0;         // game this close feels the pursuit (wide enough that a
+                                                        // genuinely fast animal stays "in the chase" and tires)
     private static final double FLEE_SPEED_SQ = 0.014; // horizontal speed² above which it's genuinely running
     private static final float GAIN = 5f;              // fatigue gained per second of hard running (mid-size game)
     private static final float RECOVER = 2f;           // and shed per second at rest (slower than it builds)
