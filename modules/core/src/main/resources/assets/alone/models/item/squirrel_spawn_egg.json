@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "minecraft:item/rabbit_spawn_egg" } }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "alone:item/squirrel_spawn_egg"
+  }
+}

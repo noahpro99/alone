@@ -1,12 +1,15 @@
 package dev.alone.core;
 
+import java.util.EnumSet;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,9 +47,14 @@ public final class Golems {
     private static final double REACH_UP_MAX = 4.0;    // a 3–4 block pillar no longer keeps you out of reach
     private static final int REACH_UP_INTERVAL = 20;   // an upward swing about once a second
 
+    private static final double COVER_TRIGGER_SQ = 36.0; // shot from >6 blocks away counts as "at range"
+    private static final int RECENT_HIT_TICKS = 60;      // reacts within ~3s of being shot
+    private static final int COVER_SEARCH = 5;           // how far to look for a spot that breaks line of sight
+
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof IronGolem golem) {
+                golem.getGoalSelector().addGoal(1, new SeekCoverGoal(golem)); // break for cover under ranged fire first
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
             }
@@ -200,6 +208,110 @@ public final class Golems {
                 golem.doHurtTarget(level, target); // its real attack: damage, knockback, and the arm-raise
             }
             cooldown = REACH_UP_INTERVAL;
+        }
+    }
+
+    /**
+     * Shot from range and it survived? A defender doesn't stand in the open taking arrows — it breaks for
+     * cover. This pulls the golem to the nearest standing spot that puts something solid between it and the
+     * archer, favouring cover that's <b>toward</b> the shooter so it <b>advances under cover</b> rather than
+     * cowering. It only triggers on ranged fire from a distance (up close it still fights head-on), and in
+     * open ground with no cover to reach it simply charges — so it stays the relentless closer, just not a
+     * stationary target. Highest priority, so a golem under fire ducks before it does anything else.
+     */
+    private static class SeekCoverGoal extends Goal {
+        private final IronGolem golem;
+        private Player shooter;
+        private Vec3 cover;
+        private int nextSearch;
+
+        SeekCoverGoal(IronGolem golem) {
+            this.golem = golem;
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!(golem.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
+                return false;
+            }
+            if (golem.tickCount - golem.getLastHurtByMobTimestamp() > RECENT_HIT_TICKS) {
+                return false; // not shot recently
+            }
+            if (golem.distanceToSqr(p) < COVER_TRIGGER_SQ) {
+                return false; // it's near — close in and fight, don't hide
+            }
+            if (!golem.getSensing().hasLineOfSight(p)) {
+                return false; // already out of its line — no need to move
+            }
+            if (golem.tickCount < nextSearch) {
+                return false; // throttle the (costly) cover scan
+            }
+            nextSearch = golem.tickCount + 10;
+            BlockPos spot = findCover(p);
+            if (spot == null) {
+                return false; // no cover within reach — it'll just advance in the open
+            }
+            this.shooter = p;
+            this.cover = Vec3.atBottomCenterOf(spot);
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.shooter != null && this.shooter.isAlive()
+                && !this.golem.getNavigation().isDone()
+                && this.golem.getSensing().hasLineOfSight(this.shooter); // stop once it's safely behind cover
+        }
+
+        @Override
+        public void start() {
+            this.golem.getNavigation().moveTo(this.cover.x, this.cover.y, this.cover.z, 1.3);
+        }
+
+        @Override
+        public void stop() {
+            this.shooter = null;
+            this.cover = null;
+        }
+
+        /** Nearest reachable standing spot (favouring ones toward the shooter, to advance) whose line to the
+         *  archer is blocked by a solid block. Null if nothing within range gives cover (open ground). */
+        private BlockPos findCover(Player p) {
+            Level level = this.golem.level();
+            Vec3 shooterEye = p.getEyePosition();
+            BlockPos origin = this.golem.blockPosition();
+            BlockPos best = null;
+            double bestToShooter = Double.MAX_VALUE;
+            for (int dx = -COVER_SEARCH; dx <= COVER_SEARCH; dx++) {
+                for (int dz = -COVER_SEARCH; dz <= COVER_SEARCH; dz++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        BlockPos spot = origin.offset(dx, dy, dz);
+                        if (!standable(level, spot)) {
+                            continue;
+                        }
+                        Vec3 spotEye = new Vec3(spot.getX() + 0.5, spot.getY() + 1.6, spot.getZ() + 0.5);
+                        BlockHitResult hit = level.clip(new ClipContext(spotEye, shooterEye,
+                            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.golem));
+                        if (hit.getType() != HitResult.Type.BLOCK) {
+                            continue; // still exposed to the shooter from here
+                        }
+                        double toShooter = spot.distSqr(p.blockPosition());
+                        if (toShooter < bestToShooter) {
+                            bestToShooter = toShooter;
+                            best = spot;
+                        }
+                    }
+                }
+            }
+            return best;
+        }
+
+        private static boolean standable(Level level, BlockPos pos) {
+            BlockPos below = pos.below();
+            return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)
+                && level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
+                && level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty();
         }
     }
 }
