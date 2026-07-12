@@ -10,6 +10,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -96,6 +97,14 @@ public final class Loadout {
             if (remaining > 0) {
                 promptOnJoin(player, remaining);
             }
+        });
+
+        // The kit is a one-time, per-run choice. Persistent attachments do NOT carry to the new player
+        // entity on respawn, so without this a death (or a return from the End) would reset the picks and
+        // let you choose two more. Carry the state across every respawn — death and End alike.
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, returnFromEnd) -> {
+            newPlayer.setAttached(PICKS, oldPlayer.getAttachedOrElse(PICKS, -1));
+            newPlayer.setAttached(TAKEN, oldPlayer.getAttachedOrElse(TAKEN, ""));
         });
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
