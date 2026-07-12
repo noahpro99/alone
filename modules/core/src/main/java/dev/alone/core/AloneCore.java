@@ -133,6 +133,7 @@ public class AloneCore implements ModInitializer {
         IceHouse.init();        // §4.2 — cut lake ice with a pick/axe; pack it around a store for cold (ice house)
         Riving.init();          // §8.1 — rive a log into rough boards by hand (slow, exhausting; no saw)
         AdminCommand.init();    // debug — /alone reset refills meters, clears conditions, tops off vitals
+        Loadout.init();         // "the start" — bring 2 items from an approved list, read against your biome
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
 
         // Proposal §8.1 — you fell a tree with the right tool, not your fist or a chicken.

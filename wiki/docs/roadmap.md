@@ -207,9 +207,11 @@ the list, with reason**):
 So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅, the warmth-rated sleeping bag ✅, the
 quick **thatch** roof ✅, the premium **tarp** ✅, and the **sewing kit** ✅ (mend worn leather/hide clothing
 by hand, a plant-fibre thread per patch) are **done** — the whole shelter, fire, and clothing-upkeep rung of
-the list is now real. What's left is the **pick-2 selection screen** itself — the centerpiece that ties the
-loadout together — and optionally a **slingshot** and a **portable net**. Build those and nearly the whole
-real list becomes a meaningful choice.
+the list is now real. And the **pick-2 start itself is now functional** ✅: on your first join to a world you
+wake with nothing, are told your biome, and `/loadout pick <item>` packs two things from the approved list
+(ferro rod, bow, iron pot, sleeping bag, tarp, snare wire, axe, knife, rod, sewing kit, rope, rations) — a
+one-time, per-world choice read against the land you woke in. What's left is **polish**: a **graphical
+selection screen** over this same foundation, and optionally a **slingshot** and a **portable net**.
 
 ## Death, respawn & run modes
 
