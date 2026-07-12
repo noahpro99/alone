@@ -11,8 +11,10 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -116,8 +118,10 @@ public final class Loadout {
             "You wake in " + biomeName(player) + " with nothing but the clothes you're in."));
         player.sendSystemMessage(Component.literal(biomeAdvice(player)));
         player.sendSystemMessage(Component.literal(
-            "You may bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home. "
-                + "Run /loadout to see the list, then /loadout pick <item> to pack each one."));
+            "You may bring " + remaining + " item" + (remaining == 1 ? "" : "s") + " from home.  ")
+            .append(Component.literal("[Choose your kit]").withStyle(s -> s
+                .withColor(ChatFormatting.AQUA).withUnderlined(true)
+                .withClickEvent(new ClickEvent.RunCommand("/loadout")))));
     }
 
     /** {@code /loadout} — show the biome, how many picks are left, and the whole approved list. */
@@ -132,9 +136,13 @@ public final class Loadout {
         source.sendSuccess(() -> Component.literal(
             "You woke in " + biomeName(player) + ". " + biomeAdvice(player)), false);
         source.sendSuccess(() -> Component.literal(
-            "You may still pack " + left + " item" + (left == 1 ? "" : "s") + " — choose against the land:"), false);
+            "You may still pack " + left + " item" + (left == 1 ? "" : "s")
+                + " — click one to pack it (or type /loadout pick <name>):"), false);
         for (Choice c : CHOICES) {
-            source.sendSuccess(() -> Component.literal("  /loadout pick " + c.key() + "  —  " + c.label()), false);
+            Component line = Component.literal("  ▶ " + c.label()).withStyle(s -> s
+                .withColor(ChatFormatting.GREEN).withUnderlined(true)
+                .withClickEvent(new ClickEvent.RunCommand("/loadout pick " + c.key())));
+            source.sendSuccess(() -> line, false);
         }
         return Command.SINGLE_SUCCESS;
     }
