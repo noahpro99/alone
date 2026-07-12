@@ -58,10 +58,13 @@ Skills otherwise stay quiet — you only hear about them when you step up a tier
 
 String does not require spiders:
 
-- **Stripping plant fiber** is a timed pull (hold right-click on grass, ferns, vines, or dead bushes for a couple of seconds). Bare hands yield **1–2 strands** (a second on about half the strips); a **cutting blade** (sword, axe, hoe, or flint knife) strips **2–3 clean lengths** at once.
-- **Twisting 3 fiber makes 1 string.**
+Cordage is the real, slow way people made it — three steps, and a serious investment:
 
-String feeds rope, bandages, bows, and more.
+- **Strip plant fiber** — a timed pull (hold right-click on grass, ferns, vines, or dead bushes for a couple of seconds). Bare hands yield **1–2 strands** (a second on about half the strips); a **cutting blade** (sword, axe, hoe, or flint knife) strips **2–3 clean lengths** at once.
+- **Bundle it into a hank** — **4 fiber makes 1 fiber bundle**, a handful gathered ready to twist.
+- **Twist a length of string** — **2 bundles (8 fiber) makes 1 string**, and the reverse-wrap twisting takes **~35 seconds** (it stands in for ~40 real minutes of hand-work — cordage is genuinely one of the slowest bushcraft jobs).
+
+So a single string is **eight strands of fiber and a long twist** — real cordage is precious, which is exactly why you'd throw down a no-cordage **[deadfall](./hunting.md#which-trap-and-when)** before you'd spend string on snares. It feeds rope, bandages, bows, snares, fishing gear, and more.
 
 ## Timed, stationary crafting
 

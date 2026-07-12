@@ -153,6 +153,11 @@ public final class AloneItems {
     public static final Item PLANT_FIBER = register("plant_fiber",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** A hank of stripped fibre gathered and bundled ready to twist — the real middle step between loose
+     *  fibre and cordage, and the way we load a big material cost into cordage without needing >9 in a grid. */
+    public static final Item FIBER_BUNDLE = register("fiber_bundle",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Splint (§1.5 medicine) — sticks bound with cord; sneak + right-click to treat a sprain. */
     public static final Item SPLINT = register("splint",
         key -> new Item(new Item.Properties().setId(key)));
