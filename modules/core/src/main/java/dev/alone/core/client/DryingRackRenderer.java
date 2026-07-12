@@ -50,10 +50,13 @@ public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEn
         if (!state.hasItem || state.item.isEmpty()) {
             return;
         }
+        // Hang the piece UPRIGHT in the frame (meat on the line / a hide stretched to cure), not laid flat:
+        // on a waist-high rack a flat item is edge-on and invisible from a standing view. Turned 45° so it
+        // reads from any side, and sized up so it's clearly visible at a glance (like food on a campfire).
         poseStack.pushPose();
-        poseStack.translate(0.5f, 0.86f, 0.5f);            // centred, resting on top of the rack frame
-        poseStack.mulPose(Axis.XP.rotationDegrees(90.0f)); // lay it flat, face-up
-        poseStack.scale(0.55f, 0.55f, 0.55f);
+        poseStack.translate(0.5f, 0.5f, 0.5f);              // centred in the frame
+        poseStack.mulPose(Axis.YP.rotationDegrees(45.0f));  // face a corner, so it shows from all four sides
+        poseStack.scale(0.7f, 0.7f, 0.7f);
         state.item.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         poseStack.popPose();
     }

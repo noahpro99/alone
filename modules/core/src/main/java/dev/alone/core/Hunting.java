@@ -74,10 +74,10 @@ public final class Hunting {
             if (hide > 0) {
                 // A green, wet hide — worthless until it's tanned on a rack (see AloneItems#RAW_HIDE).
                 entity.spawnAtLocation(level, new ItemStack(AloneItems.RAW_HIDE, hide));
-                // ...and the brains to tan it: enough to work roughly its own hide (the classic brain-tan).
-                // Bigger beasts carry a bigger skull, so a large hide comes with a little more tanning agent.
-                int brains = Math.max(1, hide - 1);
-                entity.spawnAtLocation(level, new ItemStack(AloneItems.ANIMAL_BRAINS, brains));
+                // ...and the brains to tan it: "a beast has just enough brains to tan its own hide", so a
+                // kill yields one lump of brains per hide it gave — enough to tan everything you salvaged
+                // from it (before the brains spoil), never short.
+                entity.spawnAtLocation(level, new ItemStack(AloneItems.ANIMAL_BRAINS, hide));
             }
             if (bone > 0) {
                 entity.spawnAtLocation(level, new ItemStack(Items.BONE, bone));
