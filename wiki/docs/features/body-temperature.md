@@ -42,6 +42,11 @@ Overheat and you take **burning damage** as if you were on fire. Standing in lav
   heat** (they keep only about **a quarter** of their insulation until they dry), so being **wet in the
   cold is dangerous even fully dressed**. This is why wet-cold, not dry-cold, is the real killer — and why
   drying off by a fire is worth more than another layer.
+- **A towel dries you at once.** You normally dry over ~30 seconds (faster by a fire), but a **towel**
+  (woven from **wool**) lets you **right-click to rub yourself dry instantly** — the fast way to kill the
+  wet-cold after you climb out of a river or duck out of a downpour. Using it soaks the towel, so it goes
+  **damp** and needs about a minute to dry before it'll work again; and while you're still *in* the rain or
+  water it just re-wets, so it's what you reach for the moment you get **out** of the wet.
 - **A fire dries you** about five times faster than air alone, and warms you at the same time.
 - **Heat sources warm you:** stand near a **lit campfire**, open **fire**, **torches**, or **lava** and the square climbs back toward green. Lava is strong enough to overheat you.
 - **Shelter insulates — and walls matter.** Being under cover (no open sky above you) shields you from rain and the cold night sky. A **bare roof** (an open lean-to) pulls the temperature about **40% toward comfortable**, but the more **walled in** you are the better it holds heat: a **fully enclosed shelter** (a solid wall within about 4 blocks on all four sides) reaches roughly **78%**. So building real walls, not just a roof, is what makes a cabin beat winter.

@@ -229,6 +229,9 @@ public final class AloneItems {
      *  a log with it to saw far faster, for far less sweat, and get more boards per log (see {@link Riving}). */
     public static final Item HAND_SAW = register("hand_saw",
         key -> new Item(new Item.Properties().durability(250).setId(key)));
+    /** A towel — right-click to rub yourself dry at once (see {@link TowelItem}); goes damp after a use. */
+    public static final Item TOWEL = register("towel",
+        key -> new TowelItem(new Item.Properties().stacksTo(1).setId(key)));
     public static final Item FLINT_PICK = register("flint_pick",
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",
