@@ -27,11 +27,15 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ClayPotBlockEntity extends BlockEntity {
     /** A set-down pot is a small reservoir — more than the hand-carried vessel, less than an iron cauldron. */
     public static final int CAPACITY = 8;
-    /** ~10s of steady rain per litre caught by a bare pot's own mouth — a patient, weather-dependent thing.
-     *  A tarp funnel rigged above catches far faster (its whole area drains into the pot). */
-    public static final int FILL_TICKS = 200;
-    /** Cap on tarp-funnel catchment, so a huge roof fills fast but not absurdly (litres of rain per tick). */
-    private static final int MAX_CATCHMENT = 12;
+    /** Rain-ticks to catch one litre through a BARE pot's own tiny mouth — ~50s of steady rain per litre, so
+     *  a bare pot (its ~0.02 m² opening) is slow: ~7 min of rain to fill. A tarp funnel above is the real way
+     *  to collect. (An inch of rain really does take hours; this is that, compressed for play.) */
+    public static final int FILL_TICKS = 1000;
+    /** How much rain a single sky-exposed 1 m² tarp panel funnels vs the bare pot's mouth (~a 1 m² sheet
+     *  catches ~50x a pot's opening in reality; toned to ~10x for play). So one tarp fills a pot in ~40s. */
+    private static final int TARP_UNITS = 10;
+    /** Cap on a pot's per-tick catchment, so a huge roof fills fast but not instantly. */
+    private static final int MAX_CATCHMENT = 40;
     private static final float THIRST_PER_SIP = 30f;
 
     /**
@@ -84,15 +88,15 @@ public class ClayPotBlockEntity extends BlockEntity {
         }
     }
 
-    /** Rain caught per tick: 0 if sheltered/dry, 1 for a bare pot under open sky, or the number of connected
-     *  sky-exposed tarp blocks draped above (a funnel), capped — so a tarp roof fills a pot much faster. */
+    /** Rain caught per tick: 0 if sheltered/dry, 1 for a bare pot's own mouth under open sky, or this pot's
+     *  <b>share</b> of the tarp roof draped above it — the roof's catchment split among every pot beneath it. */
     private static int rainCatchment(Level level, BlockPos pos) {
         // A tarp draped just above funnels its whole catchment into the pot, even though it shelters the
         // pot's own mouth. Scan up for one; a solid non-tarp block above simply shelters the pot (catches 0).
         for (int dy = 1; dy <= 4; dy++) {
             BlockState above = level.getBlockState(pos.above(dy));
             if (above.is(AloneBlocks.TARP)) {
-                return Math.min(MAX_CATCHMENT, tarpCatchment(level, pos.above(dy)));
+                return roofShare(level, pos.above(dy));
             }
             if (!above.isAir() && !above.canBeReplaced()) {
                 return 0; // roofed by something solid that isn't a tarp — no rain reaches the pot
@@ -101,18 +105,29 @@ public class ClayPotBlockEntity extends BlockEntity {
         return level.isRainingAt(pos.above()) ? 1 : 0; // a bare pot catches only from its own small mouth
     }
 
-    /** Connected tarp blocks (flood-filled horizontally from the given one) that rain actually reaches — the
-     *  funnel's catchment area, in litres of rain caught per tick. */
-    private static int tarpCatchment(Level level, BlockPos start) {
+    /** One pot's share of a tarp roof: flood-fill the connected tarp, total the rain it catches
+     *  (sky-exposed panels × {@link #TARP_UNITS}), then <b>split that among every pot sheltered beneath the
+     *  roof</b> — three pots under one tarp each get a third. Capped per pot. */
+    private static int roofShare(Level level, BlockPos start) {
         java.util.Set<BlockPos> seen = new java.util.HashSet<>();
         java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        java.util.Set<BlockPos> pots = new java.util.HashSet<>();
         seen.add(start);
         queue.add(start);
-        int catchment = 0;
-        while (!queue.isEmpty() && seen.size() <= 64) {
+        int exposed = 0;
+        while (!queue.isEmpty() && seen.size() <= 256) {
             BlockPos p = queue.poll();
             if (level.isRainingAt(p.above())) {
-                catchment++; // this panel of the roof is open to the sky and catching rain
+                exposed++; // this panel of the roof is open to the sky and catching rain
+            }
+            // Every pot in the sheltered space below this panel draws from the same roof.
+            for (int dy = 1; dy <= 4; dy++) {
+                BlockState below = level.getBlockState(p.below(dy));
+                if (below.is(AloneBlocks.CLAY_POT)) {
+                    pots.add(p.below(dy));
+                } else if (below.is(AloneBlocks.TARP) || (!below.isAir() && !below.canBeReplaced())) {
+                    break; // another tarp layer, or a solid floor — stop scanning down this column
+                }
             }
             for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL) {
                 BlockPos n = p.relative(d);
@@ -122,7 +137,8 @@ public class ClayPotBlockEntity extends BlockEntity {
                 }
             }
         }
-        return catchment;
+        int share = (exposed * TARP_UNITS) / Math.max(1, pots.size());
+        return Math.min(MAX_CATCHMENT, share);
     }
 
     /** Pour clean rainwater from the pot into a held vessel (§2). Won't mix into raw/salt water already in it. */

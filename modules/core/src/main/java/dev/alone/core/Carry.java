@@ -220,7 +220,10 @@ public final class Carry {
         if (path.equals("bucket") || path.contains("bucket")) {
             return 0.025f;
         }
-        if (path.contains("stick") || path.contains("string") || path.contains("feather") || path.contains("paper")) {
+        if (path.contains("string")) {
+            return 0.0002f; // a coiled length of cordage — tiny; was 0.001 (1 L) grouped with sticks, too big
+        }
+        if (path.contains("stick") || path.contains("feather") || path.contains("paper")) {
             return 0.001f;
         }
         
