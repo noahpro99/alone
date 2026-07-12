@@ -127,13 +127,12 @@ public final class Conditions {
                 && rng.nextFloat() < Math.min(0.9f, damageTaken / 8.0f) * armorGuard) {
                 addBleeding(player, BLEED_TICKS);
             }
-            // A bad fall turns an ankle; a heavy blow can break a bone — a far graver, weeks-longer injury.
-            // Both hobble you, both are eased by a splint and passed by rest (§1.5).
-            if (source.is(DamageTypes.FALL) && damageTaken >= 4.0f) {
-                addSprain(player, SPRAIN_TICKS);
-                player.sendSystemMessage(Component.literal(
-                    "You turn an ankle in the fall — it'll trouble you for a week or more. Splint it and rest."), true);
-            } else if (damageTaken >= 8.0f && rng.nextFloat() < 0.5f * armorGuard) {
+            // A heavy blow can break a bone — a far graver, weeks-longer injury, eased by a splint and
+            // passed by rest (§1.5). FALLS are handled entirely by applyFall (via PlayerFallMixin), which
+            // rolls its OWN sprain/fracture/bleed — so we must not re-injure off the fall's damage tick
+            // here, or every fall over ~10 m would tack a guaranteed extra sprain on top of that roll
+            // (and turn "a sprain is a chance" into a certainty).
+            if (!source.is(DamageTypes.FALL) && damageTaken >= 8.0f && rng.nextFloat() < 0.5f * armorGuard) {
                 addSprain(player, FRACTURE_TICKS);
                 player.sendSystemMessage(Component.literal(
                     "The blow breaks a bone — weeks of mending. Splint it and rest, or it'll cripple you far longer."));
@@ -237,15 +236,22 @@ public final class Conditions {
         // Survived — the injuries are the real cost, and they get likelier the harder you land. A sprain is
         // a CHANCE, not a certainty: a fit person walks off a 4 m drop most of the time (~10%), but by ~8 m a
         // turned ankle is near-certain. A real fracture comes on harder landings still.
+        boolean hurtLeg = false;
         float sprainChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 3.5) / 5.0), 0f, 0.95f)
             * damageMultiplier;
         if (rng.nextFloat() < sprainChance) {
             addSprain(player, SPRAIN_TICKS);
+            hurtLeg = true;
         }
         float fractureChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 6.0) / 12.0), 0f, 0.9f)
             * damageMultiplier;
         if (rng.nextFloat() < fractureChance) {
             addSprain(player, SPRAIN_TICKS); // a fracture stacks into a longer, worse limp
+            hurtLeg = true;
+        }
+        if (hurtLeg) {
+            player.sendSystemMessage(Component.literal(
+                "You turn an ankle in the fall — it'll trouble you for a week or more. Splint it and rest."), true);
         }
         float bleedChance = net.minecraft.util.Mth.clamp((float) ((fallDistance - 8.0) / 16.0), 0f, 0.85f)
             * damageMultiplier;
