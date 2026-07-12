@@ -22,8 +22,12 @@ import net.minecraft.world.level.Level;
  * hatchet}</b> (either hand) and <b>sneak + hold right-click</b> to rive. It is <b>brutal, slow work</b>:
  * a full split is dozens of blows that drain most of your wind, so one log yields just <b>2 rough
  * boards</b> and a couple of rivings leave you spent — a stack of planks is a real day's labour, not a
- * crafting-grid afterthought. (A saw, later, changes that.) Splitting along the grain is gentle on the
+ * crafting-grid afterthought. Splitting along the grain is gentle on the
  * edge, so it barely wears the hatchet.
+ *
+ * <p>A <b>{@link AloneItems#HAND_SAW hand saw}</b> (iron) changes that: the same sneak + hold-right-click on
+ * a log, but sawing is far quicker (~6s), much easier on your wind, and yields <b>more, cleaner boards</b> —
+ * the tool that turns plank-making from a gruelling chore into ordinary work.
  */
 public final class Riving {
     private Riving() {
@@ -31,7 +35,11 @@ public final class Riving {
 
     private static final int STROKES_TO_RIVE = 45;     // ~13.5s of steady splitting (client sends ~every 6t)
     private static final float STAMINA_PER_STROKE = 2.0f; // ~90 stamina a log — nearly a full bar; you tire fast
-    private static final int PLANKS_PER_LOG = 2;        // rough hand-riven yield (a saw does better, later)
+    private static final int PLANKS_PER_LOG = 2;        // rough hand-riven yield
+
+    private static final int SAW_STROKES = 20;          // ~6s — a saw cuts far quicker than splitting
+    private static final float SAW_STAMINA = 0.8f;      // ~16 stamina a log — ordinary work, not a wringing-out
+    private static final int SAW_PLANKS = 4;            // clean boards, a full log's worth
 
     private record Rive(int strokes, int atTick) {
     }
@@ -48,20 +56,23 @@ public final class Riving {
         ItemStack main = player.getMainHandItem();
         ItemStack off = player.getOffhandItem();
         ItemStack log = main.is(ItemTags.LOGS) ? main : (off.is(ItemTags.LOGS) ? off : ItemStack.EMPTY);
-        ItemStack hatchet = main.is(AloneItems.FLINT_HATCHET) ? main
-            : (off.is(AloneItems.FLINT_HATCHET) ? off : ItemStack.EMPTY);
+        ItemStack tool = isRiveTool(main) ? main : (isRiveTool(off) ? off : ItemStack.EMPTY);
         Item planks = log.isEmpty() ? null : planksFor(log.getItem());
-        if (!player.isShiftKeyDown() || log.isEmpty() || hatchet.isEmpty() || planks == null) {
+        if (!player.isShiftKeyDown() || log.isEmpty() || tool.isEmpty() || planks == null) {
             ACTIVE.remove(player.getUUID());
             return;
         }
+        boolean saw = tool.is(AloneItems.HAND_SAW);
+        int strokesNeeded = saw ? SAW_STROKES : STROKES_TO_RIVE;
+        float staminaPerStroke = saw ? SAW_STAMINA : STAMINA_PER_STROKE;
+        int yield = saw ? SAW_PLANKS : PLANKS_PER_LOG;
         if (SurvivalMeters.getStamina(player) <= 0f) {
             player.sendSystemMessage(Component.literal("You're too spent to keep splitting — rest first."), true);
             return; // exhausted; the split waits
         }
 
         var rng = player.getRandom();
-        SurvivalMeters.exert(player, STAMINA_PER_STROKE);
+        SurvivalMeters.exert(player, staminaPerStroke);
         level.playSound(null, player.blockPosition(), SoundEvents.AXE_STRIP, SoundSource.PLAYERS,
             0.6f, 0.8f + rng.nextFloat() * 0.2f);
 
@@ -69,9 +80,9 @@ public final class Riving {
         boolean continuing = current != null && player.tickCount - current.atTick <= 12;
         int strokes = continuing ? current.strokes + 1 : 1;
 
-        if (strokes < STROKES_TO_RIVE) {
+        if (strokes < strokesNeeded) {
             player.sendSystemMessage(Component.literal(
-                "Riving… " + (strokes * 100 / STROKES_TO_RIVE) + "%"), true);
+                (saw ? "Sawing… " : "Riving… ") + (strokes * 100 / strokesNeeded) + "%"), true);
             ACTIVE.put(player.getUUID(), new Rive(strokes, player.tickCount));
             return;
         }
@@ -79,18 +90,25 @@ public final class Riving {
         // The log finally splits into a couple of rough boards.
         ACTIVE.remove(player.getUUID());
         log.shrink(1);
-        if (!player.getInventory().add(new ItemStack(planks, PLANKS_PER_LOG))) {
-            player.drop(new ItemStack(planks, PLANKS_PER_LOG), false);
+        if (!player.getInventory().add(new ItemStack(planks, yield))) {
+            player.drop(new ItemStack(planks, yield), false);
         }
         if (!player.isCreative()) {
-            hatchet.setDamageValue(hatchet.getDamageValue() + 1); // splitting is gentle on the edge
-            if (hatchet.getDamageValue() >= hatchet.getMaxDamage()) {
-                hatchet.shrink(1); // worn out
+            tool.setDamageValue(tool.getDamageValue() + 1); // riving is gentle on an edge; sawing wears the blade
+            if (tool.getDamageValue() >= tool.getMaxDamage()) {
+                tool.shrink(1); // worn out
                 level.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.7f, 1f);
             }
         }
         level.playSound(null, player.blockPosition(), SoundEvents.WOOD_BREAK, SoundSource.PLAYERS, 0.8f, 1f);
-        player.sendSystemMessage(Component.literal("The log splits into rough boards."), true);
+        player.sendSystemMessage(Component.literal(saw
+            ? "You saw the log into clean boards." : "The log splits into rough boards."), true);
+    }
+
+    /** Either tool that works a log into boards: the flint hatchet (slow, brutal splitting) or the hand saw
+     *  (quick, easy, more boards). */
+    private static boolean isRiveTool(ItemStack stack) {
+        return stack.is(AloneItems.FLINT_HATCHET) || stack.is(AloneItems.HAND_SAW);
     }
 
     /** The planks a given log rives into — derived from its name (oak_log → oak_planks, warped_stem →

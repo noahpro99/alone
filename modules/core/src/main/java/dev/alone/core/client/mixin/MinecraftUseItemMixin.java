@@ -93,10 +93,12 @@ public class MinecraftUseItemMixin {
             return;
         }
 
-        // Sneak + hold right-click with a log + flint hatchet (either hand) → rive it into boards. Slow.
+        // Sneak + hold right-click with a log + a flint hatchet (slow riving) or a hand saw (quick) → work
+        // it into boards.
         boolean haveLog = main.is(ItemTags.LOGS) || off.is(ItemTags.LOGS);
-        boolean haveHatchet = main.is(AloneItems.FLINT_HATCHET) || off.is(AloneItems.FLINT_HATCHET);
-        if (mc.player.isShiftKeyDown() && haveLog && haveHatchet) {
+        boolean haveRiveTool = main.is(AloneItems.FLINT_HATCHET) || off.is(AloneItems.FLINT_HATCHET)
+            || main.is(AloneItems.HAND_SAW) || off.is(AloneItems.HAND_SAW);
+        if (mc.player.isShiftKeyDown() && haveLog && haveRiveTool) {
             if (mc.player.tickCount - alone$lastSendTick >= 6) {
                 ClientPlayNetworking.send(RiveStrokePayload.INSTANCE);
                 mc.player.swing(InteractionHand.MAIN_HAND);

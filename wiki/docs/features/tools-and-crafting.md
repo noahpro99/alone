@@ -66,6 +66,15 @@ Cordage is the real, slow way people made it — three steps, and a serious inve
 
 So a single string is **eight strands of fiber and a long twist** — real cordage is precious, which is exactly why you'd throw down a no-cordage **[deadfall](./hunting.md#which-trap-and-when)** before you'd spend string on snares. It feeds rope, bandages, bows, snares, fishing gear, and more.
 
+## Boards — riving by hand, or a hand saw
+
+Before saws, boards were **split from a log** with a froe and mallet — here, your **flint hatchet**. Hold a **log** and a hatchet (either hand) and **sneak + hold right-click** to rive:
+
+- It's **brutal, slow work** — dozens of blows (~13 seconds) that **drain most of your stamina**, and a log yields just **2 rough boards**. A stack of planks is a real day's labour, not a crafting-grid afterthought.
+- Splitting runs *along* the grain, so it's gentle on the edge — the hatchet barely wears.
+
+A **hand saw** (an iron blade — **2 iron + a stick**) changes that. Same sneak + hold-right-click on a log, but sawing is **far quicker** (~6 seconds), **much easier on your wind** (a fraction of the stamina), and gives **4 clean boards** per log. It's the tool that turns plank-making from a chore into ordinary work — worth the iron once you're building in earnest.
+
 ## Timed, stationary crafting
 
 A craft is not instant. Once a valid recipe sits in the grid, it must be **worked at** before the result can be taken:

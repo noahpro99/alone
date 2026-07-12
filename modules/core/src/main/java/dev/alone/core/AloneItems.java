@@ -225,6 +225,10 @@ public final class AloneItems {
 
     public static final Item FLINT_HATCHET = register("flint_hatchet",
         key -> new AxeItem(FLINT, 6.0F, -3.2F, new Item.Properties().setId(key)));
+    /** A hand saw (iron) — the woodworking upgrade over splitting boards by hand: sneak + hold right-click
+     *  a log with it to saw far faster, for far less sweat, and get more boards per log (see {@link Riving}). */
+    public static final Item HAND_SAW = register("hand_saw",
+        key -> new Item(new Item.Properties().durability(250).setId(key)));
     public static final Item FLINT_PICK = register("flint_pick",
         key -> new Item(new Item.Properties().pickaxe(FLINT, 1.0F, -2.8F).setId(key)));
     public static final Item FLINT_KNIFE = register("flint_knife",
