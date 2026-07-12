@@ -13,6 +13,8 @@ The year cycles **spring → summer → autumn → winter**, with each season la
 - **Summer** shifts it **hotter**.
 - **Spring and autumn** are the mild shoulder seasons, with no temperature shift.
 
+- **Nothing breeds in winter.** Animals **won't breed** while it's winter — the dead season stops new life just as it stops crops. So you grow a herd (and let hunted game repopulate) in **spring**, not the cold; breeding resumes when it breaks.
+
 Season affects body temperature — see [Body Temperature](./body-temperature.md).
 
 ## Farming with the seasons

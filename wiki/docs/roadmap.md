@@ -60,10 +60,10 @@ weed by hand, not a one-time build; trampling and farmland erosion are vanilla. 
 
 ## Wildlife & hunting
 
-- **Deer** (a proper wild-game model) and **seasonal breeding**. *(**Local overhunting** has shipped —
-  hunt a patch of country too hard and the game thins out and stops spawning there until it recovers over
-  the following days, so you work a range instead of stripping one valley; see
-  [Hunting & Wildlife](./features/hunting.md#game-runs-out-if-you-overhunt).)*
+- **Deer** — a proper wild-game model for the woods. *(**Local overhunting** and **seasonal breeding** have
+  shipped — hunt a patch too hard and the game thins out and stops spawning until it recovers, so you work a
+  range not one valley; and animals **won't breed in winter**, so you grow a herd in spring, not the dead
+  season. See [Hunting & Wildlife](./features/hunting.md#game-runs-out-if-you-overhunt).)*
 - **More tracking sign:** footprints and snow tracking, to follow quarry you can't see. *(Persistence
   hunting, blood trails, and bleed-out have shipped, and now a **prevailing wind** — a steady direction
   each day that carries your scent, so a predator downwind finds you from far off and one upwind barely
