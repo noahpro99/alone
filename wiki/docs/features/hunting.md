@@ -24,7 +24,8 @@ So to actually get close to a deer you have to beat **both** — **crouch *and* 
 range. Reading the wind isn't just about predators; it's the heart of the stalk — the way it is in real
 life and on the show. Failing that, wear the animal down by [persistence](#persistence-hunting--run-it-down).
 
-Domestic livestock (cows, pigs, sheep, chickens) stay calm, so farming and herding still work.
+Domestic livestock (cows, pigs, sheep, chickens) stay calm, so farming and herding still work — but you
+**won't meet them out in the wild** any more (see [The wild is wild — livestock live at villages](#the-wild-is-wild--livestock-live-at-villages)).
 
 ## Persistence hunting — run it down
 
@@ -71,15 +72,19 @@ wound. This is what makes a well-placed shot worth landing: put a real wound in 
 the bleeding finishes the work.
 
 > A bleed-out death isn't a blade kill, so it still **forfeits the hide** (same as an arrow kill) — finish
-> it with a blade if you want the leather.
+> it with a blade if you want the hide.
 
 ## A blade kill butchers the carcass — hide, bone, and sinew
 
 Killing a hide-bearing animal with a **blade** (knife, sword, axe, or **spear**) lets you work the whole
-carcass: it salvages **leather (hide)**, **bone**, and often a strand of **sinew** (cordage), on top of the
-meat. Kill it with a blunt tool or bare hands and you waste it all — **no clean butchering means no
-hide, bone, or sinew, only the meat.** (Animals no longer drop leather in their base loot — **all** of it
-comes from a blade kill, so a clubbed cow gives just beef.) See [Tools & Crafting](./tools-and-crafting.md).
+carcass: it salvages a **raw hide**, **bone**, and often a strand of **sinew** (cordage), on top of the
+meat — plus a lump of **animal brains** you'll need to tan the hide (see below). Kill it with a blunt tool
+or bare hands and you waste it all — **no clean butchering means no hide, bone, or sinew, only the meat.**
+(Animals don't drop leather in their base loot at all — **everything** comes from a blade kill, so a clubbed
+cow gives just beef.) See [Tools & Crafting](./tools-and-crafting.md).
+
+The hide comes off **green** — a fresh kill gives you a wet **raw hide**, *not* usable leather. Turning it
+into leather is a separate, patient job (see [From raw hide to leather](#from-raw-hide-to-leather--tanning)).
 
 **The salvage scales with the animal.** A big-bodied beast gives a proper hide and heavy bone; a mid-size
 grazer (pig, sheep, cow, deer) gives a usable hide; and **small game — a rabbit or squirrel — gives only a
@@ -95,6 +100,43 @@ Every part has a use:
   bows, and more.
 
 (Fat — rendered to tallow for candles — is the last piece of full-animal use, still to come.)
+
+## From raw hide to leather — tanning
+
+A fresh hide is **green** — wet, and useless as it is. In real life leather is *made*, not pulled off the
+animal ready to wear: you scrape the hide, tan it, and let it cure over days. So leather here is a **worked
+product**, and the tool for it is the **tanning rack** — a load-and-leave frame, the same kind of "set it
+and walk away" station as the [drying rack](./preservation.md).
+
+- **Build the rack** from a stick frame laced with cordage (**5 sticks + 1 string**).
+- **Load it** by right-clicking with a **raw hide** while you're carrying a lump of **animal brains** — the
+  classic **brain-tan**, because *"a beast has just enough brains to tan its own hide."* Both are consumed to
+  start the work, and the hide stretches on the frame while it cures.
+- **Come back days later.** Tanning is the slow, patient job — the rack works for roughly **three in-game
+  days** (about an hour of real time, and it keeps curing while the chunk is unloaded, so it runs through the
+  days you [fast-forward by resting](./sleep-and-rest.md)). That's deliberately **longer than the drying
+  rack's** meat-cure: leather is the more involved craft.
+- **Take the leather** with a right-click when it's done. Pull an **unfinished** hide off early and you get
+  the raw hide back — but the **brains are wasted**, so impatience costs you.
+
+Because each kill drops **one lump of brains per hide** (big animals run slightly brain-short — one skull, a
+large skin), you can roughly tan what you hunt, but not for free. Leather is now something you **earn**: a
+dangerous hide off a bison, or a hide off your own hunting, then days on the rack — the whole reason a leather
+coat or a [tarp](./body-temperature.md) is a real mid-game milestone rather than a punched-cow freebie.
+
+## The wild is wild — livestock live at villages
+
+Cows, pigs, sheep, and chickens are **farmed** animals, not wildlife — so, like real life, you **won't find
+them roaming the open country**. Their natural spawns are held to **villages**: a village is where a cow,
+pig, sheep, or chicken lives, as the settlement's own herd. Out in the meadows and forests you'll meet only
+genuinely wild animals — skittish prey and dangerous game.
+
+This is the same logic that keeps [hostile mobs near ruins and structures](./world-and-seasons.md#monsters-only-near-loot-structures):
+the empty wild stays *wild*, and the things humans keep stay where humans are. It also hardens the early
+economy — there's **no free beef, wool, or hide from a cow you punch in a field**. Livestock (and the leather,
+wool, and meat they give) become something you **find at, tend at, or take from a village**. Breeding still
+works normally, so once you've got a pair home from a village you can farm them; the veto only stops them
+*appearing* wild in the first place.
 
 ## Deer — the forest's wild game
 
@@ -118,6 +160,32 @@ either take the shot before it reaches a trunk, get one out in the open away fro
 only climbs actual trees, not walls or fences.)
 
 *(Squirrels currently use placeholder rabbit art until a proper squirrel model is made.)*
+
+## Dangerous game — the bison and the wild boar
+
+Not all wild game runs. Two animals hold their ground and **fight back** — they're the big-meat, big-hide
+prizes of the wild, but taking one is a **real risk**, not a walk-up club. Unlike a skittish deer you
+can't just [wear them down](#persistence-hunting--run-it-down); you have to actually beat them.
+
+**The bison** is the wild bovine — the "wild cow" that fills the big-grazer niche a docile cow used to.
+It's a **heavy, dangerous animal**: it grazes the open **plains and savanna in herds**, calm until provoked,
+but hit one and it **charges and gores** with real force (it hits hard and knocks you back), and **the whole
+herd turns on you** — one careless swing and you've got several tons of angry bovine bearing down. It has
+**far more health than a cow** (it's built to survive a fight), so you commit to the kill. The payoff matches
+the risk: a bison gives a **big haul of beef** and, blade-butchered, **several hides** — the wild's answer to
+cow-leather now that cows live only at villages. This is the realism: big-game hide and meat are *huntable in
+the wild*, but you **earn them at knifepoint**.
+
+**The wild boar** is the forest's mid-size version — the wild ancestor of the pig. It **roots around the
+forest, taiga, and swamp** peacefully, but it's **not placid**: corner it or strike it and it **charges and
+gores** (a real boar is genuinely dangerous). It's tougher and hits harder than a farm pig, so even the
+"small" dangerous game makes you pick your moment. A blade kill yields **pork** and a **usable hide**.
+
+Both are **butchered like any hide-bearing animal** — a blade kill gives the hide (to [tan](#from-raw-hide-to-leather--tanning)),
+bone, and sinew; a blunt kill wastes it. And both count as [game](#game-runs-out-if-you-overhunt), so a
+hunted-out plain or wood thins of them too.
+
+*(Bison and wild boar currently reuse vanilla cow/pig art — scaled up for the bison — until proper models are made.)*
 
 ## Trapping — the food that works while you don't
 
