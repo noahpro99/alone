@@ -16,7 +16,9 @@ It is **slow** — about **0.4× the speed of a ladder** — and climbing **up**
 
 ## Free-climbing walls
 
-You can free-climb a **flat, at-least-two-block-tall wall** — no height limit — at a slow pace, but only on **rough, natural faces**: raw rock, tree trunks, and earth (stone, cobblestone, logs, dirt, gravel, sandstone, and the like). **Smooth or finished faces** — planks, bricks, glass, metal, polished stone — offer no grip, so you need a rope or ladder for those.
+You can free-climb a **flat, at-least-two-block-tall wall** — no height limit — at a slow pace, but only on **rough, natural faces**: raw rock, tree trunks, and earth (stone, cobblestone, logs, dirt, gravel, sand, sandstone, **terracotta** — the badlands cliffs — and the like). **Smooth or finished faces** — planks, bricks, glass, metal, polished stone — offer no grip, so you need a rope or ladder for those.
+
+You climb with your **hands**, so your **selected hotbar slot must be empty** — put your tool or weapon away to get a grip (holding something drops you off the wall). Vanilla **ladders and vines** aren't affected; you climb those with a full hand as normal.
 
 - It costs about **25 stamina per block**, up or down (a full stamina bar buys roughly four blocks).
 - **Run out of stamina mid-climb and you fall.** Even with stamina to spare, your **grip can slip** at random — more likely the more tired you are — and drop you off the wall. See [Survival Meters & HUD](./survival-meters.md) for reading your stamina.

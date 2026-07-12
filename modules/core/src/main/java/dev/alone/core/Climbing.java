@@ -236,6 +236,12 @@ public final class Climbing {
             setGripping(player, false);
             return false;
         }
+        // You free-climb with your hands — you can't get a grip holding something. The selected slot must be
+        // empty (put your tool away to climb). Vanilla ladders/vines are untouched; this is only our climbs.
+        if (!player.getMainHandItem().isEmpty()) {
+            setGripping(player, false);
+            return false;
+        }
         // Too heavily loaded to pull yourself up anything — leaves or rock.
         if (Carry.totalWeight(player) > CLIMB_MAX_WEIGHT) {
             setGripping(player, false);
