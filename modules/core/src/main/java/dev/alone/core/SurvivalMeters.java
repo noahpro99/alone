@@ -47,6 +47,9 @@ public final class SurvivalMeters {
     }
 
     public static final float MAX_STAMINA = 100f;
+    // Base walk speed, down from vanilla's 0.1 (a ~4.3 m/s jog) to a real walking/brisk pace. Sprint (×1.3)
+    // and the stamina gate turn a sprint into a real, tiring run. Lower = more realistic but more tedious.
+    private static final double WALK_SPEED = 0.075;
     // MC sprint ≈ 5.6 m/s — a hard run, not an all-out dash. An average fit adult holds that pace a
     // few minutes; we compress to ~40s to empty (~225 m) so it's costly but not a 10-second gasp.
     private static final float SPRINT_DRAIN = 0.125f;
@@ -481,6 +484,11 @@ public final class SurvivalMeters {
         // Realistic reach, shorter than vanilla 4.5. Creative keeps vanilla values for building.
         setBaseValue(player, Attributes.BLOCK_INTERACTION_RANGE, player.isCreative() ? 4.5 : BLOCK_REACH);
         setBaseValue(player, Attributes.ENTITY_INTERACTION_RANGE, player.isCreative() ? 3.0 : ENTITY_REACH);
+        // Realistic human pace (§1.4): vanilla's 0.1 "walk" is really a jog (~4.3 m/s) and its sprint is a
+        // run you can hold forever. Slow the base so walking is a walk and a (stamina-gated, tiring) sprint
+        // is a real run — so you can't outrun game on foot, you wear it down (persistence hunting). Sprint's
+        // ×1.3 and any speed modifiers still stack on top. Creative keeps vanilla speed for building.
+        setBaseValue(player, Attributes.MOVEMENT_SPEED, player.isCreative() ? 0.1 : WALK_SPEED);
 
         if (player.isCreative() || player.isSpectator()) {
             return;

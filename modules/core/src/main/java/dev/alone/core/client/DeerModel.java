@@ -18,29 +18,29 @@ public class DeerModel extends QuadrupedModel<CowRenderState> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // 1. Head (Pivot at 0.0F, 4.0F, -8.0F)
+        // 1. Head (Pivot at 0.0F, 4.0F, -5.5F - centered at bottom of neck)
         // Contains Neck, Head, Snout, and Branched Antlers!
         root.addOrReplaceChild(
             "head",
             CubeListBuilder.create()
-                // Neck (width 3, height 8, depth 3) - attached to chest
+                // Neck (width 3, height 8, depth 3) - centered at pivot
                 .texOffs(12, 40)
-                .addBox(-1.5F, -8.0F, 1.0F, 3.0F, 8.0F, 3.0F)
-                // Head box (width 5, height 5, depth 5)
+                .addBox(-1.5F, -8.0F, -1.5F, 3.0F, 8.0F, 3.0F)
+                // Head box (width 3, height 4, depth 6) - slender and long
                 .texOffs(0, 0)
-                .addBox(-2.5F, -12.0F, 0.0F, 5.0F, 5.0F, 5.0F)
-                // Snout (width 3, height 2, depth 2)
+                .addBox(-1.5F, -12.0F, -3.5F, 3.0F, 4.0F, 6.0F)
+                // Snout (width 2, height 2, depth 3) - longer snout
                 .texOffs(1, 35)
-                .addBox(-1.5F, -9.0F, -2.0F, 3.0F, 2.0F, 2.0F)
+                .addBox(-1.0F, -10.0F, -6.5F, 2.0F, 2.0F, 3.0F)
                 // Right Antler (base + branch)
                 .texOffs(22, 0)
-                .addBox(-2.5F, -16.0F, 2.0F, 1.0F, 4.0F, 1.0F)
-                .addBox(-4.5F, -17.0F, 2.0F, 2.0F, 1.0F, 1.0F)
+                .addBox(-1.5F, -16.0F, -0.5F, 1.0F, 4.0F, 1.0F)
+                .addBox(-3.5F, -17.0F, -0.5F, 2.0F, 1.0F, 1.0F)
                 // Left Antler (base + branch)
                 .texOffs(22, 0)
-                .addBox(1.5F, -16.0F, 2.0F, 1.0F, 4.0F, 1.0F)
-                .addBox(2.5F, -17.0F, 2.0F, 2.0F, 1.0F, 1.0F),
-            PartPose.offset(0.0F, 4.0F, -8.0F)
+                .addBox(0.5F, -16.0F, -0.5F, 1.0F, 4.0F, 1.0F)
+                .addBox(1.5F, -17.0F, -0.5F, 2.0F, 1.0F, 1.0F),
+            PartPose.offset(0.0F, 4.0F, -5.5F)
         );
 
         // 2. Body (width 6, length 14, depth 6)
