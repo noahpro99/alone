@@ -179,3 +179,9 @@ same "leave me and my cubs alone" temperament) but roams **forests and taiga** i
 Kill one with a blade and it yields a **hide** like any hide-bearing animal.
 
 **A shield won't save you from it.** You can turn a person's blade with a raised shield, but bracing one against a bear (or a ravager, an iron golem, or the warden) is folly — the mass and power **bash your guard aside**, knocking the shield down for a few seconds so the next blow lands on flesh. You can brace a single hit; you can't turtle behind a shield against a charging bear.
+
+## The iron golem — you can't cheese a giant
+
+An iron golem is a multi-ton iron construct, and it drops its **iron** when killed — but taking that iron is meant to be a **real, dangerous fight**, not a safe farm. So a golem **smashes through weak cover to reach you**: hurt it from behind a one-block wall or poke it through a small hole, and it **pulverises the dirt, wood, or stone in the way** — opening a path straight to you. Only earth-, wood-, and stone-tier blocks give way; **metal, obsidian, and deepslate** are too tough for even a golem, so a genuinely fortified bunker still holds — a thrown-up dirt wall does not.
+
+The lesson is the same as the bear's: against something this big and strong, there's no free poke from safety. Stand and fight it properly, or leave it be. *(Its iron is a risky, one-off prize — not a bypass for the [bloomery](./fire.md), which stays your steady source.)*

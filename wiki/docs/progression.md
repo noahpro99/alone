@@ -191,8 +191,10 @@ things to keep honest as the pack fills in:
   **structure loot** (the planned "old-world leavings"), and a village **iron golem** — which, being made of
   iron, realistically drops it when killed. Everything drops what it should; the golem is kept from being a
   cheap bypass not by removing its iron but by making it a **genuinely dangerous fight** you can't safely
-  cheese (hitting it from above, or poking it through a gap it can't reach through). *(Hardening the golem
-  that way is a planned task.)*
+  cheese (hitting it from above, or poking it through a gap it can't reach through). *(Half done: a golem
+  now **smashes through weak cover** — dirt, wood, stone tier — to reach a target it can't otherwise get at,
+  so a one-block hole or a thrown-up wall no longer keeps you safe. Still to come: hitting a target standing
+  above it.)*
 - **Time and effort are the real tech tree.** Every rung must cost what it did in life — the danger is a
   shortcut sneaking in (a fast craft, a free resource, a mob that drops good gear). When auditing, the
   question is always: *could you really do this, this fast, with what you have?*
