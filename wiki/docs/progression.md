@@ -46,11 +46,11 @@ The four ages below map to the real arc:
    cold and flowing is far safer than warm and still), or **[hot-rock boil](./features/water-and-drinking.md)**
    it clean in a hide waterskin. In snow country you can eat a handful of snow in a pinch — but it
    [chills you](./features/water-and-drinking.md#eating-snow), so melt it if you can.
-6. **Hunt and butcher.** The [spear's reach](./features/hunting.md#the-spear--reach-from-the-first-day) is
-   the early game's best weapon against the woods' main wild game, the
-   **[deer](./features/hunting.md#deer--the-forests-wild-game)** (a skittish grazer you must stalk or run
-   down — small animals wind quickly, a big one takes real endurance to tire);
-   [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
+6. **Hunt and butcher.** Most days you live on **[small game](./features/hunting.md#small-game--the-staple-you-actually-live-on)**
+   — rabbit, squirrel, and bird, a scrap of meat each, taken in numbers — while a **[deer](./features/hunting.md#deer--the-forests-wild-game)**
+   is the rarer prize (a skittish grazer you stalk or run down; small animals wind quickly, a big one takes
+   real endurance to tire). The [spear's reach](./features/hunting.md#the-spear--reach-from-the-first-day) is
+   your best weapon; [run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the
    meat over your fire. You can also **fish** for an easier, renewable catch — but a spot can be

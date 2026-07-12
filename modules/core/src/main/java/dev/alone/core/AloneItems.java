@@ -73,6 +73,9 @@ public final class AloneItems {
     /** Spawn egg for the {@link Deer} (§7.2). */
     public static final Item DEER_SPAWN_EGG = register("deer_spawn_egg",
         key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.DEER).setId(key)));
+
+    public static final Item SQUIRREL_SPAWN_EGG = register("squirrel_spawn_egg",
+        key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.SQUIRREL).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));

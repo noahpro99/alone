@@ -44,11 +44,33 @@ public final class Hunting {
             if (!player.getMainHandItem().is(BLADES)) {
                 return; // no blade → no clean butchering (but the hunt still taught you)
             }
-            int hide = 1 + player.getRandom().nextInt(2); // 1–2 leather salvaged from the skin
-            entity.spawnAtLocation(level, new ItemStack(Items.LEATHER, hide));
-            int bone = 1 + player.getRandom().nextInt(2); // 1–2 bone worked out of the carcass
-            entity.spawnAtLocation(level, new ItemStack(Items.BONE, bone));
-            if (player.getRandom().nextFloat() < 0.6f) {
+            // Salvage scales with the animal's body: a squirrel or rabbit gives a scrap of pelt and little
+            // bone, a mid-size grazer a usable hide, a horse a large one. Bulk ≈ body volume from its size.
+            double bulk = entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight();
+            var rng = player.getRandom();
+            int hide;
+            int bone;
+            float sinewChance;
+            if (bulk < 0.35) {           // small game (rabbit, squirrel, chicken) — often barely worth skinning
+                hide = rng.nextInt(2);           // 0–1 leather
+                bone = rng.nextInt(2);           // 0–1 bone
+                sinewChance = 0.15f;
+            } else if (bulk < 1.6) {     // mid game (pig, sheep, goat, cow, deer) — a proper hide
+                hide = 1 + rng.nextInt(2);       // 1–2 leather
+                bone = 1 + rng.nextInt(2);       // 1–2 bone
+                sinewChance = 0.6f;
+            } else {                     // big game (horse, camel) — a large hide and heavy bone
+                hide = 2 + rng.nextInt(2);       // 2–3 leather
+                bone = 2 + rng.nextInt(2);       // 2–3 bone
+                sinewChance = 0.75f;
+            }
+            if (hide > 0) {
+                entity.spawnAtLocation(level, new ItemStack(Items.LEATHER, hide));
+            }
+            if (bone > 0) {
+                entity.spawnAtLocation(level, new ItemStack(Items.BONE, bone));
+            }
+            if (rng.nextFloat() < sinewChance) {
                 // Sinew from the tendons — a bit of animal cordage (string), when the carcass yields it.
                 entity.spawnAtLocation(level, new ItemStack(Items.STRING, 1));
             }

@@ -63,6 +63,11 @@ meat. Kill it with a blunt tool or bare hands and you waste it all — **no clea
 hide, bone, or sinew, only the meat.** (Animals no longer drop leather in their base loot — **all** of it
 comes from a blade kill, so a clubbed cow gives just beef.) See [Tools & Crafting](./tools-and-crafting.md).
 
+**The salvage scales with the animal.** A big-bodied beast gives a proper hide and heavy bone; a mid-size
+grazer (pig, sheep, cow, deer) gives a usable hide; and **small game — a rabbit or squirrel — gives only a
+scrap of pelt and little bone**, sometimes barely worth the skinning. You don't get a cow's worth of leather
+off a squirrel.
+
 Every part has a use:
 
 - **Bone** → crafted into **bonemeal**, it feeds your crops — so a good hunt helps grow the produce that
@@ -77,6 +82,17 @@ Every part has a use:
 The **deer** is the proper wild game of the woods — the animal a survivor really lives off. It's a **skittish grazer**: get near and it **bolts**, running *fast*, so you can't just walk up and club it. You **stalk** it (stay downwind, move slow) or **run it down** by [persistence hunting](#persistence-hunting--run-it-down) over distance. A **blade kill** yields **venison** and a **hide** (with bone and sinew), like any hide-bearing animal, and deer count as [game](#game-runs-out-if-you-overhunt) — overhunt a patch and they thin out. They spawn in **forest, taiga, and hill country** in small herds, and — like all animals — **won't breed in winter**.
 
 *(Deer currently use placeholder cow art until a proper deer model is made.)*
+
+## Small game — the staple you actually live on
+
+Big game is a jackpot; most days you eat **small game**. Alongside the vanilla **rabbit** and **chicken**,
+the woods hold the **squirrel** — all of them proper skittish wild game that **bolts**, so you stalk it, run
+it down (small animals [wind fast](#persistence-hunting--run-it-down)), or trap it. Each gives only a **scrap
+of meat**, so small game is a numbers game: you take several, not one big kill. They count as
+[game](#game-runs-out-if-you-overhunt) too — hunt a patch of them too hard and they thin out. It's the
+food economy of the show *Alone*: rarely a deer, often a squirrel.
+
+*(Squirrels currently use placeholder rabbit art until a proper squirrel model is made.)*
 
 ## Game runs out if you overhunt
 

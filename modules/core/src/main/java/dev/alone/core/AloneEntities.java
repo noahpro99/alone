@@ -14,6 +14,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.animal.polarbear.PolarBear;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
 
 /**
  * Custom entities. The {@link TravoisEntity travois} (proposal §6 — transport) is a dragged cargo sled;
@@ -48,6 +49,14 @@ public final class AloneEntities {
         .sized(0.9f, 1.5f) // a lean, tall grazer (placeholder cow model for now)
         .build(DEER_KEY);
 
+    public static final ResourceKey<EntityType<?>> SQUIRREL_KEY =
+        ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "squirrel"));
+
+    public static final EntityType<Squirrel> SQUIRREL = EntityType.Builder
+        .of(Squirrel::new, MobCategory.CREATURE)
+        .sized(0.4f, 0.5f) // small game — rabbit-sized (placeholder rabbit model for now)
+        .build(SQUIRREL_KEY);
+
     /** Touching this class registers the entity types above. Called from {@link AloneCore}. */
     public static void init() {
         Registry.register(BuiltInRegistries.ENTITY_TYPE, TRAVOIS_KEY, TRAVOIS);
@@ -71,5 +80,13 @@ public final class AloneEntities {
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))
                 .or(BiomeSelectors.tag(BiomeTags.IS_HILL)),
             MobCategory.CREATURE, DEER, 12, 2, 4);
+
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, SQUIRREL_KEY, SQUIRREL);
+        // A rabbit under the fur — its attributes suit small game: little health (so it winds fast under a
+        // chase) and a quick, darting flight. Common in wooded country, in ones and twos.
+        FabricDefaultAttributeRegistry.register(SQUIRREL, Rabbit.createAttributes());
+        BiomeModifications.addSpawn(
+            BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA)),
+            MobCategory.CREATURE, SQUIRREL, 10, 1, 3);
     }
 }
