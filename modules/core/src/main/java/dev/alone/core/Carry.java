@@ -539,9 +539,14 @@ public final class Carry {
     private static float bucketVolume(Player player, boolean pocket) {
         Inventory inventory = player.getInventory();
         float sum = 0f;
+        boolean basketExcused = false; // exactly ONE basket is the worn carry aid (free); spares are cargo
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.isEmpty() || stack.is(AloneItems.WOVEN_BASKET) || isWornArmor(player, stack)) {
+            if (stack.isEmpty() || isWornArmor(player, stack)) {
+                continue;
+            }
+            if (stack.is(AloneItems.WOVEN_BASKET) && !basketExcused) {
+                basketExcused = true; // the carry aid itself doesn't count against the load
                 continue;
             }
             if (isPocketable(stack) == pocket) {
