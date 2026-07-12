@@ -60,9 +60,9 @@ public final class AloneItems {
         key -> new BackpackItem(new Item.Properties().stacksTo(1).component(
             net.minecraft.core.component.DataComponents.CONTAINER,
             net.minecraft.world.item.component.ItemContainerContents.EMPTY).setId(key)));
-    /** A woven pack basket (proposal §6) — the day-one carry aid, made of plant fibre and withies (no
-     *  leather, no animals). Slung on the back, it raises how much you can carry ({@link Carry#volumeLimit});
-     *  smaller than the leather backpack, which is a proper openable pack. */
+    /** A woven pack basket (proposal §6) — the early carry aid, plant fibre and withies stitched tight with
+     *  a bone awl. Slung on the back, it raises how much you can carry ({@link Carry#volumeLimit}); smaller
+     *  than the leather backpack, which is a proper openable pack. */
     public static final Item WOVEN_BASKET = register("woven_basket",
         key -> new Item(new Item.Properties().stacksTo(1).setId(key)));
     /** A travois (proposal §6) — a dragged cargo sled. Right-click ground to set it down. */
@@ -344,6 +344,9 @@ public final class AloneItems {
      *  still works without one, just slower. */
     public static final Item BONE_SCRAPER = register("bone_scraper",
         key -> new Item(new Item.Properties().durability(BONE_SCRAPER_DURABILITY).setId(key)));
+    /** A bone awl (§7.3) — a simple pointed bone tool used for punching holes in hides and crafting. */
+    public static final Item BONE_AWL = register("bone_awl",
+        key -> new Item(new Item.Properties().setId(key)));
     /** Bone marrow (§7.3) — crack a bone for the fatty, calorie-dense tissue inside. Fat is otherwise scarce
      *  out here, so this is a real prize: a small morsel that fills you out of proportion to its size (high
      *  saturation). Raw, it spoils like any offal (on the {@code alone:perishable_foods} tag). */
