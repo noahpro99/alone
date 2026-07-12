@@ -20,6 +20,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BedItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
@@ -83,6 +84,10 @@ public final class AloneItems {
      *  (see {@link AloneBlocks#SLEEPING_BAG}; insulation applied in {@link SurvivalMeters}). */
     public static final Item SLEEPING_BAG = register("sleeping_bag",
         key -> new BedItem(AloneBlocks.SLEEPING_BAG, new Item.Properties().stacksTo(1).setId(key)));
+    /** Thatch — quick primitive roofing (sticks + plant fibre) that shelters the space beneath it
+     *  (see {@link AloneBlocks#THATCH}). */
+    public static final Item THATCH = register("thatch",
+        key -> new BlockItem(AloneBlocks.THATCH, new Item.Properties().setId(key)));
     public static final Item WATERSKIN = register("waterskin",
         key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3, false));
     /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */

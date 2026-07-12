@@ -183,8 +183,10 @@ the list, with reason**):
   chore — brought wire is the shortcut past hand-twisting; a spool of ready cordage), gill net 🔶 (the fish
   trap is the weir; a portable net could be its own item), fishing line & hooks ✅ (rod), bank line ✅ (rope),
   **slingshot** 🔨 (a low-power ranged small-game option below the bow — nice-to-have).
-- **Shelter & cordage:** paracord/rope ✅, **heavy tarp** 🔨 (a quick waterproof rain/shelter cover — ties
-  into the planned shelter ladder), bivy/−40 **sleeping bag** ✅ (a warmth-rated bedroll variant: full
+- **Shelter & cordage:** paracord/rope ✅, **thatch** ✅ (the built shelter-ladder rung: a cheap sticks +
+  plant-fibre roof block you lay over a niche/wall to get roofed and dry day one — flammable), **heavy
+  tarp** 🔨 (the *portable* waterproof cover above it — deploy-and-go, no building), bivy/−40 **sleeping
+  bag** ✅ (a warmth-rated bedroll variant: full
   recovery through a cold/freezing night where a bedroll leaves you shivering — but a sweatbox on a warm
   night, so it's a cold-weather tool and the bedroll wins in the heat: a real biome-driven choice. Dies wet.
   3 wool + 2 leather), wool blanket 🔶 (warmth; maps to insulation).
@@ -201,10 +203,11 @@ the list, with reason**):
   deliberately *not* being built — Alone's realism here is physical, and a happiness meter would be a HUD
   abstraction rather than a felt mechanic), eyeglasses / enema 🚫 (no mechanic; comfort/joke items).
 
-So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅ and the warmth-rated sleeping bag ✅
-are **done**; the remaining 🔨 builds are a **tarp**, a quick **leaf/stick shelter block**, a
-**cloth/leather sewing-repair**, and optionally a **slingshot** and a **portable net** — plus the pick-2
-selection screen itself. Build those and nearly the whole real list becomes a meaningful choice.
+So the loadout doubles as a **to-do list of mechanics**. Ferro rod ✅, the warmth-rated sleeping bag ✅, and
+the quick **thatch** shelter roof ✅ are **done**; the remaining 🔨 builds are a **tarp** (a *portable*
+waterproof cover, above the built thatch roof), a **cloth/leather sewing-repair**, and optionally a
+**slingshot** and a **portable net** — plus the pick-2 selection screen itself. Build those and nearly the
+whole real list becomes a meaningful choice.
 
 ## Death, respawn & run modes
 

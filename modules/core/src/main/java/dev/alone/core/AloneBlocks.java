@@ -64,6 +64,24 @@ public final class AloneBlocks {
         });
 
     /**
+     * Thatch (§5.5) — a woven panel of sticks and dry leaf/grass, the quick primitive roofing of a lean-to
+     * or debris hut. It's a solid block that <b>blocks the sky</b>, and that's the whole mechanic: lay it
+     * over a dug-out niche or a low wall of logs and the space beneath becomes real shelter through the
+     * systems that already exist — it reads as <b>roofed</b> (warmer, out of the night chill and off the
+     * blizzard) and, with the sky blocked, <b>rain can't reach you</b>, so you stay <b>dry</b>, which is what
+     * keeps wet-cold from killing you (§1.3). Cheap and fast from sticks + plant fibre — the day-one roof,
+     * long before you can saw planks. But it's bone-dry tinder: it <b>catches readily and fire runs through
+     * it</b>, so keep a thatch roof well clear of your fire. Placeholder straw texture until real art lands.
+     */
+    public static final Block THATCH = register("thatch",
+        key -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_YELLOW)
+            .sound(SoundType.GRASS)
+            .strength(0.4F)
+            .ignitedByLava()
+            .setId(key)));
+
+    /**
      * Rope (proposal §5.7) — a hanging climb line. No collision (you move through it) and it's in the
      * {@code minecraft:climbable} tag, so vanilla treats it exactly like a ladder: full-speed, no-cost,
      * safe up-and-down climbing — the civilized alternative to brutal free-climbing. Deployed as a run
@@ -216,6 +234,8 @@ public final class AloneBlocks {
 
         // Rope is dry plant fibre — it catches readily and burns up fast, so fire runs up a hung line.
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);
+        // Thatch is bone-dry straw and sticks — very flammable (like hay), so fire spreads across a roof.
+        net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(THATCH, 60, 20);
     }
 
     private static Block register(String path, Function<ResourceKey<Block>, Block> factory) {
