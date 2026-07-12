@@ -23,7 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
  *   <li><b>Cold store:</b> ice or snow packed against a chest/barrel chills it like a cellar (see
  *       {@link #coldPacking}). It works above ground and in warm climates — but the ice must be kept out of
  *       the light or it melts (vanilla melts ice near torches/lava), so a real ice house is <b>dark and
- *       enclosed</b>, and in a warm biome you must <b>haul the ice in</b> because none forms there.</li>
+ *       enclosed</b>, and in a warm biome you must <b>haul the ice in</b> because none forms there. And even
+ *       in the dark it doesn't last forever: in an above-freezing biome the packed ice <b>slowly melts</b>
+ *       (see {@code IceBlockWarmMeltMixin}), so a lowland ice house is a <b>restock-each-winter</b> store,
+ *       while in a below-freezing climate the ice keeps indefinitely.</li>
  * </ul>
  */
 public final class IceHouse {

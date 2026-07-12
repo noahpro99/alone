@@ -82,6 +82,12 @@ must be **shuttered and dark**, its ice packed and out of the sun — just like 
 warm biome no ice forms locally, so you must **haul it in** from the cold and race to get it walled up
 before it melts. That hauling and insulating **is** the ice house.
 
+**And it doesn't last forever.** Even shuttered in the dark, ice packed into a **warm or temperate**
+biome **slowly melts** from the heat leaking in — so a lowland ice house is a **maintenance store** you
+**restock** each winter with fresh-cut blocks, not a one-time build. The colder the climate, the longer
+it keeps: in a **below-freezing biome** (a boreal or arctic store) the ice **doesn't melt at all** and
+the cold is effectively free. So *where* you dig your ice house matters as much as how you build it.
+
 ## Salting
 
 Salting marks a food as **preserved** (the ~30-day shelf life):
