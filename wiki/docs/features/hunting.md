@@ -128,6 +128,12 @@ large skin), you can roughly tan what you hunt, but not for free. Leather is now
 dangerous hide off a bison, or a hide off your own hunting, then days on the rack — the whole reason a leather
 coat or a [tarp](./body-temperature.md) is a real mid-game milestone rather than a punched-cow freebie.
 
+**Tan promptly — the brains spoil.** Brains are offal: like meat, a lump of brains **rots** if you sit on it
+too long (faster in the heat, slower in the cold — the same [freshness clock](./preservation.md#spoilage) as
+food), and rotten brains are useless. The **raw hide itself keeps** — a green hide you can hang onto — but
+without brains to tan it, that hide is stuck until your next kill provides more. So a fresh kill is a **use-it
+window**: get the hide onto a rack while its brains are still good.
+
 ## The wild is wild — livestock live at villages
 
 Cows, pigs, sheep, and chickens are **farmed** animals, not wildlife — so, like real life, you **won't find
@@ -175,19 +181,26 @@ can't just [wear them down](#persistence-hunting--run-it-down); you have to actu
 It's a **heavy, dangerous animal**: it grazes the open **plains and savanna in herds**, calm until provoked,
 but hit one and it **charges and gores** with real force (it hits hard and knocks you back), and **the whole
 herd turns on you** — one careless swing and you've got several tons of angry bovine bearing down. It has
-**far more health than a cow** (it's built to survive a fight), so you commit to the kill. The payoff matches
-the risk: a bison gives a **big haul of beef** and, blade-butchered, **several hides** — the wild's answer to
-cow-leather now that cows live only at villages. This is the realism: big-game hide and meat are *huntable in
-the wild*, but you **earn them at knifepoint**.
+**far more health than a cow** (it's built to survive a fight), so you commit to the kill. **A shield won't
+save you** — like a bear, a charging bison's mass **smashes a braced guard aside** (knocked down for a few
+seconds), so there's no turtling behind a shield. The payoff matches the risk: a bison gives a **big haul of
+beef** and, blade-butchered, **several hides** — the wild's answer to cow-leather now that cows live only at
+villages. This is the realism: big-game hide and meat are *huntable in the wild*, but you **earn them at
+knifepoint**.
 
 **The wild boar** is the forest's mid-size version — the wild ancestor of the pig. It **roots around the
 forest, taiga, and swamp** peacefully, but it's **not placid**: corner it or strike it and it **charges and
-gores** (a real boar is genuinely dangerous). It's tougher and hits harder than a farm pig, so even the
-"small" dangerous game makes you pick your moment. A blade kill yields **pork** and a **usable hide**.
+gores** (a real boar is genuinely dangerous). It's tougher than a farm pig, hits hard, and its **charge
+shoves you back** — you can't just stand and trade blows. And **a shield is no answer**: a real boar is *low
+and fast*, so its charge **bowls your guard aside for a moment** and drives in under the shield at your legs
+(the vanilla shield-stagger — briefer than the bison's full smash, a stagger you recover from). The lesson is
+the historical one: boar were hunted with a **crossguard spear**, not a shield — you take the charge off your
+guard and strike on its overshoot, rather than hold block. A blade kill yields **pork** and a **usable hide**.
 
 Both are **butchered like any hide-bearing animal** — a blade kill gives the hide (to [tan](#from-raw-hide-to-leather--tanning)),
-bone, and sinew; a blunt kill wastes it. And both count as [game](#game-runs-out-if-you-overhunt), so a
-hunted-out plain or wood thins of them too.
+bone, and sinew; **a blunt or bare-handed kill wastes all of it** and leaves only the meat, so bring a knife
+if you want the hide. And both count as [game](#game-runs-out-if-you-overhunt), so a hunted-out plain or wood
+thins of them too.
 
 *(Bison and wild boar currently reuse vanilla cow/pig art — scaled up for the bison — until proper models are made.)*
 

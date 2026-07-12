@@ -121,6 +121,7 @@ public final class AloneEntities {
         FabricDefaultAttributeRegistry.register(WILD_BOAR, Pig.createAttributes()
             .add(Attributes.MAX_HEALTH, 16.0)
             .add(Attributes.ATTACK_DAMAGE, 4.0)
+            .add(Attributes.ATTACK_KNOCKBACK, 0.6) // a charge shoves you back — you can't just stand and trade
             .add(Attributes.MOVEMENT_SPEED, 0.28)
             .add(Attributes.STEP_HEIGHT, 1.0));
         // Home is thick cover: forest, taiga, and the swamp. Rooting about in ones and twos, not herds.

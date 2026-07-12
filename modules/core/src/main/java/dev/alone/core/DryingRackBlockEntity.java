@@ -250,7 +250,9 @@ public class DryingRackBlockEntity extends BlockEntity {
         if (held.is(AloneItems.RAW_HIDE)) {
             return placeHide(level, player, held, hand);
         }
-        if (held.is(PERISHABLE)) {
+        // Only actual FOOD dries into jerky here — so a perishable non-food (a lump of brains, which rots
+        // like offal) can't be hung on the rack and "cured".
+        if (held.is(PERISHABLE) && held.has(net.minecraft.core.component.DataComponents.FOOD)) {
             return placeFood(level, player, held, hand);
         }
         return InteractionResult.PASS;

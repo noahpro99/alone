@@ -14,22 +14,35 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * Shields don't stop a big animal (proposal §1.5 / roadmap combat depth). A raised shield can turn a
- * person's blade, but bracing it against a <b>charging bear or a ravager</b> is folly — the mass and the
- * power bash your guard aside. So when a creature in {@link #SHIELD_BREAKERS} lands a blow you <em>block</em>,
- * the shield is <b>knocked down</b>: put on cooldown for a few seconds, exactly as an axe-hit disables it,
- * so the follow-up lands on flesh. You can brace one blow; you can't turtle behind a shield against a bear.
- * (The block still spends the shield's durability as vanilla does — so it's drained as well as defeated.)
+ * A shield doesn't save you from an animal that hits harder than a person (proposal §1.5 / roadmap combat
+ * depth). This repurposes vanilla's own <b>temporary shield-disable</b> (the greyed-out, can't-block cooldown
+ * an axe hit inflicts) for beasts, in two tiers by how the real fight goes:
+ * <ul>
+ *   <li><b>Smashers</b> ({@link #SHIELD_BREAKERS} — bear, bison, ravager, golem, warden): sheer mass bashes a
+ *       braced guard <em>aside</em>. A long disable ({@value #DISABLE_TICKS}t ≈ 6s) — you can brace one blow,
+ *       but you can't turtle; the follow-up lands on flesh.</li>
+ *   <li><b>Staggerers</b> ({@link #SHIELD_STAGGERERS} — the wild boar): a fast, low charge <em>bowls your
+ *       guard aside</em> and drives under it at your legs. A brief disable ({@value #STAGGER_TICKS}t ≈ 2s) —
+ *       a stagger you recover from, not a shattered guard. So you don't hold block against a boar; you take
+ *       the hit off your guard, then strike on its overshoot (the way a boar spear's crossguard, not a shield,
+ *       was the real tool). Fast and recoverable, unlike a bear's overwhelming bulk.</li>
+ * </ul>
+ * The block still spends the shield's durability as vanilla does — so it's drained as well as beaten.
  */
 public final class ShieldBreaking {
     private ShieldBreaking() {
     }
 
-    /** Creatures big and strong enough to smash a braced shield aside — bears, ravagers, golems, the warden. */
+    /** Creatures big and strong enough to smash a braced shield aside — bears, bison, ravagers, golems, warden. */
     public static final TagKey<EntityType<?>> SHIELD_BREAKERS =
         TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "shield_breakers"));
 
-    private static final int DISABLE_TICKS = 120; // ~6s — your guard is knocked down and follow-ups land
+    /** Fast, low chargers that bowl a guard aside for a moment rather than shattering it — the wild boar. */
+    public static final TagKey<EntityType<?>> SHIELD_STAGGERERS =
+        TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "shield_staggerers"));
+
+    private static final int DISABLE_TICKS = 120; // ~6s — a smasher knocks your guard down; follow-ups land
+    private static final int STAGGER_TICKS = 40;  // ~2s — a boar's charge staggers your guard; you recover
 
     public static void init() {
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, takenDamage, blocked) -> {
@@ -37,19 +50,25 @@ public final class ShieldBreaking {
                 return;
             }
             Entity attacker = source.getDirectEntity();
-            if (attacker == null || !attacker.getType().builtInRegistryHolder().is(SHIELD_BREAKERS)) {
+            if (attacker == null) {
+                return;
+            }
+            boolean smasher = attacker.getType().builtInRegistryHolder().is(SHIELD_BREAKERS);
+            boolean staggerer = attacker.getType().builtInRegistryHolder().is(SHIELD_STAGGERERS);
+            if (!smasher && !staggerer) {
                 return;
             }
             ItemStack shield = shieldInHand(player);
             if (shield.isEmpty()) {
                 return;
             }
-            player.getCooldowns().addCooldown(shield, DISABLE_TICKS);
+            player.getCooldowns().addCooldown(shield, smasher ? DISABLE_TICKS : STAGGER_TICKS);
             player.stopUsingItem(); // drop the block that just soaked the blow
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0f, 0.8f);
-            player.sendSystemMessage(Component.literal(
-                "The blow smashes your guard aside — no shield will hold against that."), true);
+                SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0f, smasher ? 0.8f : 1.1f);
+            player.sendSystemMessage(Component.literal(smasher
+                ? "The blow smashes your guard aside — no shield will hold against that."
+                : "The boar's charge bowls your guard aside — it drives in low, under the shield."), true);
         });
     }
 
