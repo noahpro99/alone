@@ -45,9 +45,12 @@ public final class GameStock {
         });
     }
 
-    /** Wild game you hunt for food — passive animals, but not the bold predators (wolves, bears). */
+    /** Wild game you actually hunt — the hide-bearing food/pelt animals, not bees, cats, or parrots, and
+     *  not the bold predators (wolves, bears). Keyed off the same tag the butchering system uses. */
     public static boolean isGame(Entity entity) {
-        return entity instanceof Animal && !Scent.PREDATORS.contains(entity.getType());
+        return entity instanceof Animal
+            && entity.getType().builtInRegistryHolder().is(Hunting.HIDE_BEARING)
+            && !Scent.PREDATORS.contains(entity.getType());
     }
 
     /** May a game animal spawn naturally here, given how hard this ground's been hunted? */
