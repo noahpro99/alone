@@ -49,11 +49,19 @@ public final class Spoilage {
         Identifier.fromNamespaceAndPath("alone", "freshness"),
         DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
 
-    /** World time the freshness was last drained (so drain tracks elapsed, not raw tick count). */
+    /** World time the freshness was last stamped (drain since then is computed on the fly, not written
+     *  every tick — that lazy read is what stops carried food flickering in your hand). */
     public static final DataComponentType<Long> FRESHNESS_SEEN = Registry.register(
         BuiltInRegistries.DATA_COMPONENT_TYPE,
         Identifier.fromNamespaceAndPath("alone", "freshness_seen"),
         DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
+
+    /** The spoil-rate band it was stamped at, so we drain the elapsed time at the right rate and only
+     *  re-stamp when the temperature band actually changes — not every scan. */
+    public static final DataComponentType<Integer> RATE_BAND = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        Identifier.fromNamespaceAndPath("alone", "freshness_band"),
+        DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
 
     /** Salted/dried food starts with the long shelf life (§4.2). */
     public static final DataComponentType<Boolean> PRESERVED = Registry.register(
@@ -119,32 +127,41 @@ public final class Spoilage {
         if (stack.isEmpty() || !stack.is(PERISHABLE)) {
             return;
         }
+        int band = tempBand(temp);
         Long freshness = stack.get(FRESHNESS);
         if (freshness == null) {
             stack.set(FRESHNESS, stack.getOrDefault(PRESERVED, false) ? PRESERVED_SHELF_TICKS : SPOIL_TICKS);
             stack.set(FRESHNESS_SEEN, now);
+            stack.set(RATE_BAND, band);
             return;
         }
-        // Full world-time since we last saw this stack — uncapped, so away-time counts and food rots
-        // while you're gone. (now - seen is 0 the tick it's stamped, small between scans while you're
-        // present, and the entire absence the first time it's re-checked after you return.)
+        // Drain is computed lazily: full world-time since it was stamped, at the rate of the band it was
+        // stamped in — uncapped, so away-time still counts and food rots while you're gone.
         long elapsed = Math.max(0L, now - stack.getOrDefault(FRESHNESS_SEEN, now));
-        stack.set(FRESHNESS_SEEN, now);
-        if (elapsed <= 0) {
+        long left = freshness - Math.round(elapsed * rateForBand(stack.getOrDefault(RATE_BAND, band)));
+        if (left <= 0) {
+            container.setItem(slot, new ItemStack(Items.ROTTEN_FLESH, stack.getCount())); // spoiled — swapped once
             return;
         }
-        long left = freshness - Math.round(elapsed * spoilRate(temp));
-        if (left <= 0) {
-            container.setItem(slot, new ItemStack(Items.ROTTEN_FLESH, stack.getCount())); // spoiled
-        } else {
+        // Only WRITE the stack (which re-syncs it and would bob a held item) when the temperature band
+        // actually changes: commit the drain so far and re-stamp at the new rate. On a stable temperature
+        // nothing is written every scan, so carried meat no longer flickers.
+        if (band != stack.getOrDefault(RATE_BAND, band)) {
             stack.set(FRESHNESS, left);
+            stack.set(FRESHNESS_SEEN, now);
+            stack.set(RATE_BAND, band);
         }
     }
 
-    /** How fast freshness drains at a body-equivalent temperature: doubles per +25, halves per -25. */
-    private static float spoilRate(float temp) {
-        float rate = (float) Math.pow(2.0, temp / 25.0);
-        return Math.max(0.1f, Math.min(4.0f, rate));
+    /** Temperature quantised to a spoil-rate band (25° per band = a doubling/halving), so a stack is only
+     *  re-stamped when conditions meaningfully change — cold cellar, warm hut, winter — not every scan. */
+    public static int tempBand(float temp) {
+        return Math.max(-6, Math.min(6, Math.round(temp / 25.0f)));
+    }
+
+    /** Spoil rate for a band: doubles per +band, halves per -band, clamped like the old continuous rate. */
+    public static float rateForBand(int band) {
+        return Math.max(0.1f, Math.min(4.0f, (float) Math.pow(2.0, band)));
     }
 
     /** Storage temperature: a covered spot below sea level is an earth-cooled root cellar (colder the

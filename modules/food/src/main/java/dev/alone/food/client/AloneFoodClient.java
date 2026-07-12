@@ -27,10 +27,20 @@ public class AloneFoodClient implements ClientModInitializer {
             }
 
             // Freshness as a fraction of this item's own budget (preserved food starts with a much larger
-            // one). Null means it hasn't been ticked yet — treat as brand-fresh.
+            // one). The stored budget is stamped and stable (so the held item doesn't flicker); we drain it
+            // on the fly here for display — remaining = stamped budget − elapsed × the stamped band's rate.
             Long freshness = stack.get(Spoilage.FRESHNESS);
             long max = preserved ? Spoilage.PRESERVED_SHELF_TICKS : Spoilage.SPOIL_TICKS;
-            double fraction = freshness == null ? 1.0 : Math.max(0.0, Math.min(1.0, (double) freshness / max));
+            double fraction = 1.0;
+            if (freshness != null) {
+                long current = freshness;
+                net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+                if (mc.level != null) {
+                    long elapsed = Math.max(0L, mc.level.getGameTime() - stack.getOrDefault(Spoilage.FRESHNESS_SEEN, mc.level.getGameTime()));
+                    current = freshness - Math.round(elapsed * Spoilage.rateForBand(stack.getOrDefault(Spoilage.RATE_BAND, 0)));
+                }
+                fraction = Math.max(0.0, Math.min(1.0, (double) current / max));
+            }
 
             Component state;
             if (fraction >= 0.66) {
