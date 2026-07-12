@@ -27,6 +27,21 @@ public final class Wind {
         return new Vec3(Math.cos(angle), 0.0, Math.sin(angle));
     }
 
+    /**
+     * How hard the wind blows today, <b>0 (dead calm) .. 1 (strong)</b> — steady for the day, shifting day
+     * to day, deterministic like the direction. On a calm day scent barely rides the wind (you can approach
+     * from any quarter, and predators smell your meat only close by); on a strong day it carries far and
+     * reading the wind is everything. Drives the HUD wind gauge's needle length.
+     */
+    public static float strength(Level level) {
+        long day = level.getOverworldClockTime() / 24000L;
+        long h = (day * 0x9E3779B97F4A7C15L) ^ 0xD1B54A32D192ED03L; // different mix than the direction — uncorrelated
+        h ^= (h >>> 33);
+        h *= 0xFF51AFD7ED558CCDL;
+        h ^= (h >>> 33);
+        return (float) (((h >>> 11) & 0x1FFFFFFFFFFFFFL) / (double) (1L << 53));
+    }
+
     /** The compass point the wind comes <b>from</b> (how a person names a wind) — "the west", etc. */
     public static String comingFrom(Level level) {
         Vec3 toward = direction(level);

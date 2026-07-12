@@ -75,7 +75,12 @@ public final class AloneEntities {
         // speed is the reliable lever (the AI flee-modifier alone wasn't translating to real pace), so it's
         // set well above a player's sprint (rabbit is 0.3). Tracking's wide radius keeps it huntable despite
         // the speed: keep the pressure on and it tires, slows, and can be finished. Tune in playtest.
-        FabricDefaultAttributeRegistry.register(DEER, Cow.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.34));
+        // STEP_HEIGHT 1.1: a deer flows up 1-block ledges and rough forest floor at speed instead of stalling
+        // on a slow hop at every step — without it, it bogs on terrain and you catch it in seconds, tired or
+        // not. This is what lets the chase actually run its ~2-3 minute course over real ground.
+        FabricDefaultAttributeRegistry.register(DEER, Cow.createAttributes()
+            .add(Attributes.MOVEMENT_SPEED, 0.34)
+            .add(Attributes.STEP_HEIGHT, 1.1));
         // The woods and their edges — forest, taiga, and grassland. Common wild game, in small herds.
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))

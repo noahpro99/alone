@@ -100,9 +100,10 @@ public final class Scent {
             BASE_RADIUS + freshMeat * 2.0 + (bleeding ? BLOOD_BONUS : 0.0)); // meat and fresh blood both carry
         // Scent rides the wind (§7.3): a predator downwind smells you from far off, one upwind barely at all.
         Vec3 wind = Wind.direction(level);
-        AABB box = player.getBoundingBox().inflate(radius * (1.0 + WIND_STRENGTH)); // reach as far as downwind allows
+        float windStrength = Wind.strength(level);
+        AABB box = player.getBoundingBox().inflate(radius * (1.0 + WIND_STRENGTH * windStrength)); // as far as downwind allows
         List<Mob> nearby = level.getEntitiesOfClass(Mob.class, box,
-            m -> PREDATORS.contains(m.getType()) && m.isAlive() && smellsAcross(player, m, radius, wind));
+            m -> PREDATORS.contains(m.getType()) && m.isAlive() && smellsAcross(player, m, radius, wind, windStrength));
         // A hunter reads the wind — while you carry meat, you feel where it's blowing from and can keep
         // predators upwind of you. Only spoken when the wind SHIFTS (once a day at most); a HUD indicator
         // will show it at a glance, and then this note goes away.
@@ -191,11 +192,11 @@ public final class Scent {
     /** Fresh (unpreserved) perishable food carried loose on your body — a full stack reeks more than one piece. */
     /** Does your scent reach this predator, given the wind? Downwind (it lies where the wind blows) stretches
      *  your reach toward it; upwind shrinks it. {@code wind} is a horizontal unit vector. */
-    private static boolean smellsAcross(ServerPlayer player, Mob mob, double radius, Vec3 wind) {
+    private static boolean smellsAcross(ServerPlayer player, Mob mob, double radius, Vec3 wind, float windStrength) {
         Vec3 toMob = mob.position().subtract(player.position());
         double horizontal = Math.sqrt(toMob.x * toMob.x + toMob.z * toMob.z);
         double align = horizontal < 1.0e-3 ? 0.0 : (toMob.x * wind.x + toMob.z * wind.z) / horizontal;
-        double effective = radius * (1.0 + WIND_STRENGTH * align);
+        double effective = radius * (1.0 + WIND_STRENGTH * windStrength * align); // calm day → a plain circle
         return mob.distanceToSqr(player) <= effective * effective;
     }
 

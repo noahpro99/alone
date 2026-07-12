@@ -77,14 +77,15 @@ public final class Wildlife {
      * their scent blows to the animal, and <em>no crouch hides it</em>. So the only way to get close is to
      * stalk crouched <b>and</b> from downwind (wind in your face). The wider of the two senses wins.
      */
-    private static double noticeRange(PathfinderMob mob, Player player, Vec3 wind) {
+    private static double noticeRange(PathfinderMob mob, Player player, Vec3 wind, float windStrength) {
         double sight = player.isShiftKeyDown() ? SNEAK_SIGHT : FLEE_RANGE;
         // Scent reaches when the animal lies downwind of you: the player→animal direction runs with the wind.
-        // Directly downwind = full reach, crosswind less, upwind (into your face) = nothing.
+        // Directly downwind = full reach, crosswind less, upwind (into your face) = nothing. And it only
+        // carries as hard as the wind blows — on a calm day there's next to no scent to give you away.
         Vec3 toAnimal = mob.position().subtract(player.position());
         double horiz = Math.sqrt(toAnimal.x * toAnimal.x + toAnimal.z * toAnimal.z);
         double align = horiz < 1.0e-3 ? 0.0 : (toAnimal.x * wind.x + toAnimal.z * wind.z) / horiz;
-        double scent = SCENT_RANGE * Math.max(0.0, align);
+        double scent = SCENT_RANGE * windStrength * Math.max(0.0, align);
         return Math.max(sight, scent);
     }
 
@@ -106,13 +107,14 @@ public final class Wildlife {
 
         private Player nearestThreat() {
             Vec3 wind = Wind.direction(this.mob.level());
+            float windStrength = Wind.strength(this.mob.level());
             Player nearest = null;
             double best = Double.MAX_VALUE;
             for (Player p : this.mob.level().players()) {
                 if (!valid(p)) {
                     continue;
                 }
-                double range = noticeRange(this.mob, p, wind);
+                double range = noticeRange(this.mob, p, wind, windStrength);
                 double d = p.distanceToSqr(this.mob);
                 if (d <= range * range && d < best) {
                     best = d;
