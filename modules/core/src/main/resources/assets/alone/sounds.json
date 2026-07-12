@@ -1,0 +1,20 @@
+{
+  "entity.deer.ambient": {
+    "sounds": [
+      "alone:entity/deer/ambient"
+    ],
+    "subtitle": "subtitles.entity.deer.ambient"
+  },
+  "entity.deer.hurt": {
+    "sounds": [
+      "alone:entity/deer/hurt"
+    ],
+    "subtitle": "subtitles.entity.deer.hurt"
+  },
+  "entity.deer.death": {
+    "sounds": [
+      "alone:entity/deer/death"
+    ],
+    "subtitle": "subtitles.entity.deer.death"
+  }
+}

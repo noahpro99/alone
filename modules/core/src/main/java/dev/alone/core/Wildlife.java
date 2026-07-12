@@ -44,6 +44,7 @@ public final class Wildlife {
                                                        // so you can PACE a deer from a distance and wear it down,
                                                        // rather than having to sprint-glue to within 12 blocks
     private static final double BOLT_RANGE = 9.0;   // inside this they put on a burst, not just amble off
+    private static final double[] FLEE_LEGS = {18.0, 11.0, 6.0}; // straight-away distances to try (long first)
     private static final double WALK_AWAY = 1.05;   // the animal's own (already fast) pace carries the flee
     private static final double BOLT = 1.25;        // a modest burst when you're on them (base speed does the work)
 
@@ -166,12 +167,27 @@ public final class Wildlife {
         }
 
         private boolean fleeFrom(Player p) {
-            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 24, 7, p.position()); // a long, committed flee leg
-            if (away == null) {
-                return false;
-            }
             boolean close = this.mob.distanceToSqr(p) < BOLT_RANGE * BOLT_RANGE;
-            return this.mob.getNavigation().moveTo(away.x, away.y, away.z, close ? BOLT : WALK_AWAY);
+            double speed = close ? BOLT : WALK_AWAY;
+            // Bolt in a STRAIGHT LINE directly away from the player — the way real game flees, putting
+            // distance between you. Vanilla's getPosAway picks a random spot in a wide arc, which up close
+            // reads as "running around crazily" and lets you cut it off. Aim straight away; try a long leg,
+            // then shorter ones if a wall's right behind it, so it commits to flight instead of circling.
+            Vec3 flat = this.mob.position().subtract(p.position());
+            flat = new Vec3(flat.x, 0.0, flat.z);
+            if (flat.lengthSqr() < 1.0e-4) {
+                flat = new Vec3(1.0, 0.0, 0.0); // player exactly on it — any heading will do
+            }
+            Vec3 dir = flat.normalize();
+            for (double leg : FLEE_LEGS) {
+                Vec3 target = this.mob.position().add(dir.scale(leg));
+                if (this.mob.getNavigation().moveTo(target.x, target.y, target.z, speed)) {
+                    return true; // got a clear straight bolt away
+                }
+            }
+            // Boxed in directly behind — let it veer to a nearby opening rather than stall against the wall.
+            Vec3 away = DefaultRandomPos.getPosAway(this.mob, 12, 7, p.position());
+            return away != null && this.mob.getNavigation().moveTo(away.x, away.y, away.z, speed);
         }
     }
 }

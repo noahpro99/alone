@@ -65,5 +65,8 @@
   "item.alone.refractory_clay": "Refractory Clay",
   "item.alone.iron_bloom": "Iron Bloom",
   "item.alone.bloomery": "Bloomery",
-  "block.alone.bloomery": "Bloomery"
+  "block.alone.bloomery": "Bloomery",
+  "subtitles.entity.deer.ambient": "Deer snorts",
+  "subtitles.entity.deer.hurt": "Deer groans",
+  "subtitles.entity.deer.death": "Deer dies"
 }

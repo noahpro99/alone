@@ -7,6 +7,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
+
 /**
  * The deer (proposal §7.2) — the forest's proper wild game, the animal a survivor really lives off. It's
  * built for now on the cow's grazing-and-breeding brain (and made <b>skittish</b> by {@link Wildlife},
@@ -25,4 +28,20 @@ public class Deer extends Cow {
     public Cow getBreedOffspring(ServerLevel level, AgeableMob mate) {
         return AloneEntities.DEER.create(level, EntitySpawnReason.BREEDING); // deer breed deer, not cows
     }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AloneSounds.DEER_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return AloneSounds.DEER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AloneSounds.DEER_DEATH;
+    }
 }
+

@@ -55,6 +55,8 @@ public class AloneCore implements ModInitializer {
         AloneBlocks.init();     // §5.2 — the bedroll block (a real bed), registered before its item
         AloneEntities.init();   // §6 — custom entities (the travois), registered before their items
         AloneItems.init();      // §2/§5/§6 — custom items (waterskin, bedroll, backpack)
+        AloneSounds.init();     // custom sounds
+
 
         // Sync channel so the client HUD can see the player's survival state; drink request goes back.
         PayloadTypeRegistry.clientboundPlay().register(SurvivalSyncPayload.TYPE, SurvivalSyncPayload.CODEC);
