@@ -1,0 +1,21 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "minecraft:block/composter_side",
+    "wicker": "minecraft:block/composter_side"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 3, 14],
+      "faces": {
+        "up":    { "uv": [2, 2, 14, 14], "texture": "#wicker" },
+        "down":  { "uv": [2, 2, 14, 14], "texture": "#wicker" },
+        "north": { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "south": { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "east":  { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "west":  { "uv": [2, 13, 14, 16], "texture": "#wicker" }
+      }
+    }
+  ]
+}

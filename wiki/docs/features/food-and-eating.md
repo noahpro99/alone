@@ -91,6 +91,10 @@ Fishing works as it does in vanilla — but **a spot can be fished out.** Every 
 
 So fishing is a real, renewable food source you have to **manage, not strip** — exactly the pressure a survivor living off the water faces.
 
+### The fish trap — fishing without a rod
+
+You don't have to stand on the bank with a rod. A **[fish trap](./hunting.md#the-fish-trap--passive-fishing)** — a woven basket weir set on the water — catches fish **passively** over time, drawing on the same finite, size-scaled stock. It's the realistic way to fish on the show *Alone*: set it and leave, take the catch later. A trap in a small pond fishes it out fast; one on a lake or the sea keeps producing. See [Hunting & Wildlife](./hunting.md#trapping--the-food-that-works-while-you-dont).
+
 ## Related pages
 
 - [Water, Thirst & Vessels](./water-and-drinking.md) — drinking to wash your hands, foods that affect thirst.

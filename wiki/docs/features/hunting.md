@@ -130,9 +130,24 @@ So the two early traps are a real choice: run a line of **free, passive snares**
 deadfalls** for better returns where game is worth it. Both draw on the local
 [game population](#game-runs-out-if-you-overhunt), so neither works a stripped-out patch.
 
-A passive **fish trap / weir** is still to come above these.
+### The fish trap — passive fishing
 
-*(Both traps use placeholder stone/cord art until proper models are made.)*
+The **fish trap** (a woven basket weir) is the top rung, and the way you really fish on *Alone*: set it in
+the water and it catches fish **passively**, no rod and no standing on the bank.
+
+- **Craft** it from **sticks and string** (a woven funnel basket).
+- **Set** it on the **water's surface** — like a lily pad, at the edge of a pond, lake, or shore.
+- It draws on the same finite, size-scaled [fish stock](./food-and-eating.md#fishing) the rod does, so a
+  trap in a **small pond fishes it out** and then sits empty, while one on a **lake or the sea** keeps
+  producing. Right-click a trap holding a fish to take it; it resets itself.
+- Like the land traps, it keeps working through the days you [fast-forward by resting](./sleep-and-rest.md)
+  — set it before bed, take the catch in the morning.
+
+So the trapping ladder is three passive food sources you set and leave: the **snare** (free small game), the
+**deadfall** (baited small game, better odds), and the **fish trap** (passive fishing) — the backbone of how
+you eat when you can't hunt every hour of daylight.
+
+*(All three traps use placeholder art until proper models are made.)*
 
 ## Game runs out if you overhunt
 

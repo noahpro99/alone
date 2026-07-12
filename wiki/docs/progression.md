@@ -51,8 +51,8 @@ The four ages below map to the real arc:
    is the rarer prize (a skittish grazer you stalk or run down; small animals wind quickly, a big one takes
    real endurance to tire). The [spear's reach](./features/hunting.md#the-spear--reach-from-the-first-day) is
    your best weapon, but the surest early food is a **[trapline](./features/hunting.md#trapping--the-food-that-works-while-you-dont)**:
-   set free **snares** (cordage nooses) near cover, or **bait a deadfall** with a food scrap for better odds,
-   and let them catch small game while you work — then walk the line and clear them.
+   set free **snares** near cover, **bait a deadfall** for better odds, or drop a **fish trap** in the water
+   — passive food that works while you do everything else. Walk the line and clear them.
    [Run game down by persistence](./features/hunting.md#persistence-hunting--run-it-down),
    follow a [blood trail](./features/hunting.md), and **read the wind** so quarry (and predators) don't
    catch your scent. A **blade kill** salvages the [hide, bone, and sinew](./features/hunting.md). Cook the

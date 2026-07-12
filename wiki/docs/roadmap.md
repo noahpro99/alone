@@ -66,11 +66,11 @@ breeding only outside winter — on **placeholder (cow) art** until a real deer 
 overhunting** and **seasonal breeding** shipped too: hunt a patch too hard and the game thins out until it
 recovers, and animals won't breed in the dead of winter. See
 [Hunting & Wildlife](./features/hunting.md#deer--the-forests-wild-game).)*
-- **The trapping ladder:** passive food you set and leave, the way people live on *Alone*. *(The **snare**
-  (free, passive, low-odds) and the **deadfall** (baited, one-shot, better returns) have both shipped —
-  placed traps that catch small game over time, drawing on the local game population; see
-  [Hunting & Wildlife](./features/hunting.md#trapping--the-food-that-works-while-you-dont). Still to come
-  above them: a passive **fish trap / weir**.)*
+- ~~**The trapping ladder**~~ **shipped** — passive food you set and leave, the way people live on *Alone*:
+  the **snare** (free, passive, low-odds small game), the **deadfall** (baited, one-shot, better returns),
+  and the **fish trap / weir** (passive fishing on the finite fish stock). All three are placed traps that
+  keep working while you're away and draw on the local game/fish population; see
+  [Hunting & Wildlife](./features/hunting.md#trapping--the-food-that-works-while-you-dont).
 - **More small game:** the vanilla **rabbit** and **chicken** and a new **squirrel** now behave as skittish
   wild game (bolt, tire fast, count toward overhunting, give a scrap of meat); **grouse/ptarmigan** and more
   could join them later.

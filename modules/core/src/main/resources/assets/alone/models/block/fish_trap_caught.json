@@ -1,0 +1,33 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "minecraft:block/composter_side",
+    "wicker": "minecraft:block/composter_side",
+    "fish": "minecraft:block/light_gray_concrete"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 3, 14],
+      "faces": {
+        "up":    { "uv": [2, 2, 14, 14], "texture": "#wicker" },
+        "down":  { "uv": [2, 2, 14, 14], "texture": "#wicker" },
+        "north": { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "south": { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "east":  { "uv": [2, 13, 14, 16], "texture": "#wicker" },
+        "west":  { "uv": [2, 13, 14, 16], "texture": "#wicker" }
+      }
+    },
+    {
+      "from": [4, 3, 6],
+      "to": [12, 4.5, 10],
+      "faces": {
+        "up":    { "uv": [4, 6, 12, 10], "texture": "#fish" },
+        "north": { "uv": [4, 6, 12, 8], "texture": "#fish" },
+        "south": { "uv": [4, 6, 12, 8], "texture": "#fish" },
+        "east":  { "uv": [6, 6, 10, 8], "texture": "#fish" },
+        "west":  { "uv": [6, 6, 10, 8], "texture": "#fish" }
+      }
+    }
+  ]
+}

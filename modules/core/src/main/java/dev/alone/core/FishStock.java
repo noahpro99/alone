@@ -67,6 +67,12 @@ public final class FishStock {
         return stack.is(ItemTags.FISHES);
     }
 
+    /** A set fish trap drew on the water here — the same finite, richness-scaled stock the rod draws on.
+     *  Returns true (and depletes the spot) if it caught; false if this water is fished out. */
+    public static boolean drawFromTrap(ServerLevel level, BlockPos pos) {
+        return tryCatch(level, pos);
+    }
+
     /** Draw a fish from the spot if the stock allows; otherwise deny. Fish return over calendar time, so a
      *  fished-out spot recovers whether or not you keep casting — we only touch state on an actual catch,
      *  and recovery accrues from the last CATCH (not every futile cast, which must not reset the clock). */

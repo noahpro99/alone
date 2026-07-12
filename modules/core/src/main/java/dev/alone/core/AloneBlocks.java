@@ -144,6 +144,19 @@ public final class AloneBlocks {
             .pushReaction(PushReaction.DESTROY)
             .setId(key)));
 
+    /** A fish trap / weir (§7.2) — a woven basket set on the water that passively catches fish, drawing on
+     *  the local {@link FishStock}. Top rung of the trapping ladder; placed on water like a lily pad. */
+    public static final Block FISH_TRAP = register("fish_trap",
+        key -> new FishTrapBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WATER)
+            .sound(SoundType.WET_GRASS)
+            .strength(0.3F)
+            .noCollision()
+            .noOcclusion()
+            .randomTicks()
+            .pushReaction(PushReaction.DESTROY)
+            .setId(key)));
+
     /** The set-down clay pot's caught rainwater (how full, fill progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<ClayPotBlockEntity> CLAY_POT_BLOCK_ENTITY;
     /** The drying rack's hung food + dry progress. Assigned in {@link #init()}. */

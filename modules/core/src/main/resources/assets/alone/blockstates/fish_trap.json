@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "caught=false": [
+      { "model": "alone:block/fish_trap" },
+      { "model": "alone:block/fish_trap", "y": 90 },
+      { "model": "alone:block/fish_trap", "y": 180 },
+      { "model": "alone:block/fish_trap", "y": 270 }
+    ],
+    "caught=true": [
+      { "model": "alone:block/fish_trap_caught" },
+      { "model": "alone:block/fish_trap_caught", "y": 90 },
+      { "model": "alone:block/fish_trap_caught", "y": 180 },
+      { "model": "alone:block/fish_trap_caught", "y": 270 }
+    ]
+  }
+}
