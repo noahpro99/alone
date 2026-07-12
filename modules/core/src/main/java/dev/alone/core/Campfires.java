@@ -133,6 +133,22 @@ public final class Campfires {
             : "You stand the pot in the fire to boil."), true);
     }
 
+    /** Credit a completed boil onto a pot dropped without a player (the fire burned out before it was
+     *  lifted): clean the fresh water, or — for seawater boiled dry — empty it and drop a salt crust at
+     *  the fire. Only call when the boil actually finished (BOIL_LEFT ≤ 0). Mirrors {@link #retrievePot}. */
+    public static void finishBoiledPot(Level level, BlockPos pos, ItemStack pot) {
+        if (pot.getOrDefault(AloneItems.WATER_QUALITY, WaterskinItem.RAW) == WaterskinItem.SALT) {
+            int charges = pot.getOrDefault(AloneItems.WATER_CHARGES, 0);
+            int salt = Math.max(1, charges / 2);
+            pot.set(AloneItems.WATER_CHARGES, 0);
+            pot.remove(AloneItems.WATER_QUALITY);
+            net.minecraft.world.level.block.Block.popResource(level, pos, new ItemStack(AloneItems.SALT, salt));
+        } else {
+            pot.set(AloneItems.WATER_QUALITY, WaterskinItem.CLEAN);
+            pot.set(AloneItems.VESSEL_DIRTY, false);
+        }
+    }
+
     private static void retrievePot(ServerPlayer player, Level level, BlockPos pos, BlockEntity be) {
         ItemStack pot = be.getAttached(BOIL_ITEM);
         int left = be.getAttachedOrElse(BOIL_LEFT, BOIL_TIME);

@@ -82,6 +82,11 @@ public class CampfireCookTickMixin {
             // campfire drop), and leave charcoal.
             ItemStack boilingPot = entity.getAttached(Campfires.BOIL_ITEM);
             if (boilingPot != null) {
+                // If the water had already come to a boil, don't lose it to the burnout — credit it clean
+                // (or drop the salt crust) before the pot falls out, same as lifting it out by hand would.
+                if (entity.getAttachedOrElse(Campfires.BOIL_LEFT, -1) <= 0) {
+                    Campfires.finishBoiledPot(level, pos, boilingPot);
+                }
                 Block.popResource(level, pos, boilingPot);
             }
             level.destroyBlock(pos, false);
