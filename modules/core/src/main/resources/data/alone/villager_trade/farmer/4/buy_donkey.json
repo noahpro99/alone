@@ -1,6 +1,6 @@
 {
   "wants": { "id": "minecraft:emerald", "count": 32 },
-  "gives": { "id": "alone:penned_donkey" },
+  "gives": { "id": "minecraft:donkey_spawn_egg" },
   "max_uses": 2,
   "reputation_discount": 0.10,
   "xp": 15

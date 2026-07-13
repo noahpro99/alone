@@ -88,27 +88,8 @@ public final class AloneItems {
      *  vindicator egg sprite via its item def (no new PNG) — the guard is a re-coated vindicator. */
     public static final Item GUARD_SPAWN_EGG = register("guard_spawn_egg",
         key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.GUARD).setId(key)));
-    // ── Penned livestock (the Mesopotamian village economy) — the "buy a live animal for silver" tokens.
-    // Villager trades can only give items, never entities, so a herder sells you the animal as one of these
-    // small tokens; right-click the ground and the beast steps out of the pen (see PennedAnimalItem). Priced
-    // in emeralds (the silver shekel) against the vanilla 64-per-slot cap and the historical ratio that a cow
-    // is worth many sheep: sheep/goat ~8, pig ~16, donkey ~32, cow ~64 (a full slot, "a year's big surplus").
-    // Tiny, textureless items — the value is the mechanic, not the art. Sold under data/alone/villager_trade/.
-    public static final Item PENNED_SHEEP = register("penned_sheep",
-        key -> new PennedAnimalItem(net.minecraft.world.entity.EntityTypes.SHEEP,
-            new Item.Properties().stacksTo(16).setId(key)));
-    public static final Item PENNED_GOAT = register("penned_goat",
-        key -> new PennedAnimalItem(net.minecraft.world.entity.EntityTypes.GOAT,
-            new Item.Properties().stacksTo(16).setId(key)));
-    public static final Item PENNED_PIG = register("penned_pig",
-        key -> new PennedAnimalItem(net.minecraft.world.entity.EntityTypes.PIG,
-            new Item.Properties().stacksTo(16).setId(key)));
-    public static final Item PENNED_DONKEY = register("penned_donkey",
-        key -> new PennedAnimalItem(net.minecraft.world.entity.EntityTypes.DONKEY,
-            new Item.Properties().stacksTo(16).setId(key)));
-    public static final Item PENNED_COW = register("penned_cow",
-        key -> new PennedAnimalItem(net.minecraft.world.entity.EntityTypes.COW,
-            new Item.Properties().stacksTo(16).setId(key)));
+    // Livestock is bought from a village herder as a vanilla SPAWN EGG (cow/sheep/goat/pig/donkey), priced in
+    // emeralds — see data/alone/villager_trade/farmer/. No custom "penned" item; the egg IS the live animal.
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));

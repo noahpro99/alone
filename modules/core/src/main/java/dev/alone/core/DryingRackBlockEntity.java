@@ -426,8 +426,20 @@ public class DryingRackBlockEntity extends BlockEntity {
         int tanTarget = getAttachedOrElse(FLESHED, false) ? TAN_TIME / 2 : TAN_TIME;
         int target = Math.max(1, tanning ? tanTarget : DRY_TIME);
         int pct = Math.min(100, getAttachedOrElse(PROGRESS, 0) * 100 / target);
+        // Say what's actually happening: tanning a hide, smoking meat over a lit fire (faster, weatherproof),
+        // or plain air-drying — so "Smoking…" only shows when the fire below is really doing the work.
+        String verb = tanning ? "Tanning"
+            : (getLevel() != null && isSmoking(getLevel(), getBlockPos()) ? "Smoking" : "Drying");
         serverPlayer.sendSystemMessage(Component.literal(
-            (tanning ? "Tanning" : "Drying") + "… " + pct + "%  —  sneak-use to take it off early"), true);
+            verb + "… " + pct + "%  —  sneak-use to take it off early"), true);
+    }
+
+    /** Smoke reaches the rack when a lit campfire sits two blocks below with an air gap between (§4.2) —
+     *  the same condition the {@link #SMOKE_RATE fast smoke-cure} uses. */
+    static boolean isSmoking(Level level, BlockPos pos) {
+        return level.getBlockState(pos.below()).isAir()
+            && level.getBlockState(pos.below(2)).is(Blocks.CAMPFIRE)
+            && level.getBlockState(pos.below(2)).getValue(BlockStateProperties.LIT);
     }
 
     private static boolean hasBrains(Player player) {

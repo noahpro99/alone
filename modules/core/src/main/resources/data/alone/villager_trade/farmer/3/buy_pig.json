@@ -1,6 +1,6 @@
 {
   "wants": { "id": "minecraft:emerald", "count": 16 },
-  "gives": { "id": "alone:penned_pig" },
+  "gives": { "id": "minecraft:pig_spawn_egg" },
   "max_uses": 3,
   "reputation_discount": 0.10,
   "xp": 10
