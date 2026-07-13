@@ -68,7 +68,7 @@ public final class Conditions {
     private static final int SEVERE_INFECTION = 6000;   // past this it's winning — the fever drains you
     private static final float INFECT_CHANCE = 0.30f;   // odds a zombie-type bite gets infected
     public static final int DYSENTERY_TICKS = 4800;     // ~4 min of gut-wrenching illness
-    private static final float DYSENTERY_THIRST_DRAIN = 0.8f; // thirst lost per second — you must out-drink it
+    private static final float DYSENTERY_THIRST_DRAIN = 0.03f; // thirst lost per second — you must out-drink it
 
     // Condition flags synced to the HUD.
     public static final int FLAG_SICK = 1;

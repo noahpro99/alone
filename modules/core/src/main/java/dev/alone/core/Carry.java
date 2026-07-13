@@ -184,7 +184,7 @@ public final class Carry {
         if (item == AloneItems.HERBAL_REMEDY) return 0.003f;
         if (item == AloneItems.EMBER) return 0.001f;
         if (item == AloneItems.TORCH || item == AloneItems.TORCH_LIT) return 0.002f;
-        if (item == AloneItems.ROPE) return 0.005f;
+        if (item == AloneItems.ROPE) return 0.0015f; // a compact coil — 16 (loadout) now ~8% of pockets, not 27%
         if (item == AloneItems.BEDROLL) return 0.150f; // a bulky roll — hand-carried, not pocketed
         if (item == AloneItems.SLEEPING_BAG) return 0.180f; // a lofted bag — bulkier still than a bedroll
         // A travois is a frame of long poles (2–3 m) lashed with crossbars. Even undeployed it's a big,
@@ -221,7 +221,7 @@ public final class Carry {
             return 0.025f;
         }
         if (path.contains("string")) {
-            return 0.0002f; // a coiled length of cordage — tiny; was 0.001 (1 L) grouped with sticks, too big
+            return 0.0001f; // a hank of cordage — essentially nothing (0.1 L); a full stack ~1% of pockets
         }
         if (path.contains("stick") || path.contains("feather") || path.contains("paper")) {
             return 0.001f;

@@ -63,16 +63,18 @@ public final class SurvivalMeters {
     private static final float SLEEP_REGEN = 4.0f;           // stamina refilled per tick while asleep
     private static final float FATIGUE_MAX_PENALTY = 0.25f;  // sore → up to 25% lower stamina ceiling
 
-    public static final float MAX_THIRST = 100f;
-    private static final float THIRST_DRAIN = 0.01f;        // base, ~8 min at rest
-    private static final float THIRST_DRAIN_SPRINT = 0.02f; // exertion
-    private static final float THIRST_DRAIN_SWEAT = 0.04f;  // full-body-heat sweat rate (scaled by how hot you run)
-    private static final float THIRST_LOW = 15f;
+    // Hydration is measured in real LITRES (§1.2). Full ≈ 3 L of body-water reserve; you lose ~2.5 L a day
+    // to breath, sweat and urine, so you must drink ~daily. (In-game day ≈ 24000t, so ~0.000104 L/t; rounded.)
+    public static final float MAX_THIRST = 3.0f;
+    private static final float THIRST_DRAIN = 0.000125f;     // base ~2.5–3 L per in-game day at rest
+    private static final float THIRST_DRAIN_SPRINT = 0.000125f; // running doubles it
+    private static final float THIRST_DRAIN_SWEAT = 0.0005f;  // a hot body sweats — up to ~litres/hour when roasting
+    private static final float THIRST_LOW = 0.6f;            // ~20% reserve left — getting dangerously thirsty
     // Two-stage water (§1.2): a drink goes into your GUT first, and absorbs into hydration over the next
     // minute — you can't chug straight to full. MAX_GUT caps how much you can hold at once (drinking on a
     // full gut does nothing); GUT_ABSORB is how fast the gut feeds hydration.
-    public static final float MAX_GUT = 45f;
-    private static final float GUT_ABSORB = 0.06f; // ~a full gut (45) soaks into hydration over ~40s
+    public static final float MAX_GUT = 1.0f;       // stomach capacity ~1 L — you can chug about a litre at once
+    private static final float GUT_ABSORB = 0.0003f; // ~a full 1 L gut soaks into hydration over ~3 min
     // Thermoregulation feedback (§1.3) — a hot body sweats (dehydrates), a cold body burns food and shivers.
     private static final float COLD_SHIVER = -30f;      // below this, stiff muscles recover stamina poorly
     private static final int CHILL_INTERVAL = 600;      // roll a chill about every 30s of cold-and-wet
@@ -82,7 +84,7 @@ public final class SurvivalMeters {
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
     // Slow vitality recovery (§1.5) — heals only when fed, hydrated, and free of active wounds/illness.
     private static final int HEAL_FOOD_MIN = 14;    // need a reasonably full stomach to mend
-    private static final float HEAL_THIRST_MIN = 30f;
+    private static final float HEAL_THIRST_MIN = 1.2f;   // ~40% reserve — need decent hydration to mend
     private static final int HEAL_INTERVAL = 200;   // 1 HP / ~10s in good conditions (full heal ≈ 3–4 min)
     private static final float SWIM_FREE_WEIGHT = 8f;   // load past this makes staying afloat real work
     private static final float SWIM_WEIGHT_DRAIN = 0.012f; // extra stamina/tick per kg over, while in water
@@ -168,7 +170,7 @@ public final class SurvivalMeters {
     /** Clock time you lay down, so waking can charge you the metabolism of the night you slept through. */
     public static final AttachmentType<Long> SLEEP_START =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "sleep_start"), Codec.LONG);
-    private static final float SLEEP_THIRST_PER_DAY = 40f; // water lost sleeping a whole day (a night ≈ half)
+    private static final float SLEEP_THIRST_PER_DAY = 1.2f; // ~1.2 L lost sleeping a whole day (a night ≈ half)
     private static final int SLEEP_HUNGER_PER_DAY = 8;      // food burned sleeping a whole day
     private static final int DRY_NATURAL = 1;
     private static final int DRY_BY_FIRE = 5;     // a fire dries you ~5x faster
@@ -189,7 +191,7 @@ public final class SurvivalMeters {
             }
             newPlayer.setHealth(newPlayer.getMaxHealth() * 0.4f);
             newPlayer.getFoodData().setFoodLevel(6);
-            newPlayer.setAttached(THIRST, 25f);
+            newPlayer.setAttached(THIRST, 0.75f); // wake dehydrated — ~a quarter reserve
             newPlayer.setAttached(STAMINA, 20f);
             newPlayer.setAttached(FATIGUE, 80f);
             Conditions.addSprain(newPlayer, 600); // you didn't walk home unscathed

@@ -36,10 +36,10 @@ public final class Drinking {
     private Drinking() {
     }
 
-    private static final float DRINK_AMOUNT = 25f;
+    private static final float DRINK_AMOUNT = 0.25f; // a gulp from a source ~0.25 L
     private static final float SICKNESS_CHANCE = 0.15f;
-    private static final float SALT_DEHYDRATE = 15f; // seawater pulls water OUT of you (§1.2)
-    private static final float SNOW_THIRST = 6f;     // a handful of snow melts to only a little water
+    private static final float SALT_DEHYDRATE = 0.15f; // seawater pulls water OUT of you (§1.2)
+    private static final float SNOW_THIRST = 0.05f;     // a handful of snow melts to only a little water
     private static final float SNOW_CHILL = 10f;     // ...and chills your core as your body melts it
 
     // Ring of horizontal samples (~32 and ~64 blocks out, 8 compass points) to detect nearby open ocean.

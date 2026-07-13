@@ -45,26 +45,10 @@ public final class Fibers {
     }
 
     private static final Map<UUID, Strip> ACTIVE = new HashMap<>();
-    /** Players already told (this session) how to get fibre — so the discovery hint shows once, not on repeat. */
-    private static final Set<UUID> HINTED = new HashSet<>();
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(StripFiberPayload.TYPE,
             (payload, context) -> strip(context.player()));
-
-        // Plant fibre is non-obvious: you don't get it by BREAKING grass (that just scatters seeds), you
-        // STRIP it by holding right-click. So the first time a player mines a fibrous plant the old way,
-        // nudge them once toward the real method — then never again (they've either learned it or don't care).
-        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, be) -> {
-            if (level.isClientSide() || !isFibrousPlant(state)) {
-                return;
-            }
-            if (player instanceof ServerPlayer serverPlayer && HINTED.add(serverPlayer.getUUID())) {
-                serverPlayer.sendSystemMessage(Component.literal(
-                    "To get plant fibre, don't break grass — look at grass, a fern or a vine and "
-                        + "hold right-click (bare-handed or with a blade) to strip it."));
-            }
-        });
     }
 
     /** The fibrous plant you're looking at (the thing you strip), or null. */
@@ -88,7 +72,6 @@ public final class Fibers {
             ACTIVE.remove(player.getUUID());
             return;
         }
-        HINTED.add(player.getUUID()); // already stripping — they know how; don't nudge them later
         var rng = player.getRandom();
         level.playSound(null, plant, SoundEvents.GRASS_HIT, SoundSource.PLAYERS,
             0.4f, 0.9f + rng.nextFloat() * 0.2f);

@@ -35,8 +35,8 @@ public class WaterskinItem extends Item {
     public static final int TAINTED = 2;
     public static final int SALT = 3;
 
-    private static final float THIRST_PER_SIP = 30f;
-    private static final float SALT_DEHYDRATE_SIP = 18f; // a sip of seawater dehydrates (§1.2)
+    private static final float THIRST_PER_SIP = 0.25f; // a good gulp ~0.25 L
+    private static final float SALT_DEHYDRATE_SIP = 0.15f; // a sip of seawater dehydrates (§1.2)
 
     private final int maxCharges;
     /** Metal/clay vessels can sit over a fire to boil; a hide skin or bark cup cannot (§2). */
