@@ -60,6 +60,14 @@ Above friction there is one dependable fire-starter: a **ferro rod** (fire steel
 
 The ferro rod is **endgame gear**: forged from **2 steel ingots and a flint** (steel is the deep metallurgy tier), so it's something you build toward — or bring as one of your [starting loadout](../roadmap#the-start--an-alone-style-loadout) picks, exactly as contestants prize it on the show.
 
+### Flint and pyrite — the strike-a-light
+
+Long before steel, people struck fire with **iron pyrite** (marcasite) — a brassy nodule of "fool's gold." Sift enough **gravel** and, alongside the flint, you'll turn up the odd lump of **pyrite** <img class="mc-icon" src="/alone/item/pyrite.png" alt="Pyrite"/>. Craft it with a **flint shard** into a **flint-and-pyrite** striker <img class="mc-icon" src="/alone/item/flint_and_pyrite.png" alt="Flint and Pyrite"/> and you have the primitive rung between the bow drill and the forged ferro rod:
+
+- Like the ferro rod, it's **struck, not drilled** — it catches quickly (about three strikes, good odds) for **almost no stamina**, even when you're spent.
+- But its spark runs **cooler**, so — like friction — it **still needs dry tinder and fails in the rain**. That all-weather edge stays the ferro rod's alone.
+- The soft pyrite **crumbles with use** (about 40 fires), but you don't build toward it — you **find** it in the gravel, so it's the fire upgrade you can stumble into on day two.
+
 ## The campfire
 
 The campfire is the hearth. It is **crafted from 3 sticks and plant fiber** — no coal or logs needed — and laid down unlit until you drill it alight.

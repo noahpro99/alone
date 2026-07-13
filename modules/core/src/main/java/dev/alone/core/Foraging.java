@@ -30,6 +30,10 @@ public final class Foraging {
                 if (rng.nextFloat() < 0.5f) {
                     Block.popResource(serverLevel, pos, new ItemStack(AloneItems.ROCK));
                 }
+                // And, now and then, a brassy nodule of pyrite among the flint — the strike-a-light stone (§3.1).
+                if (rng.nextFloat() < 0.05f) {
+                    Block.popResource(serverLevel, pos, new ItemStack(AloneItems.PYRITE));
+                }
             } else if (isUnderbrush(state)) {
                 if (rng.nextFloat() < 0.2f) {
                     Block.popResource(serverLevel, pos, new ItemStack(Items.STICK));

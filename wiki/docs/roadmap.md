@@ -34,8 +34,11 @@ exist; the rest of the heat-tech tree does not yet.
 - **The ash economy:** hardwood ash → lye → potash, feeding soap and glass flux.
 - **Glass that gates itself** behind forge heat + flux + lime, arriving late as the trophy it
   historically was.
-- **A flint-and-pyrite fire tier** — a faster, rain-tolerant strike fire (flint + found pyrite)
-  between friction fire (shipped) and forge-era flint-and-steel.
+- ~~**A flint-and-pyrite fire tier**~~ **shipped** — the primitive strike-a-light between friction fire and
+  the forged ferro rod. **Pyrite** turns up now and then when you sift **gravel**; craft it with a flint
+  shard into a **flint-and-pyrite** striker that catches quick for almost no effort. Unlike the ferro rod its
+  cooler spark still needs dry tinder, so it fails in the rain — that all-weather edge stays the ferro rod's.
+  See [Fire](./features/fire.md#flint-and-pyrite--the-strike-a-light).
 - **Candles & lanterns:** cheap, short-lived tallow candles and permanent iron+oil lanterns above the
   burn-out torch, so deep caving becomes a light-supply problem.
 

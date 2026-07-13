@@ -52,6 +52,12 @@ public final class FireStarting {
     private static final int FERRO_MIN_STROKES = 2;
     private static final float FERRO_CATCH_CHANCE = 0.6f;
     private static final float FERRO_STAMINA = 0.05f;
+    // Flint-and-pyrite strike-a-light: struck like a ferro rod (quick, near effortless) and better odds than
+    // a drill, but its cooler spark still needs DRY tinder — so, like friction, it dies in the rain. The
+    // primitive rung between the bow drill and the forged ferro rod.
+    private static final int STRIKE_MIN_STROKES = 3;
+    private static final float STRIKE_CATCH_CHANCE = 0.4f;
+    private static final float STRIKE_STAMINA = 0.1f;
 
     private record Drill(BlockPos pos, int strokes, int atTick) {
     }
@@ -82,20 +88,24 @@ public final class FireStarting {
     private static void stroke(ServerPlayer player) {
         Level level = player.level();
         boolean ferro = player.getMainHandItem().is(AloneItems.FERRO_ROD);
+        boolean strike = player.getMainHandItem().is(AloneItems.FLINT_AND_PYRITE);
         boolean bow = player.getMainHandItem().is(AloneItems.BOW_DRILL);
-        if (!ferro && !bow && !player.getMainHandItem().is(Items.STICK)) {
+        if (!ferro && !strike && !bow && !player.getMainHandItem().is(Items.STICK)) {
             ACTIVE.remove(player.getUUID());
             return;
         }
         // Skill by doing (§8.4): a practised firemaker reads the spindle and catches sooner — and works
         // it more efficiently, spending less on each stroke. A ferro rod is mechanical, so no skill enters
-        // into it — the sparks are the sparks.
+        // into it — the sparks are the sparks. A strike-a-light still needs the spark caught in tinder, so
+        // firecraft helps its odds (but it's already low-effort, so no stamina discount to speak of).
         float firecraft = Skills.proficiency(player, Skills.FIRECRAFT);
-        int minStrokes = ferro ? FERRO_MIN_STROKES : (bow ? BOW_MIN_STROKES : HAND_MIN_STROKES);
+        int minStrokes = ferro ? FERRO_MIN_STROKES
+            : strike ? STRIKE_MIN_STROKES : (bow ? BOW_MIN_STROKES : HAND_MIN_STROKES);
         float catchChance = ferro ? FERRO_CATCH_CHANCE
-            : (bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE) * (0.8f + 0.5f * firecraft);
+            : (strike ? STRIKE_CATCH_CHANCE : (bow ? BOW_CATCH_CHANCE : HAND_CATCH_CHANCE))
+                * (0.8f + 0.5f * firecraft);
         float staminaPerStroke = ferro ? FERRO_STAMINA
-            : (bow ? BOW_STAMINA : HAND_STAMINA) * (1f - 0.4f * firecraft);
+            : strike ? STRIKE_STAMINA : (bow ? BOW_STAMINA : HAND_STAMINA) * (1f - 0.4f * firecraft);
         BlockPos fire = findUnlitCampfire(player, level);
         if (fire == null) {
             ACTIVE.remove(player.getUUID());
@@ -111,8 +121,8 @@ public final class FireStarting {
             ACTIVE.remove(player.getUUID());
             return;
         }
-        if (!ferro && SurvivalMeters.getStamina(player) <= 0f) {
-            return; // too spent to keep drilling (a ferro rod takes next to no effort)
+        if (!ferro && !strike && SurvivalMeters.getStamina(player) <= 0f) {
+            return; // too spent to keep drilling (striking a rod or a strike-a-light takes next to no effort)
         }
 
         Drill current = ACTIVE.get(player.getUUID());
@@ -131,8 +141,9 @@ public final class FireStarting {
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.3, fire.getZ() + 0.5,
                 6, 0.15, 0.05, 0.15, 0.01);
             Skills.gain(player, Skills.FIRECRAFT, 3); // every fire you coax alive teaches your hands
-            if (bow || ferro) {
-                // The bow drill's spindle burns down; the ferro rod grinds away a little — both wear per fire.
+            if (bow || ferro || strike) {
+                // The bow drill's spindle burns down, the ferro rod grinds away, the soft pyrite crumbles —
+                // each wears a little per fire.
                 player.getMainHandItem().hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
             }
             ACTIVE.remove(player.getUUID());

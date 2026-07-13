@@ -96,5 +96,7 @@
   "item.alone.bone_hook": "Bone Hook",
   "item.alone.bone_awl": "Bone Awl",
   "item.alone.raw_fat": "Raw Fat",
-  "item.alone.tallow": "Tallow"
+  "item.alone.tallow": "Tallow",
+  "item.alone.pyrite": "Pyrite",
+  "item.alone.flint_and_pyrite": "Flint and Pyrite"
 }

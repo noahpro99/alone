@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["alone:flint_shard", "alone:pyrite"],
+  "result": {"id": "alone:flint_and_pyrite", "count": 1}
+}

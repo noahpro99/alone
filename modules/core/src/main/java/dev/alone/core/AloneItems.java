@@ -271,6 +271,20 @@ public final class AloneItems {
      *  prized pick. Wears down over many, many strikes (durability). */
     public static final Item FERRO_ROD = register("ferro_rod",
         key -> new Item(new Item.Properties().durability(200).setId(key)));
+
+    /** Pyrite / marcasite (§3.1) — a brassy "fool's gold" nodule that turns up now and then when you sift
+     *  gravel, alongside the flint. Struck against a hard flint edge it throws a hot spark: the genuine
+     *  Neolithic <b>strike-a-light</b>. Craft it with a {@link #FLINT_SHARD} into a {@link #FLINT_AND_PYRITE}
+     *  fire striker. */
+    public static final Item PYRITE = register("pyrite",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** Flint-and-pyrite fire striker (§3.1) — the primitive strike-a-light, the rung between friction fire
+     *  (a bow drill's slow, sweaty gamble) and the steel-forged {@link #FERRO_ROD}. Struck, not drilled, so
+     *  it catches quick for almost no effort — but it's <b>no better in the wet</b> than a drill: the spark
+     *  still needs dry tinder, so it fails in the rain where a ferro rod would take. The soft pyrite
+     *  crumbles with use (durability), but more turns up in the gravel. */
+    public static final Item FLINT_AND_PYRITE = register("flint_and_pyrite",
+        key -> new Item(new Item.Properties().durability(40).setId(key)));
     // Copper (flint → copper → iron → steel) is vanilla in 26.2 — its tools/armour, recipes, and tool
     // tags are all built in, and it needs no forging (a soft metal), so it fits the pack as-is. Nothing
     // to add here; we just don't remove it the way wood/stone were removed.
