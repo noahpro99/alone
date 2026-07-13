@@ -150,7 +150,17 @@ it just goes straight over the fire.)
 
 ## Rain catch — clean water without fire
 
-A **water cauldron** fills from rain (as it does in vanilla) and is a **fuel-free source of clean water**:
+Rain is already potable, so anything that catches it gives you **clean water with no fire needed**.
+
+### Set a pot out
+Right-click the ground with an **empty** clay or **iron pot** <img class="mc-icon" src="/alone/item/iron_pot.png" alt="Iron Pot"/> to **set it down** under the open sky. It slowly fills with clean rainwater while it's raining — then **right-click bare-handed to drink**, or **with a vessel to pour** the clean water across.
+
+- A **bare pot** catches only through its own small mouth, so it's slow (several minutes of steady rain to fill).
+- **Rig a [tarp](./the-start.md) above it** and the tarp **funnels** its whole catch into the pot — far faster. Put **several pots under one tarp** and they **split** its catch between them.
+- **Leaves are partial shelter, not a roof.** Rain drips through a canopy: a pot under **~3 leaf layers** catches about **half** as fast, falling off exponentially with more layers (6 → a quarter, 9 → an eighth). A solid block overhead catches nothing.
+
+### Water cauldron
+A **water cauldron** fills from rain (as it does in vanilla) and is also a fuel-free clean source:
 
 - **Right-click it bare-handed** to drink clean straight from it — no sickness; spends a level.
 - **Right-click it with a vessel** to fill the vessel **clean** and drain the cauldron.

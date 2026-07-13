@@ -66,7 +66,7 @@ Overheat and you take **burning damage** as if you were on fire. Standing in lav
 What you wear shifts the temperature loop:
 
 - **Leather and hide** (armor pieces and turtle shell) **insulate well**. In the cold they blunt the chill back toward comfort. In the **heat** they trap warmth and make you **overheat faster**.
-- **Metal plate** barely insulates, and under an **open sky in the heat** it **bakes you** — the sun turns your armor into an oven.
+- **Metal plate** barely insulates, and under an **open sky in the heat** it **bakes you** — the sun turns your armor into an oven. **Shade cuts the bake:** a roof stops it entirely, and **tree cover dapples it** — standing under **~3 leaf layers** roughly **halves** the sun-heat, falling off with a denser canopy.
 - **Wet clothing insulates nothing** — soaked layers do nothing until they dry.
 
 ## How temperature feeds your other meters
