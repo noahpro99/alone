@@ -98,6 +98,7 @@ Fishing works as it does in vanilla — but **a spot can be fished out.** Every 
 - **A small pond also empties fast because it's only a spot or two of water** — a lake or the sea is *many* rich spots, so it lasts far longer and you can work along it.
 - **Fished-out water recovers on its own** — leave a spot alone and the fish return over the following in-game days (a rich spot faster, a poor one slowly), so a well-managed shoreline keeps feeding you.
 - Only **actual fish** count against the stock; junk and treasure catches don't.
+- **Bait the hook and you catch more.** Dig the soil and you'll now and then turn up **worms** <img class="mc-icon" src="/alone/item/worms.png" alt="Worms"/> — fishing bait. Carry them while you fish with a rod and **each catch spends one worm to tempt an extra fish up**, even from a spot that's been worked thin. So turning the earth before you fish pays off, and bait lets you keep drawing from water others would call fished-out.
 
 So fishing is a real, renewable food source you have to **manage, not strip** — exactly the pressure a survivor living off the water faces.
 

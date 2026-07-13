@@ -54,10 +54,11 @@ flame — has shipped. See [Water & Drinking](./features/water-and-drinking.md#h
 
 ## Food, farming & preservation
 
-- **Deeper fishing:** bait, tackle tiers, and the right spots (a fishing rod is still vanilla otherwise).
-  *(**Finite, slow-recovering fish stocks** have shipped — fish out a spot and the catches dry up until it
-  recovers over the following days, so a small pond empties fast while a lake or the sea lasts; see
-  [Food & Eating](./features/food-and-eating.md#fishing).)*
+- **Deeper fishing:** ~~bait~~ **shipped**, plus tackle tiers and the right spots still to come (the rod is
+  otherwise vanilla). Dig soil for **worms** and carry them while rod-fishing — each catch spends one to tempt
+  an extra fish up, even from a thinning spot. *(**Finite, slow-recovering fish stocks** shipped earlier —
+  fish out a spot and the catches dry up until it recovers over the following days, so a small pond empties
+  fast while a lake or the sea lasts; see [Food & Eating](./features/food-and-eating.md#fishing).)*
 - **Purpose-built food stores:** **sealed barrels, hung caches, and smokehouses** that beat the scent
   better than a plain chest. *(The scent system has shipped — carried fresh meat draws wolves and polar
   bears, which will **snatch it and bolt** if they reach you, countered by preserving or caching it; see

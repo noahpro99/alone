@@ -41,6 +41,11 @@ public final class Foraging {
                 if (rng.nextFloat() < 0.12f) {
                     Block.popResource(serverLevel, pos, new ItemStack(AloneItems.ROCK));
                 }
+            } else if (state.is(net.minecraft.tags.BlockTags.DIRT)) {
+                // Turn the earth and now and then you unearth worms — fishing bait (see FishStock).
+                if (rng.nextFloat() < 0.1f) {
+                    Block.popResource(serverLevel, pos, new ItemStack(AloneItems.WORMS));
+                }
             }
         });
     }

@@ -193,6 +193,12 @@ public final class AloneItems {
     public static final Item SLINGSHOT = register("slingshot",
         key -> new SlingshotItem(new Item.Properties().durability(150).setId(key)));
 
+    /** Worms — fishing bait, dug out of the soil (see {@link Foraging}). Carry them while you fish with a rod
+     *  and each catch spends one to <b>tempt an extra fish up</b>, even from a spot that's been worked thin
+     *  (see {@link FishStock}). The real reason to turn the earth before you fish. Placeholder art. */
+    public static final Item WORMS = register("worms",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

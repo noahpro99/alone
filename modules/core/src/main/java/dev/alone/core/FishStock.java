@@ -57,10 +57,42 @@ public final class FishStock {
                 return; // a junk or treasure catch — no fish to gate
             }
             Vec3 origin = context.getParameter(LootContextParams.ORIGIN);
-            if (!tryCatch(context.getLevel(), BlockPos.containing(origin))) {
-                drops.removeIf(FishStock::isFish); // this spot's fished out — the fish just aren't biting
+            boolean caught = tryCatch(context.getLevel(), BlockPos.containing(origin));
+            boolean baited = consumeBait(context); // an angler carrying worms spends one to tempt fish up
+            if (!caught && !baited) {
+                drops.removeIf(FishStock::isFish); // fished out and unbaited — the fish just aren't biting
+                return;
+            }
+            if (baited) {
+                // Bait tempts an extra fish onto the hook — even from a spot worked thin — for a bigger haul.
+                drops.stream().filter(FishStock::isFish).findFirst()
+                    .ifPresent(fish -> drops.add(fish.copyWithCount(1)));
             }
         });
+    }
+
+    /** If the angler is carrying {@link AloneItems#WORMS}, spend one (bait draws the fish) and report it, so
+     *  the catch lands even on a thinning spot and yields a bonus fish. The fishing loot context carries the
+     *  hook as {@code THIS_ENTITY}; its owner is the player whose pockets we check. */
+    private static boolean consumeBait(LootContext context) {
+        if (!context.hasParameter(LootContextParams.THIS_ENTITY)
+            || !(context.getParameter(LootContextParams.THIS_ENTITY)
+                instanceof net.minecraft.world.entity.projectile.FishingHook hook)) {
+            return false;
+        }
+        net.minecraft.world.entity.player.Player owner = hook.getPlayerOwner();
+        if (owner == null) {
+            return false;
+        }
+        var inventory = owner.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack slot = inventory.getItem(i);
+            if (slot.is(AloneItems.WORMS)) {
+                slot.shrink(1);
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isFish(ItemStack stack) {
