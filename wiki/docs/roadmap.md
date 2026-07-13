@@ -104,9 +104,10 @@ recovers, and animals won't breed in the dead of winter. See
   now yields **raw fat**; **render it over a fire** (campfire or furnace) into **tallow**, then cast it around
   a cordage wick (tallow + string) for a **candle**. So meat, hide, bone, sinew, marrow, brains, *and* fat all
   find a use. See [Hunting & Wildlife](./features/hunting.md#a-blade-kill-butchers-the-carcass--hide-bone-and-sinew).
-- **Netting** as a second counter to insect pressure. *(Insect pressure near standing water — countered by
-  a smudge fire — and **insect-borne fever** (sustained unprotected exposure in humid wetlands can give you
-  the sickness illness) have both shipped; see
+- ~~**Netting** as a second counter to insect pressure~~ **shipped** — a **bug net** woven from string + a
+  fibre drawstring, worn on the head (in place of a helmet) to veil off the swarm anywhere, no fire needed.
+  *(Insect pressure near standing water — countered by a smudge fire — and **insect-borne fever** (sustained
+  unprotected exposure in humid wetlands can give you the sickness illness) shipped earlier; see
   [World & Seasons](./features/world-and-seasons.md#biting-insects).)*
 
 ## Building & shelter

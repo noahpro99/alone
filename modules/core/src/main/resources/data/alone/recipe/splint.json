@@ -1,5 +1,13 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": ["minecraft:stick", "minecraft:stick", "minecraft:string"],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "s",
+    "t",
+    "s"
+  ],
+  "key": {
+    "s": "minecraft:stick",
+    "t": "minecraft:string"
+  },
   "result": {"id": "alone:splint", "count": 1}
 }

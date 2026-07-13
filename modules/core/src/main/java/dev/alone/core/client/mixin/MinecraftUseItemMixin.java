@@ -36,6 +36,14 @@ public class MinecraftUseItemMixin {
         if (mc.player == null || mc.level == null) {
             return;
         }
+        // The send-throttle is gated on the player's tickCount, but a respawn creates a FRESH player whose
+        // tickCount restarts at 0 — while our static lastSendTick still holds the (large) pre-death value.
+        // That left "now - lastSendTick" negative for a long time after dying, so strip/rive/drill/knap
+        // right-clicks silently stopped firing. If the clock has run backwards, the player was replaced —
+        // reset the throttle so hold-actions work again immediately.
+        if (mc.player.tickCount < alone$lastSendTick) {
+            alone$lastSendTick = mc.player.tickCount - 100;
+        }
         ItemStack main = mc.player.getMainHandItem();
 
         // Hold right-click on a fibrous plant (bare-handed or with a cutting blade) → strip plant fibre
@@ -68,7 +76,8 @@ public class MinecraftUseItemMixin {
 
         // Hold right-click with a stick (hand drill) or a bow drill on an unlit campfire → drill it
         // alight (no crouch needed). The bow drill is faster/more reliable; both are handled server-side.
-        if ((main.is(Items.STICK) || main.is(AloneItems.BOW_DRILL) || main.is(AloneItems.FERRO_ROD))
+        if ((main.is(Items.STICK) || main.is(AloneItems.BOW_DRILL) || main.is(AloneItems.FERRO_ROD)
+                || main.is(AloneItems.FLINT_AND_PYRITE))
             && FireStarting.findUnlitCampfire(mc.player, mc.level) != null) {
             if (mc.player.tickCount - alone$lastSendTick >= 4) {
                 ClientPlayNetworking.send(FireDrillPayload.INSTANCE);
@@ -96,7 +105,7 @@ public class MinecraftUseItemMixin {
         // Sneak + hold right-click with a log + a flint hatchet (slow riving) or a hand saw (quick) → work
         // it into boards.
         boolean haveLog = main.is(ItemTags.LOGS) || off.is(ItemTags.LOGS);
-        boolean haveRiveTool = main.is(AloneItems.FLINT_HATCHET) || off.is(AloneItems.FLINT_HATCHET)
+        boolean haveRiveTool = main.is(ItemTags.AXES) || off.is(ItemTags.AXES)
             || main.is(AloneItems.HAND_SAW) || off.is(AloneItems.HAND_SAW);
         if (mc.player.isShiftKeyDown() && haveLog && haveRiveTool) {
             if (mc.player.tickCount - alone$lastSendTick >= 6) {

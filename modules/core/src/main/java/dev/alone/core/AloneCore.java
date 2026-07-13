@@ -114,6 +114,7 @@ public class AloneCore implements ModInitializer {
         Pickup.init();          // §5.1 — no vacuum pickup; right-click a dropped item to pick it up
         Wildlife.init();        // §7.2 — wild animals are skittish; sneak to approach, else they bolt
         Insects.init();         // §7.2 — biting insects near standing water; a smudge fire drives them off
+        Spiders.init();         // §7.2 — spiders scaled down to a realistic size (and no silk drop, via loot)
         Scent.init();           // §4.3 — fresh meat you carry reeks and draws predators; preserve/cache it
         Tracking.init();        // §7.3 — persistence hunting: sustained chase tires wild game so you run it down
         BloodTrail.init();       // §7.3 — a wounded animal bleeds a fading trail you can track

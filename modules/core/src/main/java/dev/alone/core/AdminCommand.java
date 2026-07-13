@@ -29,13 +29,27 @@ public final class AdminCommand {
             // The op-gate lives on each debug subcommand (not the root), so the root "alone" node stays open
             // for the player-facing "/alone loadout" registered in Loadout — Brigadier merges the two.
             dispatcher.register(Commands.literal("alone")
-                .then(Commands.literal("reset").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)).executes(ctx -> {
-                    ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    resetAll(player);
-                    ctx.getSource().sendSuccess(
-                        () -> Component.literal("Alone: all meters refilled, conditions cleared."), false);
-                    return Command.SINGLE_SUCCESS;
-                }))
+                .then(Commands.literal("reset").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                    // No name → reset yourself (the sender).
+                    .executes(ctx -> {
+                        ServerPlayer player = ctx.getSource().getPlayerOrException();
+                        resetAll(player);
+                        ctx.getSource().sendSuccess(
+                            () -> Component.literal("Alone: all meters refilled, conditions cleared."), false);
+                        return Command.SINGLE_SUCCESS;
+                    })
+                    // "/alone reset <player(s)>" → reset the named target(s) instead.
+                    .then(Commands.argument("target", net.minecraft.commands.arguments.EntityArgument.players())
+                        .executes(ctx -> {
+                            var targets = net.minecraft.commands.arguments.EntityArgument.getPlayers(ctx, "target");
+                            for (ServerPlayer p : targets) {
+                                resetAll(p);
+                            }
+                            int n = targets.size();
+                            ctx.getSource().sendSuccess(() -> Component.literal(
+                                "Alone: reset " + n + " player" + (n == 1 ? "" : "s") + "."), true);
+                            return targets.size();
+                        })))
                 // Debug helpers to set up test conditions instantly, so the harsh systems can be checked
                 // without hunting for the exact circumstances (a freezing lake, being soaked, dirty hands…).
                 .then(Commands.literal("wet").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)).executes(ctx -> {

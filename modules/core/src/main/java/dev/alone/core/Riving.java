@@ -37,11 +37,20 @@ public final class Riving {
     private static final float STAMINA_PER_STROKE = 2.0f; // ~90 stamina a log — nearly a full bar; you tire fast
     private static final int PLANKS_PER_LOG = 2;        // rough hand-riven yield
 
+    // A proper metal axe (copper/iron/steel…) splits a log faster and a touch cleaner than knapped flint,
+    // though it's still real work — the middle rung between the crude flint hatchet and a hand saw.
+    private static final int AXE_STROKES = 30;          // ~9s
+    private static final float AXE_STAMINA = 1.3f;      // ~40 stamina a log — hard, but not a wringing-out
+    private static final int AXE_PLANKS = 3;            // a cleaner split than flint, not as clean as a saw
+
     private static final int SAW_STROKES = 20;          // ~6s — a saw cuts far quicker than splitting
     private static final float SAW_STAMINA = 0.8f;      // ~16 stamina a log — ordinary work, not a wringing-out
     private static final int SAW_PLANKS = 4;            // clean boards, a full log's worth
 
-    private record Rive(int strokes, int atTick) {
+    /** Saved rive progress: which log you're working and how many strokes into it. Kept per player until the
+     *  log is riven through (or you switch to a different kind of log), so a split you step away from isn't
+     *  lost — pick the same log back up and you carry on where you left off. */
+    private record Rive(Item log, int strokes) {
     }
 
     private static final Map<UUID, Rive> ACTIVE = new HashMap<>();
@@ -62,10 +71,13 @@ public final class Riving {
             ACTIVE.remove(player.getUUID());
             return;
         }
+        // Three tiers: a hand saw (quick, clean), a proper metal axe (the middle), or the crude flint hatchet
+        // (slow, brutal). The flint hatchet is in the AXES tag too, so pick it out explicitly for the slow tier.
         boolean saw = tool.is(AloneItems.HAND_SAW);
-        int strokesNeeded = saw ? SAW_STROKES : STROKES_TO_RIVE;
-        float staminaPerStroke = saw ? SAW_STAMINA : STAMINA_PER_STROKE;
-        int yield = saw ? SAW_PLANKS : PLANKS_PER_LOG;
+        boolean flintHatchet = tool.is(AloneItems.FLINT_HATCHET);
+        int strokesNeeded = saw ? SAW_STROKES : (flintHatchet ? STROKES_TO_RIVE : AXE_STROKES);
+        float staminaPerStroke = saw ? SAW_STAMINA : (flintHatchet ? STAMINA_PER_STROKE : AXE_STAMINA);
+        int yield = saw ? SAW_PLANKS : (flintHatchet ? PLANKS_PER_LOG : AXE_PLANKS);
         if (SurvivalMeters.getStamina(player) <= 0f) {
             player.sendSystemMessage(Component.literal("You're too spent to keep splitting — rest first."), true);
             return; // exhausted; the split waits
@@ -76,14 +88,17 @@ public final class Riving {
         level.playSound(null, player.blockPosition(), SoundEvents.AXE_STRIP, SoundSource.PLAYERS,
             0.6f, 0.8f + rng.nextFloat() * 0.2f);
 
+        // Progress is keyed to the log you're splitting, NOT to an unbroken run of clicks — so a pause
+        // (a mob, a meal, even a death and respawn) doesn't reset the split; only switching to a different
+        // kind of log starts fresh. Pick the same log back up and you resume where you left off.
         Rive current = ACTIVE.get(player.getUUID());
-        boolean continuing = current != null && player.tickCount - current.atTick <= 12;
+        boolean continuing = current != null && current.log == log.getItem();
         int strokes = continuing ? current.strokes + 1 : 1;
 
         if (strokes < strokesNeeded) {
             player.sendSystemMessage(Component.literal(
                 (saw ? "Sawing… " : "Riving… ") + (strokes * 100 / strokesNeeded) + "%"), true);
-            ACTIVE.put(player.getUUID(), new Rive(strokes, player.tickCount));
+            ACTIVE.put(player.getUUID(), new Rive(log.getItem(), strokes));
             return;
         }
 
@@ -106,10 +121,11 @@ public final class Riving {
             ? "You saw the log into clean boards." : "The log splits into rough boards."), true);
     }
 
-    /** Either tool that works a log into boards: the flint hatchet (slow, brutal splitting) or the hand saw
-     *  (quick, easy, more boards). */
+    /** Any tool that works a log into boards: a hand saw (quick, clean) or an <b>axe</b> — the crude flint
+     *  hatchet (slow, brutal) or a proper metal axe (the faster, cleaner middle). Any {@code minecraft:axes}
+     *  splits a log now, not only the flint hatchet. */
     private static boolean isRiveTool(ItemStack stack) {
-        return stack.is(AloneItems.FLINT_HATCHET) || stack.is(AloneItems.HAND_SAW);
+        return stack.is(ItemTags.AXES) || stack.is(AloneItems.HAND_SAW);
     }
 
     /** The planks a given log rives into — derived from its name (oak_log → oak_planks, warped_stem →

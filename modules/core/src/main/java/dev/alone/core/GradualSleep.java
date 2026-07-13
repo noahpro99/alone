@@ -14,53 +14,64 @@ import net.minecraft.server.level.ServerPlayer;
  * <b>interrupted</b> — a mob wakes you, a scent event stirs you, and you're back to real time the very
  * next tick, "a second later, but hours later in game time." The tick-rate lever is global (single-player
  * is one world), so it's driven once from the server tick, not per player.
+ *
+ * <p>A rest skips only the <b>phase you're in</b>: everyone <b>sleeping at night</b> tick-sprints to
+ * <b>dawn</b>, and everyone <b>resting by day</b> tick-sprints to <b>nightfall</b> — the clock hands back
+ * and everyone rises the moment the phase flips, so "skip the night" and "skip the day" are two distinct
+ * things, not a blanket jump to morning. Either way it needs <b>every</b> player lying down: one person
+ * can't drag the whole server's clock forward.
  */
 public final class GradualSleep {
     private GradualSleep() {
     }
 
-    /** ~15x real time — a full night fast-forwards in roughly half a minute, fast but still perceptibly time. */
+    /** ~15x real time — a phase fast-forwards in roughly half a minute, fast but still perceptibly time. */
     private static final float SLEEP_TICK_RATE = 300f;
     private static final float NORMAL_TICK_RATE = 20f;
-    /** First light (just after sunrise) — whoever's lying down rises here, so a rest always ends at dawn. */
-    private static final long MORNING_RISE = 1000L;
 
     private static boolean fastForwarding = false;
+    /** Which phase the current sprint is skipping: {@code true} = a daytime rest (skip on to nightfall),
+     *  {@code false} = a night's sleep (skip on to dawn). We stop the moment daylight flips away from this. */
+    private static boolean skippingDaylight = false;
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(GradualSleep::onServerTick);
     }
 
     private static void onServerTick(MinecraftServer server) {
-        boolean allResting = allPlayersResting(server);
-        long timeOfDay = server.overworld().getOverworldClockTime() % 24000L;
-        boolean morning = timeOfDay < MORNING_RISE; // first light — time to get up
         var tickRate = server.tickRateManager();
+        boolean daylight = server.overworld().isBrightOutside();
 
-        // The world only fast-forwards when EVERY (non-spectator) player is lying down — a night's sleep OR a
-        // daytime rest to pass the hours (convalescing an injury, waiting out weather, letting a crop grow).
-        // Requiring all of them means one player can't drag everyone else's clock forward in multiplayer; it
-        // runs fast for the whole server only once they're all resting. It's the one way to skip the long
-        // real durations the pack models: you all rest, and the clock runs.
-        if (allResting && !morning) {
+        // The world only fast-forwards when EVERY (non-spectator) player is lying down — a night's sleep to
+        // skip to dawn, or a daytime rest to skip to nightfall. Requiring all of them means one player can't
+        // drag everyone else's clock forward in multiplayer.
+        if (allPlayersResting(server)) {
             if (!fastForwarding) {
+                // Begin the sprint, and remember which phase we're skipping so we know where to stop.
                 tickRate.setTickRate(SLEEP_TICK_RATE);
                 fastForwarding = true;
+                skippingDaylight = daylight;
+            } else if (daylight != skippingDaylight) {
+                // The phase we were skipping just ended — daybreak after a night's sleep, or nightfall after
+                // a day's rest. Hand the clock back and rouse everyone so the rest ends right at the boundary.
+                stopSprint(server);
             }
             return;
         }
 
-        // First light (or someone got up, so it's no longer unanimous): hand the tick rate back to real time.
+        // Someone got up (no longer unanimous) — back to real time; leave anyone still lying down as they are.
         if (fastForwarding) {
             tickRate.setTickRate(NORMAL_TICK_RATE);
             fastForwarding = false;
         }
-        // Rouse anyone still lying down when morning comes, so a rest always ends at dawn.
-        if (morning) {
-            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (player.isSleeping()) {
-                    player.stopSleeping();
-                }
+    }
+
+    private static void stopSprint(MinecraftServer server) {
+        server.tickRateManager().setTickRate(NORMAL_TICK_RATE);
+        fastForwarding = false;
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (player.isSleeping()) {
+                player.stopSleeping();
             }
         }
     }

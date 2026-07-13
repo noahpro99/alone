@@ -25,10 +25,18 @@ public final class PlacedBlocks {
     private PlacedBlocks() {
     }
 
-    /** Packed {@link BlockPos#asLong() positions} within a chunk that a player set down. */
-    public static final AttachmentType<Set<Long>> PLACED = AttachmentRegistry.createPersistent(
-        Identifier.fromNamespaceAndPath("alone", "placed_blocks"),
-        Codec.LONG.listOf().xmap(HashSet::new, ArrayList::new));
+    /** Packed {@link BlockPos#asLong() positions} within a chunk that a player set down. Synced to clients:
+     *  break SPEED is computed client-side ({@code getDestroyProgress}), so every client — not just the one
+     *  who placed the block — needs to know a block is loose, or a teammate would mine your set-down blocks
+     *  at the slow rooted rate. The server stays authoritative; this just keeps the client's prediction (and
+     *  the crack animation) honest for everyone. */
+    public static final AttachmentType<Set<Long>> PLACED = AttachmentRegistry.<Set<Long>>builder()
+        .persistent(Codec.LONG.listOf().xmap(HashSet::new, ArrayList::new))
+        .syncWith(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG
+                .apply(net.minecraft.network.codec.ByteBufCodecs.list())
+                .map(HashSet::new, ArrayList::new),
+            net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate.all())
+        .buildAndRegister(Identifier.fromNamespaceAndPath("alone", "placed_blocks"));
 
     public static void init() {
         // A placed block that's broken is no longer placed — forget it, so a natural block later at the
