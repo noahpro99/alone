@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:string", "minecraft:string", "minecraft:string", "minecraft:string", "alone:plant_fiber"],
+  "result": {"id": "alone:bug_net", "count": 1}
+}

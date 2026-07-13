@@ -63,8 +63,10 @@ Camp by standing water in the warmth and the bugs will find you — just as they
 - **The counter — a smudge fire:** stand near a **lit campfire** (within ~5 blocks) and the smoke keeps
   them off — which stops the bites **and** the fever with them. Since you'd usually have a fire going at
   night anyway, the real danger is being caught at a waterside camp **without** one.
-
-*(Netting is planned as a second counter to the biting.)*
+- **The portable counter — a bug net:** weave one from **string + a fibre drawstring** and **wear it on your
+  head** (right-click to don it) — a fine mesh veil the swarm can't reach through, so no swatting toll and no
+  fever, anywhere, no fire needed. The catch: you wear it **instead of a helmet**, a real seasonal trade in
+  buggy country.
 
 ## Torches burn out
 

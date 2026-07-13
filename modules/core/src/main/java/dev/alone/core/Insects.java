@@ -30,8 +30,8 @@ import net.minecraft.world.level.material.FluidState;
  * </ul>
  * When they're on you it's a <b>maintenance nuisance, not a wound</b>: the constant swatting and itching
  * <b>wears down your stamina</b> and, in a heavy swarm, leaves you briefly miserable and clumsy. The
- * counter is smoke: stand near a <b>lit campfire</b> (a smudge fire) and they keep their distance.
- * (Netting is a planned second counter.)
+ * counter is smoke: stand near a <b>lit campfire</b> (a smudge fire) and they keep their distance — or wear
+ * a <b>{@link AloneItems#BUG_NET bug net}</b> on your head, the portable second counter (in place of a helmet).
  */
 public final class Insects {
     private Insects() {
@@ -73,6 +73,9 @@ public final class Insects {
         }
         if (nearSmudgeFire(level, pos)) {
             return; // a smoky fire keeps them off
+        }
+        if (player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).is(AloneItems.BUG_NET)) {
+            return; // a head net veils you — the swarm can't reach skin (the portable counter to a smudge fire)
         }
 
         // Bitten: harassed and swatting — it wears you down, and you can see the cloud around you.

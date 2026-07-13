@@ -152,6 +152,20 @@ public final class AloneItems {
     public static final Item GILL_NET = register("gill_net",
         key -> new net.minecraft.world.item.PlaceOnWaterBlockItem(AloneBlocks.GILL_NET, new Item.Properties().setId(key)));
 
+    /** A bug net / head net (§7.2 insect pressure) — a fine mesh veil you wear over your head. The second
+     *  counter to biting insects alongside a smudge fire: while it's on your head, the swarm can't reach you,
+     *  so no swatting toll and no wetland fever — but you wear it <b>instead of a helmet</b>, a real seasonal
+     *  trade in buggy country. Woven from string with a fibre drawstring. */
+    public static final Item BUG_NET = register("bug_net",
+        key -> new Item(new Item.Properties()
+            .component(net.minecraft.core.component.DataComponents.EQUIPPABLE,
+                net.minecraft.world.item.equipment.Equippable
+                    .builder(net.minecraft.world.entity.EquipmentSlot.HEAD)
+                    .setEquipSound(SoundEvents.ARMOR_EQUIP_LEATHER)
+                    .setEquipOnInteract(true)
+                    .build())
+            .setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
