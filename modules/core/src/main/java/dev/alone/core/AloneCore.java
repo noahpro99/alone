@@ -125,6 +125,7 @@ public class AloneCore implements ModInitializer {
         Turf.init();            // §5.4 — clear grass to bare dirt first (de-turfing), then dig the soil
         WorldGen.init();        // §8.1 — scatter loose rocks across the surface like grass, to pick up
         Foraging.init();        // §8.1 — dig gravel / rummage grass for flint, rocks, sticks (day-one)
+        DiggingStick.init();    // §5.4 — the digging stick wears as you lever packed earth loose with it
         SoilFertility.init();   // §4.1 — soil fertility: harvests deplete it, fallow/rotation restore it
         FishStock.init();       // §4.1 — finite fish stocks: fish out a spot and the catches dry up until it recovers
         GameStock.init();       // §7.2 — local game populations: overhunt a patch and it stops spawning until it recovers

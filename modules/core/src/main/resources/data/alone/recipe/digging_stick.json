@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:stick", "alone:flint_shard"],
+  "result": { "id": "alone:digging_stick", "count": 1 }
+}

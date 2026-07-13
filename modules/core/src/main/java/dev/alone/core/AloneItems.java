@@ -211,6 +211,13 @@ public final class AloneItems {
     public static final Item WORMS = register("worms",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** A digging stick (§5.4) — the oldest tool there is: a stout stick sharpened to a fire-hardened point.
+     *  Before you can knap a shovel, it's how you work the earth — you jab and lever packed soil loose far
+     *  faster than clawing it by hand, though nowhere near a proper shovel. It wears with the hard use (see
+     *  {@link DiggingStick} and {@code PlayerDestroySpeedMixin}). Placeholder art. */
+    public static final Item DIGGING_STICK = register("digging_stick",
+        key -> new Item(new Item.Properties().durability(48).setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
