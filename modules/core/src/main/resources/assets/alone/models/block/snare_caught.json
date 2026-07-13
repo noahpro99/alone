@@ -3,7 +3,7 @@
   "textures": {
     "particle": "alone:block/snare",
     "cord": "alone:block/snare",
-    "catch": "alone:entity/squirrel"
+    "catch": "alone:block/squirrel"
   },
   "elements": [
     {

@@ -28,3 +28,5 @@ gradle wrapper --gradle-version 9.5.1    # one time: generate ./gradlew
 
 See the [Dev Quickstart](https://noahpro99.github.io/alone/getting-started/dev-quickstart) for the
 full workflow, and [`wiki/README.md`](wiki/README.md) for editing the documentation site.
+
+*AI was used in the development of this modpack.*
