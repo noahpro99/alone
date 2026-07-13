@@ -32,10 +32,14 @@ public final class Campfires {
     private Campfires() {
     }
 
-    public static final int INITIAL_FUEL = 3600;  // ~3 min for a fresh campfire
-    public static final int FUEL_PER_STICK = 600;  // ~30s
-    public static final int FUEL_PER_LOG = 2400;   // ~2 min
-    public static final int MAX_FUEL = 24000;      // ~20 min cap
+    // Burn-times are pinned to the day/night clock: an MC day is 24000 ticks = 20 real min, so one
+    // MC-hour is 1000 ticks (50 real sec). Fuel life is set by what the fuel *is*, the way it burns in
+    // life — a split log holds a bed of coals for hours, tinder flares and is gone. The ladder below runs
+    // from whole wood down to leaf-litter, spanning well over two orders of magnitude per item.
+    public static final int INITIAL_FUEL = 3600;  // a freshly lit campfire, ~3.5 MC-hrs of its build wood
+    public static final int FUEL_PER_STICK = 500;  // kindling — a short burst, ~30 MC-min (~25 real s)
+    public static final int FUEL_PER_LOG = 6000;   // a whole log — a good chunk of a day, ~6 MC-hrs (~5 real min)
+    public static final int MAX_FUEL = 24000;      // the fire only holds so big a pile — one full MC day banked
     public static final int BOIL_TIME = 300;       // ~15s on the fire to bring a pot to a rolling boil
 
     public static final AttachmentType<Integer> FUEL =
@@ -186,8 +190,8 @@ public final class Campfires {
         }
     }
 
-    public static final int FUEL_PER_FIBER = 150; // dry tinder flares fast — a few seconds
-    public static final int FUEL_PER_LEAF = 100;
+    public static final int FUEL_PER_FIBER = 80; // dry tinder flares and is gone — ~4 real s
+    public static final int FUEL_PER_LEAF = 50;  // leaf-litter, the briefest of all — ~2.5 real s
 
     /** A word on how a fire's burning, read from its remaining fuel — roaring down to guttering, with a
      *  rough time. The kind of judgement you'd make glancing at the flames and coals, not a furnace gauge. */
@@ -206,7 +210,7 @@ public final class Campfires {
             return FUEL_PER_LOG;
         }
         if (stack.is(ItemTags.PLANKS)) {
-            return FUEL_PER_LOG / 2;
+            return FUEL_PER_LOG / 3; // a split of milled wood — a couple of MC-hrs, less than a whole log
         }
         if (stack.is(AloneItems.PLANT_FIBER)) {
             return FUEL_PER_FIBER; // kindling/tinder — burns quick, keeps a fire alive in a pinch
