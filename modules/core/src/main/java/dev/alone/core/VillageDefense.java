@@ -1,6 +1,7 @@
 package dev.alone.core;
 
 import java.util.EnumSet;
+import java.util.Set;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -21,10 +22,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -48,10 +51,13 @@ import net.minecraft.world.phys.Vec3;
  * <ul>
  *   <li><b>Looting</b> — opening a village-owned container (a chest/barrel/any container within village
  *       bounds). Taking a settlement's stores is theft; even cracking the lid counts.</li>
- *   <li><b>Assault</b> — hitting a villager or a village animal (a farm animal near the village). Killing is
- *       just the hardest case of hitting, so the attack hook covers it.</li>
+ *   <li><b>Assault</b> — hitting a villager, a village animal (a farm animal near the village), or one of the
+ *       settlement's own <b>iron golems</b>. Killing is just the hardest case of hitting, so the attack hook
+ *       covers it — and striking the village's guardian construct is picking a fight with the village.</li>
  *   <li><b>Rustling</b> — leading a village animal away on a lead.</li>
- *   <li><b>Vandalism</b> — breaking their hay bales or crops within village bounds.</li>
+ *   <li><b>Vandalism</b> — breaking their hay bales or crops, or a villager's <b>workstation</b> (its job-site
+ *       block — the composter, lectern, loom, smithing table…) or a bookshelf, within village bounds. A job
+ *       site is a villager's livelihood; smashing it is a crime against the settlement.</li>
  * </ul>
  *
  * <p><b>The hostile state is a per-player, decaying timer</b> ({@link #VILLAGE_HOSTILE_UNTIL}, a game-time
@@ -141,10 +147,11 @@ public final class VillageDefense {
             return InteractionResult.PASS; // don't consume the interaction — the container still opens
         });
 
-        // VANDALISM — smashing the village's hay bales or crops. Fires before the break so we read the block.
+        // VANDALISM — smashing the village's hay bales, crops, or a villager's workstation. Fires before the
+        // break so we read the block.
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
             if (level instanceof ServerLevel server && player instanceof ServerPlayer offender
-                && isVillageCrop(state) && Spawns.nearVillage(server, pos)) {
+                && isVillageBlock(state) && Spawns.nearVillage(server, pos)) {
                 flag(offender, server);
             }
             return true; // never block the break itself — it's a crime, not an impossibility
@@ -179,10 +186,13 @@ public final class VillageDefense {
         return !level.getEntitiesOfClass(VillageGuard.class, new AABB(pos).inflate(range)).isEmpty();
     }
 
-    /** A villager or a FARMED (domestic) animal — the living property a settlement defends. Wild game (a
-     *  boar, a deer that wandered near) is fair to hunt and never counts, even right by the village. */
+    /** A villager, the settlement's own iron golem, or a FARMED (domestic) animal — the living property a
+     *  settlement defends. Wild game (a boar, a deer that wandered near) is fair to hunt and never counts, even
+     *  right by the village. The golem counts because striking the village's guardian is an attack on the
+     *  village itself — hit it and, like the guards, the whole settlement turns on you. */
     private static boolean isVillageProperty(Entity entity) {
         return entity instanceof AbstractVillager
+            || entity instanceof IronGolem
             || (entity instanceof Mob mob && Domestic.isDomestic(mob));
     }
 
@@ -193,9 +203,29 @@ public final class VillageDefense {
             || Spawns.nearVillage(level, offender.blockPosition());
     }
 
-    /** Hay bales and crops — the harvest a settlement will defend. */
-    private static boolean isVillageCrop(BlockState state) {
-        return state.is(Blocks.HAY_BLOCK) || state.is(BlockTags.CROPS);
+    /** The villager job-site workstations — every block that assigns a profession — plus the bookshelf (the
+     *  library's stock). Breaking one is destroying a villager's livelihood, so it counts as vandalism. */
+    private static final Set<Block> VILLAGE_WORKSTATIONS = Set.of(
+        Blocks.COMPOSTER,        // farmer
+        Blocks.BARREL,           // fisherman
+        Blocks.BLAST_FURNACE,    // armorer
+        Blocks.SMOKER,           // butcher
+        Blocks.CARTOGRAPHY_TABLE,// cartographer
+        Blocks.BREWING_STAND,    // cleric
+        Blocks.CAULDRON,         // leatherworker
+        Blocks.FLETCHING_TABLE,  // fletcher
+        Blocks.GRINDSTONE,       // weaponsmith
+        Blocks.LECTERN,          // librarian
+        Blocks.LOOM,             // shepherd
+        Blocks.SMITHING_TABLE,   // toolsmith
+        Blocks.STONECUTTER,      // mason
+        Blocks.BOOKSHELF);       // the library's stock
+
+    /** Blocks a settlement will defend: its harvest (hay, crops) and its people's workstations/bookshelves. */
+    private static boolean isVillageBlock(BlockState state) {
+        return state.is(Blocks.HAY_BLOCK)
+            || state.is(BlockTags.CROPS)
+            || VILLAGE_WORKSTATIONS.contains(state.getBlock());
     }
 
     /** Is the village currently hostile to this player (timer set and not yet lapsed)? */
