@@ -327,6 +327,11 @@ public final class Carry {
 
     /** Weight (kg). Coarse tiers — real blocks scale with volume, tools moderate, food a portion, rest light. */
     private static float perItemWeight(Item item) {
+        // String is a BlockItem (it places tripwire), so without this it falls into the block-density weight
+        // path below and reads heavy. It's a hank of cordage — nail it light, first thing (mirrors its volume).
+        if (item == net.minecraft.world.item.Items.STRING) {
+            return 0.01f;
+        }
         // A single sawn board — a quarter of a log's mass, so 4 planks ≈ one log (mass conserves).
         if (BuiltInRegistries.ITEM.getKey(item).getPath().endsWith("_planks")) {
             return 1.5f;
