@@ -174,10 +174,12 @@ light goods float downstream) exist; the rest of the logistics tree is planned.
 - **Digestion & sanitation:** a latrine/contamination system where fouling your own camp or water
   source sickens you. *(Dysentery — the acute dehydration emergency from drinking foul water — has
   shipped; see [Injuries & Conditions](./features/injuries-and-conditions.md#dysentery).)*
-- **Combat depth:** deeper melee than trade-blows. *(Two pieces have shipped: the spear as king of the
-  early game — a flint spear with real thrusting [reach](./features/tools-and-crafting.md#the-spear--reach-from-the-first-day) —
-  and **shields defeated by large creatures**: bracing a shield against a bear, ravager, golem, or the
-  warden gets it **bashed aside** — knocked down for a few seconds so the follow-up lands, see
+- **Combat depth:** deeper melee than trade-blows. *(Pieces shipped: the spear as king of the
+  early game — a flint spear with real thrusting [reach](./features/tools-and-crafting.md#the-spear--reach-from-the-first-day);
+  **shields defeated by large creatures**: bracing a shield against a bear, ravager, golem, or the
+  warden gets it **bashed aside** — knocked down for a few seconds so the follow-up lands; and a **shield
+  tier ladder** — a woven **wicker** shield (day-one) → a **wooden** plank shield → the metal vanilla shield,
+  each sturdier and harder to bash aside, though no tier lets you turtle against a bear. See
   [Hunting & Wildlife](./features/hunting.md#the-brown-bear). You can turn a blade, not a charging bear.)*
 
 ## Crafting & labour

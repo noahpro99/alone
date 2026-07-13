@@ -166,6 +166,28 @@ public final class AloneItems {
                     .build())
             .setId(key)));
 
+    // ── Shields (§1.5 combat) — a real tier ladder up to the metal-faced vanilla shield. Each blocks like a
+    // vanilla shield (they reuse its BLOCKS_ATTACKS behaviour wholesale, so raising and blocking work the
+    // same), and they differ in what matters historically: how much punishment they take before they break
+    // (durability), and how easily a big creature bashes them aside (see ShieldBreaking). Placeholder art.
+    /** The vanilla shield's blocking behaviour, borrowed so a primitive shield blocks exactly as one should
+     *  (block delay, damage reduction, the block/disable sounds) without hand-rolling the component. */
+    private static final net.minecraft.world.item.component.BlocksAttacks SHIELD_BLOCK =
+        net.minecraft.world.item.Items.SHIELD.components()
+            .get(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS);
+    /** A woven wicker shield (§1.5) — branches and withies lashed with cordage: the day-one guard you can make
+     *  before any metal. It blocks, but it's flimsy — the lowest durability and the easiest to bash aside. */
+    public static final Item WICKER_SHIELD = register("wicker_shield",
+        key -> new Item(new Item.Properties().durability(80)
+            .component(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS, SHIELD_BLOCK)
+            .setId(key)));
+    /** A wooden plank shield (§1.5) — solid boards faced with hide, the round-shield tier: far sturdier than
+     *  wicker and harder to bash aside, short of the metal-reinforced vanilla shield. */
+    public static final Item WOODEN_SHIELD = register("wooden_shield",
+        key -> new Item(new Item.Properties().durability(200)
+            .component(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS, SHIELD_BLOCK)
+            .setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

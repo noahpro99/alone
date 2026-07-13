@@ -354,6 +354,14 @@ Kill one with a blade and it yields a **hide** like any hide-bearing animal.
 
 **A shield won't save you from it.** You can turn a person's blade with a raised shield, but bracing one against a bear (or a ravager, an iron golem, or the warden) is folly — the mass and power **bash your guard aside**, knocking the shield down for a few seconds so the next blow lands on flesh. You can brace a single hit; you can't turtle behind a shield against a charging bear.
 
+**Shields come in tiers.** All three block the same, but they differ in how much they take before they break and how badly a big creature bashes them aside:
+
+- **Wicker shield** (branches lashed with cordage — sticks + plant fibre): the day-one guard, before any metal. It blocks, but it's flimsy — the lowest durability, and it's knocked aside the longest when a beast smashes it.
+- **Wooden shield** (plank boards faced with hide — planks + leather): the round-shield tier — far sturdier, and bashed aside for less.
+- **Shield** (the vanilla wood-and-iron shield): the metal-reinforced top tier — the toughest, and the least time knocked down.
+
+So a shield is worth upgrading, but *no* tier lets you turtle against a bear — the bash scales, it never stops.
+
 ## The iron golem — you can't cheese a giant
 
 An iron golem is a multi-ton iron construct, and it drops its **iron** when killed — but taking that iron is meant to be a **real, dangerous fight**, not a safe farm. So the two usual ways to cheese a big mob don't work on it:

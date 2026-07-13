@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "sfs",
+    "sss",
+    " s "
+  ],
+  "key": {
+    "s": "minecraft:stick",
+    "f": "alone:plant_fiber"
+  },
+  "result": { "id": "alone:wicker_shield", "count": 1 }
+}

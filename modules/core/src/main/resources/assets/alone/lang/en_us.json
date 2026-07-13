@@ -99,5 +99,7 @@
   "item.alone.tallow": "Tallow",
   "item.alone.pyrite": "Pyrite",
   "item.alone.flint_and_pyrite": "Flint and Pyrite",
-  "item.alone.bug_net": "Bug Net"
+  "item.alone.bug_net": "Bug Net",
+  "item.alone.wicker_shield": "Wicker Shield",
+  "item.alone.wooden_shield": "Wooden Shield"
 }

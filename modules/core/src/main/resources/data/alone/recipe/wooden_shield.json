@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "plp",
+    "ppp",
+    " p "
+  ],
+  "key": {
+    "p": "#minecraft:planks",
+    "l": "minecraft:leather"
+  },
+  "result": { "id": "alone:wooden_shield", "count": 1 }
+}

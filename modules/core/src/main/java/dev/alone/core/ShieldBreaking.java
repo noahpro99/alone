@@ -11,7 +11,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BlocksAttacks;
 
 /**
@@ -74,20 +73,36 @@ public final class ShieldBreaking {
                 return;
             }
             // Vanilla's exact disable (the vindicator-axe path): cooldown + stop blocking + the shield's own
-            // disable sound + client sync, scaled by the shield's disable_cooldown_scale.
-            blocksAttacks.disable(level, player, smasher ? SMASH_SECONDS : STAGGER_SECONDS, blockingWith);
+            // disable sound + client sync — but for LONGER the flimsier the shield: a wicker guard is knocked
+            // aside far longer than a metal-faced one (see shieldToughness).
+            float seconds = (smasher ? SMASH_SECONDS : STAGGER_SECONDS) / shieldToughness(blockingWith);
+            blocksAttacks.disable(level, player, seconds, blockingWith);
             player.sendSystemMessage(Component.literal(smasher
                 ? "The blow smashes your guard aside — no shield will hold against that."
                 : "The boar's charge bowls your guard aside — it drives in low, under the shield."), true);
         });
     }
 
-    /** The shield the player is guarding with — off hand first (where it's normally held), then main. */
+    /** How well a shield resists being bashed aside — the divisor on the disable time, so a tougher shield is
+     *  knocked down for less. The metal-faced vanilla shield is the baseline (1.0); the plank shield gives a
+     *  little, and a woven wicker guard is knocked flying (bashed aside far longer). */
+    private static float shieldToughness(ItemStack shield) {
+        if (shield.is(AloneItems.WICKER_SHIELD)) {
+            return 0.6f;  // flimsy — disabled ~1.6x as long
+        }
+        if (shield.is(AloneItems.WOODEN_SHIELD)) {
+            return 0.8f;  // solid boards — disabled ~1.25x as long
+        }
+        return 1.0f;      // metal-reinforced (the vanilla shield) — the baseline
+    }
+
+    /** The shield the player is guarding with — any blocking item (carries BLOCKS_ATTACKS), off hand first
+     *  (where a shield is normally held), then main, so every shield tier is caught, not just the vanilla one. */
     private static ItemStack shieldInHand(ServerPlayer player) {
-        if (player.getOffhandItem().is(Items.SHIELD)) {
+        if (player.getOffhandItem().has(DataComponents.BLOCKS_ATTACKS)) {
             return player.getOffhandItem();
         }
-        if (player.getMainHandItem().is(Items.SHIELD)) {
+        if (player.getMainHandItem().has(DataComponents.BLOCKS_ATTACKS)) {
             return player.getMainHandItem();
         }
         return ItemStack.EMPTY;
