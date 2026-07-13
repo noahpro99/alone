@@ -173,7 +173,8 @@ public final class Golems {
             // opens a passage it can actually walk, so a player holed up in a house can't just wait it out.
             BlockPos wall = wallToward(level, target);
             if (wall != null) {
-                breachColumn(level, wall);
+                boolean approachAlongX = Math.abs(target.getX() - golem.getX()) >= Math.abs(target.getZ() - golem.getZ());
+                breachColumn(level, wall, approachAlongX);
             }
         }
 
@@ -204,22 +205,23 @@ public final class Golems {
             return null;
         }
 
-        /** Carve a walkable, golem-tall doorway through a wall at the given column — the block on the sightline
-         *  plus the ones at the golem's feet and head, lowest solid first (one per interval). Breaking only the
-         *  single eye-line block left a hole the golem couldn't step through; this opens a passage it can walk. */
-        private void breachColumn(Level level, BlockPos wall) {
-            int gy = golem.blockPosition().getY();
-            int wx = wall.getX();
-            int wz = wall.getZ();
-            // Feet → head (a 3-tall breach for the ~2.7-block golem), lowest first so the base clears before
-            // the top and it never leaves a lip to trip on.
-            for (int y = gy; y <= gy + 2; y++) {
-                if (smash(level, new BlockPos(wx, y, wz))) {
-                    return; // one block broken this pass
+        /** Carve a walkable, golem-tall AND golem-WIDE doorway through the wall at the given column. The golem is
+         *  ~1.4 blocks wide, so a single one-block gap won't fit it — the pathfinder needs a two-wide clearance,
+         *  and when the golem straddles a block boundary neither of the columns it overlaps is fully open. So we
+         *  break the found column PLUS its two neighbours across the wall's face (perpendicular to the approach),
+         *  feet-to-head — a passage wide and tall enough to actually walk through. Lowest row first so the base
+         *  clears before the top; one block per interval. */
+        private void breachColumn(Level level, BlockPos wall, boolean approachAlongX) {
+            int gy = wall.getY();
+            for (int y = gy; y <= gy + 2; y++) {         // feet → head (3 tall for the ~2.7-block golem)
+                for (int side = -1; side <= 1; side++) { // centre and both sides — a passage the wide golem fits
+                    int bx = wall.getX() + (approachAlongX ? 0 : side);
+                    int bz = wall.getZ() + (approachAlongX ? side : 0);
+                    if (smash(level, new BlockPos(bx, y, bz))) {
+                        return; // one block broken this pass
+                    }
                 }
             }
-            // Foot column already open but still walled off (e.g. the sightline block sits higher): take it too.
-            smash(level, wall);
         }
 
         /** Break a single block near the golem if it's within reach and not too tough. Returns whether a block
