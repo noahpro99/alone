@@ -126,11 +126,16 @@ public final class AloneEntities {
         FabricDefaultAttributeRegistry.register(DEER, Cow.createAttributes()
             .add(Attributes.MOVEMENT_SPEED, 0.34)
             .add(Attributes.STEP_HEIGHT, 1.1));
-        // The woods and their edges — forest, taiga, and grassland. Common wild game, in small herds.
+        // The woods and their edges — forest, taiga, and grassland — in small family groups (2–4). Weight is
+        // deliberately LOW: wild game was hard to come by, which is exactly why people trapped and farmed. A
+        // deer is the reward for a real hunt, not something you trip over — so the weight sits well below the
+        // small game the trapline lives on (squirrel 10, vanilla rabbit ~4), leaving the deer the occasional
+        // windfall while the reliable food is snares + crops. Deer stays the MOST encounterable big game of the
+        // three (venison being the classic quarry), so it keeps the highest weight of the megafauna. (12 → 4.)
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))
                 .or(BiomeSelectors.tag(BiomeTags.IS_HILL)),
-            MobCategory.CREATURE, DEER, 12, 2, 4);
+            MobCategory.CREATURE, DEER, 4, 2, 4);
 
         Registry.register(BuiltInRegistries.ENTITY_TYPE, SQUIRREL_KEY, SQUIRREL);
         // A rabbit under the fur — its attributes suit small game: little health (so it winds fast under a
@@ -151,11 +156,13 @@ public final class AloneEntities {
             .add(Attributes.ATTACK_KNOCKBACK, 0.6) // a charge shoves you back — you can't just stand and trade
             .add(Attributes.MOVEMENT_SPEED, 0.28)
             .add(Attributes.STEP_HEIGHT, 1.0));
-        // Home is thick cover: forest, taiga, and the swamp. Rooting about in ones and twos, not herds.
+        // Home is thick cover: forest, taiga, and the swamp. Rooting about in ones and twos, not herds — and
+        // SCARCE: a boar is a dangerous, prized encounter, not a walking larder. The weight sits at a quarter of
+        // its old value so you cover real ground between sightings and the trapline stays the staple. (8 → 2.)
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(BiomeTags.IS_FOREST).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA))
                 .or(BiomeSelectors.tag(ConventionalBiomeTags.IS_SWAMP)),
-            MobCategory.CREATURE, WILD_BOAR, 8, 1, 2);
+            MobCategory.CREATURE, WILD_BOAR, 2, 1, 2);
 
         Registry.register(BuiltInRegistries.ENTITY_TYPE, BISON_KEY, BISON);
         // A cow under the shag, but wild megafauna: a bull bison tops a tonne. So a big health pool (~40,
@@ -169,10 +176,14 @@ public final class AloneEntities {
             .add(Attributes.MOVEMENT_SPEED, 0.28)
             .add(Attributes.STEP_HEIGHT, 1.1));
         // The open grazing country — plains/grassland and savanna — where great herds of wild bovine ranged.
-        // Spawns in herds (2–4): a bison is a herd animal, and a herd that all turns on you is the danger.
+        // Spawns in herds (2–4): a bison is a herd animal, and a herd that all turns on you is the danger. But
+        // a herd is a landmark event, not a fixture of every meadow — the weight is cut to a fraction so most
+        // of the plains is empty grass and finding the herd is the reward. The 2–4 group size keeps each
+        // sighting a proper herd (worth the risk) while the low weight makes the sightings themselves
+        // rare, so the plains reward ranging rather than handing you beef on the doorstep. (10 → 3.)
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(ConventionalBiomeTags.IS_PLAINS).or(BiomeSelectors.tag(BiomeTags.IS_SAVANNA)),
-            MobCategory.CREATURE, BISON, 10, 2, 4);
+            MobCategory.CREATURE, BISON, 3, 2, 4);
 
         // A hand-thrown rock (§8.1) — a plain projectile, no attributes or spawns. It rides the standard
         // ThrowableItemProjectile spawn (the unified add-entity packet) and syncs its rock item via entity

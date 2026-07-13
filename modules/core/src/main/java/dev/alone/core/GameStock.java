@@ -26,9 +26,20 @@ public final class GameStock {
     }
 
     public static final int FULL = 100;
-    private static final int KILL_COST = 12;                 // each head taken — ~8 from a patch before it thins
-    private static final int RECOVERY_TICKS_PER_POINT = 900; // a few in-game days for a hunted-out range to return
-    private static final float MAX_SUPPRESS = 0.9f;          // even a stripped patch spawns the odd straggler
+    private static final int KILL_COST = 20;                  // a big-game head is a big dent — ~5 from a patch
+                                                              // before it's hunted thin (was 12/~8): with wild
+                                                              // game already scarce, taking a few heads visibly
+                                                              // empties the local range and pushes you onward
+    private static final int RECOVERY_TICKS_PER_POINT = 1400; // ~6 in-game days for a hunted-out range to fully
+                                                              // return (was 900/~3.75d): a worked valley stays
+                                                              // thin the better part of a week, so you rotate
+                                                              // ground instead of camping one spot. Still far
+                                                              // faster than a light snare's draw, so the trapline
+                                                              // stays reliable (see SNARE_COST below)
+    private static final float MAX_SUPPRESS = 0.93f;          // a stripped patch is all but closed to fresh game
+                                                              // (7% still leaks through, and untouched ground
+                                                              // nearby is wide open) — hunt one valley out and
+                                                              // the next kill is a hike away, never impossible
 
     public static final AttachmentType<Integer> STOCK = AttachmentRegistry.createPersistent(
         Identifier.fromNamespaceAndPath("alone", "game_stock"), Codec.INT);
