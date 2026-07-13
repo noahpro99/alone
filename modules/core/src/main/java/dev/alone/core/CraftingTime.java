@@ -54,6 +54,15 @@ public final class CraftingTime {
     // recipe is what makes it quicker — so this is the awl-assisted time (~1.4 in-world hours), compressed
     // for playability but still a real, rooted weave. (§6)
     private static final int WEAVE = 1400;
+    // Weaving a withy/wicker shield is a bigger job than a basket: you rive and soak the withies, then lash
+    // and weave a dense, double-layered disc tight enough to turn a blow and lace on a rim and grip — a few
+    // real hours at the bench. At the pack's clock (1 real hour = 1000 ticks) ~3 hours reads as 3000 ticks.
+    private static final int WICKER_WEAVE = 3000;
+    // A fine-mesh mosquito head-net is the most laborious weave in the pack: knotting a net fine enough that a
+    // midge can't pass is many hours of slow, repetitive knot-by-knot netting (historically an evening's work
+    // over several days). We compress it, but keep it clearly the longest — ~6 real hours → 6000 ticks, twice
+    // the wicker shield, so a head-net is a serious commitment, not a quick craft.
+    private static final int MESH_NET = 6000;
     private static final int SEWN_SHEET = 1200; // ~72 real min hand-stitching tanned hides into an oiled tarp — slow, patient sewing
     private static final int SEWN_BAG = 1800;   // ~108 real min sewing a lofted, shelled sleeping bag — a real half-day project
     private static final int GRIND = 200;       // ~12 real min grinding grain to flour on a hand quern
@@ -130,6 +139,15 @@ public final class CraftingTime {
 
     /** How long this result takes to craft, in ticks — compressed real-world effort by category. */
     public static int craftTicks(ItemStack result) {
+        // Woven-fibre crafts are checked first: both would otherwise be caught by a broader category — the
+        // bug net is HEAD-equippable (would read as ARMOR) and the wicker shield is damageable (would read as
+        // TOOL) — but neither is forge/joinery work; each is a long hand-weave with its own real-world time.
+        if (result.is(AloneItems.BUG_NET)) {
+            return MESH_NET; // knotting a fine insect-proof mesh by hand — the longest weave in the pack (§1.5)
+        }
+        if (result.is(AloneItems.WICKER_SHIELD)) {
+            return WICKER_WEAVE; // riving, soaking and weaving withies into a shield — a few real hours (§1.5)
+        }
         var equippable = result.get(DataComponents.EQUIPPABLE);
         if (equippable != null && isArmorSlot(equippable.slot())) {
             return ARMOR;
