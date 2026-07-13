@@ -312,6 +312,12 @@ public final class AloneItems {
      *  as it did in life — not wait behind a copper hoe. */
     public static final Item FLINT_HOE = register("flint_hoe",
         key -> new Item(new Item.Properties().hoe(FLINT, -2.0F, -1.0F).setId(key)));
+    /** A flint shovel (§8.1) — a flint blade lashed to a haft: the stone-age digging tool that completes the
+     *  flint set (hatchet, pick, knife, hoe, spear, and now this). It's in the {@code minecraft:shovels} tag,
+     *  so it digs packed earth at the real shovel rate instead of the near-hopeless bare-handed claw — the
+     *  first tool that lets you actually excavate before you smelt metal. Placeholder art. */
+    public static final Item FLINT_SHOVEL = register("flint_shovel",
+        key -> new Item(new Item.Properties().shovel(FLINT, 1.5F, -3.0F).setId(key)));
     /** A flint-tipped spear (§8.6) — king of the early game: a real thrusting reach so you can hit before
      *  the animal (or attacker) reaches you, plus the vanilla spear's charged thrust and piercing. A
      *  flint point lashed to a shaft, at the flint tier; uses the stone-spear tuning and look. */
