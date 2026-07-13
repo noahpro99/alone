@@ -46,7 +46,6 @@ public class PlayerDestroySpeedMixin {
     // clearing a gravel block, though — it shakes loose part-way through (see ServerPlayerGameModeMixin).
     private static final float LOOSE_FACTOR = 0.006f;   // loose sand/gravel with a shovel — ~60–75s a block
     private static final float NO_SHOVEL_DIG = 0.0007f; // packed earth by hand / wrong tool — ~1080s (~18 min), ~6x a shovel
-    private static final float DIG_STICK_DIG = 0.0018f; // packed earth with a digging stick — ~420s, ~2.5x hands, still short of a shovel
     private static final float LOOSE_HAND_DIG = 0.008f; // loose sand/gravel by hand — ~90–110s, scoopable but slow
     private static final float LEAVES_HAND_FACTOR = 0.08f;  // tearing foliage by hand is slow, tugging work
     private static final float LEAVES_BLADE_FACTOR = 0.3f;  // an axe/hoe shears through it quicker
@@ -90,8 +89,7 @@ public class PlayerDestroySpeedMixin {
             // grass block only strips the grass to bare dirt (see Turf), which you then dig at the packed-
             // earth rate below. De-turfing a square metre is real labour — laborious by hand, quicker with
             // a hoe or shovel — but nowhere near as long as digging out the whole cubic metre of soil.
-            boolean tool = self.getMainHandItem().is(ItemTags.HOES) || self.getMainHandItem().is(ItemTags.SHOVELS)
-                || self.getMainHandItem().is(dev.alone.core.AloneItems.DIGGING_STICK);
+            boolean tool = self.getMainHandItem().is(ItemTags.HOES) || self.getMainHandItem().is(ItemTags.SHOVELS);
             cir.setReturnValue(tool ? GRASS_CLEAR_TOOL : GRASS_CLEAR_HAND);
             return;
         }
@@ -105,18 +103,9 @@ public class PlayerDestroySpeedMixin {
                 || state.is(Blocks.SUSPICIOUS_SAND) || state.is(Blocks.SUSPICIOUS_GRAVEL);
             boolean clay = state.is(Blocks.CLAY); // dense subsoil — the hardest earth, its own factor
             boolean hasShovel = self.getMainHandItem().is(ItemTags.SHOVELS);
-            // A digging stick is the pre-shovel aid: it jabs and levers packed earth loose, so it digs
-            // dirt/soil markedly faster than bare hands, though well short of a shovel. It's no help on dense
-            // clay subsoil or on already-loose sand/gravel (you scoop those by hand anyway).
-            boolean hasDiggingStick = self.getMainHandItem().is(dev.alone.core.AloneItems.DIGGING_STICK);
-            float speed;
-            if (hasShovel) {
-                speed = cir.getReturnValueF() * (clay ? CLAY_FACTOR : (loose ? LOOSE_FACTOR : DIRT_FACTOR));
-            } else if (hasDiggingStick && !loose && !clay) {
-                speed = DIG_STICK_DIG; // packed earth with a digging stick — ~2.5x bare hands, short of a shovel
-            } else {
-                speed = (loose ? LOOSE_HAND_DIG : NO_SHOVEL_DIG);
-            }
+            float speed = hasShovel
+                ? cir.getReturnValueF() * (clay ? CLAY_FACTOR : (loose ? LOOSE_FACTOR : DIRT_FACTOR))
+                : (loose ? LOOSE_HAND_DIG : NO_SHOVEL_DIG);
             // No shovel gives a FIXED speed (not scaled by the held item), so a pot or an axe is never
             // faster than bare hands; packed earth barely yields, so you can't claw a shelter out of the
             // ground without the right tool. With a shovel it's still heavy work — dirt slow, dense clay
