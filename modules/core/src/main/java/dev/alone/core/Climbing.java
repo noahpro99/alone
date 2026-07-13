@@ -318,7 +318,10 @@ public final class Climbing {
         if (player.onGround() || player.getAbilities().flying || player.isSpectator()) {
             return false;
         }
-        return onRope(player) || inLeaves(player) || isWallClimbing(player);
+        // Use the GRIP LATCH (server-tracked), NOT isWallClimbing — that keys off horizontalCollision, which is
+        // unreliable server-side, so on the server (where stamina is authoritative) it read false mid-climb and
+        // the player kept regenerating stamina while clinging. isGripping is set by canClimb on both sides.
+        return onRope(player) || inLeaves(player) || isGripping(player);
     }
 
     /** You're hanging on a rope line. */
