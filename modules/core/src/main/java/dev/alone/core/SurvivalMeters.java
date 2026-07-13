@@ -63,13 +63,14 @@ public final class SurvivalMeters {
     private static final float SLEEP_REGEN = 4.0f;           // stamina refilled per tick while asleep
     private static final float FATIGUE_MAX_PENALTY = 0.25f;  // sore → up to 25% lower stamina ceiling
 
-    // Hydration is measured in real LITRES (§1.2). Full ≈ 3 L of body-water reserve; you lose ~2.5 L a day
-    // to breath, sweat and urine, so you must drink ~daily. (In-game day ≈ 24000t, so ~0.000104 L/t; rounded.)
+    // Hydration in real LITRES (§1.2). Full ≈ 3 L reserve, and a resting body runs it down over ~3 in-game
+    // days — the real "rule of 3s": you die in about three days without water. Heat and hard work drain it
+    // faster (sweat), so an active day in the sun cuts that survival window down. (In-game day ≈ 24000t.)
     public static final float MAX_THIRST = 3.0f;
-    private static final float THIRST_DRAIN = 0.000125f;     // base ~2.5–3 L per in-game day at rest
-    private static final float THIRST_DRAIN_SPRINT = 0.000125f; // running doubles it
-    private static final float THIRST_DRAIN_SWEAT = 0.0005f;  // a hot body sweats — up to ~litres/hour when roasting
-    private static final float THIRST_LOW = 0.6f;            // ~20% reserve left — getting dangerously thirsty
+    private static final float THIRST_DRAIN = 0.00004f;      // ~1 L/in-game-day at rest → 3 L reserve ≈ 3 days
+    private static final float THIRST_DRAIN_SPRINT = 0.00004f; // running doubles the loss
+    private static final float THIRST_DRAIN_SWEAT = 0.0002f;  // a hot body sweats hard — roasting empties in ~half a day
+    private static final float THIRST_LOW = 0.6f;            // ~20% reserve left — badly thirsty, impaired
     // Two-stage water (§1.2): a drink goes into your GUT first, and absorbs into hydration over the next
     // minute — you can't chug straight to full. MAX_GUT caps how much you can hold at once (drinking on a
     // full gut does nothing); GUT_ABSORB is how fast the gut feeds hydration.
@@ -170,7 +171,7 @@ public final class SurvivalMeters {
     /** Clock time you lay down, so waking can charge you the metabolism of the night you slept through. */
     public static final AttachmentType<Long> SLEEP_START =
         AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "sleep_start"), Codec.LONG);
-    private static final float SLEEP_THIRST_PER_DAY = 1.2f; // ~1.2 L lost sleeping a whole day (a night ≈ half)
+    private static final float SLEEP_THIRST_PER_DAY = 1.0f; // ~1 L lost over a full day's sleep
     private static final int SLEEP_HUNGER_PER_DAY = 8;      // food burned sleeping a whole day
     private static final int DRY_NATURAL = 1;
     private static final int DRY_BY_FIRE = 5;     // a fire dries you ~5x faster

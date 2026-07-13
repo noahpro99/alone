@@ -103,10 +103,10 @@ public final class AloneItems {
     public static final Item SEWING_KIT = register("sewing_kit",
         key -> new SewingKitItem(new Item.Properties().durability(64).setId(key)));
     public static final Item WATERSKIN = register("waterskin",
-        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 3, false));
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 4, false));
     /** Iron pot (§2 vessel ladder) — holds far more water than a skin; the workhorse vessel. */
     public static final Item IRON_POT = register("iron_pot",
-        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 6, true));
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 12, true));
 
     /** An unfired clay pot (§2/§3) — shaped from clay by hand; useless as a vessel until you <b>bake it
      *  in a fire</b> (campfire or furnace) into a {@link #CLAY_POT}. The first step of the heat-tech tree. */
@@ -115,7 +115,7 @@ public final class AloneItems {
     /** Clay pot (§2 vessel ladder) — the first <b>fire-safe</b> pot, before metal: set it on a fire to
      *  boil water clean and to cook. The stone-age answer to the iron pot, fired from clay. */
     public static final Item CLAY_POT = register("clay_pot",
-        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 4, true));
+        key -> new WaterskinItem(new Item.Properties().stacksTo(1).setId(key), 8, true));
 
     /** The kiln as a placeable item (§3.2) — lay it down and fire your pottery in it. */
     public static final Item KILN = register("kiln",

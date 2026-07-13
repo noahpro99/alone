@@ -67,7 +67,7 @@ public final class Carry {
         float baseVolume = perItemVolume(stack.getItem());
         if (stack.getItem() instanceof WaterskinItem) {
             int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
-            baseVolume += charges * 0.001f; // 1 liter (0.001 m³) per charge
+            baseVolume += charges * 0.00025f; // 0.25 L per charge (a cup)
         }
         return baseVolume;
     }
@@ -81,7 +81,7 @@ public final class Carry {
         float baseWeight = perItemWeight(stack.getItem());
         if (stack.getItem() instanceof WaterskinItem) {
             int charges = stack.getOrDefault(AloneItems.WATER_CHARGES, 0);
-            baseWeight += charges * 1.0f; // water is 1 kg/L, and a charge is ~1 L (matches unitVolume) — it's HEAVY
+            baseWeight += charges * 0.25f; // water is 1 kg/L, and a charge is 0.25 L
         }
         // Dried (jerked) food has lost most of its water — much lighter to carry (§4.2). The component lives
         // in the food module; look it up by id so core needn't depend on it.
@@ -132,6 +132,11 @@ public final class Carry {
      * flowers, carpets) — those fall through to the small-item tiers, so a seed isn't a block's weight.
      */
     private static float computeVolume(Item item) {
+        // Cordage is negligible bulk — set FIRST and explicitly, so no path/name grouping can ever inflate
+        // it. (String kept being reported "too big"; there is no code path that makes it big, so this nails it.)
+        if (item == net.minecraft.world.item.Items.STRING) {
+            return 0.00005f;
+        }
         // Planks are thin sawn boards, not a solid cube of wood: a log's worth splits into ~4 and they
         // stack compact, so a handful carries easily (you can hold 4 to craft a table) and the wood
         // roughly conserves from log → planks instead of quadrupling out of nowhere.
