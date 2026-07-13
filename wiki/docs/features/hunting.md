@@ -186,6 +186,15 @@ the canopy where you can't follow on foot. Cornered near a tree it goes *vertica
 either take the shot before it reaches a trunk, get one out in the open away from timber, or trap it. (It
 only climbs actual trees, not walls or fences.)
 
+### The slingshot — the first ranged weapon
+
+Before the bow there's the **slingshot** — a forked stick, two bands, and a leather pouch (**stick + string +
+leather**). It flings a foraged **loose rock**: **draw** by holding right-click to build power, then **loose**
+(release) to sling the stone at whatever you're aiming at. A full draw carries ~20 blocks and hits hard enough
+to **drop a rabbit, chicken, or squirrel** — but it barely troubles anything big, so it's a small-game
+food-getter, not a war weapon. The stone flies true (it's stopped by a wall, and a weak draw carries only a
+short way), and each shot spends one rock, so keep a few loose stones on you. It's a natural [loadout](../roadmap#the-start--an-alone-style-loadout) pick when you want to eat without closing to arm's reach.
+
 *(Squirrels currently use placeholder rabbit art until a proper squirrel model is made.)*
 
 ## Dangerous game — the bison and the wild boar

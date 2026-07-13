@@ -188,6 +188,11 @@ public final class AloneItems {
             .component(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS, SHIELD_BLOCK)
             .setId(key)));
 
+    /** A slingshot (roadmap: the loadout) — the low-power ranged weapon below the bow. Draw and loose a
+     *  foraged {@link #ROCK loose rock} at small game; see {@link SlingshotItem}. Placeholder art. */
+    public static final Item SLINGSHOT = register("slingshot",
+        key -> new SlingshotItem(new Item.Properties().durability(150).setId(key)));
+
     /** Salt (§2/§4.2) — boil seawater to get it; use it to preserve food for winter. */
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));

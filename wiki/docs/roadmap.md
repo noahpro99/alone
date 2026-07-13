@@ -216,7 +216,9 @@ is ways to extend it:
 
 - **Graphical selection screen** — a proper picker window over the existing command/clickable-chat loadout
   (same underlying picks, biome read, and one-time gate).
-- **More list options to build:** a **slingshot** (low-power ranged small game below the bow), and —
+- **More list options to build:** ~~a **slingshot**~~ **shipped** — the low-power ranged weapon below the
+  bow: draw and loose a foraged loose rock to drop small game (rabbit/chicken/squirrel), useless on anything
+  big; see [Hunting](./features/hunting.md#the-slingshot--the-first-ranged-weapon). Still to build — and,
   deepening existing systems — a **frying pan** (better cook surface) and a **bar of soap** (better/faster
   washing). *(Shipped: the **gill net** (open-water fishing; see
   [Hunting](./features/hunting.md#the-gill-net--the-open-water-alternative)), the **hand saw** (fast

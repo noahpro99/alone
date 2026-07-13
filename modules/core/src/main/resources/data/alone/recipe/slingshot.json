@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["minecraft:stick", "minecraft:string", "minecraft:leather"],
+  "result": { "id": "alone:slingshot", "count": 1 }
+}
