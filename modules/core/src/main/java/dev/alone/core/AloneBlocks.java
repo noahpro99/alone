@@ -86,6 +86,22 @@ public final class AloneBlocks {
             .setId(key)));
 
     /**
+     * Wattle (§5.5, shelter ladder) — a wall panel woven from <b>sticks and plant fibre</b>: the day-one
+     * wall, the counterpart to {@link #THATCH} the day-one roof. A cheap, light, renewable way to <b>enclose</b>
+     * a shelter (walls, not just a roof, are what make a space hold its warmth — see the shelter-quality
+     * mechanic) long before you can haul logs or ram earth. Being woven wood it's <b>flammable</b> and
+     * <b>weak</b> — it breaks fast and won't stop a determined beast — so it's the crude first tier, below log
+     * and stone walls. Placeholder texture.
+     */
+    public static final Block WATTLE = register("wattle",
+        key -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.SCAFFOLDING)
+            .strength(0.6F)
+            .ignitedByLava()
+            .setId(key)));
+
+    /**
      * Tarp (§5.5) — a sewn, oiled hide sheet: the manufactured top rung of the shelter-roof ladder above
      * {@link #THATCH}. Same core mechanic (a solid block that blocks the sky, so the space beneath is
      * roofed and dry), but it's <b>premium, packable gear</b>, not bushcraft: unlike thatch it does
@@ -279,6 +295,8 @@ public final class AloneBlocks {
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(ROPE, 30, 60);
         // Thatch is bone-dry straw and sticks — very flammable (like hay), so fire spreads across a roof.
         net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(THATCH, 60, 20);
+        // Wattle is woven wood — it burns, but not as readily as tinder-dry thatch (nearer to planks).
+        net.fabricmc.fabric.api.registry.FlammableBlockRegistry.getDefaultInstance().add(WATTLE, 15, 25);
     }
 
     private static Block register(String path, Function<ResourceKey<Block>, Block> factory) {

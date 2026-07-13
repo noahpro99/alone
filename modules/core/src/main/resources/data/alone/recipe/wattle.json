@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SFS",
+    "SFS",
+    "SFS"
+  ],
+  "key": {
+    "S": "minecraft:stick",
+    "F": "alone:plant_fiber"
+  },
+  "result": { "id": "alone:wattle", "count": 3 }
+}

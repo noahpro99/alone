@@ -94,6 +94,10 @@ public final class AloneItems {
      *  (see {@link AloneBlocks#THATCH}). */
     public static final Item THATCH = register("thatch",
         key -> new BlockItem(AloneBlocks.THATCH, new Item.Properties().setId(key)));
+    /** Wattle — a woven wall panel (sticks + plant fibre); the day-one wall that encloses a shelter cheaply,
+     *  below log and stone walls (see {@link AloneBlocks#WATTLE}). */
+    public static final Item WATTLE = register("wattle",
+        key -> new BlockItem(AloneBlocks.WATTLE, new Item.Properties().setId(key)));
     /** Tarp — a waterproof, fireproof, reusable hide sheet: the premium roof above thatch
      *  (see {@link AloneBlocks#TARP}). Hard to make (leather + cordage) or brought. */
     public static final Item TARP = register("tarp",
