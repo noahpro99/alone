@@ -78,8 +78,9 @@ public final class SurvivalMeters {
     private static final float GUT_ABSORB = 0.0003f; // ~a full 1 L gut soaks into hydration over ~3 min
     // Thermoregulation feedback (§1.3) — a hot body sweats (dehydrates), a cold body burns food and shivers.
     private static final float COLD_SHIVER = -30f;      // below this, stiff muscles recover stamina poorly
-    private static final int CHILL_INTERVAL = 600;      // roll a chill about every 30s of cold-and-wet
-    private static final float CHILL_CHANCE = 0.2f;      // odds per roll — a few minutes of exposure and it takes
+    private static final int CHILL_INTERVAL = 1200;     // roll a chill about every 60s of cold-and-wet
+    private static final float CHILL_CHANCE = 0.1f;      // odds per roll — a sustained wet-cold spell (~10 real
+                                                         // min ≈ half an in-game day at 72×) before a chill takes
     private static final float COLD_EXHAUSTION = 0.03f; // extra food burned per tick keeping warm (scaled by cold)
 
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)

@@ -1,13 +1,17 @@
 package dev.alone.core.mixin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import dev.alone.core.AloneItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -66,6 +70,22 @@ public abstract class ServerPlayerGameModeMixin {
             this.alone$sifted = new HashMap<>();
         }
         return this.alone$sifted;
+    }
+
+    // Worms turn up EARLY when you break topsoil (proposal §8.1). Unlike flint, which shakes loose in
+    // stages as you sift a whole block of gravel, a spadeful of good earth is riddled with earthworms — so
+    // they surface right as you break into the soil (one early stage, ~10% of the dig) with HIGH odds.
+    // Tracked per block (packed position, checked once) so a single spot can't be farmed for endless bait.
+    @Unique private static final float WORM_STAGE = 0.10f;  // worms surface early in the dig, not at the end
+    @Unique private static final float WORM_CHANCE = 0.60f; // odds a soil block turns up worms — topsoil is full of them
+    @Unique private Set<Long> alone$wormed;
+
+    @Unique
+    private Set<Long> alone$wormed() {
+        if (this.alone$wormed == null) {
+            this.alone$wormed = new HashSet<>();
+        }
+        return this.alone$wormed;
     }
 
     /** Abandoning a dig — remember the ticks of progress accrued so far. */
@@ -130,11 +150,33 @@ public abstract class ServerPlayerGameModeMixin {
         }
     }
 
+    /**
+     * Worm foraging (proposal §8.1). Same {@code incrementDestroyProgress} hook as flint, but for soil: as
+     * you break into any {@link BlockTags#DIRT dirt} block (grass, dirt, podzol…) you turn up earthworms —
+     * fishing bait (see {@link dev.alone.core.FishStock}). Unlike flint's staged sift, worms surface EARLY
+     * (a spadeful of topsoil is riddled with them) at {@link #WORM_STAGE} with the high {@link #WORM_CHANCE}
+     * odds, checked once per block so a single spot can't be re-scraped for endless bait.
+     */
+    @Inject(method = "incrementDestroyProgress", at = @At("RETURN"))
+    private void alone$siftWorms(BlockState state, BlockPos pos, int startTick,
+                                 CallbackInfoReturnable<Float> cir) {
+        if (!state.is(BlockTags.DIRT) || cir.getReturnValueF() < WORM_STAGE) {
+            return;
+        }
+        // add() is true only the first time we cross the early stage for this block — the once-per-block gate.
+        if (this.alone$wormed().add(pos.asLong()) && this.player.getRandom().nextFloat() < WORM_CHANCE) {
+            Block.popResource(this.level, pos, new ItemStack(AloneItems.WORMS));
+        }
+    }
+
     /** Once a block is actually removed, forget it was sifted so its spot can be foraged again later. */
     @Inject(method = "destroyBlock", at = @At("HEAD"))
     private void alone$forgetSifted(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (this.alone$sifted != null) {
             this.alone$sifted.remove(pos.asLong());
+        }
+        if (this.alone$wormed != null) {
+            this.alone$wormed.remove(pos.asLong());
         }
     }
 }
