@@ -170,11 +170,23 @@ public final class AloneItems {
     // vanilla shield (they reuse its BLOCKS_ATTACKS behaviour wholesale, so raising and blocking work the
     // same), and they differ in what matters historically: how much punishment they take before they break
     // (durability), and how easily a big creature bashes them aside (see ShieldBreaking). Placeholder art.
-    /** The vanilla shield's blocking behaviour, borrowed so a primitive shield blocks exactly as one should
-     *  (block delay, damage reduction, the block/disable sounds) without hand-rolling the component. */
+    /** A shield's blocking behaviour, built to match the vanilla shield: a 5-tick raise, a 90° frontal arc
+     *  that blocks the blow in full, durability spent equal to the damage stopped, and the shield block/break
+     *  sounds. Built directly (NOT copied from {@code Items.SHIELD.components()}) — vanilla item components
+     *  aren't bound yet during mod init, so reading another item's components here NPEs ("Components not bound
+     *  yet"). See [[mc26-naming-quirks]]. */
     private static final net.minecraft.world.item.component.BlocksAttacks SHIELD_BLOCK =
-        net.minecraft.world.item.Items.SHIELD.components()
-            .get(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS);
+        new net.minecraft.world.item.component.BlocksAttacks(
+            0.25f, // block delay — 5 ticks to raise the guard, like a vanilla shield
+            1.0f,  // disable cooldown scale
+            java.util.List.of(new net.minecraft.world.item.component.BlocksAttacks.DamageReduction(
+                90.0f, java.util.Optional.empty(), 0.0f, 1.0f)), // 90° frontal arc, blocks the hit in full
+            net.minecraft.world.item.component.BlocksAttacks.ItemDamageFunction.DEFAULT, // durability = damage stopped
+            java.util.Optional.empty(), // nothing bypasses it
+            java.util.Optional.<net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>>of(
+                net.minecraft.sounds.SoundEvents.SHIELD_BLOCK),
+            java.util.Optional.<net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>>of(
+                net.minecraft.sounds.SoundEvents.SHIELD_BREAK));
     /** A woven wicker shield (§1.5) — branches and withies lashed with cordage: the day-one guard you can make
      *  before any metal. It blocks, but it's flimsy — the lowest durability and the easiest to bash aside. */
     public static final Item WICKER_SHIELD = register("wicker_shield",
