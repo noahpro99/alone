@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -104,6 +105,12 @@ public class VillageGuard extends PathfinderMob implements RangedAttackMob {
 
     @Override
     protected void registerGoals() {
+        // A man opens doors — he lives in the village and walks through its houses, and he won't be shut out by
+        // a closed door when chasing a thief inside. Let the pathfinder route through wooden doors, and give it
+        // the goal that actually swings them open (and shuts them behind, like a resident) as it passes.
+        this.getNavigation().setCanOpenDoors(true);
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
+
         this.goalSelector.addGoal(0, new FloatGoal(this)); // don't drown chasing you across water
         // The shared golem tactical brain — top priority, so a guard under fire reacts before anything else.
         this.goalSelector.addGoal(0, new Golems.ChargeOrFleeGoal(this)); // charge if it can reach you, else flee
