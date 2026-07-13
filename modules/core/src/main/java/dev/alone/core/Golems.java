@@ -10,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -34,6 +35,12 @@ import net.minecraft.world.phys.Vec3;
  * it, and if you <b>tower up higher</b> to snipe with a bow it <b>digs the pillar out from under you</b> —
  * loose soil then collapses and drops you back into reach. Only touches blocks right next to it, so it opens
  * a path (or knocks a tower down) rather than levelling the countryside.
+ *
+ * <p><b>Provoked escalation:</b> the first blow makes it break for cover ({@link SeekCoverGoal}); keep
+ * hitting a golem that's already backing off and it stops absorbing punishment. If it <b>can path to
+ * you</b> it turns and <b>charges</b> home (its normal melee takes the wheel); if it <b>can't</b> reach you
+ * at all — you're across a gap, behind a wall it can't route around — it <b>turns tail and flees</b> away
+ * from you until the hits stop. A cornered construct that can't fight back doesn't stand there being farmed.
  */
 public final class Golems {
     private Golems() {
@@ -54,6 +61,14 @@ public final class Golems {
     private static final int RECENT_HIT_TICKS = 60;      // reacts within ~3s of being shot
     private static final int COVER_SEARCH = 5;           // how far to look for a spot that breaks line of sight
 
+    // Provoked escalation: 1st hit → retreat (SeekCoverGoal); a further hit while it's still smarting →
+    // charge if it can reach you, else flee. Tracked as a hit counter that decays when the blows stop.
+    private static final int PROVOKE_THRESHOLD = 2;      // hits within the window before it stops absorbing and reacts
+    private static final int PROVOKE_RESET_TICKS = 100;  // ~5s with no fresh blow and it stands down (matches vanilla hurt-by expiry)
+    private static final int FLEE_RADIUS = 16;           // how far it scans for a standing spot away from you
+    private static final int FLEE_Y = 7;                 // vertical slack allowed on that flee spot
+    private static final double FLEE_SPEED = 1.4;        // a multi-ton construct breaking away at a dead run
+
     public static void init() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof IronGolem golem) {
@@ -62,6 +77,9 @@ public final class Golems {
                 if (follow != null) {
                     follow.setBaseValue(Math.max(follow.getBaseValue(), 40.0));
                 }
+                // Highest priority: once repeatedly provoked it charges (if it can reach you) or flees (if it
+                // can't) — this outranks cover-seeking so a fed-up golem stops hiding and commits.
+                golem.getGoalSelector().addGoal(0, new ChargeOrFleeGoal(golem));
                 golem.getGoalSelector().addGoal(1, new SeekCoverGoal(golem)); // break for cover under ranged fire first
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
@@ -338,6 +356,135 @@ public final class Golems {
                 }
             }
             return true;
+        }
+    }
+
+    /**
+     * The provoked-escalation goal. A golem's first response to being hurt is to break for cover
+     * ({@link SeekCoverGoal}); this goal is what happens when you <b>keep hitting it anyway</b>. It counts
+     * recent blows from a player (via the vanilla hurt-by timestamp) and only fires once you're past the
+     * first, so it never overrides the initial retreat — it's the second-stage reaction.
+     *
+     * <p>When provoked it makes one decision: <b>can it path to you?</b>
+     * <ul>
+     *   <li><b>Yes</b> — it stands down from this goal ({@code canUse} returns {@code false}) and lets its
+     *       normal {@code MeleeAttackGoal} charge home and attack. No point steering a fight the vanilla AI
+     *       already wins; we only exist to change what happens when it <i>can't</i> fight.</li>
+     *   <li><b>No</b> — there's no route to you (a gap, a wall it can't route around, you're up on terrain
+     *       it can't climb): it <b>flees</b> to a spot away from you and keeps running until the blows stop
+     *       for {@link #PROVOKE_RESET_TICKS}. A construct being poked from an unreachable perch doesn't
+     *       stand still and get farmed — it leaves.</li>
+     * </ul>
+     *
+     * <p>Holds only the {@link Flag#MOVE} flag and sits at the top priority, so a fleeing golem wins the
+     * navigation over both cover-seeking and melee; the moment a path to the player opens up it yields so
+     * the charge can take over instead.
+     */
+    private static class ChargeOrFleeGoal extends Goal {
+        private final IronGolem golem;
+        private int lastHurtStamp;   // the last hurt-by timestamp we've already counted
+        private int hitCount;        // blows taken within the current provoke window
+        private int lastHitTick;     // golem.tickCount of the most recent counted blow
+        private Player fleeFrom;
+        private Vec3 fleeTarget;
+
+        ChargeOrFleeGoal(IronGolem golem) {
+            this.golem = golem;
+            setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        /**
+         * Fold any new blow into the provoke counter and let it decay. Runs every tick — from {@code canUse}
+         * while idle (this is the top-priority goal, so the selector polls it each tick) and from
+         * {@code tick} while fleeing — so no hit is ever missed regardless of which state we're in. Detection
+         * keys off the vanilla hurt-by <i>timestamp</i> changing, so it's independent of poll timing.
+         */
+        private void trackHits() {
+            int stamp = golem.getLastHurtByMobTimestamp();
+            if (stamp != lastHurtStamp && golem.getLastHurtByMob() instanceof Player) {
+                if (golem.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
+                    hitCount = 0; // the previous flurry had already lapsed — start a fresh window
+                }
+                hitCount++;
+                lastHitTick = golem.tickCount;
+            }
+            lastHurtStamp = stamp;
+            if (hitCount > 0 && golem.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
+                hitCount = 0; // the hits stopped for a few seconds — stand down
+            }
+        }
+
+        @Override
+        public boolean canUse() {
+            trackHits();
+            if (hitCount < PROVOKE_THRESHOLD) {
+                return false; // still on the first blow (or calm) — leave the retreat to SeekCoverGoal
+            }
+            if (!(golem.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
+                return false;
+            }
+            // Can it get at the attacker? Then don't take the wheel — its melee charges in the vanilla way.
+            Path path = golem.getNavigation().createPath(p, 0);
+            if (path != null && path.canReach()) {
+                return false;
+            }
+            // No route to you and you're still hurting it: turn tail and run.
+            Vec3 away = DefaultRandomPos.getPosAway(golem, FLEE_RADIUS, FLEE_Y, p.position());
+            if (away == null) {
+                return false; // boxed in with nowhere to flee — nothing useful to do here
+            }
+            this.fleeFrom = p;
+            this.fleeTarget = away;
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            if (hitCount < PROVOKE_THRESHOLD) {
+                return false; // blows have lapsed (see trackHits decay) — stop fleeing
+            }
+            if (this.fleeFrom == null || !this.fleeFrom.isAlive()) {
+                return false;
+            }
+            // If a path to the player opens up mid-flight, bail so its melee can turn and charge instead.
+            Path path = golem.getNavigation().createPath(this.fleeFrom, 0);
+            if (path != null && path.canReach()) {
+                return false;
+            }
+            return !golem.getNavigation().isDone() || fleeTarget != null;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void start() {
+            golem.getNavigation().moveTo(fleeTarget.x, fleeTarget.y, fleeTarget.z, FLEE_SPEED);
+        }
+
+        @Override
+        public void tick() {
+            trackHits(); // keep counting blows landed while we're running, so the flee ends when they stop
+            if (fleeFrom == null) {
+                return;
+            }
+            if (golem.getNavigation().isDone()) {
+                // Reached the last spot but still being pursued/hit — pick a fresh spot further from the player.
+                Vec3 away = DefaultRandomPos.getPosAway(golem, FLEE_RADIUS, FLEE_Y, fleeFrom.position());
+                if (away != null) {
+                    fleeTarget = away;
+                    golem.getNavigation().moveTo(away.x, away.y, away.z, FLEE_SPEED);
+                }
+            }
+        }
+
+        @Override
+        public void stop() {
+            golem.getNavigation().stop();
+            fleeFrom = null;
+            fleeTarget = null;
         }
     }
 }
