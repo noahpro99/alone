@@ -3,6 +3,7 @@ package dev.alone.core;
 import java.util.EnumSet;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -15,6 +16,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -29,14 +31,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Village defence (proposal §7.2). A settlement is not a free pantry: wrong it and it turns on you. Commit a
- * <b>crime against a village</b> — anywhere inside its bounds (detected via {@link Spawns#nearVillage}) — and
- * the village goes <b>hostile against you personally</b> for a while, then cools off. While it's hostile it
- * <b>musters armed {@link VillageGuard guards}</b> (a bow-and-sword humanoid, see that class) who hunt you,
- * and its {@link Golems iron golems} turn on you too.
+ * Village defence (proposal §7.2). A settlement is not a free pantry: it keeps armed men. In this redesign the
+ * {@link VillageGuard guards} <b>live in the village permanently</b> — every village that a player draws near
+ * is topped up to a small standing garrison (see {@link #GARRISON_SIZE}), each guard posted to the village and
+ * marked persistent. In peacetime they patrol and wander it. Its {@link Golems iron golems} stand alongside
+ * them, ignoring the guards entirely (a guard is a neutral pathfinder, not an {@code Enemy} — see
+ * {@link VillageGuard}).
+ *
+ * <p>Wrong the village and both turn on <b>you</b>. Commit a <b>crime against a village</b> — anywhere inside
+ * its bounds (detected via {@link Spawns#nearVillage}) — and it goes <b>hostile against you personally</b> for
+ * a while, then cools off. While it's hostile, the guards <b>and</b> the golems hunt you (both via
+ * {@link FlaggedPlayerTargetGoal}); the golems attack the flagged player but never the guards.
  *
  * <p><b>What counts as a crime</b> (any one flags the village):
  * <ul>
@@ -51,8 +60,7 @@ import net.minecraft.world.phys.Vec3;
  * <p><b>The hostile state is a per-player, decaying timer</b> ({@link #VILLAGE_HOSTILE_UNTIL}, a game-time
  * tick): each fresh crime refreshes it to {@code now + }{@link #HOSTILE_DURATION}, and once the clock passes
  * it the village forgets and stands its guards down. So a raid is a consequence you can outlast or flee, not
- * a permanent black mark. Guards are mustered in a wave the moment you first offend and reinforced if you
- * keep offending (throttled by {@link #REINFORCE_COOLDOWN}); they're marked persistent so they see it through.
+ * a permanent black mark — and the garrison never leaves regardless (it just goes back to patrolling).
  */
 public final class VillageDefense {
     private VillageDefense() {
@@ -63,24 +71,38 @@ public final class VillageDefense {
         AttachmentRegistry.createPersistent(
             Identifier.fromNamespaceAndPath("alone", "village_hostile_until"), Codec.LONG);
 
-    /** Game-time tick of the last guard muster, so repeated crimes don't spawn an endless horde. */
-    public static final AttachmentType<Long> GUARDS_MUSTERED_AT =
-        AttachmentRegistry.createPersistent(
-            Identifier.fromNamespaceAndPath("alone", "guards_mustered_at"), Codec.LONG);
-
     /** How long a single crime keeps the village hostile — ~5 minutes; refreshed on each fresh crime. */
     private static final long HOSTILE_DURATION = 6000L;
-    /** Minimum gap between guard waves while you keep offending — ~1 minute. */
-    private static final long REINFORCE_COOLDOWN = 1200L;
-    /** How many guards muster per wave. */
-    private static final int WAVE_SIZE = 3;
-    /** Ring the wave spawns in around you (min..max blocks) — close enough to close in, not on your head. */
-    private static final int SPAWN_MIN = 8;
-    private static final int SPAWN_MAX = 16;
     /** How far a guard/golem will look for the flagged player it's hunting. */
     static final double SEARCH_RANGE = 48.0;
 
+    /** How often (ticks) the garrison top-up scan runs — cheap, so a low cadence is plenty. */
+    private static final int GARRISON_SCAN = 100;
+    /** How many guards a village keeps posted. */
+    private static final int GARRISON_SIZE = 3;
+    /** The guards' home radius around the village centre — their patrol leash and the count area for top-up. */
+    private static final int GARRISON_RADIUS = 40;
+    /** How far from the village centre a freshly-posted guard is placed. */
+    private static final int POST_SPREAD = 12;
+
     public static void init() {
+        // PERMANENT GARRISON — keep every village a player is near topped up to a standing guard force. Keyed
+        // off nearby players (a village only matters, and is only loaded, when someone's about); the count
+        // check keeps it from ever over-spawning. Guards are posted to the village and marked persistent, so
+        // they stay and patrol it rather than despawning or wandering off.
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (!(player.level() instanceof ServerLevel level)
+                    || level.getGameTime() % GARRISON_SCAN != 0L) {
+                    continue;
+                }
+                BlockPos centre = Spawns.villageCenter(level, player.blockPosition());
+                if (centre != null) {
+                    garrison(level, centre);
+                }
+            }
+        });
+
         // ASSAULT — hitting a villager or a village animal flags the village (killing is the hardest hit, so
         // it's covered here too). We never cancel the strike; the blow lands, it just has consequences.
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
@@ -122,6 +144,28 @@ public final class VillageDefense {
         });
     }
 
+    /** Top the village's garrison back up to {@link #GARRISON_SIZE}: count the guards already posted within
+     *  the home radius and spawn any shortfall on the local surface, each posted to the centre and persistent. */
+    private static void garrison(ServerLevel level, BlockPos centre) {
+        AABB area = new AABB(centre).inflate(GARRISON_RADIUS);
+        int missing = GARRISON_SIZE - level.getEntitiesOfClass(VillageGuard.class, area).size();
+        if (missing <= 0) {
+            return;
+        }
+        RandomSource rng = level.getRandom();
+        for (int i = 0; i < missing; i++) {
+            int x = centre.getX() + rng.nextInt(POST_SPREAD * 2 + 1) - POST_SPREAD;
+            int z = centre.getZ() + rng.nextInt(POST_SPREAD * 2 + 1) - POST_SPREAD;
+            // Drop the guard onto the local surface so it never spawns buried or floating.
+            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            VillageGuard guard = new VillageGuard(AloneEntities.GUARD, level);
+            guard.snapTo(x + 0.5, y, z + 0.5, rng.nextFloat() * 360f, 0f);
+            guard.setHomeTo(centre, GARRISON_RADIUS); // patrol leash — it stays in its village
+            guard.setPersistenceRequired();           // a posted guard doesn't despawn
+            level.addFreshEntity(guard);
+        }
+    }
+
     /** A villager or a farmed animal — the living property a settlement will defend. */
     private static boolean isVillageProperty(Entity entity) {
         return entity instanceof AbstractVillager || entity instanceof Animal;
@@ -139,42 +183,17 @@ public final class VillageDefense {
     }
 
     /**
-     * Register a crime: turn (or keep) the village hostile to this player and, on the first offence or after
-     * the reinforcement cooldown, muster a wave of guards. The timer refresh is what makes the state decay —
-     * stop offending and it simply runs out.
+     * Register a crime: turn (or keep) the village hostile to this player. The timer refresh is what makes the
+     * state decay — stop offending and it simply runs out, and the standing garrison (which never left) goes
+     * back to patrolling. No wave is spawned here: the guards are already posted; they just switch targets to
+     * you via {@link FlaggedPlayerTargetGoal}, as do the iron golems.
      */
     private static void flag(ServerPlayer player, ServerLevel level) {
-        long now = level.getGameTime();
         boolean wasHostile = isHostile(player);
-        player.setAttached(VILLAGE_HOSTILE_UNTIL, now + HOSTILE_DURATION);
-
-        long lastMuster = player.getAttachedOrElse(GUARDS_MUSTERED_AT, 0L);
-        if (!wasHostile || now - lastMuster > REINFORCE_COOLDOWN) {
-            musterGuards(level, player);
-            player.setAttached(GUARDS_MUSTERED_AT, now);
-        }
+        player.setAttached(VILLAGE_HOSTILE_UNTIL, level.getGameTime() + HOSTILE_DURATION);
         if (!wasHostile) {
-            player.sendSystemMessage(Component.literal("The village turns against you — its guards are coming.")
+            player.sendSystemMessage(Component.literal("The village turns against you — its guards and golems close in.")
                 .withStyle(ChatFormatting.RED));
-        }
-    }
-
-    /** Spawn a wave of guards in a ring around the offender, each already hunting them and marked persistent. */
-    private static void musterGuards(ServerLevel level, ServerPlayer player) {
-        var rng = player.getRandom();
-        BlockPos centre = player.blockPosition();
-        for (int i = 0; i < WAVE_SIZE; i++) {
-            double angle = rng.nextDouble() * Math.PI * 2.0;
-            double radius = SPAWN_MIN + rng.nextDouble() * (SPAWN_MAX - SPAWN_MIN);
-            int x = centre.getX() + (int) Math.round(Math.cos(angle) * radius);
-            int z = centre.getZ() + (int) Math.round(Math.sin(angle) * radius);
-            // Drop the guard onto the local surface so it never spawns buried or floating.
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            VillageGuard guard = new VillageGuard(AloneEntities.GUARD, level);
-            guard.snapTo(x + 0.5, y, z + 0.5, rng.nextFloat() * 360f, 0f);
-            guard.setPersistenceRequired(); // a mustered guard sees the reprisal through — no despawn
-            guard.setTarget(player);
-            level.addFreshEntity(guard);
         }
     }
 
@@ -182,7 +201,7 @@ public final class VillageDefense {
      * Sets a defending mob onto the nearest player the village has been turned hostile against. Shared by the
      * {@link VillageGuard guards} and the {@link Golems iron golems} so one wrong turns the whole settlement's
      * defenders on you. Drops the target the instant the hostile timer lapses (see {@link #isHostile}), so a
-     * guard stands down when the village forgets — it doesn't hound you forever.
+     * defender stands down when the village forgets — it doesn't hound you forever.
      */
     public static class FlaggedPlayerTargetGoal extends Goal {
         private final Mob mob;

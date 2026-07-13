@@ -17,7 +17,6 @@ import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.animal.polarbear.PolarBear;
 import net.minecraft.world.entity.animal.rabbit.Rabbit;
-import net.minecraft.world.entity.monster.illager.Vindicator;
 
 /**
  * Custom entities. The {@link TravoisEntity travois} (proposal §6 — transport) is a dragged cargo sled;
@@ -93,13 +92,14 @@ public final class AloneEntities {
     public static final ResourceKey<EntityType<?>> GUARD_KEY =
         ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "village_guard"));
 
-    /** An armed village guard (§7.2) — a {@link VillageGuard} (re-coated vindicator) mustered when a village
-     *  is wronged. MONSTER so it's a hostile combatant; sized like the illager it reuses. No loot table: a
-     *  guard is a defender, not a farm (its bow/sword don't drop either — see {@link VillageGuard}). */
+    /** An armed village guard (§7.2) — a {@link VillageGuard}: an armoured human who lives in and patrols a
+     *  village, turning hostile only on a player who wrongs the settlement. CREATURE, not MONSTER, and — the
+     *  key point — the class is a plain {@code PathfinderMob}, NOT an {@code Enemy}, so iron golems ignore it
+     *  (they only target {@code Enemy} mobs). Human-sized. It has a loot table (default id
+     *  {@code alone:entities/village_guard}): a killed guard drops its whole kit — see {@link VillageGuard}. */
     public static final EntityType<VillageGuard> GUARD = EntityType.Builder
-        .of(VillageGuard::new, MobCategory.MONSTER)
-        .sized(0.6f, 1.95f) // vindicator build
-        .noLootTable()
+        .of(VillageGuard::new, MobCategory.CREATURE)
+        .sized(0.6f, 1.95f) // a person in armour
         .build(GUARD_KEY);
 
     /** Touching this class registers the entity types above. Called from {@link AloneCore}. */
@@ -190,12 +190,11 @@ public final class AloneEntities {
         // data, so no custom spawn packet is needed; it just needs its type registered and a renderer.
         Registry.register(BuiltInRegistries.ENTITY_TYPE, THROWN_ROCK_KEY, THROWN_ROCK);
 
-        // An armed village guard (§7.2). It's a vindicator under the hood, so it wants the vindicator's
-        // attributes (health, melee damage, speed) — with a wide FOLLOW_RANGE so it keeps hunting the
-        // wrongdoer it was mustered against instead of losing interest. No biome spawns: guards are not
-        // wild, they're mustered on demand by VillageDefense when a village is wronged (and via the egg).
+        // An armed village guard (§7.2) — a plain PathfinderMob (so golems leave it be), with its own
+        // man-at-arms attributes: modest health, a real sword arm, a wide FOLLOW_RANGE to keep after a flagged
+        // wrongdoer, and a walk speed matched to the player's. No biome spawns: guards aren't wild, they're
+        // posted into villages by VillageDefense (and spawnable via the egg).
         Registry.register(BuiltInRegistries.ENTITY_TYPE, GUARD_KEY, GUARD);
-        FabricDefaultAttributeRegistry.register(GUARD, Vindicator.createAttributes()
-            .add(Attributes.FOLLOW_RANGE, 48.0));
+        FabricDefaultAttributeRegistry.register(GUARD, VillageGuard.createAttributes());
     }
 }

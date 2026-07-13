@@ -8,6 +8,7 @@ import net.minecraft.tags.StructureTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 
 /**
  * The core spawn rule (proposal §7.1): <b>monsters only near loot structures.</b> The open wilderness
@@ -63,5 +64,23 @@ public final class Spawns {
             }
         }
         return false;
+    }
+
+    /**
+     * The centre of the <b>village</b> this position sits on or near, or {@code null} if none. Used to anchor
+     * the settlement's permanent {@link VillageGuard guards} (see {@link VillageDefense}) to the village they
+     * belong to — the guards patrol around this point rather than a player's position. Samples the same ring
+     * as {@link #nearVillage} and returns the centre of the first village structure found.
+     */
+    public static BlockPos villageCenter(ServerLevel level, BlockPos pos) {
+        StructureManager structures = level.structureManager();
+        for (int[] offset : SAMPLES) {
+            StructureStart start =
+                structures.getStructureWithPieceAt(pos.offset(offset[0], 0, offset[1]), StructureTags.VILLAGE);
+            if (start.isValid()) {
+                return start.getBoundingBox().getCenter();
+            }
+        }
+        return null;
     }
 }

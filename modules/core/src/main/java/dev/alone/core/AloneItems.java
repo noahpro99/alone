@@ -84,8 +84,8 @@ public final class AloneItems {
     public static final Item BISON_SPAWN_EGG = register("bison_spawn_egg",
         key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.BISON).setId(key)));
 
-    /** Spawn egg for the armed {@link AloneEntities#GUARD village guard} (§7.2). Reuses the vanilla
-     *  vindicator egg sprite via its item def (no new PNG) — the guard is a re-coated vindicator. */
+    /** Spawn egg for the armed {@link AloneEntities#GUARD village guard} (§7.2). Reuses a vanilla egg sprite
+     *  (the vindicator egg) via its item def (no new PNG) — a placeholder for the man-at-arms. */
     public static final Item GUARD_SPAWN_EGG = register("guard_spawn_egg",
         key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.GUARD).setId(key)));
     // Livestock is bought from a village herder as a vanilla SPAWN EGG (cow/sheep/goat/pig/donkey), priced in

@@ -1,0 +1,61 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:chainmail_helmet" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:chainmail_chestplate" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:chainmail_leggings" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:chainmail_boots" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:iron_sword" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "minecraft:bow" } ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:arrow",
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 3.0, "max": 6.0 } }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bread",
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1.0, "max": 2.0 } }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:cooked_beef", "weight": 2 },
+        { "type": "minecraft:item", "name": "minecraft:cooked_mutton" },
+        { "type": "minecraft:item", "name": "minecraft:cooked_porkchop" }
+      ]
+    }
+  ]
+}

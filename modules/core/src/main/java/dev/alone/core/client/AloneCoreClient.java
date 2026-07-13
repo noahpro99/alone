@@ -115,11 +115,11 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.BISON, BisonRenderer::new);
 
-        // The armed village guard (§7.2) is a re-coated vindicator — reuse the vanilla vindicator renderer
-        // and its texture as-is, so an angry villager-in-arms needs no new art.
+        // The armed village guard (§7.2) is a neutral pathfinder (so iron golems ignore it) drawn as an
+        // armoured human — the vanilla player model + a plain human skin + the standard armour/held-item
+        // layers, no new art. See VillageGuardRenderer.
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
-            dev.alone.core.AloneEntities.GUARD,
-            net.minecraft.client.renderer.entity.VindicatorRenderer::new);
+            dev.alone.core.AloneEntities.GUARD, VillageGuardRenderer::new);
 
         // A thrown rock (§8.1) renders as the loose-rock item itself — vanilla's ThrownItemRenderer draws
         // the entity's carried item (its rock), so it reuses the rock's existing model/texture, no new art.
