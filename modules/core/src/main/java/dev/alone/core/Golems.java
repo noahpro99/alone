@@ -105,6 +105,8 @@ public final class Golems {
     private static class SmashThroughGoal extends Goal {
         private final IronGolem golem;
         private int cooldown;
+        private int nextReachCheck;
+        private boolean blocked; // cached: can't currently path to the target (re-tested on a throttle)
 
         SmashThroughGoal(IronGolem golem) {
             this.golem = golem;
@@ -118,12 +120,23 @@ public final class Golems {
             }
             double dx = target.getX() - golem.getX();
             double dz = target.getZ() - golem.getZ();
-            if (dx * dx + dz * dz > 64.0) {
-                return false; // too far off horizontally to be worth digging at
+            if (dx * dx + dz * dz > 256.0) {
+                return false; // too far off horizontally (>16 blocks) to be worth digging at
             }
-            // A wall between us (can't see it), OR it's perched up a tower out of reach (see it, can't get it).
-            return !golem.getSensing().hasLineOfSight(target)
-                || target.getY() - golem.getY() > UNDERMINE_MIN_DY;
+            // The gate is REACHABILITY, not line of sight. Keying off sight was the cheese: the moment the golem
+            // broke a peephole it could see you through, it stopped digging — and simply moving re-blocked that
+            // sightline, so standing still behind a wall froze it. Dig until it can actually WALK to you.
+            return isBlockedFromTarget(target);
+        }
+
+        /** Can the golem currently NOT path to its target? Throttled — pathfinding every tick per golem is dear. */
+        private boolean isBlockedFromTarget(LivingEntity target) {
+            if (golem.tickCount >= nextReachCheck) {
+                nextReachCheck = golem.tickCount + 10;
+                Path path = golem.getNavigation().createPath(target, 0);
+                blocked = path == null || !path.canReach();
+            }
+            return blocked;
         }
 
         @Override
@@ -147,23 +160,48 @@ public final class Golems {
                 return;
             }
             Level level = golem.level();
-            // A wall between us: smash straight through it toward the target — but carve a walkable, golem-tall
-            // DOORWAY, not a single eye-line hole. A 2.7-block construct can't step through a one-block gap it
-            // can merely see through, which is why it couldn't reach a player holed up in a house.
-            if (!golem.getSensing().hasLineOfSight(target)) {
-                BlockHitResult hit = level.clip(new ClipContext(golem.getEyePosition(), target.getEyePosition(),
-                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, golem));
-                if (hit.getType() == HitResult.Type.BLOCK) {
-                    breachColumn(level, hit.getBlockPos());
-                }
-                return;
-            }
-            // Otherwise it's perched above (towered up to snipe with a bow) — pound the pillar out from under
-            // it. Loose soil then collapses (see DirtFalling), dropping it to you; a flung-up dirt tower is
-            // no refuge from a construct that can knock it down.
+            // Perched up a tower out of reach (towered up to snipe with a bow) — pound the pillar out from under
+            // it. Loose soil then collapses (see DirtFalling), dropping it to you; a flung-up dirt tower is no
+            // refuge from a construct that can knock it down.
             if (target.getY() - golem.getY() > UNDERMINE_MIN_DY) {
                 undermine(level, target);
+                return;
             }
+            // Walled off at ground level: carve a walkable, golem-tall DOORWAY through the wall right in front of
+            // it, toward the target — not the single block on the eye-line (which turns to air the instant a
+            // peephole opens, leaving a gap too small to step through). Breaking the wall in front, feet-to-head,
+            // opens a passage it can actually walk, so a player holed up in a house can't just wait it out.
+            BlockPos wall = wallToward(level, target);
+            if (wall != null) {
+                breachColumn(level, wall);
+            }
+        }
+
+        /** The nearest solid block directly between the golem and its target at body height — the wall to breach.
+         *  Marches horizontally toward the target at foot and head level so it finds the wall even when an
+         *  eye-level peephole is already open. Returns that column's base (golem foot Y), or null if the way is
+         *  clear in front (nothing to dig — the block is elsewhere and navigation will bring it round). */
+        private BlockPos wallToward(Level level, LivingEntity target) {
+            double dx = target.getX() - golem.getX();
+            double dz = target.getZ() - golem.getZ();
+            double len = Math.sqrt(dx * dx + dz * dz);
+            if (len < 1.0e-3) {
+                return null;
+            }
+            double ux = dx / len;
+            double uz = dz / len;
+            int fy = golem.blockPosition().getY();
+            for (double step = 0.5; step <= 3.5; step += 0.5) { // out to just past smash reach, to the wall it faces
+                int bx = (int) Math.floor(golem.getX() + ux * step);
+                int bz = (int) Math.floor(golem.getZ() + uz * step);
+                for (int y = fy; y <= fy + 1; y++) { // foot and body height — a wall blocks one of these
+                    BlockPos p = new BlockPos(bx, y, bz);
+                    if (!level.getBlockState(p).getCollisionShape(level, p).isEmpty()) {
+                        return new BlockPos(bx, fy, bz); // breach this column from the feet up
+                    }
+                }
+            }
+            return null;
         }
 
         /** Carve a walkable, golem-tall doorway through a wall at the given column — the block on the sightline
