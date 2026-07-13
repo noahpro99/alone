@@ -147,12 +147,14 @@ public final class Golems {
                 return;
             }
             Level level = golem.level();
-            // A wall between us: smash straight through it toward the target.
+            // A wall between us: smash straight through it toward the target — but carve a walkable, golem-tall
+            // DOORWAY, not a single eye-line hole. A 2.7-block construct can't step through a one-block gap it
+            // can merely see through, which is why it couldn't reach a player holed up in a house.
             if (!golem.getSensing().hasLineOfSight(target)) {
                 BlockHitResult hit = level.clip(new ClipContext(golem.getEyePosition(), target.getEyePosition(),
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, golem));
                 if (hit.getType() == HitResult.Type.BLOCK) {
-                    smash(level, hit.getBlockPos());
+                    breachColumn(level, hit.getBlockPos());
                 }
                 return;
             }
@@ -164,19 +166,39 @@ public final class Golems {
             }
         }
 
-        /** Break a single block near the golem if it's within reach and not too tough. */
-        private void smash(Level level, BlockPos pos) {
+        /** Carve a walkable, golem-tall doorway through a wall at the given column — the block on the sightline
+         *  plus the ones at the golem's feet and head, lowest solid first (one per interval). Breaking only the
+         *  single eye-line block left a hole the golem couldn't step through; this opens a passage it can walk. */
+        private void breachColumn(Level level, BlockPos wall) {
+            int gy = golem.blockPosition().getY();
+            int wx = wall.getX();
+            int wz = wall.getZ();
+            // Feet → head (a 3-tall breach for the ~2.7-block golem), lowest first so the base clears before
+            // the top and it never leaves a lip to trip on.
+            for (int y = gy; y <= gy + 2; y++) {
+                if (smash(level, new BlockPos(wx, y, wz))) {
+                    return; // one block broken this pass
+                }
+            }
+            // Foot column already open but still walled off (e.g. the sightline block sits higher): take it too.
+            smash(level, wall);
+        }
+
+        /** Break a single block near the golem if it's within reach and not too tough. Returns whether a block
+         *  was actually pulverised this call (so callers can stop after one per interval). */
+        private boolean smash(Level level, BlockPos pos) {
             if (golem.distanceToSqr(Vec3.atCenterOf(pos)) > SMASH_RANGE_SQ) {
-                return; // too far to be the cheese wall — leave the world alone
+                return false; // too far to be the cheese wall — leave the world alone
             }
             BlockState state = level.getBlockState(pos);
             float hardness = state.getDestroySpeed(level, pos);
             if (state.isAir() || hardness < 0f || hardness > MAX_HARDNESS) {
-                return; // air, unbreakable (bedrock), or too tough for even a golem
+                return false; // air, unbreakable (bedrock), or too tough for even a golem
             }
             golem.swing(InteractionHand.MAIN_HAND);
             level.destroyBlock(pos, false, golem, 512); // pulverised — plays the break effect itself
             cooldown = SMASH_INTERVAL;
+            return true;
         }
 
         /** Dig out the pillar under a perched target: break a reachable block of its supporting column near
@@ -186,8 +208,7 @@ public final class Golems {
             int cz = (int) Math.floor(target.getZ());
             int gy = golem.blockPosition().getY();
             for (int y = gy + 2; y >= gy - 1; y--) {
-                smash(level, new BlockPos(cx, y, cz));
-                if (cooldown > 0) {
+                if (smash(level, new BlockPos(cx, y, cz))) {
                     return; // smashed one this pass
                 }
             }
