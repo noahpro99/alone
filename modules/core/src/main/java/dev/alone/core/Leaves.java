@@ -3,17 +3,17 @@ package dev.alone.core;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 /**
- * Leaves behave like real foliage (proposal §5.4 / realism). Tearing a canopy apart with your bare
- * hands leaves you holding broken twigs and a scatter of leaf litter — not a tidy hedge cube; a clean
- * cut with an <b>axe or hoe</b> salvages the whole leaf block. Either way it's slow, tugging work
- * (see {@code PlayerDestroySpeedMixin}). Vanilla saplings/apples still fall on top, so tree farming
- * survives. Leaves are also soft enough to climb up through — see {@link Climbing}.
+ * Leaves behave like real foliage (proposal §5.4 / realism). However you tear a canopy down — bare
+ * hands, an axe, a hoe — you come away with the same thing a fistful of branches leaves in the real
+ * world: a good scatter of <b>leaf litter</b> and, often, some snapped <b>twigs</b>. A tool only makes
+ * the work faster, not richer (the yield is tool-agnostic); either way it's slow, tugging work (see
+ * {@code PlayerDestroySpeedMixin}). Vanilla saplings/apples still fall on top, so tree farming survives.
+ * Leaves are also soft enough to climb up through — see {@link Climbing}.
  */
 public final class Leaves {
     private Leaves() {
@@ -27,13 +27,13 @@ public final class Leaves {
             if (!state.is(BlockTags.LEAVES)) {
                 return;
             }
-            ItemStack tool = player.getMainHandItem();
-            if (tool.is(ItemTags.AXES) || tool.is(ItemTags.HOES)) {
-                Block.popResource(serverLevel, pos, new ItemStack(state.getBlock())); // clean cut → the leaf block
-            } else {
-                // bare hands: you come away with snapped twigs and a handful of leaf litter
-                Block.popResource(serverLevel, pos, new ItemStack(Items.STICK, 1 + player.getRandom().nextInt(2)));
-                Block.popResource(serverLevel, pos, new ItemStack(Items.LEAF_LITTER, 1 + player.getRandom().nextInt(2)));
+            // Tool-agnostic: a torn-down canopy always sheds a decent pile of litter, plus a chance of
+            // twigs — an axe or hoe just breaks it faster, it doesn't salvage more.
+            int litter = 2 + player.getRandom().nextInt(3); // 2–4 leaf litter, every break, whatever the tool
+            Block.popResource(serverLevel, pos, new ItemStack(Items.LEAF_LITTER, litter));
+            int sticks = player.getRandom().nextInt(3);      // 0–2 snapped twigs — a chance, not a guarantee
+            if (sticks > 0) {
+                Block.popResource(serverLevel, pos, new ItemStack(Items.STICK, sticks));
             }
         });
     }

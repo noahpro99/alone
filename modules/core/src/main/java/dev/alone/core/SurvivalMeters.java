@@ -541,7 +541,12 @@ public final class SurvivalMeters {
         float fatigue = getFatigue(player);
         float effectiveMax = MAX_STAMINA * (1f - fatigue / 100f * FATIGUE_MAX_PENALTY);
         float stamina = getStamina(player);
-        boolean exerting = player.isSprinting() || player.swinging || player.isSwimming(); // sprint, swim, mine, fight
+        // Free-climbing (bare wall, canopy, or rope) is exertion, never rest: folding it in here stops the
+        // stamina regen below AND charges the base effort drain, so a climb — even hanging dead-still on the
+        // rock — always costs wind instead of quietly restoring it. The per-block ascent cost is charged on
+        // top by Climbing.climbDrainTick.
+        boolean climbing = Climbing.isClimbing(player);
+        boolean exerting = player.isSprinting() || player.swinging || player.isSwimming() || climbing; // sprint, swim, mine, fight, climb
         // Only real swimming/floating is work — wading through shallow water (standing on the bottom) is
         // like walking on land, so you recover stamina there instead of "swimming".
         boolean afloat = player.isInWater() && !player.onGround();

@@ -306,6 +306,21 @@ public final class Climbing {
         }
     }
 
+    /**
+     * Are you actively free-climbing <em>right now</em> — clinging to a bare wall, hauling yourself up
+     * through a canopy, or hanging on a rope line? Never true while standing on solid ground (a climb is
+     * an off-the-ground effort), so brushing a bush at your feet or standing beside a cliff doesn't count.
+     * <p>{@link SurvivalMeters#tick} reads this to treat a climb as <b>exertion</b>: it stops the rest
+     * regen and charges the base effort drain, so clinging on <em>always</em> costs wind and never restores
+     * it — even hanging dead-still. The per-block ascent cost is charged on top by {@link #climbDrainTick}.
+     */
+    public static boolean isClimbing(Player player) {
+        if (player.onGround() || player.getAbilities().flying || player.isSpectator()) {
+            return false;
+        }
+        return onRope(player) || inLeaves(player) || isWallClimbing(player);
+    }
+
     /** You're hanging on a rope line. */
     public static boolean onRope(Player player) {
         Level level = player.level();
