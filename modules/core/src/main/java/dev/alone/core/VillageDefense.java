@@ -9,9 +9,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import com.mojang.serialization.Codec;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +21,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -74,7 +71,7 @@ public final class VillageDefense {
     /** How long a single crime keeps the village hostile — ~5 minutes; refreshed on each fresh crime. */
     private static final long HOSTILE_DURATION = 6000L;
     /** How far a guard/golem will look for the flagged player it's hunting. */
-    static final double SEARCH_RANGE = 48.0;
+    static final double SEARCH_RANGE = 64.0; // guards notice a flagged wrongdoer village-wide, out to the fields
 
     /** How often (ticks) the garrison top-up scan runs — cheap, so a low cadence is plenty. */
     private static final int GARRISON_SCAN = 100;
@@ -100,6 +97,15 @@ public final class VillageDefense {
                 if (centre != null) {
                     garrison(level, centre);
                 }
+                // DE-ESCALATION — a wanted player who has broken clear of the village AND shaken every guard
+                // has gotten away: the settlement loses the trail and stands down, instead of staying hostile
+                // for the whole timer no matter how far you run. Lingering near the village or within a guard's
+                // reach keeps the heat on; only genuinely escaping (out of the village bounds, no guard within
+                // their own give-up range) drops it. The timer is still the fallback if you hole up nearby.
+                if (centre == null && isHostile(player)
+                    && !guardWithin(level, player.blockPosition(), SEARCH_RANGE)) {
+                    player.removeAttached(VILLAGE_HOSTILE_UNTIL);
+                }
             }
         });
 
@@ -107,7 +113,7 @@ public final class VillageDefense {
         // it's covered here too). We never cancel the strike; the blow lands, it just has consequences.
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
             if (level instanceof ServerLevel server && player instanceof ServerPlayer offender
-                && isVillageProperty(entity) && Spawns.nearVillage(server, entity.blockPosition())) {
+                && isVillageProperty(entity) && crimeNearVillage(server, offender, entity)) {
                 flag(offender, server);
             }
             return InteractionResult.PASS;
@@ -117,7 +123,8 @@ public final class VillageDefense {
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
             if (level instanceof ServerLevel server && player instanceof ServerPlayer offender
                 && player.getItemInHand(hand).is(Items.LEAD)
-                && entity instanceof Animal && Spawns.nearVillage(server, entity.blockPosition())) {
+                && entity instanceof Mob mob && Domestic.isDomestic(mob)
+                && crimeNearVillage(server, offender, entity)) {
                 flag(offender, server);
             }
             return InteractionResult.PASS;
@@ -166,9 +173,24 @@ public final class VillageDefense {
         }
     }
 
-    /** A villager or a farmed animal — the living property a settlement will defend. */
+    /** Is any village guard within {@code range} of this position? Used by de-escalation: a wanted player is
+     *  only considered to have escaped once no guard is still on them (and they're clear of the village). */
+    private static boolean guardWithin(ServerLevel level, BlockPos pos, double range) {
+        return !level.getEntitiesOfClass(VillageGuard.class, new AABB(pos).inflate(range)).isEmpty();
+    }
+
+    /** A villager or a FARMED (domestic) animal — the living property a settlement defends. Wild game (a
+     *  boar, a deer that wandered near) is fair to hunt and never counts, even right by the village. */
     private static boolean isVillageProperty(Entity entity) {
-        return entity instanceof AbstractVillager || entity instanceof Animal;
+        return entity instanceof AbstractVillager
+            || (entity instanceof Mob mob && Domestic.isDomestic(mob));
+    }
+
+    /** A crime counts if the target OR the offender is near the village — so hitting a cow that has drifted to
+     *  the OUTSKIRTS still rouses the garrison, and standing at the edge doesn't put you out of its reach. */
+    private static boolean crimeNearVillage(ServerLevel level, Player offender, Entity target) {
+        return Spawns.nearVillage(level, target.blockPosition())
+            || Spawns.nearVillage(level, offender.blockPosition());
     }
 
     /** Hay bales and crops — the harvest a settlement will defend. */
@@ -189,12 +211,9 @@ public final class VillageDefense {
      * you via {@link FlaggedPlayerTargetGoal}, as do the iron golems.
      */
     private static void flag(ServerPlayer player, ServerLevel level) {
-        boolean wasHostile = isHostile(player);
+        // No chat warning — the village turning on you is felt in the action (the guards and golems closing in),
+        // not announced. Just set/refresh the hostile timer.
         player.setAttached(VILLAGE_HOSTILE_UNTIL, level.getGameTime() + HOSTILE_DURATION);
-        if (!wasHostile) {
-            player.sendSystemMessage(Component.literal("The village turns against you — its guards and golems close in.")
-                .withStyle(ChatFormatting.RED));
-        }
     }
 
     /**
