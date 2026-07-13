@@ -108,12 +108,12 @@
   "item.alone.slingshot": "Slingshot",
   "item.alone.worms": "Worms",
 
-  "jei.alone.waterskin.desc": "The day-one water vessel. Fill it at clean water, then drink on the move. It holds only a few draughts — far less than a pot — so it's what carries you until you can bake clay or cast iron.",
-  "jei.alone.flint_knife.desc": "The first cutting edge: a flint blade knapped and lashed to a handle. It skins and butchers game, cuts cordage and fibre, and fights in a pinch — the tool the whole stone-age kit is built around.",
-  "jei.alone.tallow.desc": "Rendered, clarified animal fat — a stable, storable block of hard fat. Cast around a cordage wick it becomes a candle, a dim honest light that puts the whole animal to use.",
-  "jei.alone.pyrite.desc": "A lump of iron pyrite, \"fool's gold,\" dug from gravel. Struck against a flint shard it throws a hot spark; craft the two together into a flint-and-pyrite striker.",
-  "jei.alone.flint_and_pyrite.desc": "The primitive strike-a-light — the rung between the bow drill's slow, sweaty gamble and the steel ferro rod. Struck, not drilled, so it catches quick for almost no effort, but it's no better in the wet: the spark still needs dry tinder. The soft pyrite crumbles with use.",
-  "jei.alone.slingshot.desc": "The low-power ranged weapon below the bow. Draw and loose a foraged loose rock at small game — squirrels, birds — when you have no arrows to spare.",
-  "jei.alone.bug_net.desc": "A fine mesh hood worn on the head against biting insects, best paired with a smudge fire. While it's on, the swarm can't reach you — no swatting toll, no wetland fever — but it takes your helmet slot, a real seasonal trade in buggy country.",
-  "jei.alone.wicker_shield.desc": "Branches and withies lashed with cordage — the day-one guard you can make before any metal. It blocks like any shield, but it's flimsy: the lowest durability and the easiest for a big creature to bash aside."
+  "jei.alone.waterskin.desc": "Right-click a water source to fill it (4 draughts); hold right-click to drink. Raw water risks sickness — swamp/jungle water is worse. A skin can't go over a fire, so boil water clean in a fire-safe pot and pour it in, or fill from clean rain or a water cauldron.",
+  "jei.alone.flint_knife.desc": "A cutting blade. Kill a hide-bearing animal while holding a blade (this, a sword, axe, or spear) to butcher the carcass for raw hide, bone, and sinew — a fists/pick kill wastes them. Hold right-click on grass/ferns/vines to strip 2-3 plant fibre at once (bare hands: 1-2).",
+  "jei.alone.tallow.desc": "Rendered animal fat. Make it by cooking Raw Fat (from butchering big game) on a lit campfire or in a furnace. Craft Tallow + String to cast a candle for dim light.",
+  "jei.alone.pyrite.desc": "A fire-starting stone that turns up now and then when you dig gravel. Craft Pyrite + a Flint Shard to make a Flint and Pyrite striker.",
+  "jei.alone.flint_and_pyrite.desc": "A strike-a-light. Hold it and hold right-click on an UNLIT campfire to strike it alight — quick and near-effortless, but the spark needs dry tinder, so it fails in the rain (a bow drill also fails wet; only a forged ferro rod lights in the wet). Wears out after ~40 fires.",
+  "jei.alone.slingshot.desc": "A ranged weapon for small game. Carry loose Rocks as ammo. Hold right-click to draw (a longer draw = more power and range), release to loose a pebble at what you're aiming at. Each shot spends one rock. Drops rabbits, birds, squirrels; barely dents big animals.",
+  "jei.alone.bug_net.desc": "Right-click to wear it on your head. While worn, biting insects near standing water can't reach you — no stamina drain, no wetland fever. It occupies your HELMET slot (you can't also wear a helmet). A smudge fire (a lit campfire) does the same for anyone nearby.",
+  "jei.alone.wicker_shield.desc": "A primitive shield. Hold right-click to raise it and block attacks like any shield. It has the lowest durability of the shields, and a large creature (bear, boar, ravager, golem) bashes it aside for LONGER than a sturdier wooden or metal shield."
 }

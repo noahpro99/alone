@@ -300,8 +300,8 @@ public final class Climbing {
             if (dy > 0) { // hauling up a tree; dropping down through it is free
                 SurvivalMeters.exert(player, (float) (dy * LEAF_DRAIN_PER_BLOCK));
             }
-        } else if (facingFlatWall(player)) {
-            SurvivalMeters.exert(player, (float) (ady * WALL_DRAIN_PER_BLOCK)); // rock burns up or down
+        } else if (isWallClimbing(player)) {
+            SurvivalMeters.exert(player, (float) (ady * WALL_DRAIN_PER_BLOCK)); // rock burns up or down (any side)
             maybeSlip(player); // even a skilled climber occasionally loses a hold and falls
         }
     }
@@ -344,38 +344,34 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // ── Bare-wall free-climbing: every one of these must hold to START or CONTINUE a climb (§5.4). ──
+        // ── Bare-wall free-climbing (§5.4). The strict gates below govern GRABBING ON — a real ≥2-tall face,
+        //    looking straight at it, pressed into it, and a deliberate jump. But once you've caught the wall
+        //    you STAY caught as long as a block face is beside you on ANY side: so you can climb sideways,
+        //    round a corner, and look around freely. The start-gates don't keep re-applying mid-climb. ──
         Direction dir = player.getDirection();
-        // (1) A genuine ≥2-tall rough face — or the last block of one you're topping out. A lone 1-block
-        //     step is neither, so it's a normal step-up/jump, never a climb. No face → let go of any grip.
-        if (!hasClimbableWall(player)) {
-            setGripping(player, false);
-            return false;
-        }
-        // (5) You must be looking roughly straight at the rock — pitch and yaw within tolerance. This kills
-        //     the old "climb a block while looking 90° away / straight down at it" looseness.
-        if (!facingWall(player, dir)) {
-            setGripping(player, false);
-            return false;
-        }
-        // (3) You must be pressed against the face, driving into it. Standing or sliding beside it never
-        //     holds a grip.
-        if (!pressingIntoWall(player, dir)) {
-            setGripping(player, false);
-            return false;
-        }
-        // Already latched onto this wall? Stay latched. This is the anti-jitter core: the grab decision was
-        // made once on engage; here we only confirm the face is still there, you're still facing it, and
-        // still pressing in (all checked above). It holds until the wall runs out, stamina fails, you look
-        // away, stop pressing, or climb clear.
+
+        // CONTINUE — already latched on. Hold the grip while a climbable face is beside you on any horizontal
+        // side; let go only when you've climbed clear of every wall (the universal gates above already drop
+        // you for empty stamina, a filled hand, etc.).
         if (isGripping(player)) {
+            if (!nearAnyClimbableWall(player)) {
+                setGripping(player, false); // no face on any side — you've topped out or stepped off
+                return false;
+            }
             gripMap(player).put(player, player.tickCount); // keep the top-out grace fresh while climbing
             return true;
         }
-        // (4) Not yet on the wall — a climb is INITIATED by a deliberate JUMP press, never automatically.
-        //     We engage once the jump's own upward momentum is spent (at/after the peak), so a normal jump
-        //     first carries you a block, then the slower climb takes over. Pressing jump with no wall, or
-        //     touching a wall without jumping, does nothing.
+
+        // START — every gate must hold to INITIATE a climb from standing:
+        //   (1) a genuine ≥2-tall rough face in front of you (a lone 1-block step is just a jump);
+        //   (5) looking roughly straight at the rock (kills the old "climb while looking 90° away" looseness);
+        //   (3) pressed against the face, driving into it.
+        if (!hasClimbableWall(player) || !facingWall(player, dir) || !pressingIntoWall(player, dir)) {
+            setGripping(player, false);
+            return false;
+        }
+        // (4) A climb is INITIATED by a deliberate JUMP, engaged once the jump's own upward momentum is spent
+        //     (at/after the peak), so a normal jump first carries you a block, then the slower climb takes over.
         boolean engage = jumpedRecently(player)
             && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
             && !jumpLatched(player);
@@ -383,6 +379,20 @@ public final class Climbing {
             setGripping(player, true);
             gripMap(player).put(player, player.tickCount);
             return true;
+        }
+        return false;
+    }
+
+    /** A climbable flat face beside you on ANY of the four horizontal sides, at foot or head height — what
+     *  keeps a climb going once you've caught on, so you can move sideways, round a corner, and look about
+     *  without dropping the grip. (Grabbing ON is stricter; see {@link #canClimb}.) */
+    private static boolean nearAnyClimbableWall(Player player) {
+        Level level = player.level();
+        BlockPos feet = player.blockPosition();
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            if (isFlatWall(level, feet.relative(d)) || isFlatWall(level, feet.above().relative(d))) {
+                return true;
+            }
         }
         return false;
     }
@@ -408,7 +418,9 @@ public final class Climbing {
         if (player.level().getBlockState(player.blockPosition()).is(BlockTags.CLIMBABLE)) {
             return false;
         }
-        return hasClimbableWall(player);
+        // Facing a ≥2-tall face, OR mid-climb with a face on any side (so a sideways/traversing climb still
+        // runs at the slow bare-rock pace, not vanilla ladder speed).
+        return hasClimbableWall(player) || (isGripping(player) && nearAnyClimbableWall(player));
     }
 
     /**
