@@ -22,6 +22,9 @@ import org.lwjgl.glfw.GLFW;
 
 /** Client-only entrypoint: receive survival syncs and draw the HUD. */
 public class AloneCoreClient implements ClientModInitializer {
+    /** Last-tick state of the JUMP key, so we can fire only on the press edge (not every held tick). */
+    private boolean jumpWasDown;
+
     @Override
     public void onInitializeClient() {
         // Quick-open backpack keybind (default B) — opens the first backpack in your pack (§6). Filed
@@ -62,6 +65,18 @@ public class AloneCoreClient implements ClientModInitializer {
                 // Client movement is authoritative, so the jump-momentum latch (which protects a jump's
                 // full height near a wall) must be maintained here, where velocity is real.
                 dev.alone.core.Climbing.updateJumpLatch(client.player);
+                // A free-climb is deliberately STARTED by pressing JUMP against the rock (§5.4). The
+                // jump-key edge is only visible client-side, so we detect the press here, record it
+                // locally (the client drives the actual climb), and mirror the intent to the server so
+                // its climb grant agrees. Only on the press edge — holding jump must not re-trigger.
+                boolean jumpDown = client.options.keyJump.isDown();
+                if (jumpDown && !jumpWasDown) {
+                    dev.alone.core.Climbing.noteJumpPressed(client.player);
+                    ClientPlayNetworking.send(dev.alone.core.net.ClimbJumpPayload.INSTANCE);
+                }
+                jumpWasDown = jumpDown;
+            } else {
+                jumpWasDown = false;
             }
         });
 

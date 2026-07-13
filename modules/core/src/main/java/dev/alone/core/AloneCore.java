@@ -72,6 +72,8 @@ public class AloneCore implements ModInitializer {
             dev.alone.core.net.BackpackOpenPayload.TYPE, dev.alone.core.net.BackpackOpenPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(
             dev.alone.core.net.StripFiberPayload.TYPE, dev.alone.core.net.StripFiberPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
+            dev.alone.core.net.ClimbJumpPayload.TYPE, dev.alone.core.net.ClimbJumpPayload.CODEC);
         // Quick-open keybind: toggle the backpack — open the first one in your pack, or close it if
         // that's what you're already looking at (§6).
         net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(

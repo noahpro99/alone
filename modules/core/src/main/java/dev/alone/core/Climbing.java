@@ -14,9 +14,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Free-climbing (proposal §5.4 / realism). Two ways up the world beyond ladders:
@@ -83,6 +85,21 @@ public final class Climbing {
     private static final Map<Player, Boolean> GRIP_CLIENT = new WeakHashMap<>();
     private static final Map<Player, Boolean> GRIP_SERVER = new WeakHashMap<>();
 
+    // Deliberate initiation: a free-climb is STARTED by pressing JUMP against the rock, never automatically
+    // by brushing into it. We stamp the tick of the last jump-key press per side; a grab may only engage
+    // within JUMP_GRACE ticks of it (long enough that the jump can carry you a block, peak, and then the
+    // slower climb takes over — see the engage logic in canClimb). Client edge-detects the key and mirrors
+    // it to the server (movement is client-authoritative), so both sides gate initiation on the same intent.
+    private static final int JUMP_GRACE = 10;
+    private static final Map<Player, Integer> JUMP_PRESS_CLIENT = new WeakHashMap<>();
+    private static final Map<Player, Integer> JUMP_PRESS_SERVER = new WeakHashMap<>();
+
+    /** How straight-on you must be looking at the rock to grab or hold it: the view vector must lie within
+     *  ~40° of the wall's inward normal (i.e. of the direction into the face). {@code cos(40°) ≈ 0.766}.
+     *  Real free-climbing, you face the rock — you can't cling to a wall you're looking 90° away from, or
+     *  steeply up/down past. This is the pitch-and-yaw gate the old cardinal-only check was missing. */
+    private static final double FACE_MIN_DOT = 0.77;
+
     /** Surfaces rough enough to free-climb: raw rock, tree trunks, earth — never smooth/finished faces.
      *  Datapack-defined ({@code data/alone/tags/block/climbable.json}), so the pack can tune it. */
     private static final TagKey<Block> CLIMBABLE_ROUGH =
@@ -139,6 +156,12 @@ public final class Climbing {
     }
 
     public static void init() {
+        // Deliberate initiation (§5.4): the client tells us the instant JUMP is pressed, so the server's
+        // climb grant agrees with the client that actually moves the player up the wall.
+        net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.registerGlobalReceiver(
+            dev.alone.core.net.ClimbJumpPayload.TYPE,
+            (payload, context) -> noteJumpPressed(context.player()));
+
         // Charge stamina off real vertical travel while against a climbable surface — the one signal the
         // server can trust for a client-driven player.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -195,6 +218,67 @@ public final class Climbing {
     private static boolean jumpLatched(Player player) {
         return (player.level().isClientSide() ? JUMP_LATCH_CLIENT : JUMP_LATCH_SERVER)
             .getOrDefault(player, false);
+    }
+
+    /**
+     * Record that the player just pressed the JUMP key — the deliberate trigger that lets a free-climb
+     * <em>start</em>. Called client-side on the key's press edge (see {@code AloneCoreClient}) and again
+     * server-side when that intent arrives over {@link dev.alone.core.net.ClimbJumpPayload}, so each side
+     * gates initiation on the same press.
+     */
+    public static void noteJumpPressed(Player player) {
+        (player.level().isClientSide() ? JUMP_PRESS_CLIENT : JUMP_PRESS_SERVER)
+            .put(player, player.tickCount);
+    }
+
+    /** True within {@link #JUMP_GRACE} ticks of the last jump press — the window in which a wall grab may
+     *  engage. A stale stamp from a respawned player reads as a negative age (the clock restarts at 0), so
+     *  it correctly counts as "not recent" and never phantom-grabs. */
+    private static boolean jumpedRecently(Player player) {
+        Integer at = (player.level().isClientSide() ? JUMP_PRESS_CLIENT : JUMP_PRESS_SERVER).get(player);
+        if (at == null) {
+            return false;
+        }
+        int age = player.tickCount - at;
+        return age >= 0 && age <= JUMP_GRACE;
+    }
+
+    /**
+     * Are you looking roughly straight at the rock? The view vector (pitch <em>and</em> yaw) must lie
+     * within ~40° of the direction into the wall — {@link #FACE_MIN_DOT}. This is what stops a climb while
+     * you're looking 90° away or steeply up/down; the old check only compared cardinal facing and ignored
+     * where the camera actually pointed.
+     */
+    private static boolean facingWall(Player player, Direction dir) {
+        Vec3 look = player.calculateViewVector(player.getXRot(), player.getYRot());
+        Vec3 into = dir.getUnitVec3();
+        return look.dot(into) >= FACE_MIN_DOT;
+    }
+
+    /**
+     * Are you pressed against the wall, walking into it? You have to drive into the rock to climb it —
+     * standing beside it does nothing. {@code horizontalCollision} means something is blocking you in the
+     * direction you're moving (both sides can see it); where the raw movement input is also available
+     * (client-authoritative — the server sees ~0 for a player), we additionally require the wish direction
+     * to point <em>into</em> the face, so backing away or strafing along it won't hold a grip.
+     */
+    private static boolean pressingIntoWall(Player player, Direction dir) {
+        if (!player.horizontalCollision) {
+            return false;
+        }
+        double strafe = player.xxa;
+        double forward = player.zza;
+        if (Math.abs(strafe) < 1.0e-3 && Math.abs(forward) < 1.0e-3) {
+            return true; // no input signal (server side) — the collision alone stands in for "walking into it"
+        }
+        float yaw = player.getYRot() * Mth.DEG_TO_RAD;
+        double sin = Mth.sin(yaw);
+        double cos = Mth.cos(yaw);
+        // World-space wish direction from (strafe, forward), mirroring Entity.getInputVector's basis.
+        double wishX = strafe * cos - forward * sin;
+        double wishZ = forward * cos + strafe * sin;
+        Vec3 into = dir.getUnitVec3();
+        return wishX * into.x + wishZ * into.z > 0.0; // you're pushing toward the face, not away/along it
     }
 
     private static void climbDrainTick(ServerPlayer player) {
@@ -260,23 +344,39 @@ public final class Climbing {
         if (inLeaves(player)) {
             return true; // a tree you can haul up through (costs stamina; see the tick + speed factor)
         }
-        // A wall you can actually climb: a clear ≥2-tall rough face, or the last block of one you're
-        // topping out. A lone 1-block step is neither, so it's ignored — you just jump it. No face → let
-        // go of any grip.
+        // ── Bare-wall free-climbing: every one of these must hold to START or CONTINUE a climb (§5.4). ──
+        Direction dir = player.getDirection();
+        // (1) A genuine ≥2-tall rough face — or the last block of one you're topping out. A lone 1-block
+        //     step is neither, so it's a normal step-up/jump, never a climb. No face → let go of any grip.
         if (!hasClimbableWall(player)) {
             setGripping(player, false);
             return false;
         }
-        // Already latched onto this wall? Stay latched. This is the anti-jitter core: we DON'T re-check
-        // horizontalCollision every tick (it blinks off whenever you're not driving into the face), so the
-        // grip no longer flickers. It holds until the wall runs out, stamina fails, or you climb clear.
+        // (5) You must be looking roughly straight at the rock — pitch and yaw within tolerance. This kills
+        //     the old "climb a block while looking 90° away / straight down at it" looseness.
+        if (!facingWall(player, dir)) {
+            setGripping(player, false);
+            return false;
+        }
+        // (3) You must be pressed against the face, driving into it. Standing or sliding beside it never
+        //     holds a grip.
+        if (!pressingIntoWall(player, dir)) {
+            setGripping(player, false);
+            return false;
+        }
+        // Already latched onto this wall? Stay latched. This is the anti-jitter core: the grab decision was
+        // made once on engage; here we only confirm the face is still there, you're still facing it, and
+        // still pressing in (all checked above). It holds until the wall runs out, stamina fails, you look
+        // away, stop pressing, or climb clear.
         if (isGripping(player)) {
             gripMap(player).put(player, player.tickCount); // keep the top-out grace fresh while climbing
             return true;
         }
-        // Not yet on the wall — engage when you press into it and aren't mid-jump. Standing beside a wall
-        // without pushing into it does nothing (no auto-climb); a live jump keeps its momentum.
-        boolean engage = player.horizontalCollision
+        // (4) Not yet on the wall — a climb is INITIATED by a deliberate JUMP press, never automatically.
+        //     We engage once the jump's own upward momentum is spent (at/after the peak), so a normal jump
+        //     first carries you a block, then the slower climb takes over. Pressing jump with no wall, or
+        //     touching a wall without jumping, does nothing.
+        boolean engage = jumpedRecently(player)
             && player.getDeltaMovement().y <= CLIMB_ENGAGE_VY
             && !jumpLatched(player);
         if (engage) {
