@@ -30,8 +30,10 @@ public final class Foraging {
                 if (rng.nextFloat() < 0.5f) {
                     Block.popResource(serverLevel, pos, new ItemStack(AloneItems.ROCK));
                 }
-                // And, now and then, a brassy nodule of pyrite among the flint — the strike-a-light stone (§3.1).
-                if (rng.nextFloat() < 0.05f) {
+                // And, once in a while, a brassy nodule of pyrite among the flint — the strike-a-light stone
+                // (§3.1). Kept rare (a lucky find, not a supply) so the bow drill stays the reliable everyday
+                // fire and a strike-a-light is the occasional boon it was in reality.
+                if (rng.nextFloat() < 0.02f) {
                     Block.popResource(serverLevel, pos, new ItemStack(AloneItems.PYRITE));
                 }
             } else if (isUnderbrush(state)) {
