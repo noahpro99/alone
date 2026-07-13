@@ -88,21 +88,32 @@ public class ClayPotBlockEntity extends BlockEntity {
         }
     }
 
-    /** Rain caught per tick: 0 if sheltered/dry, 1 for a bare pot's own mouth under open sky, or this pot's
-     *  <b>share</b> of the tarp roof draped above it — the roof's catchment split among every pot beneath it. */
+    /** Rain caught per tick: 0 if sheltered/dry, 1 for a bare pot's own mouth under open sky, this pot's
+     *  <b>share</b> of a tarp roof draped above it, or a fraction of that mouth-catch under a porous leaf
+     *  canopy (rain drips through — half at ~3 leaf layers, exponential falloff; see {@link Canopy}). */
     private static int rainCatchment(Level level, BlockPos pos) {
         // A tarp draped just above funnels its whole catchment into the pot, even though it shelters the
-        // pot's own mouth. Scan up for one; a solid non-tarp block above simply shelters the pot (catches 0).
+        // pot's own mouth. Scan up for one; leaves are porous (fall through to the canopy model below), and
+        // a solid non-tarp block above simply shelters the pot (catches 0).
         for (int dy = 1; dy <= 4; dy++) {
             BlockState above = level.getBlockState(pos.above(dy));
             if (above.is(AloneBlocks.TARP)) {
                 return roofShare(level, pos.above(dy));
             }
+            if (above.is(net.minecraft.tags.BlockTags.LEAVES)) {
+                break; // a porous canopy, not a hard roof — let the leaf model attenuate the catch
+            }
             if (!above.isAir() && !above.canBeReplaced()) {
                 return 0; // roofed by something solid that isn't a tarp — no rain reaches the pot
             }
         }
-        return level.isRainingAt(pos.above()) ? 1 : 0; // a bare pot catches only from its own small mouth
+        // A bare pot catches from its own small mouth; a leaf canopy overhead lets only a fraction through.
+        // Drip probabilistically so the sub-litre-per-tick rate averages out over the long fill.
+        float exposure = Canopy.rainExposure(level, pos);
+        if (exposure <= 0f) {
+            return 0;
+        }
+        return level.getRandom().nextFloat() < exposure ? 1 : 0;
     }
 
     /** One pot's share of a tarp roof: flood-fill the connected tarp, total the rain it catches

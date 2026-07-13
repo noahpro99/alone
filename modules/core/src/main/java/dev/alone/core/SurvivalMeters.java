@@ -493,9 +493,9 @@ public final class SurvivalMeters {
             return Math.min(0f, envTarget + insulation);
         }
         if (envTarget > 0f) {
-            // Heat: layers you can't shed trap warmth, and sun-baked metal adds to it.
-            boolean underSun = player.level().canSeeSky(player.blockPosition());
-            float sun = underSun ? metal * METAL_SUN_HEAT : 0f;
+            // Heat: layers you can't shed trap warmth, and sun-baked metal adds to it. Shade cuts the sun —
+            // fully under a roof, and partially under a leaf canopy (dappled shade, ~half at 3 layers).
+            float sun = metal * METAL_SUN_HEAT * Canopy.skyExposure(player.level(), player.blockPosition());
             return envTarget + insulation * HEAT_TRAP + sun;
         }
         return envTarget;
