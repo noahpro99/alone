@@ -1,1 +1,1 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "minecraft:block/white_wool" } }
+{ "parent": "minecraft:item/generated", "textures": { "layer0": "alone:item/towel" } }

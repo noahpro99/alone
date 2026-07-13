@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "minecraft:block/composter_side",
-    "wicker": "minecraft:block/composter_side",
-    "fish": "minecraft:block/light_gray_concrete"
+    "particle": "alone:block/fish_trap",
+    "wicker": "alone:block/fish_trap",
+    "fish": "alone:block/fish_trap_fish"
   },
   "elements": [
     {
