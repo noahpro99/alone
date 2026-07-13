@@ -24,7 +24,13 @@ public final class Domestic {
     /** True only for the settlement roster (cow, pig, sheep, chicken, goat, donkey) — exact type, so
      *  wild subclasses (and the wild horse) are ignored. */
     public static boolean isDomestic(Mob mob) {
-        EntityType<?> type = mob.getType();
+        return isDomesticType(mob.getType());
+    }
+
+    /** Type-based variant of {@link #isDomestic} — used by the position-accurate spawn veto
+     *  ({@code NaturalSpawnerStructureMixin}), which has the {@link EntityType} from the spawn list but
+     *  no built mob instance yet. Exact type, so wild subclasses (and the wild horse) are ignored. */
+    public static boolean isDomesticType(EntityType<?> type) {
         return type == EntityTypes.COW
             || type == EntityTypes.PIG
             || type == EntityTypes.SHEEP
