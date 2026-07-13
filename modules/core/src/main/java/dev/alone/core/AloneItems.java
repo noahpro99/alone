@@ -83,6 +83,11 @@ public final class AloneItems {
     /** Spawn egg for the {@link Bison} — the big wild bovine of the plains and savanna. */
     public static final Item BISON_SPAWN_EGG = register("bison_spawn_egg",
         key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.BISON).setId(key)));
+
+    /** Spawn egg for the armed {@link AloneEntities#GUARD village guard} (§7.2). Reuses the vanilla
+     *  vindicator egg sprite via its item def (no new PNG) — the guard is a re-coated vindicator. */
+    public static final Item GUARD_SPAWN_EGG = register("guard_spawn_egg",
+        key -> new SpawnEggItem(new Item.Properties().spawnEgg(AloneEntities.GUARD).setId(key)));
     /** A placeable bedroll — a real bed block that reads as a flat mat (see {@link AloneBlocks#BEDROLL}). */
     public static final Item BEDROLL = register("bedroll",
         key -> new BedItem(AloneBlocks.BEDROLL, new Item.Properties().stacksTo(1).setId(key)));

@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -41,6 +42,14 @@ import net.minecraft.world.phys.Vec3;
  * you</b> it turns and <b>charges</b> home (its normal melee takes the wheel); if it <b>can't</b> reach you
  * at all — you're across a gap, behind a wall it can't route around — it <b>turns tail and flees</b> away
  * from you until the hits stop. A cornered construct that can't fight back doesn't stand there being farmed.
+ *
+ * <p><b>The two range-fight goals — {@link SeekCoverGoal} (advance under cover) and {@link ChargeOrFleeGoal}
+ * (charge if reachable, else flee) — are generic over any {@link PathfinderMob}</b> so the {@link VillageGuard
+ * village guards} reuse the exact same tactical brain (proposal §7.2 / village defence). Only the
+ * golem-specific super-strength goals ({@link SmashThroughGoal}/{@link ReachUpGoal}, which pulverise blocks)
+ * stay bound to the golem — a mortal guard doesn't punch through walls. The golems also hunt any player the
+ * village has been turned hostile against (see {@link VillageDefense}), so wronging a settlement sets its
+ * iron sentinels on you as well as its armed guards.
  */
 public final class Golems {
     private Golems() {
@@ -83,6 +92,10 @@ public final class Golems {
                 golem.getGoalSelector().addGoal(1, new SeekCoverGoal(golem)); // break for cover under ranged fire first
                 golem.getGoalSelector().addGoal(2, new SmashThroughGoal(golem));
                 golem.getGoalSelector().addGoal(2, new ReachUpGoal(golem));
+                // Wrong the village and its iron sentinels come for you too, alongside the armed guards. This
+                // TARGET-flag goal rides the golem's GOAL selector because the target selector has no public
+                // accessor in 26.2; the selectors track their flag sets independently, so it targets cleanly.
+                golem.getGoalSelector().addGoal(4, new VillageDefense.FlaggedPlayerTargetGoal(golem));
             }
         });
     }
@@ -239,44 +252,47 @@ public final class Golems {
 
     /**
      * Shot from range and it survived? A defender doesn't stand in the open taking arrows — it breaks for
-     * cover. This pulls the golem to the nearest standing spot that puts something solid between it and the
+     * cover. This pulls the mob to the nearest standing spot that puts something solid between it and the
      * archer, favouring cover that's <b>toward</b> the shooter so it <b>advances under cover</b> rather than
      * cowering. It only triggers on ranged fire from a distance (up close it still fights head-on), and in
      * open ground with no cover to reach it simply charges — so it stays the relentless closer, just not a
-     * stationary target. Highest priority, so a golem under fire ducks before it does anything else.
+     * stationary target. Highest priority, so a defender under fire ducks before it does anything else.
+     *
+     * <p>Generic over any {@link PathfinderMob} so both the iron golem and the {@link VillageGuard armed
+     * village guards} share it — the tactical "advance under fire" brain lives here, once.
      */
-    private static class SeekCoverGoal extends Goal {
-        private final IronGolem golem;
+    static class SeekCoverGoal extends Goal {
+        private final PathfinderMob mob;
         private Player shooter;
         private Vec3 cover;
         private int nextSearch;
 
-        SeekCoverGoal(IronGolem golem) {
-            this.golem = golem;
+        SeekCoverGoal(PathfinderMob mob) {
+            this.mob = mob;
             setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
         public boolean canUse() {
-            if (!(golem.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
+            if (!(mob.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
                 return false;
             }
-            if (golem.tickCount - golem.getLastHurtByMobTimestamp() > RECENT_HIT_TICKS) {
+            if (mob.tickCount - mob.getLastHurtByMobTimestamp() > RECENT_HIT_TICKS) {
                 return false; // not shot recently
             }
-            if (golem.distanceToSqr(p) < COVER_TRIGGER_SQ) {
+            if (mob.distanceToSqr(p) < COVER_TRIGGER_SQ) {
                 return false; // it's near — close in and fight, don't hide
             }
-            if (!golem.getSensing().hasLineOfSight(p)) {
+            if (!mob.getSensing().hasLineOfSight(p)) {
                 return false; // already out of its line — no need to move
             }
-            if (golem.tickCount < nextSearch) {
+            if (mob.tickCount < nextSearch) {
                 return false; // throttle the (costly) cover scan
             }
-            nextSearch = golem.tickCount + 10;
+            nextSearch = mob.tickCount + 10;
             // If it can just walk to you, CHARGE — don't detour to cover. Cover is only for when the direct
             // approach is blocked (a gap, or a wall it has to go around).
-            Path path = golem.getNavigation().createPath(p, 0);
+            Path path = mob.getNavigation().createPath(p, 0);
             if (path != null && path.canReach()) {
                 return false;
             }
@@ -292,13 +308,13 @@ public final class Golems {
         @Override
         public boolean canContinueToUse() {
             return this.shooter != null && this.shooter.isAlive()
-                && !this.golem.getNavigation().isDone()
-                && this.golem.getSensing().hasLineOfSight(this.shooter); // stop once it's safely behind cover
+                && !this.mob.getNavigation().isDone()
+                && this.mob.getSensing().hasLineOfSight(this.shooter); // stop once it's safely behind cover
         }
 
         @Override
         public void start() {
-            this.golem.getNavigation().moveTo(this.cover.x, this.cover.y, this.cover.z, 1.3);
+            this.mob.getNavigation().moveTo(this.cover.x, this.cover.y, this.cover.z, 1.3);
         }
 
         @Override
@@ -310,9 +326,9 @@ public final class Golems {
         /** Nearest reachable standing spot (favouring ones toward the shooter, to advance) whose line to the
          *  archer is blocked by a solid block. Null if nothing within range gives cover (open ground). */
         private BlockPos findCover(Player p) {
-            Level level = this.golem.level();
+            Level level = this.mob.level();
             Vec3 shooterEye = p.getEyePosition();
-            BlockPos origin = this.golem.blockPosition();
+            BlockPos origin = this.mob.blockPosition();
             BlockPos best = null;
             double bestToShooter = Double.MAX_VALUE;
             for (int dx = -COVER_SEARCH; dx <= COVER_SEARCH; dx++) {
@@ -323,7 +339,7 @@ public final class Golems {
                             continue;
                         }
                         if (!hiddenFrom(level, spot, shooterEye)) {
-                            continue; // not fully screened — a 2.7 m golem needs feet, body AND head covered
+                            continue; // not fully screened — the mob needs feet, body AND head covered
                         }
                         double toShooter = spot.distSqr(p.blockPosition());
                         if (toShooter < bestToShooter) {
@@ -343,14 +359,16 @@ public final class Golems {
                 && level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty();
         }
 
-        /** A golem is ~2.7 m tall, so a spot only counts as cover if something screens its feet, middle AND
-         *  head from the archer — a one-block wall doesn't hide it. Head checked first (bails cheapest). */
+        /** A spot only counts as cover if something screens the mob's feet, middle AND head from the archer —
+         *  a one-block wall doesn't hide a tall body. Sample heights scale with the mob's own height (a 2.7 m
+         *  golem needs taller cover than a 1.95 m guard). Head checked first (bails cheapest). */
         private boolean hiddenFrom(Level level, BlockPos spot, Vec3 shooterEye) {
-            double[] heights = {2.6, 0.3, 1.4};
-            for (double h : heights) {
-                Vec3 from = new Vec3(spot.getX() + 0.5, spot.getY() + h, spot.getZ() + 0.5);
+            double h = this.mob.getBbHeight();
+            double[] heights = {h * 0.95, 0.3, h * 0.5};
+            for (double sample : heights) {
+                Vec3 from = new Vec3(spot.getX() + 0.5, spot.getY() + sample, spot.getZ() + 0.5);
                 BlockHitResult hit = level.clip(new ClipContext(from, shooterEye,
-                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.golem));
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.mob));
                 if (hit.getType() != HitResult.Type.BLOCK) {
                     return false;
                 }
@@ -360,7 +378,7 @@ public final class Golems {
     }
 
     /**
-     * The provoked-escalation goal. A golem's first response to being hurt is to break for cover
+     * The provoked-escalation goal. A defender's first response to being hurt is to break for cover
      * ({@link SeekCoverGoal}); this goal is what happens when you <b>keep hitting it anyway</b>. It counts
      * recent blows from a player (via the vanilla hurt-by timestamp) and only fires once you're past the
      * first, so it never overrides the initial retreat — it's the second-stage reaction.
@@ -372,24 +390,25 @@ public final class Golems {
      *       already wins; we only exist to change what happens when it <i>can't</i> fight.</li>
      *   <li><b>No</b> — there's no route to you (a gap, a wall it can't route around, you're up on terrain
      *       it can't climb): it <b>flees</b> to a spot away from you and keeps running until the blows stop
-     *       for {@link #PROVOKE_RESET_TICKS}. A construct being poked from an unreachable perch doesn't
+     *       for {@link #PROVOKE_RESET_TICKS}. A defender being poked from an unreachable perch doesn't
      *       stand still and get farmed — it leaves.</li>
      * </ul>
      *
-     * <p>Holds only the {@link Flag#MOVE} flag and sits at the top priority, so a fleeing golem wins the
+     * <p>Holds only the {@link Flag#MOVE} flag and sits at the top priority, so a fleeing defender wins the
      * navigation over both cover-seeking and melee; the moment a path to the player opens up it yields so
-     * the charge can take over instead.
+     * the charge can take over instead. Generic over {@link PathfinderMob} — shared by the golem and the
+     * {@link VillageGuard village guards}.
      */
-    private static class ChargeOrFleeGoal extends Goal {
-        private final IronGolem golem;
+    static class ChargeOrFleeGoal extends Goal {
+        private final PathfinderMob mob;
         private int lastHurtStamp;   // the last hurt-by timestamp we've already counted
         private int hitCount;        // blows taken within the current provoke window
-        private int lastHitTick;     // golem.tickCount of the most recent counted blow
+        private int lastHitTick;     // mob.tickCount of the most recent counted blow
         private Player fleeFrom;
         private Vec3 fleeTarget;
 
-        ChargeOrFleeGoal(IronGolem golem) {
-            this.golem = golem;
+        ChargeOrFleeGoal(PathfinderMob mob) {
+            this.mob = mob;
             setFlags(EnumSet.of(Flag.MOVE));
         }
 
@@ -400,16 +419,16 @@ public final class Golems {
          * keys off the vanilla hurt-by <i>timestamp</i> changing, so it's independent of poll timing.
          */
         private void trackHits() {
-            int stamp = golem.getLastHurtByMobTimestamp();
-            if (stamp != lastHurtStamp && golem.getLastHurtByMob() instanceof Player) {
-                if (golem.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
+            int stamp = mob.getLastHurtByMobTimestamp();
+            if (stamp != lastHurtStamp && mob.getLastHurtByMob() instanceof Player) {
+                if (mob.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
                     hitCount = 0; // the previous flurry had already lapsed — start a fresh window
                 }
                 hitCount++;
-                lastHitTick = golem.tickCount;
+                lastHitTick = mob.tickCount;
             }
             lastHurtStamp = stamp;
-            if (hitCount > 0 && golem.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
+            if (hitCount > 0 && mob.tickCount - lastHitTick > PROVOKE_RESET_TICKS) {
                 hitCount = 0; // the hits stopped for a few seconds — stand down
             }
         }
@@ -420,16 +439,16 @@ public final class Golems {
             if (hitCount < PROVOKE_THRESHOLD) {
                 return false; // still on the first blow (or calm) — leave the retreat to SeekCoverGoal
             }
-            if (!(golem.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
+            if (!(mob.getLastHurtByMob() instanceof Player p) || !p.isAlive() || p.isCreative()) {
                 return false;
             }
             // Can it get at the attacker? Then don't take the wheel — its melee charges in the vanilla way.
-            Path path = golem.getNavigation().createPath(p, 0);
+            Path path = mob.getNavigation().createPath(p, 0);
             if (path != null && path.canReach()) {
                 return false;
             }
             // No route to you and you're still hurting it: turn tail and run.
-            Vec3 away = DefaultRandomPos.getPosAway(golem, FLEE_RADIUS, FLEE_Y, p.position());
+            Vec3 away = DefaultRandomPos.getPosAway(mob, FLEE_RADIUS, FLEE_Y, p.position());
             if (away == null) {
                 return false; // boxed in with nowhere to flee — nothing useful to do here
             }
@@ -447,11 +466,11 @@ public final class Golems {
                 return false;
             }
             // If a path to the player opens up mid-flight, bail so its melee can turn and charge instead.
-            Path path = golem.getNavigation().createPath(this.fleeFrom, 0);
+            Path path = mob.getNavigation().createPath(this.fleeFrom, 0);
             if (path != null && path.canReach()) {
                 return false;
             }
-            return !golem.getNavigation().isDone() || fleeTarget != null;
+            return !mob.getNavigation().isDone() || fleeTarget != null;
         }
 
         @Override
@@ -461,7 +480,7 @@ public final class Golems {
 
         @Override
         public void start() {
-            golem.getNavigation().moveTo(fleeTarget.x, fleeTarget.y, fleeTarget.z, FLEE_SPEED);
+            mob.getNavigation().moveTo(fleeTarget.x, fleeTarget.y, fleeTarget.z, FLEE_SPEED);
         }
 
         @Override
@@ -470,19 +489,19 @@ public final class Golems {
             if (fleeFrom == null) {
                 return;
             }
-            if (golem.getNavigation().isDone()) {
+            if (mob.getNavigation().isDone()) {
                 // Reached the last spot but still being pursued/hit — pick a fresh spot further from the player.
-                Vec3 away = DefaultRandomPos.getPosAway(golem, FLEE_RADIUS, FLEE_Y, fleeFrom.position());
+                Vec3 away = DefaultRandomPos.getPosAway(mob, FLEE_RADIUS, FLEE_Y, fleeFrom.position());
                 if (away != null) {
                     fleeTarget = away;
-                    golem.getNavigation().moveTo(away.x, away.y, away.z, FLEE_SPEED);
+                    mob.getNavigation().moveTo(away.x, away.y, away.z, FLEE_SPEED);
                 }
             }
         }
 
         @Override
         public void stop() {
-            golem.getNavigation().stop();
+            mob.getNavigation().stop();
             fleeFrom = null;
             fleeTarget = null;
         }

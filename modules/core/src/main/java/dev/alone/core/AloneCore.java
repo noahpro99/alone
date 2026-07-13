@@ -133,6 +133,7 @@ public class AloneCore implements ModInitializer {
         FishStock.init();       // §4.1 — finite fish stocks: fish out a spot and the catches dry up until it recovers
         GameStock.init();       // §7.2 — local game populations: overhunt a patch and it stops spawning until it recovers
         Golems.init();          // §7.2 — iron golems smash through weak cover, so you can't cheese them through a wall/hole
+        VillageDefense.init();  // §7.2 — wrong a village (loot/hit/rustle/vandalise) and it musters armed guards to hunt you
         Weather.init();         // §10 — telegraphed weather: the sky warns of a coming storm before it hits
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
         IceHouse.init();        // §4.2 — cut lake ice with a pick/axe; pack it around a store for cold (ice house)
