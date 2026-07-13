@@ -75,6 +75,20 @@ public final class AloneEntities {
         .sized(1.4f, 1.9f) // a ton of wild bovine — much bigger than the cow's 0.9×1.4 (model scaled to match)
         .build(BISON_KEY);
 
+    public static final ResourceKey<EntityType<?>> THROWN_ROCK_KEY =
+        ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("alone", "thrown_rock"));
+
+    /** A hand-thrown {@link AloneItems#ROCK loose rock} (§8.1) — the ranged tier below the slingshot; see
+     *  {@link ThrownRock}. A small, short-lived projectile: MISC (no AI/attributes), sized like the pebble
+     *  it is. Tracked often (updateInterval 10) with velocity so its arc renders smoothly. */
+    public static final EntityType<ThrownRock> THROWN_ROCK = EntityType.Builder
+        .<ThrownRock>of(ThrownRock::new, MobCategory.MISC)
+        .noLootTable()
+        .sized(0.25f, 0.25f)
+        .clientTrackingRange(4)
+        .updateInterval(10)
+        .build(THROWN_ROCK_KEY);
+
     /** Touching this class registers the entity types above. Called from {@link AloneCore}. */
     public static void init() {
         Registry.register(BuiltInRegistries.ENTITY_TYPE, TRAVOIS_KEY, TRAVOIS);
@@ -146,5 +160,10 @@ public final class AloneEntities {
         BiomeModifications.addSpawn(
             BiomeSelectors.tag(ConventionalBiomeTags.IS_PLAINS).or(BiomeSelectors.tag(BiomeTags.IS_SAVANNA)),
             MobCategory.CREATURE, BISON, 10, 2, 4);
+
+        // A hand-thrown rock (§8.1) — a plain projectile, no attributes or spawns. It rides the standard
+        // ThrowableItemProjectile spawn (the unified add-entity packet) and syncs its rock item via entity
+        // data, so no custom spawn packet is needed; it just needs its type registered and a renderer.
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, THROWN_ROCK_KEY, THROWN_ROCK);
     }
 }

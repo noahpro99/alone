@@ -100,6 +100,12 @@ public class AloneCoreClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
             dev.alone.core.AloneEntities.BISON, BisonRenderer::new);
 
+        // A thrown rock (§8.1) renders as the loose-rock item itself — vanilla's ThrownItemRenderer draws
+        // the entity's carried item (its rock), so it reuses the rock's existing model/texture, no new art.
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+            dev.alone.core.AloneEntities.THROWN_ROCK,
+            net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+
 
 
         // Show whatever's curing on a drying rack (§4.2/§7.3) — a piece of food drying, or a hide/leather

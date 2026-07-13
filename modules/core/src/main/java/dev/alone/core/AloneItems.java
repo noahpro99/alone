@@ -219,10 +219,12 @@ public final class AloneItems {
     public static final Item SALT = register("salt",
         key -> new Item(new Item.Properties().setId(key)));
 
-    /** A loose rock (§8.1) — foraged off the ground / from gravel; your day-one stone, and the
-     *  hammerstone you knap flint with. */
+    /** A loose rock (§8.1) — foraged off the ground / from gravel; your day-one stone. It's the
+     *  hammerstone you knap flint with, the stone you heat for hot-rock boiling, and — on a plain
+     *  right-click — the crudest ranged weapon: throw it at small game ({@link RockItem}/{@link
+     *  ThrownRock}), the tier below the {@link SlingshotItem slingshot}. Stays a normal stackable stone. */
     public static final Item ROCK = register("rock",
-        key -> new Item(new Item.Properties().setId(key)));
+        key -> new RockItem(new Item.Properties().setId(key)));
     /** A knapped flint flake (§8.1) — struck from flint with a rock; the sharp edge for flint tools. */
     public static final Item FLINT_SHARD = register("flint_shard",
         key -> new Item(new Item.Properties().setId(key)));
