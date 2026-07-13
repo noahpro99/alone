@@ -15,7 +15,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Finite, slow-recovering fish stocks (proposal §4.1 / roadmap: fishing as a food source). A body of water
@@ -33,6 +32,12 @@ public final class FishStock {
     public static final int FULL = 100;
     private static final int CATCH_COST = 8;              // each fish taken — ~12 from a fresh spot before it thins
     private static final int RECOVERY_TICKS_PER_POINT = 600; // ~2.5 in-game days for a fished-out spot to fully return
+
+    // Bait is what actually catches fish. A bare hook — no worm — draws almost nothing: real fish rarely
+    // strike naked steel, so an unbaited rod is a poor larder, not a food supply. When vanilla would have
+    // paid out a fish on a bare hook we keep it only on this low, richness-scaled roll (so open water still
+    // feeds you now and then, a thinned spot or a puddle practically never), and only if the spot has stock.
+    private static final float BARE_HOOK_KEEP_CHANCE = 0.2f; // open water ~1-in-5, a MIN_RICHNESS puddle ~1-in-20
 
     // How much water actually surrounds the spot decides how rich it is. A tiny puddle holds few fish and
     // has no connected body to restock it; open water is deep and fed by the whole lake or sea. We survey a
@@ -56,17 +61,30 @@ public final class FishStock {
             if (drops.stream().noneMatch(FishStock::isFish)) {
                 return; // a junk or treasure catch — no fish to gate
             }
-            Vec3 origin = context.getParameter(LootContextParams.ORIGIN);
-            boolean caught = tryCatch(context.getLevel(), BlockPos.containing(origin));
-            boolean baited = consumeBait(context); // an angler carrying worms spends one to tempt fish up
-            if (!caught && !baited) {
-                drops.removeIf(FishStock::isFish); // fished out and unbaited — the fish just aren't biting
-                return;
-            }
-            if (baited) {
-                // Bait tempts an extra fish onto the hook — even from a spot worked thin — for a bigger haul.
+            // Note on FREQUENCY: vanilla's bite rate is wildly unrealistic — a rod hooks something every
+            // ~10-30s, baited or not, and reliably yields a fish. In reality catching supper on a line is
+            // slow, uncertain work, and bait is the difference between eating and not. We can't cleanly slow
+            // the bite rate from here — that lives in FishingHook's wait-time internals and would take a
+            // mixin — so we instead throttle the YIELD: a bare hook usually surrenders no fish (below), which
+            // lands unbaited rod-fishing at the same "not a reliable larder" place a realistic bite rate would.
+            ServerLevel level = context.getLevel();
+            BlockPos pos = BlockPos.containing(context.getParameter(LootContextParams.ORIGIN));
+            if (consumeBait(context)) {
+                // WITH WORMS — bait is the whole game. Spend the worm; it draws fish up even from a spot
+                // worked thin, so the catch always lands. Draw the spot down if it still has stock, then
+                // tempt a bonus fish onto the hook for a real haul (a good bait can outfish the stock).
+                tryCatch(level, pos);
                 drops.stream().filter(FishStock::isFish).findFirst()
                     .ifPresent(fish -> drops.add(fish.copyWithCount(1)));
+                return;
+            }
+            // WITHOUT WORMS — a bare hook. Most casts that vanilla would reward with a fish give only junk:
+            // we keep the fish only on a low, richness-weighted roll AND only if the spot still holds stock
+            // (a thinned or finite spot won't give one up to a naked hook). Short-circuit so a failed roll
+            // never draws the spot down — a fish that never bit shouldn't thin the water.
+            float richness = richness(level, pos);
+            if (context.getRandom().nextFloat() >= BARE_HOOK_KEEP_CHANCE * richness || !tryCatch(level, pos)) {
+                drops.removeIf(FishStock::isFish); // no bait, no luck — the fish just aren't biting
             }
         });
     }
