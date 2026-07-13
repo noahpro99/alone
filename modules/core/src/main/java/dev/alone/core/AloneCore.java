@@ -121,6 +121,7 @@ public class AloneCore implements ModInitializer {
         Tracking.init();        // §7.3 — persistence hunting: sustained chase tires wild game so you run it down
         BloodTrail.init();       // §7.3 — a wounded animal bleeds a fading trail you can track
         Hunting.init();         // §7.3 — a blade kill salvages the hide (leather) from a hide-bearing animal
+        AnimalProducts.init();  // §7.2 — milk on a schedule (cow cooldown); milk/egg nutrition realism
         Fibers.init();          // §8.1 — strip plant fiber from grass/ferns; twist into string (no spiders)
         PlacedBlocks.init();    // §5.1 — remember player-placed blocks so they break loose, not rooted
         Tamping.init();         // §5.3 — ram soil into rammed earth: it won't cave and shores like a post

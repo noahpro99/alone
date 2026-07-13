@@ -88,6 +88,7 @@ public class AloneJeiPlugin implements IModPlugin {
         info(registration, AloneItems.RAW_HIDE, "raw_hide");
         info(registration, AloneItems.ANIMAL_BRAINS, "animal_brains");
         info(registration, AloneItems.BONE_SCRAPER, "bone_scraper");
+        info(registration, AloneItems.COOKED_EGG, "cooked_egg");
 
         // Shelter & sleep
         info(registration, AloneItems.THATCH, "thatch");

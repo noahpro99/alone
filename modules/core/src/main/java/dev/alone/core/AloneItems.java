@@ -453,6 +453,14 @@ public final class AloneItems {
     public static final Item TALLOW = register("tallow",
         key -> new Item(new Item.Properties().setId(key)));
 
+    /** A cooked egg (§7.2) — a raw {@code minecraft:egg} is a throwable, not a meal; fry it on a fire (or
+     *  in a furnace) and it becomes real food. A small, quick protein: modest hunger, a little saturation —
+     *  a hen's daily gift turned into breakfast. Placeholder art (renders missing-texture). */
+    public static final Item COOKED_EGG = register("cooked_egg",
+        key -> new Item(new Item.Properties().food(
+            new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.4F).build())
+            .setId(key)));
+
     /** Touching this class registers the items above; {@link #init()} then adds the creative tab. */
     public static void init() {
         registerCreativeTab();
