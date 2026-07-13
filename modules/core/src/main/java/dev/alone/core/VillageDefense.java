@@ -51,9 +51,10 @@ import net.minecraft.world.phys.Vec3;
  * <ul>
  *   <li><b>Looting</b> — opening a village-owned container (a chest/barrel/any container within village
  *       bounds). Taking a settlement's stores is theft; even cracking the lid counts.</li>
- *   <li><b>Assault</b> — hitting a villager, a village animal (a farm animal near the village), or one of the
- *       settlement's own <b>iron golems</b>. Killing is just the hardest case of hitting, so the attack hook
- *       covers it — and striking the village's guardian construct is picking a fight with the village.</li>
+ *   <li><b>Assault</b> — hitting a villager, a village animal (a farm animal near the village), one of the
+ *       settlement's <b>guards</b>, or one of its <b>iron golems</b>. Killing is just the hardest case of
+ *       hitting, so the attack hook covers it — and striking any of the village's defenders picks a fight with
+ *       the whole village, not just the one you hit.</li>
  *   <li><b>Rustling</b> — leading a village animal away on a lead.</li>
  *   <li><b>Vandalism</b> — breaking their hay bales or crops, or a villager's <b>workstation</b> (its job-site
  *       block — the composter, lectern, loom, smithing table…) or a bookshelf, within village bounds. A job
@@ -186,12 +187,14 @@ public final class VillageDefense {
         return !level.getEntitiesOfClass(VillageGuard.class, new AABB(pos).inflate(range)).isEmpty();
     }
 
-    /** A villager, the settlement's own iron golem, or a FARMED (domestic) animal — the living property a
-     *  settlement defends. Wild game (a boar, a deer that wandered near) is fair to hunt and never counts, even
-     *  right by the village. The golem counts because striking the village's guardian is an attack on the
-     *  village itself — hit it and, like the guards, the whole settlement turns on you. */
+    /** A villager, one of the village's own guards, its iron golem, or a FARMED (domestic) animal — the living
+     *  property a settlement defends. Wild game (a boar, a deer that wandered near) is fair to hunt and never
+     *  counts, even right by the village. A guard or golem counts because striking a village's defenders is an
+     *  attack on the village itself: hit one and the WHOLE settlement turns on you — every guard and golem, not
+     *  just the one you struck (which alone would only retaliate via its own hurt-by goal). */
     private static boolean isVillageProperty(Entity entity) {
         return entity instanceof AbstractVillager
+            || entity instanceof VillageGuard
             || entity instanceof IronGolem
             || (entity instanceof Mob mob && Domestic.isDomestic(mob));
     }
