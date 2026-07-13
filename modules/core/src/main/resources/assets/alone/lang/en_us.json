@@ -105,5 +105,14 @@
   "item.alone.wicker_shield": "Wicker Shield",
   "item.alone.wooden_shield": "Wooden Shield",
   "item.alone.slingshot": "Slingshot",
-  "item.alone.worms": "Worms"
+  "item.alone.worms": "Worms",
+
+  "jei.alone.waterskin.desc": "The day-one water vessel. Fill it at clean water, then drink on the move. It holds only a few draughts — far less than a pot — so it's what carries you until you can bake clay or cast iron.",
+  "jei.alone.flint_knife.desc": "The first cutting edge: a flint blade knapped and lashed to a handle. It skins and butchers game, cuts cordage and fibre, and fights in a pinch — the tool the whole stone-age kit is built around.",
+  "jei.alone.tallow.desc": "Rendered, clarified animal fat — a stable, storable block of hard fat. Cast around a cordage wick it becomes a candle, a dim honest light that puts the whole animal to use.",
+  "jei.alone.pyrite.desc": "A lump of iron pyrite, \"fool's gold,\" dug from gravel. Struck against a flint shard it throws a hot spark; craft the two together into a flint-and-pyrite striker.",
+  "jei.alone.flint_and_pyrite.desc": "The primitive strike-a-light — the rung between the bow drill's slow, sweaty gamble and the steel ferro rod. Struck, not drilled, so it catches quick for almost no effort, but it's no better in the wet: the spark still needs dry tinder. The soft pyrite crumbles with use.",
+  "jei.alone.slingshot.desc": "The low-power ranged weapon below the bow. Draw and loose a foraged loose rock at small game — squirrels, birds — when you have no arrows to spare.",
+  "jei.alone.bug_net.desc": "A fine mesh hood worn on the head against biting insects, best paired with a smudge fire. While it's on, the swarm can't reach you — no swatting toll, no wetland fever — but it takes your helmet slot, a real seasonal trade in buggy country.",
+  "jei.alone.wicker_shield.desc": "Branches and withies lashed with cordage — the day-one guard you can make before any metal. It blocks like any shield, but it's flimsy: the lowest durability and the easiest for a big creature to bash aside."
 }

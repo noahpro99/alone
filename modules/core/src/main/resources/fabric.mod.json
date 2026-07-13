@@ -10,7 +10,8 @@
   "environment": "*",
   "entrypoints": {
     "main": ["dev.alone.core.AloneCore"],
-    "client": ["dev.alone.core.client.AloneCoreClient"]
+    "client": ["dev.alone.core.client.AloneCoreClient"],
+    "jei_mod_plugin": ["dev.alone.core.client.jei.AloneJeiPlugin"]
   },
   "mixins": [
     "alone-core.mixins.json",

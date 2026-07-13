@@ -4,3 +4,18 @@
 base {
     archivesName = 'alone-core'
 }
+
+repositories {
+    // JEI (Just Enough Items) is published on the BlameJared maven.
+    maven {
+        name = 'BlameJared (JEI)'
+        url = 'https://maven.blamejared.com'
+    }
+}
+
+dependencies {
+    // JEI API for our @JeiPlugin (item "Information" tabs). Compile-only: 26.2 is
+    // unobfuscated so the API needs no remapping, and JEI itself ships at runtime in
+    // the mrpack — we must NOT bundle it. Version tracks the pinned jar (see gradle.properties).
+    compileOnly "mezz.jei:jei-26.2-fabric-api:${project.jei_version}"
+}
