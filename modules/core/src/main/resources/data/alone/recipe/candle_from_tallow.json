@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["alone:tallow", "minecraft:string"],
+  "result": {"id": "minecraft:candle", "count": 1}
+}

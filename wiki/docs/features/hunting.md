@@ -105,9 +105,12 @@ Every part has a use:
       so you can **fish before you ever smelt iron** — genuine early tech.
 - **Sinew** (string) → **animal cordage**, an alternative to twisting plant fibre — for rope, bandages,
   bows, and more.
-
-(Marrow already puts the animal's **fat** to use as food; rendering fat to **tallow** for candles is the last
-piece of full-animal use, still to come.)
+- **Raw fat** → **tallow → a candle.** A big carcass carries **fat** you strip off when you butcher (1–2 off
+  big game like a bison, boar, or bear; a scrap off a mid-size grazer; nothing off lean small game). It's no
+  use raw — **render it down over a fire** (a campfire while you're still hunting rough, or a furnace once you
+  have one) and it clarifies into **tallow**, a stable block of hard fat. Cast that around a **cordage wick**
+  (tallow + string) and you have a **candle** — a dim, honest light. That's the last of the nose-to-tail use:
+  meat, hide, bone, sinew, marrow, brains, and now the fat all find a purpose.
 
 ## From raw hide to leather — tanning
 

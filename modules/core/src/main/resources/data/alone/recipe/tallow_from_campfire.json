@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": "alone:raw_fat",
+  "result": { "id": "alone:tallow" },
+  "experience": 0.1,
+  "cookingtime": 600
+}

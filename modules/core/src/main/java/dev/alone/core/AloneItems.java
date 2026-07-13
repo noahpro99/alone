@@ -360,6 +360,20 @@ public final class AloneItems {
     public static final Item BONE_HOOK = register("bone_hook",
         key -> new Item(new Item.Properties().setId(key)));
 
+    // ── Fat &amp; tallow (§7.3) — the last of the nose-to-tail use. A big carcass carries fat you strip off
+    // when you butcher; render it down over a fire and it clarifies into tallow, the raw material for a
+    // candle (and, later, soap). Placeholder art on both.
+    /** Raw animal fat (§7.3) — the suet stripped off a butchered carcass; more the bigger the animal. It's
+     *  not much use raw: <b>render it over a fire</b> (a campfire or furnace) to melt and clarify it into
+     *  {@link #TALLOW}. */
+    public static final Item RAW_FAT = register("raw_fat",
+        key -> new Item(new Item.Properties().setId(key)));
+    /** Tallow (§7.3) — rendered, clarified animal fat: a stable, storable block of hard fat. Cast around a
+     *  cordage wick it becomes a <b>candle</b> (see the {@code candle_from_tallow} recipe) — a dim, honest
+     *  light that completes using the whole animal. */
+    public static final Item TALLOW = register("tallow",
+        key -> new Item(new Item.Properties().setId(key)));
+
     /** Touching this class registers the items above; {@link #init()} then adds the creative tab. */
     public static void init() {
         registerCreativeTab();
