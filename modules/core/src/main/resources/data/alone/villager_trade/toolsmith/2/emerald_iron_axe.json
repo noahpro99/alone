@@ -1,0 +1,7 @@
+{
+  "wants": { "id": "minecraft:emerald", "count": 7 },
+  "gives": { "id": "minecraft:iron_axe" },
+  "max_uses": 8,
+  "reputation_discount": 0.05,
+  "xp": 5
+}

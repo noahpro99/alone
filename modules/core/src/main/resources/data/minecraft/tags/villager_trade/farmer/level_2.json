@@ -1,0 +1,8 @@
+{
+  "replace": true,
+  "values": [
+    "alone:farmer/2/carrot_emerald",
+    "alone:farmer/2/potato_emerald",
+    "alone:farmer/2/buy_goat"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "wants": { "id": "minecraft:emerald", "count": 32 },
+  "gives": { "id": "alone:penned_donkey" },
+  "max_uses": 2,
+  "reputation_discount": 0.10,
+  "xp": 15
+}

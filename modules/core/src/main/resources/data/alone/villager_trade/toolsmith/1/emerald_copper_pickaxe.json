@@ -1,0 +1,7 @@
+{
+  "wants": { "id": "minecraft:emerald", "count": 3 },
+  "gives": { "id": "minecraft:copper_pickaxe" },
+  "max_uses": 12,
+  "reputation_discount": 0.05,
+  "xp": 1
+}

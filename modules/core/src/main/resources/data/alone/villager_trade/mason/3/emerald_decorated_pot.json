@@ -1,0 +1,6 @@
+{
+  "wants": { "id": "minecraft:emerald", "count": 3 },
+  "gives": { "id": "minecraft:decorated_pot" },
+  "max_uses": 8,
+  "reputation_discount": 0.05
+}

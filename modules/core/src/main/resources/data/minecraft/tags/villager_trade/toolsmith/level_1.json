@@ -1,0 +1,8 @@
+{
+  "replace": true,
+  "values": [
+    "alone:toolsmith/1/emerald_copper_axe",
+    "alone:toolsmith/1/emerald_copper_pickaxe",
+    "alone:toolsmith/1/emerald_copper_hoe"
+  ]
+}

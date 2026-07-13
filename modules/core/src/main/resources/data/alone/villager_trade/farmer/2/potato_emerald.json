@@ -1,0 +1,7 @@
+{
+  "wants": { "id": "minecraft:potato", "count": 6 },
+  "gives": { "id": "minecraft:emerald" },
+  "max_uses": 32,
+  "reputation_discount": 0.05,
+  "xp": 2
+}
