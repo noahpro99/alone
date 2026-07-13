@@ -178,10 +178,13 @@ public final class Golems {
             }
         }
 
-        /** The nearest solid block directly between the golem and its target at body height — the wall to breach.
-         *  Marches horizontally toward the target at foot and head level so it finds the wall even when an
-         *  eye-level peephole is already open. Returns that column's base (golem foot Y), or null if the way is
-         *  clear in front (nothing to dig — the block is elsewhere and navigation will bring it round). */
+        /** The nearest wall between the golem and its target — the column to breach. Marches horizontally toward
+         *  the target and, at each step, scans the WHOLE cross-section the golem must fit through: 3 blocks wide
+         *  (its ~1.4-block body plus straddle) and 3 blocks tall (feet, body AND head). If ANY block in that
+         *  volume is solid the way is still barred, so it stays flagged as a wall until the full doorway is open
+         *  — checking only foot/body height was why it left a 2-tall hole and stalled with its head walled in.
+         *  Returns the centre column's base (golem foot Y) for {@link #breachColumn} to open, or null if the
+         *  whole cross-section ahead is already clear (navigation will bring it round). */
         private BlockPos wallToward(Level level, LivingEntity target) {
             double dx = target.getX() - golem.getX();
             double dz = target.getZ() - golem.getZ();
@@ -191,14 +194,19 @@ public final class Golems {
             }
             double ux = dx / len;
             double uz = dz / len;
+            boolean alongX = Math.abs(dx) >= Math.abs(dz);
             int fy = golem.blockPosition().getY();
             for (double step = 0.5; step <= 3.5; step += 0.5) { // out to just past smash reach, to the wall it faces
-                int bx = (int) Math.floor(golem.getX() + ux * step);
-                int bz = (int) Math.floor(golem.getZ() + uz * step);
-                for (int y = fy; y <= fy + 1; y++) { // foot and body height — a wall blocks one of these
-                    BlockPos p = new BlockPos(bx, y, bz);
-                    if (!level.getBlockState(p).getCollisionShape(level, p).isEmpty()) {
-                        return new BlockPos(bx, fy, bz); // breach this column from the feet up
+                int cx = (int) Math.floor(golem.getX() + ux * step);
+                int cz = (int) Math.floor(golem.getZ() + uz * step);
+                for (int side = -1; side <= 1; side++) {       // its full width across the wall face
+                    int bx = cx + (alongX ? 0 : side);
+                    int bz = cz + (alongX ? side : 0);
+                    for (int y = fy; y <= fy + 2; y++) {       // feet, body AND head — all must be clear to pass
+                        BlockPos p = new BlockPos(bx, y, bz);
+                        if (!level.getBlockState(p).getCollisionShape(level, p).isEmpty()) {
+                            return new BlockPos(cx, fy, cz); // breach centred here (breachColumn widens + full-height)
+                        }
                     }
                 }
             }
