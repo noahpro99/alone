@@ -90,6 +90,19 @@ What you eat also nudges warmth and thirst:
 
 Hunger gates recovery: **below 6 hunger, stamina recovers poorly.** Running hungry risks both starvation and being unable to catch your breath.
 
+## Wasting — the long game
+
+The hunger bar is your **day-to-day** energy. Behind it sits a slower, long-horizon meter: your **body condition** — think of it as your reserves of fat and muscle. It moves over **in-game days**, according to whether you're eating enough across the whole run, and it is the thing that decides a long stint the way it decides the show *Alone*: not a single bad event, but the **cumulative math** of calories in versus out.
+
+- **Eat well and you rebuild.** A **genuinely full stomach** (kept near the top of the bar) means you're in surplus, and condition slowly climbs back.
+- **Just getting by still costs you.** If you eat only enough to stay off the hunger penalties — not hungry, but never full — you are almost never in true surplus, so you **slowly waste anyway.** This is the quiet, always-losing math of living rough: you *feel* fine and are still going backwards.
+- **Hungry drains it; starving plummets it.** Real deficit eats into your reserves; an empty stomach burns through them fast.
+- **Losing is faster than regaining.** Falling into a hole takes days; climbing back out takes longer — a one-way ratchet you have to stay ahead of.
+
+**You can watch it happen on your heart bar.** Condition drives your **maximum health**: as you waste, your **hearts shrink** — a gaunt, frail body — and eating well over days **brings them back**. There's no separate gauge; the hearts *are* your weight readout.
+
+Let it bottom out and you're in the state that ends real *Alone* runs: only a **few hearts**, too **weak** to do hard work (weakness, slowness, mining fatigue), and **unable to mend** — a wasted body has nothing spare to heal with. Recovering from that is slow and deliberate. The lesson is the show's lesson: **a little food each day isn't enough — you have to win the calorie war, not just skip today's hunger.**
+
 ## Fishing
 
 Fishing works as it does in vanilla — but **a spot can be fished out.** Every water area holds a **finite stock of fish**, and pulling fish out of the same place fast enough **empties it**: the catches dry up (you'll reel in junk or nothing) until the stock **recovers over the following days**, or you move to fresh water.
