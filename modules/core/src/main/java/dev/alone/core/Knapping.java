@@ -25,8 +25,9 @@ import net.minecraft.world.level.Level;
  * strikes on the same core flake off a sharp {@link AloneItems#FLINT_SHARD}. If you're holding only one
  * of the two, it tells you what's missing.
  */
-// Hold flint in one hand and a rock in the other, then hold right-click to strike it, again and again —
-// no crouch needed. Enough strikes flake off a sharp flint shard (or the flint shatters).
+// Hold flint in one hand and a rock in the other, then SNEAK and hold right-click to strike it, again and
+// again — the crouch marks it as deliberate work (and keeps a held rock from being thrown). Enough strikes
+// flake off a sharp flint shard (or the flint shatters).
 public final class Knapping {
     private Knapping() {
     }
@@ -57,7 +58,9 @@ public final class Knapping {
             ItemStack off = player.getOffhandItem();
             boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
             boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
-            if ((haveFlint ^ haveRock) && player instanceof ServerPlayer serverPlayer) {
+            // Only hint when they're actually trying to knap (crouched), so it doesn't fire on a normal
+            // right-click while just carrying one of the two.
+            if ((haveFlint ^ haveRock) && player.isShiftKeyDown() && player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.sendSystemMessage(Component.literal(haveFlint
                     ? "You need a rock in your other hand to knap the flint."
                     : "You need flint in your other hand to knap against the rock."), true);
@@ -72,7 +75,9 @@ public final class Knapping {
         ItemStack off = player.getOffhandItem();
         boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
         boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
-        if (!haveFlint || !haveRock) {
+        // Must be crouched to knap (server-authoritative — don't trust the client's gate). Stand up and the
+        // work stops; the progress on the current core is dropped.
+        if (!haveFlint || !haveRock || !player.isShiftKeyDown()) {
             ACTIVE.remove(player.getUUID());
             return;
         }

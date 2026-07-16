@@ -88,11 +88,12 @@ public class MinecraftUseItemMixin {
             return;
         }
 
-        // Hold right-click with flint + a rock (either hand) → strike to knap a sharp flake (no crouch).
+        // Sneak + hold right-click with flint + a rock (either hand) → strike to knap a sharp flake. The crouch
+        // is what distinguishes deliberate knapping from just holding the two items (and from throwing the rock).
         ItemStack off = mc.player.getOffhandItem();
         boolean haveFlint = main.is(Items.FLINT) || off.is(Items.FLINT);
         boolean haveRock = main.is(AloneItems.ROCK) || off.is(AloneItems.ROCK);
-        if (haveFlint && haveRock) {
+        if (mc.player.isShiftKeyDown() && haveFlint && haveRock) {
             if (mc.player.tickCount - alone$lastSendTick >= 5) {
                 ClientPlayNetworking.send(KnapStrikePayload.INSTANCE);
                 mc.player.swing(InteractionHand.MAIN_HAND);
