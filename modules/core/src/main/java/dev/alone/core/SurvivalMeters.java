@@ -87,6 +87,16 @@ public final class SurvivalMeters {
     // pressure to get warm without being a hidden starvation clock (hypothermia gets you first at that point).
     private static final float COLD_EXHAUSTION = 0.008f; // extra food burned per tick keeping warm (scaled by cold)
 
+    // Basal metabolism (§1.1): a body burns energy every waking moment, not only when it works — so hunger is
+    // a steady clock, like thirst's, not something only hard labour triggers. Tuned so a full 20-point food bar
+    // drains over ~2 in-game days at REST, and a hearty meal's saturation buffer stretches a well-fed stomach to
+    // ~3; exertion and cold add their burn on top. This is what makes you "waste away over days" like a real
+    // survival stint — the show Alone is a weeks-long grind of wasting, never an afternoon death — instead of
+    // either starving in a day or (with only activity-driven drain) never getting hungry standing still.
+    private static final float BASAL_EXHAUSTION = 0.0015f; // steady calorie burn per tick — the hunger clock's backbone
+    private static final int HUNGER_FAINT = 2;   // at/below this the body is failing — weak-armed, can't do hard work
+    private static final int HUNGER_LOW = 6;      // below this you're properly hungry — sluggish (matches vanilla's "can't sprint")
+
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
     // Slow vitality recovery (§1.5) — heals only when fed, hydrated, and free of active wounds/illness.
     private static final int HEAL_FOOD_MIN = 14;    // need a reasonably full stomach to mend
@@ -687,6 +697,11 @@ public final class SurvivalMeters {
         applyTemperatureEffects(player, bodyTemp);
         player.setAttached(BODY_TEMP, bodyTemp);
 
+        // Basal metabolism (§1.1): the steady, always-on calorie burn that is the backbone of the hunger clock —
+        // you get hungry over days just by living, then exertion and cold add to it.
+        player.causeFoodExhaustion(BASAL_EXHAUSTION);
+        applyHungerPenalties(player, player.getFoodData().getFoodLevel());
+
         // Staying warm costs calories (§1.3): a cold body shivers and burns food to hold its heat —
         // the colder you are, the more you eat just to keep from freezing.
         if (bodyTemp < 0f) {
@@ -746,6 +761,28 @@ public final class SurvivalMeters {
             effect(player, MobEffects.MINING_FATIGUE, 0);
         } else if (thirst < THIRST_LOW) {
             effect(player, MobEffects.SLOWNESS, 0); // thirsty = sluggish, but you can still fight
+        }
+    }
+
+    /** Graduated hunger penalties (§1.1): as the stomach empties you weaken by degrees — first sluggish, then
+     *  weak-armed and unfit for hard work — long before the body starts consuming itself at empty. So an
+     *  emptying belly is FELT for days as failing strength, not a bar that does nothing until it suddenly kills
+     *  (the "waste away" of a real survival stint). At empty, vanilla's own starvation damage takes over. */
+    private static void applyHungerPenalties(ServerPlayer player, int food) {
+        if (food <= 0) {
+            // Nothing left in the tank — the body eats itself (vanilla deals the starvation damage). Barely able.
+            effect(player, MobEffects.WEAKNESS, 0);
+            effect(player, MobEffects.SLOWNESS, 0);
+            effect(player, MobEffects.MINING_FATIGUE, 0);
+        } else if (food <= HUNGER_FAINT) {
+            // Faint with hunger: weak-armed and mining-slow, hard labour is beyond you.
+            effect(player, MobEffects.WEAKNESS, 0);
+            effect(player, MobEffects.MINING_FATIGUE, 0);
+        } else if (food < HUNGER_LOW) {
+            effect(player, MobEffects.SLOWNESS, 0); // properly hungry — sluggish, but you can still function
+        }
+        if (food <= HUNGER_FAINT && player.tickCount % 600 == 0) {
+            player.sendSystemMessage(Component.literal("You're faint with hunger — you need to eat."));
         }
     }
 
