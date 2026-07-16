@@ -81,7 +81,11 @@ public final class SurvivalMeters {
     private static final int CHILL_INTERVAL = 1200;     // roll a chill about every 60s of cold-and-wet
     private static final float CHILL_CHANCE = 0.1f;      // odds per roll — a sustained wet-cold spell (~10 real
                                                          // min ≈ half an in-game day at 72×) before a chill takes
-    private static final float COLD_EXHAUSTION = 0.03f; // extra food burned per tick keeping warm (scaled by cold)
+    // Cold raises your metabolism — shivering burns calories — but real cold roughly doubles calorie use, it
+    // doesn't quintuple it. At 0.03 a merely chilly body (-30) burned ~2.7 food bars a day just standing there,
+    // which on its own could starve you; 0.008 makes a hard chill cost ~0.7 bar/day and deep cold ~2, a real
+    // pressure to get warm without being a hidden starvation clock (hypothermia gets you first at that point).
+    private static final float COLD_EXHAUSTION = 0.008f; // extra food burned per tick keeping warm (scaled by cold)
 
     private static final float SINK_WEIGHT = 22f; // past this you can't stay afloat (one full block ≈ 30 kg)
     // Slow vitality recovery (§1.5) — heals only when fed, hydrated, and free of active wounds/illness.
