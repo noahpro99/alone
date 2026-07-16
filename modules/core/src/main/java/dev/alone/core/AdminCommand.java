@@ -169,6 +169,8 @@ public final class AdminCommand {
         // Reset the scurvy clock (no fresh-food deficiency right after a reset).
         player.setAttached(Nutrition.LAST_VITAMIN, player.level().getGameTime());
 
+        // Restore body condition (full max-health frame) BEFORE healing, so full health means full hearts.
+        Wasting.restore(player);
         // Vanilla vitals — full health, fed, unhurt by fire/drowning, no lingering effects.
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setFoodLevel(20);

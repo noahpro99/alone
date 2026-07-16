@@ -196,6 +196,7 @@ public final class SurvivalMeters {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 tick(player);
                 Nutrition.tick(player);
+                Wasting.tick(player);
             }
         });
 
@@ -713,6 +714,7 @@ public final class SurvivalMeters {
         if (player.getHealth() < player.getMaxHealth()
             && player.getFoodData().getFoodLevel() >= HEAL_FOOD_MIN
             && getThirst(player) >= HEAL_THIRST_MIN
+            && !Wasting.isCritical(player) // a wasted-away body has nothing spare to mend with
             && !Conditions.isBleeding(player) && !Conditions.isInfected(player) && !Conditions.isSick(player)
             && player.tickCount % HEAL_INTERVAL == 0) {
             player.heal(1.0f);
