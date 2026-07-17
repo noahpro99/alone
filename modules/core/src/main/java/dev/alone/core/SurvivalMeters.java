@@ -554,7 +554,12 @@ public final class SurvivalMeters {
 
         // Stamina (short-term) + fatigue (medium-term soreness) — §1.4.
         float fatigue = getFatigue(player);
-        float effectiveMax = MAX_STAMINA * (1f - fatigue / 100f * FATIGUE_MAX_PENALTY);
+        // Hunger caps how far your wind can refill, not just how fast (§1.1/§1.4): a faint, empty body has no
+        // fuel to sustain hard exertion. Below 6 hunger you're winded low; faint (≤2) halves the ceiling — this
+        // is on top of the poorer regen rate a hungry body already gets below.
+        int foodLevel = player.getFoodData().getFoodLevel();
+        float hungerCeiling = foodLevel <= 2 ? 0.5f : (foodLevel < 6 ? 0.8f : 1f);
+        float effectiveMax = MAX_STAMINA * (1f - fatigue / 100f * FATIGUE_MAX_PENALTY) * hungerCeiling;
         float stamina = getStamina(player);
         // Free-climbing (bare wall, canopy, or rope) is exertion, never rest: folding it in here stops the
         // stamina regen below AND charges the base effort drain, so a climb — even hanging dead-still on the

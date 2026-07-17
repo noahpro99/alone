@@ -30,13 +30,18 @@ public final class Seasons {
         overrideIndex = null;
     }
 
+    /** The world starts in <b>autumn</b> (index 2), like an <em>Alone</em> drop: you land as the cold is
+     *  coming on, and <b>winter looms one season out</b> (~{@link #SEASON_LENGTH_DAYS} days) — so shelter and a
+     *  fire are an early necessity, not a someday luxury. From there: autumn → winter → spring → summer. */
+    private static final int START_SEASON = 2; // autumn
+
     /** 0 = spring, 1 = summer, 2 = autumn, 3 = winter. */
     public static int index(Level level) {
         if (overrideIndex != null) {
             return overrideIndex;
         }
         long day = level.getGameTime() / 24000L;
-        return (int) ((day / SEASON_LENGTH_DAYS) % 4L);
+        return (int) ((day / SEASON_LENGTH_DAYS + START_SEASON) % 4L);
     }
 
     /** Deep cold — frozen ground, nothing grows (see the crop-growth mixin). */
@@ -53,12 +58,14 @@ public final class Seasons {
         };
     }
 
-    /** Added to ambient temperature (biome scale): winter cold, summer hot, shoulder seasons mild. */
+    /** Added to ambient temperature (biome scale): winter deep cold, summer hot, autumn a real cooling toward
+     *  winter (nights bite), spring mild. Autumn isn't neutral — it's the shoulder that warns winter is close. */
     public static float temperatureOffset(Level level) {
         return switch (index(level)) {
-            case 1 -> 0.30f;
-            case 3 -> -0.45f;
-            default -> 0f;
+            case 1 -> 0.30f;   // summer — hot
+            case 2 -> -0.12f;  // autumn — cooling; nights get cold, a nudge to build before winter
+            case 3 -> -0.45f;  // winter — deadly cold, lethal at night without shelter + fire
+            default -> 0f;     // spring — mild
         };
     }
 }
