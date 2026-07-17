@@ -7,14 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -61,12 +59,15 @@ public class MultiPlayerGameModeMixin {
         return this.alone$saved;
     }
 
-    /** Same block = same dig, whatever tool is now in hand. Dropping vanilla's held-item match means a
-     *  hotbar slot change (deliberate or a stray scroll) no longer restarts the break and zeroes the crack. */
-    @Redirect(method = "sameDestroyTarget", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
-    private boolean alone$ignoreToolChangeWhileMining(ItemStack selected, ItemStack destroyingItem) {
-        return true;
+    /** Same block = same dig, whatever tool is now in hand — so a hotbar slot change (deliberate or a stray
+     *  scroll) no longer restarts the break and zeroes the crack. We OVERRIDE the whole check at HEAD rather
+     *  than redirect its item-equality call: Fabric Item API already redirects that same {@code
+     *  isSameItemSameComponents} instruction (its continue-block-breaking hook), and a second redirector on it
+     *  crashes the class transform. A head inject leaves the instruction in place (Fabric's redirect still
+     *  applies) and just supersedes the result — we care only that it's the same block position. */
+    @Inject(method = "sameDestroyTarget", at = @At("HEAD"), cancellable = true)
+    private void alone$sameBlockIsSameDig(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(pos.equals(this.destroyBlockPos));
     }
 
     /** Releasing mid-dig — stash how far along we were and drop a persistent crack marker. */
