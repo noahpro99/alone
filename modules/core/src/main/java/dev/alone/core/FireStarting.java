@@ -130,6 +130,12 @@ public final class FireStarting {
         int strokes = continuing ? current.strokes + 1 : 1;
 
         SurvivalMeters.exert(player, staminaPerStroke);
+        // Wear comes from TRYING, not just succeeding — every stroke scrapes the striker (a ferro rod sheds a
+        // little ferrocerium each spark, the bow-drill spindle burns down from the friction, the soft pyrite
+        // crumbles) whether or not the tinder catches. Failed attempts cost the tool too, as they do in life.
+        if (ferro || strike || bow) {
+            player.getMainHandItem().hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        }
         serverLevel.sendParticles(ParticleTypes.SMOKE, fire.getX() + 0.5, fire.getY() + 0.5, fire.getZ() + 0.5,
             2, 0.08, 0.02, 0.08, 0.005);
 
@@ -141,11 +147,7 @@ public final class FireStarting {
             serverLevel.sendParticles(ParticleTypes.FLAME, fire.getX() + 0.5, fire.getY() + 0.3, fire.getZ() + 0.5,
                 6, 0.15, 0.05, 0.15, 0.01);
             Skills.gain(player, Skills.FIRECRAFT, 3); // every fire you coax alive teaches your hands
-            if (bow || ferro || strike) {
-                // The bow drill's spindle burns down, the ferro rod grinds away, the soft pyrite crumbles —
-                // each wears a little per fire.
-                player.getMainHandItem().hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-            }
+            // (Tool wear is charged per stroke above — from trying, not only on success.)
             ACTIVE.remove(player.getUUID());
         } else {
             ACTIVE.put(player.getUUID(), new Drill(fire, strokes, player.tickCount));

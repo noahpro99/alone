@@ -335,14 +335,14 @@ public final class AloneItems {
      *  Far faster and less exhausting than palming a bare stick. The cordage frays and the spindle burns
      *  down, so it wears out (durability) and eventually needs re-stringing. */
     public static final Item BOW_DRILL = register("bow_drill",
-        key -> new Item(new Item.Properties().durability(24).setId(key)));
+        key -> new Item(new Item.Properties().durability(120).setId(key))); // wears per stroke now (~13 fires)
 
     /** A ferro rod / fire steel (§3.1) — a hard steel striker that throws hot sparks: a <b>fast, reliable</b>
      *  light that works even in the wet, unlike a friction drill. It's a real gate to get one — you must
      *  have <b>steel</b> to forge it — or you bring it in a starting loadout, which is exactly why it's a
      *  prized pick. Wears down over many, many strikes (durability). */
     public static final Item FERRO_ROD = register("ferro_rod",
-        key -> new Item(new Item.Properties().durability(200).setId(key)));
+        key -> new Item(new Item.Properties().durability(300).setId(key))); // wears per strike now (~80 fires)
 
     /** Pyrite / marcasite (§3.1) — a brassy "fool's gold" nodule that turns up now and then when you sift
      *  gravel, alongside the flint. Struck against a hard flint edge it throws a hot spark: the genuine
@@ -356,7 +356,7 @@ public final class AloneItems {
      *  still needs dry tinder, so it fails in the rain where a ferro rod would take. The soft pyrite
      *  crumbles with use (durability), but more turns up in the gravel. */
     public static final Item FLINT_AND_PYRITE = register("flint_and_pyrite",
-        key -> new Item(new Item.Properties().durability(40).setId(key)));
+        key -> new Item(new Item.Properties().durability(50).setId(key))); // wears per strike now (~9 fires; pyrite crumbles)
     // Copper (flint → copper → iron → steel) is vanilla in 26.2 — its tools/armour, recipes, and tool
     // tags are all built in, and it needs no forging (a soft metal), so it fits the pack as-is. Nothing
     // to add here; we just don't remove it the way wood/stone were removed.

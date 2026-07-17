@@ -103,7 +103,7 @@ public class AloneCore implements ModInitializer {
         Eating.init();          // §1.1 — no eating while sprinting
         Hygiene.init();         // §5.6 — dirty hands from butchering contaminate food
         Torches.init();         // §5.6 — lit torches burn their fuel down to a spent torch
-        Nutrition.init();       // §1.1 — diet variety; a monotonous diet shrinks usable hunger
+        Nutrition.init();       // §1.1 — scurvy only for now (fresh food staves it off); variety penalty removed, calories/vitamins model later
         Wasting.init();         // §1.1 — long-term body condition: sustained deficit wastes you (shrinks max hearts), like Alone
         Leaves.init();          // §5.4 — leaves: hand → twigs + litter, axe/hoe → leaf block
         Climbing.init();        // §5.4 — climb up through leaves; free-climb short flat walls (strenuous)
