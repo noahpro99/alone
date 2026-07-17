@@ -126,9 +126,15 @@ public final class Sleeping {
         return true;
     }
 
-    /** Soft enough to bed down on — dirt/grass or sand. */
+    /** Soft enough to bed down on — dirt, grass, sand, and the other natural soft ground. NOTE: in 26.2
+     *  {@code BlockTags.DIRT} is tiny (dirt/coarse/rooted only) and does NOT contain grass_block, podzol,
+     *  mycelium or moss — so those must be listed explicitly, or you can't lie down on a grassy field. */
     private static boolean isSoftGround(net.minecraft.world.level.block.state.BlockState state) {
-        return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND);
+        return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND)
+            || state.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+            || state.is(net.minecraft.world.level.block.Blocks.PODZOL)
+            || state.is(net.minecraft.world.level.block.Blocks.MYCELIUM)
+            || state.is(net.minecraft.world.level.block.Blocks.MOSS_BLOCK);
     }
 
     private static void say(Player player, Level level, String text) {
