@@ -3,7 +3,6 @@ package dev.alone.core;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -122,14 +121,8 @@ public final class Wasting {
             frail(player, MobEffects.WEAKNESS);
             frail(player, MobEffects.SLOWNESS);
             frail(player, MobEffects.MINING_FATIGUE);
-            if (player.tickCount % 1200 == 0) {
-                player.sendSystemMessage(Component.literal(
-                    "You're wasting away — gaunt, frail, barely any strength left. You must eat well, and soon."));
-            }
-        } else if (condition <= GAUNT && player.tickCount % 1800 == 0) {
-            player.sendSystemMessage(Component.literal(
-                "You've grown gaunt — you're slowly wasting from too little food. Eat well to rebuild your strength."));
         }
+        // No chat nag — the condition bar and your shrunken heart row show the wasting plainly enough.
     }
 
     /** Restore the max-health frame to full (creative, or a full recovery) so hearts aren't left shrunk. */

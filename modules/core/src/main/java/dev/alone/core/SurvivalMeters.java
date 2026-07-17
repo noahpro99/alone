@@ -775,6 +775,11 @@ public final class SurvivalMeters {
             effect(player, MobEffects.WEAKNESS, 0);
             effect(player, MobEffects.SLOWNESS, 0);
             effect(player, MobEffects.MINING_FATIGUE, 0);
+            // Dehydration KILLS (§1.2, rule of 3s): an empty reserve isn't just "impaired" — the body fails.
+            // ~1 HP every 5s once you're bone-dry, so hitting 0 water is a death sentence you must drink out of.
+            if (player.tickCount % TEMP_DAMAGE_INTERVAL == 0 && player.level() instanceof ServerLevel level) {
+                player.hurtServer(level, level.damageSources().dryOut(), 1.0f);
+            }
         } else if (thirst < THIRST_LOW) {
             effect(player, MobEffects.SLOWNESS, 0); // thirsty = sluggish, but you can still fight
         }
@@ -797,9 +802,7 @@ public final class SurvivalMeters {
         } else if (food < HUNGER_LOW) {
             effect(player, MobEffects.SLOWNESS, 0); // properly hungry — sluggish, but you can still function
         }
-        if (food <= HUNGER_FAINT && player.tickCount % 600 == 0) {
-            player.sendSystemMessage(Component.literal("You're faint with hunger — you need to eat."));
-        }
+        // No chat nag — the hunger bar and the shrinking hearts (see Wasting) show it plainly enough.
     }
 
     private static void applyTemperatureEffects(ServerPlayer player, float bodyTemp) {

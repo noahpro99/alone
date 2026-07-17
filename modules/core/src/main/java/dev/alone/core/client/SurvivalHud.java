@@ -22,6 +22,13 @@ public final class SurvivalHud {
     private static final int BAR_W = 80;
     private static final int BAR_H = 4;
 
+    // Death-warning blink (§1: the HUD should telegraph a lethal meter, not let it sneak up on you). Body temp
+    // past these enters the killing cold/heat zone; thirst this low is dying of dehydration.
+    private static final float TEMP_DANGER_COLD = -50f, TEMP_LETHAL_COLD = -85f;
+    private static final float TEMP_DANGER_HOT = 50f, TEMP_LETHAL_HOT = 85f;
+    private static final float THIRST_DANGER = 0.4f; // ~13% reserve — the dehydration-death run has begun
+    private static final int ALARM = 0xFFFF3B30;     // the warning-flash colour
+
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.GOLDEN_PICKAXE);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
@@ -64,7 +71,11 @@ public final class SurvivalHud {
         drawBar(g, barX, yFatigue, 1f - ClientSurvivalState.fatigue / 100f, 0xFFB5793A);
 
         drawItemIcon(g, ICON_THIRST, left, yThirst - 3);
-        drawBar(g, barX, yThirst, ClientSurvivalState.thirst / SurvivalMeters.MAX_THIRST, 0xFF4A90D9);
+        // Thirst flashes red as it runs dry — dehydration KILLS at 0, so it must warn before it sneaks up.
+        float thirst = ClientSurvivalState.thirst;
+        int thirstCol = thirst <= THIRST_DANGER && dangerFlash((THIRST_DANGER - thirst) / THIRST_DANGER)
+            ? ALARM : 0xFF4A90D9;
+        drawBar(g, barX, yThirst, thirst / SurvivalMeters.MAX_THIRST, thirstCol);
 
         // Gut water — how full your stomach is with water still absorbing into hydration. It jumps up when
         // you drink and drains as it soaks in; a full gut means you can't drink more right now.
@@ -81,10 +92,22 @@ public final class SurvivalHud {
         // Carry (volume + weight) isn't on the always-on HUD — it's a pack-management concern, so it's
         // drawn only while your inventory is open (see {@link #renderCarry}).
 
-        // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot).
+        // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot). Once
+        // it enters the KILLING zone (freeze/heatstroke damage) it flashes an alarm colour, faster the closer
+        // to death, so a cold snap doesn't just quietly kill you — you get a warning to get warm/cool.
         int tx = barX + BAR_W + 6;
+        float temp = ClientSurvivalState.temperature;
+        int tempCol = temperatureColor(temp);
+        boolean cold = temp <= TEMP_DANGER_COLD, hot = temp >= TEMP_DANGER_HOT;
+        if (cold || hot) {
+            float nearness = cold ? (TEMP_DANGER_COLD - temp) / (TEMP_LETHAL_COLD - TEMP_DANGER_COLD)
+                                  : (temp - TEMP_DANGER_HOT) / (TEMP_LETHAL_HOT - TEMP_DANGER_HOT);
+            if (dangerFlash(nearness)) {
+                tempCol = ALARM;
+            }
+        }
         g.fill(tx - 1, yStamina - 1, tx + 9, yStamina + 9, 0xAA000000);
-        g.fill(tx, yStamina, tx + 8, yStamina + 8, temperatureColor(ClientSurvivalState.temperature));
+        g.fill(tx, yStamina, tx + 8, yStamina + 8, tempCol);
         drawTrendArrow(g, tx + 11, yStamina, ClientSurvivalState.temperatureTrend);
 
         // A little figure — a paper-doll of your body: bleeding torso, sprained legs, dirty hands, illness.
@@ -223,6 +246,14 @@ public final class SurvivalHud {
             g.fill(x + 2, y + 6, x + 6, y + 7, c);
             g.fill(x + 3, y + 7, x + 5, y + 8, c);
         }
+    }
+
+    /** The "on" half of a warning blink whose speed rises with how close to death you are ({@code nearness}
+     *  0 = just entered danger, 1 = at the killing threshold). Clamped so even mild danger blinks slowly. */
+    private static boolean dangerFlash(float nearness) {
+        int period = (int) (12 - 9 * Math.max(0f, Math.min(1f, nearness))); // 12 ticks (slow) → 3 (frantic)
+        int t = Minecraft.getInstance().player != null ? Minecraft.getInstance().player.tickCount : 0;
+        return (t / Math.max(2, period)) % 2 == 0;
     }
 
     private static int temperatureColor(float bodyTemp) {
