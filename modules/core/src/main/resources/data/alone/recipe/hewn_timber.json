@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": ["#minecraft:logs"],
+  "result": { "id": "alone:hewn_timber", "count": 1 }
+}

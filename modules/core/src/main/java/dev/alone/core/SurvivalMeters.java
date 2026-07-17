@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -462,7 +463,7 @@ public final class SurvivalMeters {
      * if there's a solid block within {@link #WALL_REACH}.
      */
     private static float enclosure(Level level, BlockPos pos) {
-        int walls = 0;
+        float walls = 0f;
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         for (Direction d : Direction.Plane.HORIZONTAL) {
             p.set(pos);
@@ -470,12 +471,20 @@ public final class SurvivalMeters {
                 p.move(d);
                 var state = level.getBlockState(p);
                 if (!state.isAir() && !state.getCollisionShape(level, p).isEmpty()) {
-                    walls++;
-                    break; // this side is sheltered
+                    walls += wallSeal(state); // how well this side is sealed against the cold
+                    break;
                 }
             }
         }
         return walls / 4f;
+    }
+
+    /** How tightly a wall seals a shelter (§5.5). A wall of stacked <b>round logs</b> is draughty — the gaps
+     *  between the rounds leak warmth — until it's hewn square and chinked, so it counts for less. A worked
+     *  wall (hewn timber, planks, stone, wattle, anything not a raw log) sits tight and seals fully. This is
+     *  the payoff for the timed work of hewing logs into {@link AloneBlocks#HEWN_TIMBER timber}. */
+    private static float wallSeal(BlockState state) {
+        return state.is(BlockTags.LOGS) ? 0.7f : 1.0f;
     }
 
     /**

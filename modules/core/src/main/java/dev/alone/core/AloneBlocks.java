@@ -101,6 +101,18 @@ public final class AloneBlocks {
             .ignitedByLava()
             .setId(key)));
 
+    /** Hewn timber (§5.5) — a round log squared and dressed into a proper beam ({@link dev.alone.core.Riving}
+     *  hews it, timed labour). Unlike stacked round logs, a hewn-timber wall sits tight and seals a shelter
+     *  against the cold (see the enclosure rating in {@code SurvivalMeters}). Sturdier than wattle; the
+     *  worked-wood construction tier. */
+    public static final Block HEWN_TIMBER = register("hewn_timber",
+        key -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOD)
+            .strength(2.0F)
+            .ignitedByLava()
+            .setId(key)));
+
     /**
      * Tarp (§5.5) — a sewn, oiled hide sheet: the manufactured top rung of the shelter-roof ladder above
      * {@link #THATCH}. Same core mechanic (a solid block that blocks the sky, so the space beneath is

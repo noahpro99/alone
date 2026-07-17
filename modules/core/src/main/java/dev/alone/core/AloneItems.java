@@ -105,6 +105,10 @@ public final class AloneItems {
      *  below log and stone walls (see {@link AloneBlocks#WATTLE}). */
     public static final Item WATTLE = register("wattle",
         key -> new BlockItem(AloneBlocks.WATTLE, new Item.Properties().setId(key)));
+    /** Hewn timber — a log squared into a proper building beam (hewn on the crafting grid, timed work). The
+     *  worked-wood wall that actually seals a shelter, unlike draughty round logs. */
+    public static final Item HEWN_TIMBER = register("hewn_timber",
+        key -> new BlockItem(AloneBlocks.HEWN_TIMBER, new Item.Properties().setId(key)));
     /** Tarp — a waterproof, fireproof, reusable hide sheet: the premium roof above thatch
      *  (see {@link AloneBlocks#TARP}). Hard to make (leather + cordage) or brought. */
     public static final Item TARP = register("tarp",

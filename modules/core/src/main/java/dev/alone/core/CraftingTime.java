@@ -38,6 +38,7 @@ public final class CraftingTime {
     // Craft durations in ticks (20/s) — compressed real-world effort. Tunable; a datapack could refine.
     private static final int SIMPLE = 40;    // ~2s: sticks, a torch
     private static final int PLANK = 240;    // ~12s: riving/sawing a log into boards is slow, real work
+    private static final int HEW = 220;      // ~11s: hewing a round log square into a dressed building beam
     // Reverse-wrap twisting fibre into a usable length of cordage is ~40 real minutes by hand (a slow,
     // notorious bushcraft job). At the pack's 72x clock (1 real hour = 1000 ticks) that's ~700 ticks —
     // ~35 wall-clock seconds. Set by real duration, not feel; a snare's two strings is ~70 real minutes.
@@ -147,6 +148,9 @@ public final class CraftingTime {
         }
         if (result.is(AloneItems.WICKER_SHIELD)) {
             return WICKER_WEAVE; // riving, soaking and weaving withies into a shield — a few real hours (§1.5)
+        }
+        if (result.is(AloneItems.HEWN_TIMBER)) {
+            return HEW; // squaring a round log into a dressed beam with an axe — real, sweaty joinery (§5.5)
         }
         var equippable = result.get(DataComponents.EQUIPPABLE);
         if (equippable != null && isArmorSlot(equippable.slot())) {
