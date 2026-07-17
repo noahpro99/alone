@@ -15,6 +15,8 @@ public final class ClientSurvivalState {
     public static volatile float fatigue = 0f;
     /** Water in the gut, absorbing into hydration, 0..MAX_GUT. */
     public static volatile float gut = 0f;
+    /** Long-term body condition, 0 (wasted away) .. 100 (well-nourished) — the wasting/weight arc. */
+    public static volatile float condition = 100f;
 
     private ClientSurvivalState() {
     }
@@ -29,5 +31,6 @@ public final class ClientSurvivalState {
         conditions = payload.conditions();
         fatigue = payload.fatigue();
         gut = payload.gut();
+        condition = payload.condition();
     }
 }

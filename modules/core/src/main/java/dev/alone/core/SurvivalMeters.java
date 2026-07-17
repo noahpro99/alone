@@ -740,7 +740,7 @@ public final class SurvivalMeters {
         // Push state to the client HUD a few times a second (temperature field carries body temp).
         if (player.tickCount % 10 == 0) {
             ServerPlayNetworking.send(player,
-                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player), getGut(player)));
+                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player), getGut(player), Wasting.getCondition(player)));
         }
     }
 

@@ -26,6 +26,7 @@ public final class SurvivalHud {
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
     private static final ItemStack ICON_THIRST = new ItemStack(Items.WATER_BUCKET);
     private static final ItemStack ICON_GUT = new ItemStack(Items.GLASS_BOTTLE); // water in your belly, absorbing
+    private static final ItemStack ICON_CONDITION = new ItemStack(Items.COOKED_BEEF); // body condition — flesh on your bones
     private static final ItemStack ICON_VOLUME = new ItemStack(Items.BUNDLE);   // hands (bulky carry)
     private static final ItemStack ICON_POCKET = new ItemStack(Items.LEATHER);  // pockets (small items)
     private static final ItemStack ICON_WEIGHT = new ItemStack(Items.ANVIL);
@@ -48,6 +49,7 @@ public final class SurvivalHud {
         int yFatigue = y0 + rowH;
         int yThirst = y0 + rowH * 2;
         int yGut = y0 + rowH * 3;
+        int yCondition = y0 + rowH * 4;
 
         // NO single "health"/vitality bar (§1.5). The body is a set of separate systems: you bleed out,
         // freeze, dehydrate, starve, or die of trauma — each shows through its own meter, the body
@@ -68,6 +70,13 @@ public final class SurvivalHud {
         // you drink and drains as it soaks in; a full gut means you can't drink more right now.
         drawItemIcon(g, ICON_GUT, left, yGut - 3);
         drawBar(g, barX, yGut, ClientSurvivalState.gut / SurvivalMeters.MAX_GUT, 0xFF7EC8E3);
+
+        // Body condition — the long, slow wasting/weight arc (full = well-nourished flesh, empty = wasted away).
+        // It moves over in-game days, not seconds, so this bar is the one you watch across the whole run; it's
+        // the same thing that decides a real Alone stint (cumulative weight loss). It also drives your max
+        // hearts, so a low bar here is why your heart row has shrunk.
+        drawItemIcon(g, ICON_CONDITION, left, yCondition - 3);
+        drawBar(g, barX, yCondition, ClientSurvivalState.condition / 100f, 0xFFCC5D5D);
 
         // Carry (volume + weight) isn't on the always-on HUD — it's a pack-management concern, so it's
         // drawn only while your inventory is open (see {@link #renderCarry}).
