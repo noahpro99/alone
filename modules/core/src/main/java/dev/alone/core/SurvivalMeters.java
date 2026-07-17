@@ -150,6 +150,7 @@ public final class SurvivalMeters {
     private static final int CAVE_VARIABLE_DEPTH = 15; // m over which the surface's influence fades underground
     private static final int CAVE_DEEP_DEPTH = 110;    // m below the cold zone at which the chill bottoms out (~bedrock)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
+    private static final float WIND_CHILL_MAX = 0.3f;   // full-strength wind in the open (biome scale) — a windbreak removes it
     private static final float BLIZZARD_CHILL = 0.6f;   // a winter storm freezes the exposed fast — any roof breaks it
     private static final float ROOF_INSULATION = 0.4f;  // a bare roof (open lean-to) blunts ~40% of cold/heat (§5.5)
     private static final float MAX_INSULATION = 0.78f;   // a snug, fully-walled shelter — holds heat far better
@@ -453,8 +454,43 @@ public final class SurvivalMeters {
             if (timeOfDay >= 13000L && timeOfDay < 23000L) {
                 temp -= NIGHT_CHILL; // clear night sky is colder
             }
+            // Wind chill (§1.3): out in the open a steady wind strips body heat far faster than still air —
+            // but a wall on the WINDWARD side breaks it, which is why you orient a shelter and close off the
+            // upwind face. Only bites when it's already cool (wind chill is a cold-weather thing); in the heat
+            // a breeze is neutral, so we don't warm you with it. This is what makes winter demand a real
+            // windbreak, not just a roof.
+            if (temp < NEUTRAL_AMBIENT) {
+                float wind = Wind.strength(level);
+                if (wind > 0f && !windwardSheltered(level, pos)) {
+                    temp -= WIND_CHILL_MAX * wind;
+                }
+            }
         }
         return temp;
+    }
+
+    /** Is there a windbreak on the <b>upwind</b> side (a solid block within {@link #WALL_REACH} toward where
+     *  the wind blows from)? A wall there blocks the wind chill; an open windward face leaves you exposed. */
+    private static boolean windwardSheltered(Level level, BlockPos pos) {
+        Vec3 dir = Wind.direction(level); // the way the wind blows TOWARD
+        double ux = -dir.x; // upwind: toward the wind's source
+        double uz = -dir.z;
+        if (ux == 0 && uz == 0) {
+            return true; // no defined direction — treat as sheltered rather than chill everywhere
+        }
+        Direction into = Math.abs(ux) >= Math.abs(uz)
+            ? (ux >= 0 ? Direction.EAST : Direction.WEST)
+            : (uz >= 0 ? Direction.SOUTH : Direction.NORTH);
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        p.set(pos);
+        for (int i = 1; i <= WALL_REACH; i++) {
+            p.move(into);
+            var state = level.getBlockState(p);
+            if (!state.isAir() && !state.getCollisionShape(level, p).isEmpty()) {
+                return true; // a windbreak stands between you and the wind
+            }
+        }
+        return false;
     }
 
     /**
