@@ -32,6 +32,11 @@ public class PlayerDestroySpeedMixin {
     // the 72x day/night scale — matching a knapped, chipped hand-axe). A crude chopper — a knife or an
     // improvised blade with no proper edge or haft — hacks at ~75s a log, a genuine ordeal by comparison.
     private static final float LOG_AXE_FACTOR = 0.04f;  // a real axe: slow but functional (~30s/log for flint)
+    // Cap the tier bonus on FELLING. A keener metal edge does help, but chopping through a trunk is limited by
+    // swing effort and the wood itself, not just sharpness — so a steel axe (material speed 7.0) shouldn't fell
+    // ~2.8x faster than a hafted flint one (2.5). Clamping the axe's speed input to 4.0 leaves flint untouched
+    // and gives the best metal axe only a modest ~1.6x edge (~19s/log vs ~30s), not a trivialising one.
+    private static final float LOG_AXE_SPEED_CAP = 4.0f;
     private static final float LOG_CRUDE_SPEED = 0.04f; // a knife/improvised chopper: ~75s a log, a real slog
     private static final float STONE_FACTOR = 0.02f;   // ~50x slower quarrying
     // Calibrated to Minecraft's time compression: a 20-min day stands in for 24 real hours, so real
@@ -64,7 +69,9 @@ public class PlayerDestroySpeedMixin {
             // ($SwitchMap), which mixin then has to relocate into Player and can choke on — avoid it.
             AloneCore.LogTool tool = AloneCore.classifyForLog(self.getMainHandItem());
             if (tool == AloneCore.LogTool.AXE) {
-                cir.setReturnValue(cir.getReturnValueF() * LOG_AXE_FACTOR);
+                // Clamp the tier speed first so a fine metal edge only modestly out-fells a flint one.
+                float axeSpeed = Math.min(cir.getReturnValueF(), LOG_AXE_SPEED_CAP);
+                cir.setReturnValue(axeSpeed * LOG_AXE_FACTOR);
             } else if (tool == AloneCore.LogTool.CRUDE) {
                 cir.setReturnValue(LOG_CRUDE_SPEED);
             } else {
