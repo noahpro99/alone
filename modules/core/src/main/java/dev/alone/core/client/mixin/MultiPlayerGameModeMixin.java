@@ -7,12 +7,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -29,6 +31,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * <p>Maps are lazily created — Mixin does <b>not</b> reliably run a {@code @Unique} instance-field
  * initialiser into the target constructor, so a {@code = new HashMap<>()} initialiser leaves the field
  * null and every access NPEs. The accessors build them on first use instead.
+ *
+ * <p>We also stop a <b>hotbar slot change</b> from wiping the crack. Vanilla's {@code sameDestroyTarget}
+ * demands the <em>same held item</em>, so swapping tools (or a stray scroll) mid-dig counted as a new
+ * target and zeroed your progress. We drop that item check — a dig is the same dig as long as it's the
+ * same <em>block</em> — so switching slots keeps the crack (mining speed still tracks whatever tool is now
+ * in hand, and no ABORT is sent so the server holds its timer to match).
  */
 @Mixin(MultiPlayerGameMode.class)
 public class MultiPlayerGameModeMixin {
@@ -51,6 +59,14 @@ public class MultiPlayerGameModeMixin {
             this.alone$saved = new HashMap<>();
         }
         return this.alone$saved;
+    }
+
+    /** Same block = same dig, whatever tool is now in hand. Dropping vanilla's held-item match means a
+     *  hotbar slot change (deliberate or a stray scroll) no longer restarts the break and zeroes the crack. */
+    @Redirect(method = "sameDestroyTarget", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+    private boolean alone$ignoreToolChangeWhileMining(ItemStack selected, ItemStack destroyingItem) {
+        return true;
     }
 
     /** Releasing mid-dig — stash how far along we were and drop a persistent crack marker. */
