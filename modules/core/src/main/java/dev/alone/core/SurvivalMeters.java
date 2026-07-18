@@ -244,11 +244,8 @@ public final class SurvivalMeters {
             if (entity instanceof ServerPlayer player) {
                 float quality = restQuality(player);
                 rest(player, 100f * quality, MAX_STAMINA * quality);
-                if (quality < 1.0f) {
-                    player.sendSystemMessage(Component.literal(getBodyTemp(player) < 0f
-                        ? "You slept poorly — too cold to rest well."
-                        : "You slept poorly — too hot to rest well."));
-                }
+                // No "you slept poorly" chat — poor recovery shows in the barely-moved stamina/endurance bars,
+                // and the temperature square already flags a cold spot.
 
                 // Charge the metabolism of the time actually slept (the clock jumps to morning).
                 long start = player.getAttachedOrElse(SLEEP_START, player.level().getOverworldClockTime());
@@ -259,10 +256,7 @@ public final class SurvivalMeters {
                 if (hunger > 0) {
                     player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - hunger));
                 }
-                if (slept > 3000L) {
-                    player.sendSystemMessage(Component.literal(
-                        "You wake rested — but the night has left you hungry and dry."));
-                }
+                // No "hungry and dry" chat — the hunger and thirst bars show the night's cost plainly.
                 // A night's rest also mends illness (§1.5): sickness, a festering wound, and dysentery all
                 // ebb as you sleep — the more comfortable the rest, the more (a shivering night mends little).
                 int mend = Math.round(slept * 0.5f * quality);
