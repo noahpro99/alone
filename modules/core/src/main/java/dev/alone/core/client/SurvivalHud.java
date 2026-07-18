@@ -27,7 +27,6 @@ public final class SurvivalHud {
     private static final float TEMP_DANGER_COLD = -50f, TEMP_LETHAL_COLD = -85f;
     private static final float TEMP_DANGER_HOT = 50f, TEMP_LETHAL_HOT = 85f;
     private static final float THIRST_DANGER = 0.4f; // ~13% reserve — the dehydration-death run has begun
-    private static final int ALARM = 0xFFFF3B30;     // the warning-flash colour
 
     private static final ItemStack ICON_STAMINA = new ItemStack(Items.GOLDEN_PICKAXE);
     private static final ItemStack ICON_ENDURANCE = new ItemStack(Items.GOLDEN_CARROT);
@@ -71,10 +70,12 @@ public final class SurvivalHud {
         drawBar(g, barX, yFatigue, 1f - ClientSurvivalState.fatigue / 100f, 0xFFB5793A);
 
         drawItemIcon(g, ICON_THIRST, left, yThirst - 3);
-        // Thirst flashes red as it runs dry — dehydration KILLS at 0, so it must warn before it sneaks up.
+        // Thirst pulses as it runs dry — dehydration KILLS at 0, so it must warn before it sneaks up.
         float thirst = ClientSurvivalState.thirst;
-        int thirstCol = thirst <= THIRST_DANGER && dangerFlash((THIRST_DANGER - thirst) / THIRST_DANGER)
-            ? ALARM : 0xFF4A90D9;
+        int thirstCol = 0xFF4A90D9;
+        if (thirst <= THIRST_DANGER) {
+            thirstCol = pulseAlpha(thirstCol, (THIRST_DANGER - thirst) / THIRST_DANGER);
+        }
         drawBar(g, barX, yThirst, thirst / SurvivalMeters.MAX_THIRST, thirstCol);
 
         // Gut water — how full your stomach is with water still absorbing into hydration. It jumps up when
@@ -93,8 +94,8 @@ public final class SurvivalHud {
         // drawn only while your inventory is open (see {@link #renderCarry}).
 
         // Body temperature — a small square to the right of the bars, blue (cold) → green → red (hot). Once
-        // it enters the KILLING zone (freeze/heatstroke damage) it flashes an alarm colour, faster the closer
-        // to death, so a cold snap doesn't just quietly kill you — you get a warning to get warm/cool.
+        // it enters the KILLING zone (freeze/heatstroke damage) it softly pulses — its own colour fading in and
+        // out, faster the closer to death — so a cold snap doesn't just quietly kill you off-guard.
         int tx = barX + BAR_W + 6;
         float temp = ClientSurvivalState.temperature;
         int tempCol = temperatureColor(temp);
@@ -102,9 +103,7 @@ public final class SurvivalHud {
         if (cold || hot) {
             float nearness = cold ? (TEMP_DANGER_COLD - temp) / (TEMP_LETHAL_COLD - TEMP_DANGER_COLD)
                                   : (temp - TEMP_DANGER_HOT) / (TEMP_LETHAL_HOT - TEMP_DANGER_HOT);
-            if (dangerFlash(nearness)) {
-                tempCol = ALARM;
-            }
+            tempCol = pulseAlpha(tempCol, nearness); // its own colour, fading in and out (faster as death nears)
         }
         g.fill(tx - 1, yStamina - 1, tx + 9, yStamina + 9, 0xAA000000);
         g.fill(tx, yStamina, tx + 8, yStamina + 8, tempCol);
@@ -248,12 +247,17 @@ public final class SurvivalHud {
         }
     }
 
-    /** The "on" half of a warning blink whose speed rises with how close to death you are ({@code nearness}
-     *  0 = just entered danger, 1 = at the killing threshold). Clamped so even mild danger blinks slowly. */
-    private static boolean dangerFlash(float nearness) {
-        int period = (int) (12 - 9 * Math.max(0f, Math.min(1f, nearness))); // 12 ticks (slow) → 3 (frantic)
-        int t = Minecraft.getInstance().player != null ? Minecraft.getInstance().player.tickCount : 0;
-        return (t / Math.max(2, period)) % 2 == 0;
+    /** Fade a colour's opacity in and out as a soft danger pulse — the meter breathes rather than flashing an
+     *  alarm colour. {@code nearness} (0 = just entered danger, 1 = at the killing threshold) sets the speed:
+     *  a slow throb at the edge of danger, quickening toward a fast pulse as death nears. Wall-clock driven so
+     *  it's smooth at any framerate, not stepped to the 20 Hz tick. */
+    private static int pulseAlpha(int argb, float nearness) {
+        nearness = Math.max(0f, Math.min(1f, nearness));
+        double periodMs = 1500 - 1050 * nearness;          // ~1.5s throb → ~0.45s as death closes in
+        double phase = (System.currentTimeMillis() % (long) periodMs) / periodMs; // 0..1
+        float wave = 0.5f + 0.5f * (float) Math.cos(phase * 2 * Math.PI);  // 1 → 0 → 1, smooth
+        int alpha = 0x33 + (int) ((0xFF - 0x33) * wave);   // dim (never fully gone) → full opacity
+        return (alpha << 24) | (argb & 0x00FFFFFF);
     }
 
     private static int temperatureColor(float bodyTemp) {
