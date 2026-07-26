@@ -251,16 +251,15 @@ kiln → refractory bloomery; glass moved to the kiln, which is the realistic si
 **verification of the crafting-table path** (log→planks is riven/sawn by hand, no grid shortcut; the flint
 riving tool is 2×2-craftable so there's no table chicken-and-egg — all true to real woodworking), and a
 **fence/gate carry-weight fix** (their thin posts slipped under the block-density threshold and read as a
-near-weightless 0.05 kg — now weighted by the wood they're built from, a fence ~2 kg, a gate ~3.5 kg).
+near-weightless 0.05 kg — now weighted by the wood they're built from, a fence ~2 kg, a gate ~3.5 kg),
+**two-person boats done right** (see [Boats](./features/boats.md) — a **dugout canoe** you hollow from a
+real log by char-and-scrape; vanilla boat crafting disabled so the dugout is the only path; **stamina-
+paddling** where two paddlers share the effort and cruise faster), **desert nights turning cold** (arid
+radiative cooling — no more overheating after dark in the sand), a **boat-boarding fix** (an entity under
+the crosshair owns the click, so boarding a boat on water no longer reads as drinking), and **sugar-cane /
+bamboo carry weight+volume** (their full-height outline no longer reads as a ~9 kg, half-your-pack stone).
 
-- **Two-person boats, done right** — in progress:
-  - ✅ **The hard build shipped** — a **dugout canoe**: sneak+right-click a placed log with an axe to begin
-    hollowing the real log (no recipe), then char-and-scrape it hollow (lit flame + axe, six tiring cycles)
-    into a boat. No plank-craft shortcut. *(Reuses the vanilla boat as the finished craft for now; a
-    hollowed-canoe model is polish.)*
-  - **Disable vanilla boat crafting** so the dugout is the only path — once the dugout is playtest-confirmed
-    (holding off so a dugout bug can't leave you with no boats at all).
-  - **Stamina-paddling:** moving a boat costs wind, two paddlers move it faster — the two-person payoff.
+*(No open playtest items right now — the list above is caught up.)*
 
 ## Death, respawn & run modes
 
