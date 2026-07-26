@@ -237,14 +237,13 @@ docs once it ships). Recently cleared: the gravel-flint place-and-break exploit,
 crouched, timed-craft repeats no longer instant, guards now chase at sprint pace, the **Alone: Cinematic**
 submodule (a biome/day reveal on a cooldown), the timed-craft take (server-authoritative), **drinking-water
 temperature** (your core drifts toward the water you drink), **trampling crops** now angering the village,
-and **villager/guard body drops** (meat, fat, hide, brains, bone).
+and **villager/guard body drops** (meat, fat, hide, brains, bone), the **free-climb one-block grab**
+(a lone step is only a jump now), and **tool hand-orientation** (item/handheld).
 
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
-- **Free-climb one-block bug:** you can still get "caught" gripping a single-block step; that should never
-  engage a climb.
-- **Hydration not rising after a drink** — a two-stage gut→hydration absorb case to chase down.
-- **Axe held-orientation** — the axe sits wrong in the hand (item display transform).
+- **Hydration not rising after a drink** — likely the intended two-stage gut→hydration absorb (a drink
+  fills the gut, which soaks into hydration over ~a minute); confirm it's not a real stall.
 - **Tuning/realism passes to verify against the day↔real scale:** fire duration (logs/coal), plank & stick
   fuel times, dehydration rate (days→MC-days), the endurance bar's meaning & drain, fence carry weight,
   food-sickness duration + dehydration (and whether rest should shorten it), and whether the path to the
