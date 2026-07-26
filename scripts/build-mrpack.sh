@@ -70,6 +70,7 @@ jq -n --arg name "$PACK_NAME" --arg ver "$PACK_VER" --arg mc "$MC" --arg fl "$LO
 # bundle the custom Alone mods as overrides (not on Modrinth)
 cp "$ROOT/modules/core/build/libs/alone-core-$PACK_VER.jar" "$WORK/overrides/mods/" 2>/dev/null && echo "  bundled alone-core"
 cp "$ROOT/modules/food/build/libs/alone-food-$PACK_VER.jar" "$WORK/overrides/mods/" 2>/dev/null && echo "  bundled alone-food"
+cp "$ROOT/modules/cinematic/build/libs/alone-cinematic-$PACK_VER.jar" "$WORK/overrides/mods/" 2>/dev/null && echo "  bundled alone-cinematic"
 
 OUT="$ROOT/dist/${PACK_NAME}-${PACK_VER}.mrpack"
 rm -f "$OUT"

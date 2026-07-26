@@ -20,6 +20,9 @@ project(':core').projectDir = file('modules/core')
 include 'food'
 project(':food').projectDir = file('modules/food')
 
+include 'cinematic'
+project(':cinematic').projectDir = file('modules/cinematic')
+
 // Not a shipped mod — aggregates every module so one run loads the whole pack.
 include 'dev'
 project(':dev').projectDir = file('modules/dev')

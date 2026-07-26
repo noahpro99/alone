@@ -1,0 +1,8 @@
+// Alone: Cinematic — a small, self-contained atmosphere mod (separable from the survival core).
+// A dramatic swell + the biome name shown bottom-centre when you cross into a new biome or a new
+// day breaks, throttled by a cooldown. No dependency on Core — pure client flavour.
+// All Loom/Fabric/Java config is inherited from the root build.gradle.
+
+base {
+    archivesName = 'alone-cinematic'
+}

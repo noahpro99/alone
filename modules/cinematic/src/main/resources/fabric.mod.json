@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "alone-cinematic",
+  "version": "${version}",
+  "name": "Alone: Cinematic",
+  "description": "Atmosphere for Alone: a dramatic swell and the biome name on screen when you cross into new country or a new day breaks.",
+  "authors": ["noahpro"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.alone.cinematic.client.AloneCinematicClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
