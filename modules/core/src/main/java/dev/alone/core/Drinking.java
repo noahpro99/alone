@@ -196,7 +196,16 @@ public final class Drinking {
                 "The seawater is salty — it only makes you thirstier. Boiling won't help; you'd need to distil it, or find fresh water."));
             return;
         }
-        SurvivalMeters.cool(player, 10f); // a mouthful of water eases the heat if you're overheated
+        // Your core shifts a little toward the water's own temperature (§1.3): an ice-cold spring refreshes
+        // you in the heat, but drinking near-freezing water when you're already cold pulls your core down
+        // further, and tepid water does little either way. A gulp is ~0.25 L, so the nudge is modest.
+        float waterTemp = SurvivalMeters.waterTemperature(player.level(), water);
+        float shift = (waterTemp - SurvivalMeters.getBodyTemp(player)) * 0.12f;
+        if (shift < 0f) {
+            SurvivalMeters.chill(player, -shift);   // cold water draws heat out — good when hot, bad when cold
+        } else if (shift > 0f) {
+            SurvivalMeters.warm(player, shift);      // a warmer source nudges you up a touch
+        }
         if (SurvivalMeters.getThirst(player) < SurvivalMeters.MAX_THIRST) {
             SurvivalMeters.drink(player, DRINK_AMOUNT);
             if (player.getRandom().nextFloat() < rawSicknessChance(player.level(), water)) {
