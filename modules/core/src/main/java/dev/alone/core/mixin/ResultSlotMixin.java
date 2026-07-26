@@ -21,5 +21,12 @@ public class ResultSlotMixin {
         if (!player.level().isClientSide() && !player.isCreative()) {
             SurvivalMeters.exert(player, 2f);
         }
+        // TEMPORARY DEBUG (remove after diagnosing the normal-click take): fires server-side whenever a
+        // crafted result is actually taken, by any method. If a normal click DOESN'T show this but a
+        // shift-click DOES, the normal-click take isn't reaching the server.
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
+            sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                "[debug] craft taken server-side"), true);
+        }
     }
 }
