@@ -238,16 +238,21 @@ crouched, timed-craft repeats no longer instant, guards now chase at sprint pace
 submodule (a biome/day reveal on a cooldown), the timed-craft take (server-authoritative), **drinking-water
 temperature** (your core drifts toward the water you drink), **trampling crops** now angering the village,
 and **villager/guard body drops** (meat, fat, hide, brains, bone), the **free-climb one-block grab**
-(a lone step is only a jump now), and **tool hand-orientation** (item/handheld).
+(a lone step is only a jump now — and you can no longer cling while stood on the ground), **tool
+hand-orientation** (item/handheld; flint hatchet re-oriented blade-forward), and a **realism verification
+pass** on hydration/dehydration (rule-of-3s on the in-game clock; ~3 game-days at rest, faster
+sprinting/roasting; empty reserve kills over ~100s), **food-sickness** (food→hunger, water-dysentery→thirst;
+real-time, not rest-shortened by design), and the **endurance bar** (free jog, ~40s sprint, sleep-cleared
+fatigue ceiling) — all confirmed true to scale.
 
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
-- **Hydration not rising after a drink** — likely the intended two-stage gut→hydration absorb (a drink
-  fills the gut, which soaks into hydration over ~a minute); confirm it's not a real stall.
-- **Tuning/realism passes to verify against the day↔real scale:** fire duration (logs/coal), plank & stick
-  fuel times, dehydration rate (days→MC-days), the endurance bar's meaning & drain, fence carry weight,
-  food-sickness duration + dehydration (and whether rest should shorten it), and whether the path to the
-  crafting table and what it unlocks reads as realistic.
+- **Fuel & fire durations are still vanilla** (no override): plank 15s, stick 5s, coal 80s; logs aren't
+  furnace fuel at all. Decide whether a survival-realism fire wants realism-longer burns (and logs as a
+  direct fuel), or whether vanilla reads fine. A design call, not a bug.
+- **Fence carry weight** — fences sit in the planks/gate density tier (500 kg/m³ × footprint volume). Want a
+  concrete playtest read: did a fence in the pack feel too heavy/light against a real ~5–10 kg section?
+- **Crafting-table path realism** — whether the route to the table and what it unlocks reads as realistic.
 
 ## Death, respawn & run modes
 
