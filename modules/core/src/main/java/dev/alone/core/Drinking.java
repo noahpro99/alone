@@ -193,7 +193,7 @@ public final class Drinking {
         if (isSaltWater(player.level(), water)) {
             SurvivalMeters.drink(player, -SALT_DEHYDRATE); // seawater only makes you thirstier (§1.2)
             player.sendSystemMessage(Component.literal(
-                "The seawater is salty — it only makes you thirstier. Boiling won't help; you'd need to distil it, or find fresh water."));
+                "The seawater is salty — it only makes you thirstier."), true); // action bar, not chat
             return;
         }
         // Your core shifts a little toward the water's own temperature (§1.3): an ice-cold spring refreshes

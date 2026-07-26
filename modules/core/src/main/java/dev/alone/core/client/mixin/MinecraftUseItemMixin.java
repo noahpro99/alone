@@ -36,6 +36,12 @@ public class MinecraftUseItemMixin {
         if (mc.player == null || mc.level == null) {
             return;
         }
+        // An entity under the crosshair (a boat to board, an animal to interact with) owns this click — bail
+        // out and let vanilla handle it, so our bare-hand hijacks below don't steal it. Without this, boarding
+        // a dugout boat sitting ON water was being read as "drink from water" and cancelled.
+        if (mc.crosshairPickEntity != null) {
+            return;
+        }
         // The send-throttle is gated on the player's tickCount, but a respawn creates a FRESH player whose
         // tickCount restarts at 0 — while our static lastSendTick still holds the (large) pre-death value.
         // That left "now - lastSendTick" negative for a long time after dying, so strip/rive/drill/knap
