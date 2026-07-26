@@ -384,7 +384,10 @@ public final class Climbing {
         //   (1) a genuine ≥2-tall rough face in front of you (a lone 1-block step is just a jump);
         //   (5) looking roughly straight at the rock (kills the old "climb while looking 90° away" looseness);
         //   (3) pressed against the face, driving into it.
-        if (!hasClimbableWall(player) || !facingWall(player, dir) || !pressingIntoWall(player, dir)) {
+        // Note: STRICTLY 2-tall here (hasTallWallInFront), NOT hasClimbableWall — the latter also accepts a
+        // 1-block face when you've *recently* gripped, which is only for cresting mid-climb (the CONTINUE
+        // path above). Using it to START let a jump near a lone block right after a climb re-grab the block.
+        if (!hasTallWallInFront(player) || !facingWall(player, dir) || !pressingIntoWall(player, dir)) {
             setGripping(player, false);
             return false;
         }
@@ -446,6 +449,16 @@ public final class Climbing {
      * of a wall you were <b>just gripping</b> (topping out). A lone 1-block step is neither — so it's left
      * to a normal jump rather than being mistaken for a climb.
      */
+    /** A genuine ≥2-tall flat face directly in front — what it takes to GRAB ON from standing. A lone
+     *  1-block step is only ever a jump, never a climb, even right after another climb (unlike
+     *  {@link #hasClimbableWall}, which accepts a 1-block face mid-climb to let you crest). */
+    private static boolean hasTallWallInFront(Player player) {
+        Level level = player.level();
+        Direction dir = player.getDirection();
+        BlockPos feet = player.blockPosition();
+        return isFlatWall(level, feet.relative(dir)) && isFlatWall(level, feet.above().relative(dir));
+    }
+
     private static boolean hasClimbableWall(Player player) {
         Level level = player.level();
         Direction dir = player.getDirection();
