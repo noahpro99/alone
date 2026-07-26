@@ -43,6 +43,11 @@ public class RockItem extends Item {
 
     @Override
     public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
+        // Crouch is for the deliberate rock uses (knapping, careful placement) — don't fling the stone while
+        // sneaking, so you can hold a rock and work with it without hurling it away.
+        if (player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
         ItemStack stack = player.getItemInHand(hand);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
             SoundSource.PLAYERS, 0.6f, 0.6f / (level.getRandom().nextFloat() * 0.4f + 0.8f));

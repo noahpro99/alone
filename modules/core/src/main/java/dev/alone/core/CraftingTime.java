@@ -120,9 +120,20 @@ public final class CraftingTime {
 
     /** Taking a result restarts that item's clock, so each item costs its own crafting time. */
     public static void reset(Player player, ItemStack taken) {
-        Map<Integer, Integer> worked = mapFor(player).get(player.getUUID());
+        // Clear BOTH the client and server maps, not just this side's. Progress is accrued client-side (the
+        // client gates the slot), but onTake fires server-side in single-player — so resetting only "this
+        // side" left the CLIENT map's finished ticks in place, and every repeat of the same item crafted
+        // instantly. Wiping both by UUID (same JVM in single-player; a no-op for the absent map otherwise)
+        // makes each craft cost its time afresh.
+        int id = BuiltInRegistries.ITEM.getId(taken.getItem());
+        clearWorked(CLIENT, player.getUUID(), id);
+        clearWorked(SERVER, player.getUUID(), id);
+    }
+
+    private static void clearWorked(Map<UUID, Map<Integer, Integer>> maps, UUID uuid, int id) {
+        Map<Integer, Integer> worked = maps.get(uuid);
         if (worked != null) {
-            worked.remove(BuiltInRegistries.ITEM.getId(taken.getItem()));
+            worked.remove(id);
         }
     }
 

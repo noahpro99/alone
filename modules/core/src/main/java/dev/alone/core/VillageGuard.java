@@ -45,9 +45,10 @@ import net.minecraft.world.level.Level;
  *   <li><b>Bow and sword.</b> A bow in the main hand and an iron sword in the off hand: it looses arrows at
  *       range ({@link GuardBowAttackGoal}) and cuts you up close ({@link GuardMeleeGoal}). It wears a full set
  *       of chainmail.</li>
- *   <li><b>Moves at your pace.</b> Its {@code MOVEMENT_SPEED} base is {@code 0.09} — the player's own walk
- *       ({@link SurvivalMeters} {@code WALK_SPEED}). An armoured man on foot doesn't outrun you; stand and
- *       fight and he keeps pace, sprint away and you can break contact. (Deliberate — a tuning knob.)</li>
+ *   <li><b>Keeps pace with a runner.</b> Its {@code MOVEMENT_SPEED} base is {@code 0.117} — roughly the
+ *       player's SPRINT (walk {@code 0.09} × 1.3). A guard at a walk was hopeless — you just strolled away —
+ *       so a chasing guard now matches a fleeing sprint: you break contact by outlasting his approach (your
+ *       stamina), breaking line of sight, or using terrain, not by simply holding sprint. (A tuning knob.)</li>
  *   <li><b>Drops its whole kit.</b> Unlike the old cut, the gear is <b>not</b> kept back: a guard has a loot
  *       table ({@code data/alone/loot_table/entities/village_guard.json}) that drops its chainmail, bow,
  *       arrows, sword, and the rations it was carrying. Equipment drop-chances are zeroed so the loot table is
@@ -93,7 +94,7 @@ public class VillageGuard extends PathfinderMob implements RangedAttackMob {
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 24.0)
-            .add(Attributes.MOVEMENT_SPEED, 0.09) // == SurvivalMeters.WALK_SPEED — the player's walk
+            .add(Attributes.MOVEMENT_SPEED, 0.117) // ~= the player's SPRINT (walk 0.09 x1.3): a chasing guard keeps pace
             .add(Attributes.ATTACK_DAMAGE, 4.0)
             .add(Attributes.FOLLOW_RANGE, 48.0);
     }

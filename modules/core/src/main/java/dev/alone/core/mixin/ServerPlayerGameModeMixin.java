@@ -135,6 +135,9 @@ public abstract class ServerPlayerGameModeMixin {
         if (!state.is(Blocks.GRAVEL)) {
             return;
         }
+        if (dev.alone.core.PlacedBlocks.isPlaced(this.level, pos)) {
+            return; // player-placed gravel has already given up its flint — no place-and-break flint farming
+        }
         float progress = cir.getReturnValueF();
         long key = pos.asLong();
         int checked = this.alone$sifted().getOrDefault(key, 0);
