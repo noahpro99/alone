@@ -17,6 +17,8 @@ public final class ClientSurvivalState {
     public static volatile float gut = 0f;
     /** Long-term body condition, 0 (wasted away) .. 100 (well-nourished) — the wasting/weight arc. */
     public static volatile float condition = 100f;
+    /** How wet the body is, 0..1 — drives the wet sheen on the HUD body figure. */
+    public static volatile float wetness = 0f;
 
     private ClientSurvivalState() {
     }
@@ -32,5 +34,6 @@ public final class ClientSurvivalState {
         fatigue = payload.fatigue();
         gut = payload.gut();
         condition = payload.condition();
+        wetness = payload.wetness();
     }
 }

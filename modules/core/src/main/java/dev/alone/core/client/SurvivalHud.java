@@ -110,7 +110,7 @@ public final class SurvivalHud {
         drawTrendArrow(g, tx + 11, yStamina, ClientSurvivalState.temperatureTrend);
 
         // A little figure — a paper-doll of your body: bleeding torso, sprained legs, dirty hands, illness.
-        drawPerson(g, tx + 24, yStamina, ClientSurvivalState.conditions);
+        drawPerson(g, tx + 24, yStamina, ClientSurvivalState.conditions, ClientSurvivalState.wetness);
 
         // A weather-vane under the temperature (§7.3): a north-up needle pointing the way the wind blows,
         // its length the wind's strength — a stub on a calm day, a long needle in a gale.
@@ -177,7 +177,7 @@ public final class SurvivalHud {
         pose.popMatrix();
     }
 
-    private static void drawPerson(GuiGraphicsExtractor g, int x, int y, int conditions) {
+    private static void drawPerson(GuiGraphicsExtractor g, int x, int y, int conditions, float wetness) {
         boolean sick = (conditions & Conditions.FLAG_SICK) != 0;
         boolean bleeding = (conditions & Conditions.FLAG_BLEEDING) != 0;
         boolean sprained = (conditions & Conditions.FLAG_SPRAINED) != 0;
@@ -203,6 +203,17 @@ public final class SurvivalHud {
         g.fill(x + 8, y + 11, x + 10, y + 13, hands);     // right hand
         g.fill(x + 3, y + 12, x + 5, y + 18, legs);       // left leg
         g.fill(x + 6, y + 12, x + 8, y + 18, legs);       // right leg
+
+        // Wet body — a watery-blue sheen over the figure, heavier the more soaked you are, with a drip
+        // gathering at a foot. Fades as you dry, so the doll visibly glistens then dries out.
+        if (wetness > 0.02f) {
+            float w = Math.min(1f, wetness);
+            int sheen = ((int) (w * 0x70) << 24) | 0x5AA6E6; // translucent blue, up to ~44%
+            g.fill(x + 3, y, x + 8, y + 18, sheen);          // head → torso → legs core
+            g.fill(x + 1, y + 5, x + 10, y + 13, sheen);     // arms + hands
+            int drip = ((int) (w * 0xD0) << 24) | 0x5AA6E6;  // a brighter drop forming at the foot
+            g.fill(x + 4, y + 18, x + 5, y + 20, drip);
+        }
     }
 
     private static void drawBar(GuiGraphicsExtractor g, int x, int y, float pct, int color) {

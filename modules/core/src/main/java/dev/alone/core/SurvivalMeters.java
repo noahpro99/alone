@@ -298,6 +298,11 @@ public final class SurvivalMeters {
         return player.getAttachedOrElse(GUT, 0f);
     }
 
+    /** How wet the body is, 0..1 — synced for the HUD's wet-body readout. */
+    public static float wetnessFraction(Player player) {
+        return player.getAttachedOrElse(WETNESS, 0) / (float) MAX_WETNESS;
+    }
+
     public static float getBodyTemp(Player player) {
         return player.getAttachedOrElse(BODY_TEMP, 0f);
     }
@@ -798,7 +803,7 @@ public final class SurvivalMeters {
         // Push state to the client HUD a few times a second (temperature field carries body temp).
         if (player.tickCount % 10 == 0) {
             ServerPlayNetworking.send(player,
-                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player), getGut(player), Wasting.getCondition(player)));
+                new SurvivalSyncPayload(stamina, thirst, bodyTemp, Conditions.flags(player), getFatigue(player), getGut(player), Wasting.getCondition(player), wetnessFraction(player)));
         }
     }
 

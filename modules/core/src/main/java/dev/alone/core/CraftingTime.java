@@ -126,21 +126,17 @@ public final class CraftingTime {
 
     /** Taking a result restarts that item's clock, so each item costs its own crafting time. */
     public static void reset(Player player, ItemStack taken) {
-        // Clear BOTH the client and server maps, not just this side's. Progress is accrued client-side (the
-        // client gates the slot), but onTake fires server-side in single-player — so resetting only "this
-        // side" left the CLIENT map's finished ticks in place, and every repeat of the same item crafted
-        // instantly. Wiping both by UUID (same JVM in single-player; a no-op for the absent map otherwise)
-        // makes each craft cost its time afresh.
+        // Clear this item's clock from EVERY map on BOTH sides — deliberately UUID-agnostic. The client
+        // accrues progress (it gates the slot) and the integrated server accrues its own copy, and if those
+        // two ever key off even a slightly different player identity (the dev client/server can), a
+        // per-UUID reset clears one map and leaves the other's finished ticks — so a repeat crafts instantly
+        // or, worse, the client shows "ready" while the server (re-ticking from zero) refuses the take. Wiping
+        // the item from all maps guarantees both sides restart the clock together. (Single-player has one
+        // player anyway; the only cost in multiplayer is resetting another player's timer for the SAME item,
+        // which is negligible.)
         int id = BuiltInRegistries.ITEM.getId(taken.getItem());
-        clearWorked(CLIENT, player.getUUID(), id);
-        clearWorked(SERVER, player.getUUID(), id);
-    }
-
-    private static void clearWorked(Map<UUID, Map<Integer, Integer>> maps, UUID uuid, int id) {
-        Map<Integer, Integer> worked = maps.get(uuid);
-        if (worked != null) {
-            worked.remove(id);
-        }
+        CLIENT.values().forEach(worked -> worked.remove(id));
+        SERVER.values().forEach(worked -> worked.remove(id));
     }
 
     private static ItemStack currentResult(Player player) {
