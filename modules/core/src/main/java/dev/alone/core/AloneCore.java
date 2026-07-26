@@ -141,6 +141,7 @@ public class AloneCore implements ModInitializer {
         Knapping.init();        // §8.1 — knap flint with a rock into sharp shards (flint tools start here)
         IceHouse.init();        // §4.2 — cut lake ice with a pick/axe; pack it around a store for cold (ice house)
         Riving.init();          // §8.1 — rive a log into rough boards by hand (slow, exhausting; no saw)
+        Dugout.init();          // boats — sneak+axe a placed log to begin hollowing it into a dugout canoe
         AdminCommand.init();    // debug — /alone reset refills meters, clears conditions, tops off vitals
         Loadout.init();         // "the start" — bring 2 items from an approved list, read against your biome
         CraftingTime.init();    // §8.2 — timed, stationary crafting: a recipe must be worked before you take it
