@@ -234,16 +234,13 @@ is ways to extend it:
 
 Concrete items raised in playtest, still to do (each is removed from here and folded into the feature
 docs once it ships). Recently cleared: the gravel-flint place-and-break exploit, no throwing a rock while
-crouched, timed-craft repeats no longer instant, guards now chase at sprint pace, and the **Alone:
-Cinematic** submodule (a biome/day reveal with a dramatic swell, on a cooldown).
+crouched, timed-craft repeats no longer instant, guards now chase at sprint pace, the **Alone: Cinematic**
+submodule (a biome/day reveal on a cooldown), the timed-craft take (server-authoritative), **drinking-water
+temperature** (your core drifts toward the water you drink), **trampling crops** now angering the village,
+and **villager/guard body drops** (meat, fat, hide, brains, bone).
 
-- **Drinking-water temperature:** cold water cools your body a little, a hot drink warms it.
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
-- **Trampling crops is a crime:** jumping on / trampling a village's farmland should anger it like any
-  other theft or vandalism.
-- **Villager & guard drops:** people and guards are bodies — they should yield raw meat, fat, hide, and
-  the like (with the realistic-drops principle: honest loot, balanced by difficulty).
 - **Free-climb one-block bug:** you can still get "caught" gripping a single-block step; that should never
   engage a climb.
 - **Hydration not rising after a drink** — a two-stage gut→hydration absorb case to chase down.
