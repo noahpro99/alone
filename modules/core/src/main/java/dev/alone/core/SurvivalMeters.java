@@ -150,6 +150,11 @@ public final class SurvivalMeters {
     private static final int CAVE_VARIABLE_DEPTH = 15; // m over which the surface's influence fades underground
     private static final int CAVE_DEEP_DEPTH = 110;    // m below the cold zone at which the chill bottoms out (~bedrock)
     private static final float NIGHT_CHILL = 0.2f;      // nights are colder than days (biome scale)
+    // Dry, cloudless country (deserts, savanna, badlands — biomes with no rainfall) radiates the day's heat
+    // straight back to a clear sky after dark, so a searing desert turns genuinely cold at night (a real
+    // ~40°C→5°C swing). The drop scales with how hot the biome ran by day, so the hottest deserts swing
+    // hardest, while humid biomes (which hold their warmth) keep just the small base NIGHT_CHILL.
+    private static final float ARID_NIGHT_FACTOR = 1.1f;
     private static final float WIND_CHILL_MAX = 0.3f;   // full-strength wind in the open (biome scale) — a windbreak removes it
     private static final float BLIZZARD_CHILL = 0.6f;   // a winter storm freezes the exposed fast — any roof breaks it
     private static final float ROOF_INSULATION = 0.4f;  // a bare roof (open lean-to) blunts ~40% of cold/heat (§5.5)
@@ -451,7 +456,13 @@ public final class SurvivalMeters {
             }
             long timeOfDay = level.getOverworldClockTime() % 24000L;
             if (timeOfDay >= 13000L && timeOfDay < 23000L) {
-                temp -= NIGHT_CHILL; // clear night sky is colder
+                // Clear night sky is colder — and in arid, rainless country the radiative loss is dramatic:
+                // the day's stored heat bleeds off fast and a scorching desert turns cold after dark.
+                float nightChill = NIGHT_CHILL;
+                if (!level.getBiome(pos).value().hasPrecipitation()) {
+                    nightChill += ARID_NIGHT_FACTOR * Math.max(0f, temp - NEUTRAL_AMBIENT);
+                }
+                temp -= nightChill;
             }
             // Wind chill (§1.3): out in the open a steady wind strips body heat far faster than still air —
             // but a wall on the WINDWARD side breaks it, which is why you orient a shelter and close off the
