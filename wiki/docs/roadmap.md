@@ -254,9 +254,10 @@ riving tool is 2×2-craftable so there's no table chicken-and-egg — all true t
 near-weightless 0.05 kg — now weighted by the wood they're built from, a fence ~2 kg, a gate ~3.5 kg).
 
 - **Two-person boats, done right** — in progress:
-  - ✅ **The hard build shipped** — a **dugout canoe**: craft a Dugout Log from a log, then char-and-scrape
-    it hollow (lit flame + axe, six tiring cycles) into a boat. No plank-craft shortcut. *(Reuses the vanilla
-    boat as the finished craft for now; a hollowed-canoe model is polish.)*
+  - ✅ **The hard build shipped** — a **dugout canoe**: sneak+right-click a placed log with an axe to begin
+    hollowing the real log (no recipe), then char-and-scrape it hollow (lit flame + axe, six tiring cycles)
+    into a boat. No plank-craft shortcut. *(Reuses the vanilla boat as the finished craft for now; a
+    hollowed-canoe model is polish.)*
   - **Disable vanilla boat crafting** so the dugout is the only path — once the dugout is playtest-confirmed
     (holding off so a dugout bug can't leave you with no boats at all).
   - **Stamina-paddling:** moving a boat costs wind, two paddlers move it faster — the two-person payoff.
