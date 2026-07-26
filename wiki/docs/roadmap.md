@@ -245,13 +245,16 @@ sprinting/roasting; empty reserve kills over ~100s), **food-sickness** (food→h
 real-time, not rest-shortened by design), and the **endurance bar** (free jog, ~40s sprint, sleep-cleared
 fatigue ceiling) — all confirmed true to scale, and a **realistic campfire fire economy** (a log is ~2
 MC-hrs not 6, mass-consistent plank/stick ladder, and a spent fire now leaves charcoal in proportion to
-the wood it burned — at open-fire efficiency, ~1 lump per two logs, since most wood burns clean to ash).
+the wood it burned — at open-fire efficiency, ~1 lump per two logs, since most wood burns clean to ash),
+the **retirement of the craftable cobblestone furnace** (heat-tech is clay-built now — campfire → brick
+kiln → refractory bloomery; glass moved to the kiln, which is the realistic silica heat), and a
+**verification of the crafting-table path** (log→planks is riven/sawn by hand, no grid shortcut; the flint
+riving tool is 2×2-craftable so there's no table chicken-and-egg — all true to real woodworking).
 
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
 - **Fence carry weight** — fences sit in the planks/gate density tier (500 kg/m³ × footprint volume). Want a
   concrete playtest read: did a fence in the pack feel too heavy/light against a real ~5–10 kg section?
-- **Crafting-table path realism** — whether the route to the table and what it unlocks reads as realistic.
 
 ## Death, respawn & run modes
 
