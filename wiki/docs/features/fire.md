@@ -75,9 +75,29 @@ The campfire is the hearth. It is **crafted from 3 sticks and plant fiber** — 
 Once lit, it runs on fuel and needs feeding:
 
 - **Right-click it with sticks, logs, planks, plant fiber, or leaf litter** to add fuel and make it burn longer.
+  Fuel is worth what it physically is — a **log** is a couple of hours of steady fire, a **plank** a quarter of
+  that (a log saws into four), a **stick** minutes of kindling, **fibre and leaf litter** mere seconds of tinder.
+  Keeping a fire lit through a night is a real, several-log wood cost.
 - It **burns down over time and goes out** when the fuel runs dry.
+- When it dies it leaves **charcoal — in proportion to the wood it burned**: a small fire a single lump, a big
+  well-fed blaze a handful. But an open fire is a poor charcoal-maker (most wood burns clean to ash), so it
+  yields only about **one charcoal per two logs** — for charcoal in quantity you want a purpose-built burn.
 - It gives off **warmth that dwindles as the fuel runs low** — a dying fire warms less.
 - It **cooks food** and **boils water** (set a fire-safe vessel over it — see [Water](./water-and-drinking.md)).
+
+## Heat structures — there is no craftable furnace
+
+You don't assemble a furnace from loose cobblestone (nor could you carry eight blocks of it — that's ~140 kg).
+As in life, a furnace is a **fired-clay or brick structure built in place**, and Alone's heat-tech is exactly that:
+
+- The **campfire** is the low, open heat — cooking, boiling, rendering tallow, and firing your **first bricks**
+  (right-click a clay ball onto a lit fire) and clay pots.
+- The **kiln** (laid from 8 bricks) is the contained high heat — it fires pottery and **melts sand to glass**,
+  which an open campfire can't reach.
+- The **bloomery** (laid from refractory clay) is the iron furnace — see [Tools & crafting](./tools-and-crafting.md).
+
+The vanilla cobblestone furnace **can't be crafted**; the clay ladder above replaces it, and (unlike 140 kg of
+cobble) a whole kiln or bloomery's worth of clay is light enough to carry to your camp.
 
 ## Fire is a hazard — keep it clear of wood
 

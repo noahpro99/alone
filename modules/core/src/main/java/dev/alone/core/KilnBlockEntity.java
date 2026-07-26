@@ -61,13 +61,18 @@ public class KilnBlockEntity extends BlockEntity {
         }
     }
 
-    /** What a loaded item fires into — clay hardens to a pot or a brick. Null means it can't be fired. */
+    /** What a loaded item fires into — clay hardens to a pot or a brick, sand melts to glass. Null means it
+     *  can't be fired. Glass lives here (not on the campfire) because it takes the kiln's sustained high heat
+     *  to melt silica — the realistic home for it now the cobblestone furnace is gone. */
     public static ItemStack firedResult(Item item) {
         if (item == AloneItems.UNFIRED_CLAY_POT) {
             return new ItemStack(AloneItems.CLAY_POT);
         }
         if (item == Items.CLAY_BALL) {
             return new ItemStack(Items.BRICK);
+        }
+        if (item == Items.SAND || item == Items.RED_SAND) {
+            return new ItemStack(Items.GLASS);
         }
         return null;
     }
