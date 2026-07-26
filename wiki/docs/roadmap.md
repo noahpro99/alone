@@ -249,12 +249,12 @@ the wood it burned — at open-fire efficiency, ~1 lump per two logs, since most
 the **retirement of the craftable cobblestone furnace** (heat-tech is clay-built now — campfire → brick
 kiln → refractory bloomery; glass moved to the kiln, which is the realistic silica heat), and a
 **verification of the crafting-table path** (log→planks is riven/sawn by hand, no grid shortcut; the flint
-riving tool is 2×2-craftable so there's no table chicken-and-egg — all true to real woodworking).
+riving tool is 2×2-craftable so there's no table chicken-and-egg — all true to real woodworking), and a
+**fence/gate carry-weight fix** (their thin posts slipped under the block-density threshold and read as a
+near-weightless 0.05 kg — now weighted by the wood they're built from, a fence ~2 kg, a gate ~3.5 kg).
 
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
-- **Fence carry weight** — fences sit in the planks/gate density tier (500 kg/m³ × footprint volume). Want a
-  concrete playtest read: did a fence in the pack feel too heavy/light against a real ~5–10 kg section?
 
 ## Death, respawn & run modes
 

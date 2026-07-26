@@ -468,6 +468,12 @@ public final class Carry {
         if (path.contains("clay_ball")) return 0.50f;
         if (path.contains("egg")) return 0.06f;
         if (path.contains("ender_pearl")) return 0.50f;
+        // Wooden fences/gates are thin-posted, so their collision shape slips under the block-density
+        // threshold above and would otherwise read as a near-weightless misc item — but a fence section is
+        // real timber. Weight them by the wood they're built from (mass conserves): a fence ≈ a plank and a
+        // third, a gate a small framed hurdle of a few boards. Check gate first — "fence_gate" contains "fence".
+        if (path.contains("fence_gate")) return 3.50f; // a hung gate — a framed hurdle of several boards
+        if (path.contains("fence")) return 2.00f;      // a post-and-rail section, ~1⅓ planks of wood
 
         // Food
         ItemStack def = item.getDefaultInstance();
