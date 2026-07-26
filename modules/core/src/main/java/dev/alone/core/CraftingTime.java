@@ -72,6 +72,9 @@ public final class CraftingTime {
     // stepped away from resumes. Side-separated so the integrated server and client don't collide.
     private static final Map<UUID, Map<Integer, Integer>> CLIENT = new HashMap<>();
     private static final Map<UUID, Map<Integer, Integer>> SERVER = new HashMap<>();
+    // Last-seen total count of items in the crafting GRID (per side) — used to notice a craft being taken.
+    private static final Map<UUID, Integer> LAST_GRID_CLIENT = new HashMap<>();
+    private static final Map<UUID, Integer> LAST_GRID_SERVER = new HashMap<>();
 
     public static void init() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -83,6 +86,19 @@ public final class CraftingTime {
 
     /** Advance the craft timer for whatever recipe is in the player's grid. Runs each tick, both sides. */
     public static void tick(Player player) {
+        // Robust reset: taking a crafted result ALWAYS consumes its grid ingredients, so the grid's total item
+        // count drops. When it does, wipe every clock for this player — this catches a take by normal click,
+        // shift-click, OR removing an ingredient by hand, and doesn't depend on onTake firing (which was the
+        // fragile part). Runs on both sides, so each side's clock restarts together.
+        int grid = craftingGridCount(player);
+        Integer prevGrid = lastGridFor(player).put(player.getUUID(), grid);
+        if (prevGrid != null && grid < prevGrid) {
+            Map<Integer, Integer> worked = mapFor(player).get(player.getUUID());
+            if (worked != null) {
+                worked.clear();
+            }
+        }
+
         ItemStack result = currentResult(player);
         if (result.isEmpty()) {
             return; // nothing on the bench — leave saved progress alone (resumable)
@@ -149,6 +165,26 @@ public final class CraftingTime {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    /** Total number of items sitting in the crafting GRID's input slots (not the result). A drop in this
+     *  between ticks means a craft was taken (its ingredients were consumed) — our reset trigger. */
+    private static int craftingGridCount(Player player) {
+        if (player.containerMenu == null) {
+            return 0;
+        }
+        int total = 0;
+        for (Slot slot : player.containerMenu.slots) {
+            if (!(slot instanceof ResultSlot)
+                    && slot.container instanceof net.minecraft.world.inventory.CraftingContainer) {
+                total += slot.getItem().getCount();
+            }
+        }
+        return total;
+    }
+
+    private static Map<UUID, Integer> lastGridFor(Player player) {
+        return player.level().isClientSide() ? LAST_GRID_CLIENT : LAST_GRID_SERVER;
     }
 
     /** How long this result takes to craft, in ticks — compressed real-world effort by category. */
