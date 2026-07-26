@@ -322,6 +322,13 @@ public final class Carry {
         if (path.contains("snow")) {
             return 300f;
         }
+        // Tall, thin growth — sugar cane, bamboo, cactus, kelp, vines. Their outline shape reads as a near-
+        // full 1 m column, so without this they'd take the default stone-ish density and weigh ~9 kg a stalk.
+        // It's soft, water-and-fibre plant matter, so it's LIGHT for its bounding box — nail it low.
+        if (path.contains("sugar_cane") || path.contains("bamboo") || path.contains("cactus")
+            || path.contains("kelp") || path.contains("vine") || path.contains("seagrass")) {
+            return 120f;
+        }
         return 1500f; // default density (medium block)
     }
 
