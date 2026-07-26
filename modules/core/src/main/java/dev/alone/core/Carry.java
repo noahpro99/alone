@@ -155,6 +155,12 @@ public final class Carry {
         if (item == AloneItems.TARP) {
             return 0.008f;
         }
+        // Tall, thin growth (sugar cane, bamboo, cactus, kelp, vines): its outline shape reads as a near-full
+        // 1 m column, so the block-cube path below would hand it half your pack per stalk — but as CARGO it's
+        // a slim stalk you bundle. Catch it FIRST (same shape-misread that made the fence weightless).
+        if (isTallThinPlant(item)) {
+            return 0.03f;
+        }
         if (item instanceof BlockItem blockItem) {
             float shape = blockShapeVolume(blockItem);
             if (shape >= 0.4f) {
@@ -257,6 +263,17 @@ public final class Carry {
         return 0.25f; // unknown → below the block threshold, treated as a small item
     }
 
+    /** Tall, thin growth (sugar cane, bamboo, cactus, kelp, vines) whose full-height outline shape fools the
+     *  block-cube weight/volume paths — it's a slim stalk you bundle, not a 1 m cube of stone. */
+    private static boolean isTallThinPlant(Item item) {
+        return isTallThinPlantPath(BuiltInRegistries.ITEM.getKey(item).getPath());
+    }
+
+    private static boolean isTallThinPlantPath(String path) {
+        return path.contains("sugar_cane") || path.contains("bamboo") || path.contains("cactus")
+            || path.contains("kelp") || path.contains("vine") || path.contains("seagrass");
+    }
+
     private static float getBlockDensity(String path) {
         if (path.equals("gold_block") || path.equals("raw_gold_block")) {
             return 19300f;
@@ -325,8 +342,7 @@ public final class Carry {
         // Tall, thin growth — sugar cane, bamboo, cactus, kelp, vines. Their outline shape reads as a near-
         // full 1 m column, so without this they'd take the default stone-ish density and weigh ~9 kg a stalk.
         // It's soft, water-and-fibre plant matter, so it's LIGHT for its bounding box — nail it low.
-        if (path.contains("sugar_cane") || path.contains("bamboo") || path.contains("cactus")
-            || path.contains("kelp") || path.contains("vine") || path.contains("seagrass")) {
+        if (isTallThinPlantPath(path)) {
             return 120f;
         }
         return 1500f; // default density (medium block)
