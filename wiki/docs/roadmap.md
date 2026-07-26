@@ -243,13 +243,12 @@ hand-orientation** (item/handheld; flint hatchet re-oriented blade-forward), and
 pass** on hydration/dehydration (rule-of-3s on the in-game clock; ~3 game-days at rest, faster
 sprinting/roasting; empty reserve kills over ~100s), **food-sickness** (food→hunger, water-dysentery→thirst;
 real-time, not rest-shortened by design), and the **endurance bar** (free jog, ~40s sprint, sleep-cleared
-fatigue ceiling) — all confirmed true to scale.
+fatigue ceiling) — all confirmed true to scale, and a **realistic campfire fire economy** (a log is ~2
+MC-hrs not 6, mass-consistent plank/stick ladder, and a spent fire now leaves charcoal in proportion to
+the wood it burned — at open-fire efficiency, ~1 lump per two logs, since most wood burns clean to ash).
 
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
-- **Fuel & fire durations are still vanilla** (no override): plank 15s, stick 5s, coal 80s; logs aren't
-  furnace fuel at all. Decide whether a survival-realism fire wants realism-longer burns (and logs as a
-  direct fuel), or whether vanilla reads fine. A design call, not a bug.
 - **Fence carry weight** — fences sit in the planks/gate density tier (500 kg/m³ × footprint volume). Want a
   concrete playtest read: did a fence in the pack feel too heavy/light against a real ~5–10 kg section?
 - **Crafting-table path realism** — whether the route to the table and what it unlocks reads as realistic.

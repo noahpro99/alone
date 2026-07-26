@@ -33,13 +33,14 @@ public final class Campfires {
     }
 
     // Burn-times are pinned to the day/night clock: an MC day is 24000 ticks = 20 real min, so one
-    // MC-hour is 1000 ticks (50 real sec). Fuel life is set by what the fuel *is*, the way it burns in
-    // life — a split log holds a bed of coals for hours, tinder flares and is gone. The ladder below runs
-    // from whole wood down to leaf-litter, spanning well over two orders of magnitude per item.
-    public static final int INITIAL_FUEL = 3600;  // a freshly lit campfire, ~3.5 MC-hrs of its build wood
-    public static final int FUEL_PER_STICK = 500;  // kindling — a short burst, ~30 MC-min (~25 real s)
-    public static final int FUEL_PER_LOG = 6000;   // a whole log — a good chunk of a day, ~6 MC-hrs (~5 real min)
-    public static final int MAX_FUEL = 24000;      // the fire only holds so big a pile — one full MC day banked
+    // MC-hour is 1000 ticks. Fuel life is set by what the fuel *is*, measured against real firewood: a
+    // seasoned log burns ~1–2 hours on a fire, a thin dry board far less, a kindling twig minutes, tinder
+    // seconds. The ladder is mass-consistent with the carry model (4 planks = 1 log). Keeping a fire lit
+    // through a night is a genuine wood cost — several logs — the way a real camp burns through a woodpile.
+    public static final int FUEL_PER_LOG = 2000;   // a whole log section — ~2 MC-hrs of steady fire
+    public static final int INITIAL_FUEL = 2400;   // a fresh lay ≈ a log plus a handful of kindling
+    public static final int FUEL_PER_STICK = 200;  // a kindling twig — ~12 MC-min, flares and is spent
+    public static final int MAX_FUEL = 12000;      // a campfire holds only so big a bed — ~6 logs / half a day
     public static final int BOIL_TIME = 300;       // ~15s on the fire to bring a pot to a rolling boil
 
     public static final AttachmentType<Integer> FUEL =
@@ -91,8 +92,10 @@ public final class Campfires {
                     return InteractionResult.PASS; // let vanilla handle food/pottery cooking, etc.
                 }
                 if (!level.isClientSide()) {
-                    int fuel = Math.min(MAX_FUEL, getFuel(be) + add);
+                    int oldFuel = getFuel(be);
+                    int fuel = Math.min(MAX_FUEL, oldFuel + add);
                     setFuel(be, fuel);
+                    be.setAttached(WOOD_IN, getWoodIn(be) + (fuel - oldFuel)); // only wood that took chars later
                     if (!player.isCreative()) {
                         held.shrink(1);
                     }
@@ -196,10 +199,31 @@ public final class Campfires {
     /** A word on how a fire's burning, read from its remaining fuel — roaring down to guttering, with a
      *  rough time. The kind of judgement you'd make glancing at the flames and coals, not a furnace gauge. */
     private static String fireStateMessage(int fuel) {
-        int minutes = Math.max(1, Math.round(fuel / 1200f)); // 1200 ticks = 1 minute
-        String state = fuel > 12000 ? "roaring" : fuel > 4800 ? "burning steadily"
-            : fuel > 1200 ? "burning low" : "guttering";
+        int minutes = Math.max(1, Math.round(fuel / 1200f)); // 1200 ticks = 1 real minute of burn
+        String state = fuel > 6000 ? "roaring" : fuel > 2400 ? "burning steadily"
+            : fuel > 600 ? "burning low" : "guttering";
         return "The fire is " + state + " — about " + minutes + " min of fuel left.";
+    }
+
+    // Charcoal from a dead campfire (§3). An OPEN fire is a poor charcoal-maker — with free air most of the
+    // wood burns clean to ash and gas; only the wood the fire starved out before it could fully combust is
+    // left as char. So the yield is proportional to the total wood that ever went through it, at roughly HALF
+    // the rate of a controlled char (a furnace/pit gets ~1 charcoal per log; an open fire ~1 per two logs).
+    // Real, and it leaves quantity charcoal — for iron — to a purpose-built burn rather than a warming fire.
+    public static final int FUEL_PER_CHARCOAL = FUEL_PER_LOG * 2;
+
+    /** Total fuel that has ever gone into this fire — the wood available to char when it finally dies. */
+    public static final AttachmentType<Integer> WOOD_IN =
+        AttachmentRegistry.createPersistent(Identifier.fromNamespaceAndPath("alone", "campfire_wood_in"), Codec.INT);
+
+    public static int getWoodIn(BlockEntity be) {
+        return be.getAttachedOrElse(WOOD_IN, INITIAL_FUEL); // the build lay is the first wood in the bed
+    }
+
+    /** How much charcoal a spent campfire leaves — scaled by how much wood it burned, floored at a single
+     *  lump (even a small fire leaves some char), capped at a stack. */
+    public static int charcoalYield(BlockEntity be) {
+        return Math.min(64, Math.max(1, getWoodIn(be) / FUEL_PER_CHARCOAL));
     }
 
     public static int fuelValue(ItemStack stack) {
@@ -210,7 +234,7 @@ public final class Campfires {
             return FUEL_PER_LOG;
         }
         if (stack.is(ItemTags.PLANKS)) {
-            return FUEL_PER_LOG / 3; // a split of milled wood — a couple of MC-hrs, less than a whole log
+            return FUEL_PER_LOG / 4; // a sawn board — a quarter of a log's wood (mass conserves), ~30 MC-min
         }
         if (stack.is(AloneItems.PLANT_FIBER)) {
             return FUEL_PER_FIBER; // kindling/tinder — burns quick, keeps a fire alive in a pinch

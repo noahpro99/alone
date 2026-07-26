@@ -89,8 +89,9 @@ public class CampfireCookTickMixin {
                 }
                 Block.popResource(level, pos, boilingPot);
             }
+            int charcoal = Campfires.charcoalYield(entity);
             level.destroyBlock(pos, false);
-            Block.popResource(level, pos, new ItemStack(Items.CHARCOAL));
+            Block.popResource(level, pos, new ItemStack(Items.CHARCOAL, charcoal));
             return;
         }
         Campfires.setFuel(entity, fuel - 1);
