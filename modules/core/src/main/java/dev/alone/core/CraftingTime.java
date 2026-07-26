@@ -104,8 +104,14 @@ public final class CraftingTime {
     }
 
     /** Whether the crafted result may be taken yet — false until its craft time has been worked. */
+    // The client and server both tick the timer, up to a tick out of step. Without slack, the client hits
+    // "ready" a tick before the server, so a normal click-take is accepted client-side, then DENIED by the
+    // server (a hair behind) and rolled back — which looks like the timer restarting. (Shift-click takes a
+    // different path and dodged it.) A few ticks of grace means when the client shows ready, the server agrees.
+    private static final int READY_MARGIN = 3;
+
     public static boolean isReady(Player player, ItemStack result) {
-        return workedTicks(player, result) >= craftTicks(result);
+        return workedTicks(player, result) >= craftTicks(result) - READY_MARGIN;
     }
 
     /** 0..1 progress toward completing this result — drives the on-slot bar. */

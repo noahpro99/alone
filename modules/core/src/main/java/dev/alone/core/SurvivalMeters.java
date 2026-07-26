@@ -684,6 +684,20 @@ public final class SurvivalMeters {
         }
         player.setAttached(WETNESS, wetness);
         boolean wet = wetness > 0;
+        // Visible wetness (§1.3): a soaked body drips. Spawn drip particles server-side (so co-op partners see
+        // you're wet, not just you), scaled by how wet you are — a shine of drips when you first climb out,
+        // tapering as you dry. Not while submerged (you're in the water then, not dripping off it).
+        if (wet && !player.isInWater() && player.level() instanceof ServerLevel wetLevel
+            && player.tickCount % 6 == 0) {
+            float soak = wetness / (float) MAX_WETNESS; // 0..1
+            if (wetLevel.getRandom().nextFloat() < soak) {
+                double px = player.getX() + (wetLevel.getRandom().nextDouble() - 0.5) * player.getBbWidth();
+                double py = player.getY() + player.getBbHeight() * (0.2 + wetLevel.getRandom().nextDouble() * 0.7);
+                double pz = player.getZ() + (wetLevel.getRandom().nextDouble() - 0.5) * player.getBbWidth();
+                wetLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.FALLING_WATER,
+                    px, py, pz, 1, 0.0, -0.05, 0.0, 0.0);
+            }
+        }
 
         //  1) Environmental drift — biome + weather + wetness. Slow (minutes) unless you're wet.
         boolean submerged = player.isInWater();
