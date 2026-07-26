@@ -147,17 +147,15 @@ public final class CraftingTime {
 
     /** Taking a result restarts that item's clock, so each item costs its own crafting time. */
     public static void reset(Player player, ItemStack taken) {
-        // Clear this item's clock from EVERY map on BOTH sides — deliberately UUID-agnostic. The client
-        // accrues progress (it gates the slot) and the integrated server accrues its own copy, and if those
-        // two ever key off even a slightly different player identity (the dev client/server can), a
-        // per-UUID reset clears one map and leaves the other's finished ticks — so a repeat crafts instantly
-        // or, worse, the client shows "ready" while the server (re-ticking from zero) refuses the take. Wiping
-        // the item from all maps guarantees both sides restart the clock together. (Single-player has one
-        // player anyway; the only cost in multiplayer is resetting another player's timer for the SAME item,
-        // which is negligible.)
-        int id = BuiltInRegistries.ITEM.getId(taken.getItem());
-        CLIENT.values().forEach(worked -> worked.remove(id));
-        SERVER.values().forEach(worked -> worked.remove(id));
+        // Clear ONLY this side's map. Crucially NOT both: onTake fires on the CLIENT too (during the
+        // left-click take prediction), and if that wiped the SERVER map it would make the server "not ready"
+        // right before it processed the click — so the server refused the take and it snapped back (which is
+        // exactly why a left-click never worked while shift-click did). The authoritative repeat-reset is the
+        // grid-ingredient-drop check in tick(); this per-side clear is just belt-and-suspenders.
+        Map<Integer, Integer> worked = mapFor(player).get(player.getUUID());
+        if (worked != null) {
+            worked.remove(BuiltInRegistries.ITEM.getId(taken.getItem()));
+        }
     }
 
     private static ItemStack currentResult(Player player) {
