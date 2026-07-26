@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "minecraft:porkchop",
+      "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 2.0, "max": 4.0 } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "alone:raw_fat",
+      "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1.0, "max": 2.0 } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "alone:raw_hide" } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "alone:animal_brains" } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "minecraft:bone",
+      "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1.0, "max": 3.0 } } ] } ] }
+  ]
+}

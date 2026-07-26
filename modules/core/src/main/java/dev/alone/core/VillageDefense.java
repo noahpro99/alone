@@ -249,6 +249,15 @@ public final class VillageDefense {
         player.setAttached(VILLAGE_HOSTILE_UNTIL, level.getGameTime() + HOSTILE_DURATION);
     }
 
+    /** VANDALISM by trampling — jumping/stomping onto a village's farmland (which tramples the crop) is
+     *  wrecking their harvest, so it rouses the village like breaking a crop by hand. Called from
+     *  {@code FarmBlockTrampleMixin} when a player lands hard on farmland. */
+    public static void reportTrample(ServerPlayer player, ServerLevel level, BlockPos pos) {
+        if (!player.isCreative() && Spawns.nearVillage(level, pos)) {
+            flag(player, level);
+        }
+    }
+
     /**
      * Sets a defending mob onto the nearest player the village has been turned hostile against. Shared by the
      * {@link VillageGuard guards} and the {@link Golems iron golems} so one wrong turns the whole settlement's
