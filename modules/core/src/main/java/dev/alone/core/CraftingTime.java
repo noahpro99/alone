@@ -107,15 +107,20 @@ public final class CraftingTime {
         int itemId = BuiltInRegistries.ITEM.getId(result.getItem());
         int required = craftTicks(result);
         int ticks = worked.getOrDefault(itemId, 0);
-        if (ticks >= required) {
-            return; // already done; waiting to be taken
+        if (ticks < required) {
+            ticks++;
+            worked.put(itemId, ticks);
         }
-        ticks++;
-        worked.put(itemId, ticks);
+        // The SERVER pushes the authoritative progress + ready-flag to the client every tick a recipe is on
+        // the bench (including once it's done), so the client's bar and take-gate track the server exactly —
+        // no independent client timer to drift and make a ready take snap back.
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.sendSystemMessage(Component.literal(ticks >= required
+            boolean ready = isReady(player, result);
+            serverPlayer.sendSystemMessage(Component.literal(ready
                 ? "Ready to take."
                 : "Crafting… " + (ticks * 100 / required) + "%"), true);
+            net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(serverPlayer,
+                new dev.alone.core.net.CraftProgressPayload(progressFraction(player, result), ready));
         }
     }
 

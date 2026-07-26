@@ -57,11 +57,16 @@ public class AloneCoreClient implements ClientModInitializer {
                 }
             });
 
-        // Timed crafting (§8.2): tick the same craft-timer client-side so the result slot's "can I take
-        // it yet?" gate agrees with the server (no take-then-snap-back on the crafting result).
+        // Timed crafting (§8.2): the SERVER owns the timer and pushes progress + ready to us — no client-side
+        // timer to drift and desync the take-gate. Store it for the result-slot bar and the client take-gate.
+        ClientPlayNetworking.registerGlobalReceiver(dev.alone.core.net.CraftProgressPayload.TYPE,
+            (payload, context) -> {
+                dev.alone.core.client.ClientCraftState.progress = payload.progress();
+                dev.alone.core.client.ClientCraftState.ready = payload.ready();
+            });
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null) {
-                CraftingTime.tick(client.player);
                 // Client movement is authoritative, so the jump-momentum latch (which protects a jump's
                 // full height near a wall) must be maintained here, where velocity is real.
                 dev.alone.core.Climbing.updateJumpLatch(client.player);

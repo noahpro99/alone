@@ -29,8 +29,7 @@ public class ScreenCraftBarMixin {
         if (player == null) {
             return;
         }
-        ItemStack result = slot.getItem();
-        float fraction = CraftingTime.progressFraction(player, result);
+        float fraction = dev.alone.core.client.ClientCraftState.progress; // server-authoritative (synced)
         if (fraction <= 0f || fraction >= 1f) {
             return; // not started, or done and takeable — no bar
         }

@@ -62,6 +62,8 @@ public class AloneCore implements ModInitializer {
         PayloadTypeRegistry.clientboundPlay().register(SurvivalSyncPayload.TYPE, SurvivalSyncPayload.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(
             dev.alone.core.net.ClimbSlipPayload.TYPE, dev.alone.core.net.ClimbSlipPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
+            dev.alone.core.net.CraftProgressPayload.TYPE, dev.alone.core.net.CraftProgressPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(DrinkRequestPayload.TYPE, DrinkRequestPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(FireDrillPayload.TYPE, FireDrillPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(
