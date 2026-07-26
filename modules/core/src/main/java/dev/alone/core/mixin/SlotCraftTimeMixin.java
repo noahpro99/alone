@@ -23,6 +23,15 @@ public class SlotCraftTimeMixin {
         if (!cir.getReturnValue() || !((Object) this instanceof ResultSlot)) {
             return;
         }
+        // Gate on the SERVER only. The client and the integrated server each keep their own copy of the timer
+        // and drift apart, so gating the client too meant a client running a hair BEHIND would keep blocking a
+        // take the server had already cleared ("Ready to take" shows, but you can't grab it) — and a stale
+        // client copy made the next craft look instant. Letting the server be the sole authority fixes both:
+        // it accepts the take the instant IT is ready, and it enforces the full timer on every repeat even if
+        // the client's copy is out of date. The client just predicts (a premature click harmlessly snaps back).
+        if (player.level().isClientSide()) {
+            return;
+        }
         ItemStack result = ((Slot) (Object) this).getItem();
         if (!result.isEmpty() && !CraftingTime.isReady(player, result)) {
             cir.setReturnValue(false); // still being worked — you can't take it yet
