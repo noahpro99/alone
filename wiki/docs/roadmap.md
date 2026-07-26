@@ -230,6 +230,31 @@ is ways to extend it:
 - **Decided against:** a **personal photograph / morale system** — Alone's realism here is physical, and a
   happiness meter would be a HUD abstraction rather than a felt mechanic, so it's deliberately not built.
 
+## Playtest follow-ups
+
+Concrete items raised in playtest, still to do (each is removed from here and folded into the feature
+docs once it ships). Recently cleared: the gravel-flint place-and-break exploit, no throwing a rock while
+crouched, timed-craft repeats no longer instant, and guards now chase at sprint pace.
+
+- **Cinematic biome/day announcer** (its own submodule) — a swell of dramatic music and the **biome name
+  shown bottom-centre** when you cross into a new biome or a new day breaks, on a long cooldown so it can't
+  be spammed by hopping borders.
+- **Drinking-water temperature:** cold water cools your body a little, a hot drink warms it.
+- **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
+  hard build — not an instant three-plank craft.
+- **Trampling crops is a crime:** jumping on / trampling a village's farmland should anger it like any
+  other theft or vandalism.
+- **Villager & guard drops:** people and guards are bodies — they should yield raw meat, fat, hide, and
+  the like (with the realistic-drops principle: honest loot, balanced by difficulty).
+- **Free-climb one-block bug:** you can still get "caught" gripping a single-block step; that should never
+  engage a climb.
+- **Hydration not rising after a drink** — a two-stage gut→hydration absorb case to chase down.
+- **Axe held-orientation** — the axe sits wrong in the hand (item display transform).
+- **Tuning/realism passes to verify against the day↔real scale:** fire duration (logs/coal), plank & stick
+  fuel times, dehydration rate (days→MC-days), the endurance bar's meaning & drain, fence carry weight,
+  food-sickness duration + dehydration (and whether rest should shorten it), and whether the path to the
+  crafting table and what it unlocks reads as realistic.
+
 ## Death, respawn & run modes
 
 - **Hardcore-Alone run modes:** self-set victory conditions (survive the winter, survive a year, slay
