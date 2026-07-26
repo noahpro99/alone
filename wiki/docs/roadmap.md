@@ -234,11 +234,9 @@ is ways to extend it:
 
 Concrete items raised in playtest, still to do (each is removed from here and folded into the feature
 docs once it ships). Recently cleared: the gravel-flint place-and-break exploit, no throwing a rock while
-crouched, timed-craft repeats no longer instant, and guards now chase at sprint pace.
+crouched, timed-craft repeats no longer instant, guards now chase at sprint pace, and the **Alone:
+Cinematic** submodule (a biome/day reveal with a dramatic swell, on a cooldown).
 
-- **Cinematic biome/day announcer** (its own submodule) — a swell of dramatic music and the **biome name
-  shown bottom-centre** when you cross into a new biome or a new day breaks, on a long cooldown so it can't
-  be spammed by hopping borders.
 - **Drinking-water temperature:** cold water cools your body a little, a hot drink warms it.
 - **Two-person boats, done right:** realistic paddling stamina and speed, and a boat that's a real,
   hard build — not an instant three-plank craft.
