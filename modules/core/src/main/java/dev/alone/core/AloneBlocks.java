@@ -189,6 +189,15 @@ public final class AloneBlocks {
             .requiresCorrectToolForDrops()
             .setId(key)));
 
+    /** A log being hollowed into a dugout canoe (§ boats). You char its inside and scrape the burnt wood out
+     *  with an axe, over and over — a real, laborious build that ends in a boat (see DugoutBlock). */
+    public static final Block DUGOUT_BLANK = register("dugout_blank",
+        key -> new DugoutBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOD)
+            .strength(2.0F)
+            .setId(key)));
+
     /** A clay pot set down in the open to catch rain (§2). Fills clean while it rains; place empty. */
     public static final Block CLAY_POT = register("clay_pot",
         key -> new ClayPotBlock(BlockBehaviour.Properties.of()
@@ -279,6 +288,8 @@ public final class AloneBlocks {
     public static net.minecraft.world.level.block.entity.BlockEntityType<KilnBlockEntity> KILN_BLOCK_ENTITY;
     /** The bloomery's smelting state (loaded ore, fuel, progress). Assigned in {@link #init()}. */
     public static net.minecraft.world.level.block.entity.BlockEntityType<BloomeryBlockEntity> BLOOMERY_BLOCK_ENTITY;
+    /** The dugout blank's hollowing state (charred flag, scrape stage). Assigned in {@link #init()}. */
+    public static net.minecraft.world.level.block.entity.BlockEntityType<DugoutBlockEntity> DUGOUT_BLANK_BLOCK_ENTITY;
 
     /** Touching this class registers the blocks above. Call before {@link AloneItems#init()}. */
     public static void init() {
@@ -290,6 +301,10 @@ public final class AloneBlocks {
             Identifier.fromNamespaceAndPath("alone", "bloomery"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
                 BloomeryBlockEntity::new, java.util.Set.of(BLOOMERY)));
+        DUGOUT_BLANK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("alone", "dugout_blank"),
+            new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                DugoutBlockEntity::new, java.util.Set.of(DUGOUT_BLANK)));
         BACKPACK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("alone", "backpack"),
             new net.minecraft.world.level.block.entity.BlockEntityType<>(
