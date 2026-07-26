@@ -372,8 +372,12 @@ public final class Climbing {
         // side; let go only when you've climbed clear of every wall (the universal gates above already drop
         // you for empty stamina, a filled hand, etc.).
         if (isGripping(player)) {
-            if (!nearAnyClimbableWall(player)) {
-                setGripping(player, false); // no face on any side — you've topped out or stepped off
+            // You can't cling while standing on solid ground — a real climb is airborne the whole way up.
+            // The instant your feet find a floor you've either topped out onto the ledge or never left the
+            // ground, so the grip drops. This is what stops a lone 1-block wall (you're stood at its base)
+            // from ever reading as a climb, even right after cresting a taller wall beside it.
+            if (player.onGround() || !nearAnyClimbableWall(player)) {
+                setGripping(player, false); // on the ground, or no face on any side — topped out / stepped off
                 return false;
             }
             gripMap(player).put(player, player.tickCount); // keep the top-out grace fresh while climbing
